@@ -191,6 +191,15 @@ The entire platform — both the landing page and the terminal — supports full
 
 ## 🚀 Getting Started
 
+### Required Environment Variables
+
+To run the terminal features and AI analysis, you must configure the following keys in a `.env` or `.env.local` file in the root directory:
+
+* `GOOGLE_API_KEY`: API key for Google Gemini (required for AI Research and memo generation). Obtain it from [Google AI Studio](https://aistudio.google.com/).
+* `EODHD_API_KEY`: API key for EODHD (required for live KSA market feeds and performance data). Obtain it from [EOD Historical Data](https://eodhistoricaldata.com/).
+
+### Installation & Run
+
 ```bash
 # Install dependencies
 npm install

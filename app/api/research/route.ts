@@ -4,7 +4,7 @@ export async function POST(req: NextRequest) {
   const GEMINI_API_KEY = process.env.GOOGLE_API_KEY;
   
   if (!GEMINI_API_KEY) {
-    return new Response(JSON.stringify({ error: 'GOOGLE_API_KEY not configured in .env' }), { 
+    return new Response(JSON.stringify({ error: 'AI service unavailable' }), { 
       status: 500,
       headers: { 'Content-Type': 'application/json' }
     });
@@ -69,8 +69,10 @@ Now write the full report:`;
   });
 
   if (!response.ok) {
-    const err = await response.text();
-    return new Response(JSON.stringify({ error: err }), { status: 500 });
+    return new Response(JSON.stringify({ error: 'AI service unavailable' }), { 
+      status: 500,
+      headers: { 'Content-Type': 'application/json' }
+    });
   }
 
   // Stream raw SSE back to client
