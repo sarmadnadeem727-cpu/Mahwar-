@@ -40,3 +40,51 @@ export const useMarketData = (ticker: string | null) => {
     refetchOnWindowFocus: false,
   });
 };
+
+export const useDividends = (ticker: string | null) => {
+  return useQuery({
+    queryKey: ['dividends', ticker],
+    queryFn: async () => {
+      if (!ticker) return null;
+      const res = await fetch(`/api/yahoo/${ticker}?type=dividends`);
+      if (!res.ok) throw new Error('Failed to fetch dividend data');
+      return res.json();
+    },
+    enabled: !!ticker,
+    staleTime: 60 * 1000 * 5,
+    retry: 2,
+    refetchOnWindowFocus: false,
+  });
+};
+
+export const useOwnership = (ticker: string | null) => {
+  return useQuery({
+    queryKey: ['ownership', ticker],
+    queryFn: async () => {
+      if (!ticker) return null;
+      const res = await fetch(`/api/yahoo/${ticker}?type=ownership`);
+      if (!res.ok) throw new Error('Failed to fetch ownership data');
+      return res.json();
+    },
+    enabled: !!ticker,
+    staleTime: 60 * 1000 * 5,
+    retry: 2,
+    refetchOnWindowFocus: false,
+  });
+};
+
+export const useTechnicalData = (ticker: string | null, interval: string, range: string) => {
+  return useQuery({
+    queryKey: ['technicalData', ticker, interval, range],
+    queryFn: async () => {
+      if (!ticker) return null;
+      const res = await fetch(`/api/yahoo/${ticker}?type=technical&interval=${interval}&range=${range}`);
+      if (!res.ok) throw new Error('Failed to fetch technical data');
+      return res.json();
+    },
+    enabled: !!ticker,
+    staleTime: 60 * 1000 * 5,
+    retry: 2,
+    refetchOnWindowFocus: false,
+  });
+};

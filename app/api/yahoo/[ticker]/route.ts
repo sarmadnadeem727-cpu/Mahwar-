@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { getQuote, getHistoricalData, getFundamentals } from '@/lib/market/yahoo';
+import { getQuote, getHistoricalData, getFundamentals, getDividends, getOwnership, getChartData } from '@/lib/market/yahoo';
 
 export async function GET(
   request: NextRequest,
@@ -17,14 +17,12 @@ export async function GET(
   try {
     switch (type) {
       case 'quote': {
-        const quote = await getQuote(ticker);
+        const symbols = ticker.includes(',') ? ticker.split(',') : ticker;
+        const quote = await getQuote(symbols);
         return NextResponse.json(quote);
       }
       
       case 'history': {
-        const range = searchParams.get('range') || '1y'; // Optional: Default to 1 year
-        // We'll calculate a simple period1 based on the range.
-        // For simplicity, we just use a default date or calculate based on the range.
         const period1 = new Date();
         period1.setFullYear(period1.getFullYear() - 1); // defaulting to 1 year ago for now
         
@@ -36,10 +34,32 @@ export async function GET(
         const fundamentals = await getFundamentals(ticker);
         return NextResponse.json(fundamentals);
       }
+
+      case 'dividends': {
+        const dividendsHistory = await getDividends(ticker);
+        const fundamentals = await getFundamentals(ticker).catch(() => null);
+        return NextResponse.json({
+          history: dividendsHistory,
+          summaryDetail: fundamentals?.summaryDetail || null,
+          defaultKeyStatistics: fundamentals?.keyStatistics || null,
+        });
+      }
+
+      case 'ownership': {
+        const ownership = await getOwnership(ticker);
+        return NextResponse.json(ownership);
+      }
+
+      case 'technical': {
+        const interval = searchParams.get('interval') || '1d';
+        const range = searchParams.get('range') || '1y';
+        const chartData = await getChartData(ticker, interval, range);
+        return NextResponse.json(chartData);
+      }
       
       default: {
         return NextResponse.json(
-          { error: 'Invalid type parameter. Use ?type=quote, ?type=history, or ?type=fundamentals.' },
+          { error: 'Invalid type parameter. Use ?type=quote, ?type=history, ?type=fundamentals, ?type=dividends, ?type=ownership, or ?type=technical.' },
           { status: 400 }
         );
       }
@@ -52,3 +72,4 @@ export async function GET(
     );
   }
 }
+

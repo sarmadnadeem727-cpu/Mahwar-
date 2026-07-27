@@ -3,7 +3,7 @@
 import React, { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import {
-  BarChart3, Layers, Activity, Sparkles, ShieldCheck, Grid3X3, Globe, Percent, Calendar, Columns
+  BarChart3, Layers, Activity, Sparkles, ShieldCheck, Grid3X3, Globe, Percent, Calendar, Columns, Users, LineChart
 } from "lucide-react";
 import dynamic from 'next/dynamic';
 import { TickerSearch } from "@/components/features/TickerSearch";
@@ -17,7 +17,14 @@ const DCFModel = dynamic(() => import("@/components/models/DCFModel").then((mod)
 const LBOModel = dynamic(() => import("@/components/models/LBOModel").then((mod) => ({ default: mod.LBOModel })), { ssr: false });
 const ThreeStatementModel = dynamic(() => import("@/components/models/ThreeStatementModel").then((mod) => ({ default: mod.ThreeStatementModel })), { ssr: false });
 
-type Panel = "hub" | "DCF" | "LBO" | "FS" | "research" | "shariah" | "dividends" | "calendar";
+const AIResearch = dynamic(() => import("@/components/features/AIResearch"), { ssr: false });
+const ShariahScreening = dynamic(() => import("@/components/features/ShariahScreening"), { ssr: false });
+const DividendAnalysis = dynamic(() => import("@/components/features/DividendAnalysis"), { ssr: false });
+const EconomicCalendar = dynamic(() => import("@/components/features/EconomicCalendar"), { ssr: false });
+const OwnershipDetails = dynamic(() => import("@/components/features/OwnershipDetails"), { ssr: false });
+const TechnicalCharts = dynamic(() => import("@/components/features/TechnicalCharts"), { ssr: false });
+
+type Panel = "hub" | "DCF" | "LBO" | "FS" | "research" | "shariah" | "dividends" | "calendar" | "ownership" | "technical";
 
 const NAV_SECTIONS = [
   {
@@ -40,6 +47,9 @@ const NAV_SECTIONS = [
       { id: "research" as Panel, icon: <Sparkles size={14} />, label: "AI Research" },
       { id: "shariah" as Panel, icon: <ShieldCheck size={14} />, label: "Compliance Hub" },
       { id: "dividends" as Panel, icon: <Percent size={14} />, label: "Dividend Tracker" },
+      { id: "ownership" as Panel, icon: <Users size={14} />, label: "Ownership Details" },
+      { id: "technical" as Panel, icon: <LineChart size={14} />, label: "Technical Charts" },
+      { id: "calendar" as Panel, icon: <Calendar size={14} />, label: "Economic Calendar" },
     ],
   },
 ];
@@ -54,6 +64,12 @@ export default function DashboardPage() {
       case "DCF": return <DCFModel />;
       case "LBO": return <LBOModel />;
       case "FS":  return <ThreeStatementModel />;
+      case "research": return <AIResearch />;
+      case "shariah": return <ShariahScreening />;
+      case "dividends": return <DividendAnalysis />;
+      case "calendar": return <EconomicCalendar />;
+      case "ownership": return <OwnershipDetails />;
+      case "technical": return <TechnicalCharts />;
       case "hub":
       default: return (
         <motion.div 
