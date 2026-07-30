@@ -1,200 +1,132 @@
 "use client";
 
 import React from "react";
+import Link from "next/link";
 import { motion } from "framer-motion";
-import { staggerContainer, staggerItem } from "@/lib/motion";
-import SectionLabel from "@/components/ui/SectionLabel";
-import { FEATURES } from "@/lib/constants";
+import { Sparkles, BarChart3, Layers, ShieldCheck, Activity, LineChart, ChevronRight } from "lucide-react";
 import { useTerminalStore } from "@/store/useTerminalStore";
+import { staggerContainer, staggerItem } from "@/lib/motion";
 
-const MiniViz = ({ type, isAr }: { type: string; isAr?: boolean }) => {
-  switch (type) {
-    case "DCF":
-      return (
-        <div className="flex items-end gap-1 h-8 w-full">
-          {[30, 45, 60, 85, 95].map((h, i) => (
-            <motion.div
-              key={i}
-              initial={{ height: 0 }}
-              whileInView={{ height: `${h}%` }}
-              transition={{ delay: 0.1 * i, duration: 0.5 }}
-              className="flex-1 bg-[var(--gold)]/40 rounded-t-[1px]"
-            />
-          ))}
-        </div>
-      );
-    case "LBO":
-      return (
-        <div className="flex items-end gap-1 h-8 w-full">
-          {[90, 75, 60, 40, 20].map((h, i) => (
-            <motion.div
-              key={i}
-              initial={{ height: 0 }}
-              whileInView={{ height: `${h}%` }}
-              transition={{ delay: 0.1 * i, duration: 0.5 }}
-              className="flex-1 bg-[var(--emerald)]/40 rounded-t-[1px]"
-            />
-          ))}
-        </div>
-      );
-    case "AI":
-      return (
-        <div className="font-mono text-[8px] text-[var(--text3)] space-y-1">
-          <div className="flex gap-1">
-            <span className="text-[var(--gold)]">{">"}</span>
-            <span>{isAr ? "جاري توليد المذكرة..." : "Generating memo..."}</span>
-          </div>
-          <div className="flex gap-1">
-            <span className="text-[var(--gold)]">{">"}</span>
-            <span>{isAr ? "اكتمل التحليل." : "Analysis complete."}</span>
-            <motion.div
-              animate={{ opacity: [0, 1, 0] }}
-              transition={{ duration: 0.8, repeat: Infinity }}
-              className="w-1 h-2 bg-[var(--gold)]"
-            />
-          </div>
-        </div>
-      );
-    case "3S":
-      return (
-        <div className="flex items-center justify-between gap-2 h-8 w-full px-2">
-          {["IS", "BS", "CF"].map((t, i) => (
-            <React.Fragment key={i}>
-              <div className="w-6 h-6 border border-[var(--gold-dim)] rounded-sm flex items-center justify-center text-[8px] font-mono text-[var(--gold)]">
-                {t}
-              </div>
-              {i < 2 && <div className="flex-1 h-[1px] bg-[var(--gold-dim)]" />}
-            </React.Fragment>
-          ))}
-        </div>
-      );
-    case "Shariah":
-      return (
-        <div className="relative w-12 h-6 overflow-hidden mx-auto mt-2">
-          <div className="absolute inset-0 border-[3px] border-[var(--emerald)]/40 rounded-full border-b-transparent" />
-          <motion.div
-            animate={{ rotate: [0, 120] }}
-            transition={{ duration: 1.5, ease: "easeOut" }}
-            className="absolute bottom-0 left-1/2 -translate-x-1/2 w-[1px] h-full bg-[var(--gold)] origin-bottom"
-          />
-        </div>
-      );
-    case "Scenario":
-      return (
-        <div className="relative h-8 w-full flex items-center justify-center gap-1.5 opacity-60">
-          <div className="w-1.5 h-1.5 rounded-full bg-[var(--gold)]" />
-          <div className="w-[1px] h-full bg-[var(--border)]" />
-          <div className="flex flex-col gap-1">
-            <div className="w-4 h-[2px] bg-[var(--pos)]" />
-            <div className="w-6 h-[2px] bg-[var(--gold)]" />
-            <div className="w-4 h-[2px] bg-[var(--neg)]" />
-          </div>
-        </div>
-      );
-    default:
-      return null;
-  }
-};
-
-const SolutionSection = () => {
+export default function SolutionSection() {
   const { language } = useTerminalStore();
-  const isAr = language === "ar";
+  const isAr = language === 'ar';
 
-  const featureDescriptionsAr: Record<string, string> = {
-    "Three-Statement Model": "تكامل ديناميكي للقوائم المالية (الدخل، المركز المالي، التدفقات النقدية) مع معالجة الزكاة والمعايير السعودية.",
-    "DCF Engine": "نماذج تدفقات نقدية مخصومة عالية الدقة مع حساب تلقائي لـ WACC وتحليل الحساسية.",
-    "LBO Analytics": "نمذجة عمليات الاستحواذ الرافعة المعقدة مع هياكل ديون متعددة وتصورات العائد الداخلي (IRR).",
-    "AI Research": "مذكرات أبحاث أسهم مؤتمتة تم إنشاؤها بواسطة Gemini 2.0 Flash، مدربة على إفصاحات تداول السعودية.",
-    "Shariah Screening": "محرك فحص شرعي من الدرجة المؤسسية مع تتبع نسب التطهير والامتثال في الوقت الفعلي.",
-    "Scenario Manager": "اختبار الجهد لعدة سيناريوهات (متفائل/أساسي/متشائم) لجميع النماذج مع عروض مقارنة فورية."
-  };
-
-  const tagMapAr: Record<string, string> = {
-    "INSTITUTIONAL": "مؤسسي",
-    "PRECISION": "دقة",
-    "STRATEGY": "استراتيجية",
-    "INTELLIGENCE": "ذكاء",
-    "COMPLIANCE": "امتثال",
-    "DATA": "بيانات"
-  };
+  const features = [
+    {
+      icon: <Sparkles className="text-[var(--gold)]" size={24} />,
+      title: isAr ? "مذكرات أبحاث بالذكاء الاصطناعي" : "AI Research Memo Engine",
+      desc: isAr ? "توليد تقارير مالية مؤسسية فورية عبر Gemini 2.5 Flash مع الربط بالبحث اللحظي." : "Instant institutional equity memo generation via Gemini 2.5 Flash with real-time web search grounding.",
+      badge: "Gemini 2.5 Flash",
+      panel: "research"
+    },
+    {
+      icon: <BarChart3 className="text-[var(--emerald)]" size={24} />,
+      title: isAr ? "محرك تقييم التدفقات DCF" : "Institutional DCF Engine",
+      desc: isAr ? "نمذجة التدفقات النقدية 5 سنوات مع خريطة حساسيات 5×5 لمعدل الخصم والنمو النهائي." : "5-year FCF projections with WACC formulas and a 5x5 heatmap sensitivity matrix.",
+      badge: "Bloomberg Grade",
+      panel: "DCF"
+    },
+    {
+      icon: <Layers className="text-[var(--gold)]" size={24} />,
+      title: isAr ? "باني صفقات الاستحواذ LBO" : "LBO Deal Builder",
+      desc: isAr ? "تحليل عائدات الاستحواذ للملكية الخاصة وشداول إطفاء الديون متعددة الشرائح." : "Private equity deal mechanics, multi-tranche debt amortization, and MOIC / IRR waterfalls.",
+      badge: "Private Equity",
+      panel: "LBO"
+    },
+    {
+      icon: <ShieldCheck className="text-[var(--emerald)]" size={24} />,
+      title: isAr ? "الفحص الشرعي AAOIFI" : "AAOIFI Shariah Screening",
+      desc: isAr ? "فحص نسب الديون والإيرادات المحرمة وفق المعيار 21 وحساب مبالغ التطهير للسهم." : "AAOIFI Standard No. 21 ratio checks and per-share purification income calculation.",
+      badge: "Islamic Finance",
+      panel: "shariah"
+    },
+    {
+      icon: <Activity className="text-[var(--gold)]" size={24} />,
+      title: isAr ? "بيانات تداول اللحظية" : "Live Tadawul Market Suite",
+      desc: isAr ? "تحديث تلقائي كل 30 ثانية لأسهم السوق السعودي مع شريط التدفقات النقدية اللحظي." : "Auto-refreshing 30s price feed for 30+ Tadawul symbols with institutional order tape.",
+      badge: "Tadawul Direct",
+      panel: "live_market"
+    },
+    {
+      icon: <LineChart className="text-[var(--emerald)]" size={24} />,
+      title: isAr ? "نموذج القوائم الثلاث IFRS" : "Linked 3-Statement Model",
+      desc: isAr ? "قوائم مالية مترابطة بالكامل مع حساب مخصص الزكاة الشرعية وتصدير Excel & PDF." : "IFRS / Saudi GAAP model with Zakat recalculation, dynamic charts, and Excel/PDF export.",
+      badge: "IFRS / Zakat",
+      panel: "FS"
+    }
+  ];
 
   return (
-    <section id="solutions" className="relative py-[120px] px-6 lg:px-24 bg-[var(--bg1)]">
-      {/* Grid Pattern Background */}
-      <div className="absolute inset-0 grid-bg opacity-5 pointer-events-none" />
+    <section id="solution" className="py-28 bg-[#0A0B0D] relative overflow-hidden" dir={isAr ? "rtl" : "ltr"}>
+      {/* Background Radial Glow */}
+      <div className="absolute top-1/3 right-1/4 w-[600px] h-[600px] bg-[var(--emerald)]/10 rounded-full blur-[160px] pointer-events-none" />
 
-      <motion.div
-        variants={staggerContainer}
-        initial="hidden"
-        whileInView="visible"
-        viewport={{ once: true, margin: "-100px" }}
-        className="container mx-auto"
-      >
-        <div className="flex flex-col items-center text-center mb-20">
-          <SectionLabel label={isAr ? "الحل" : "The Solution"} />
-          <motion.h2 variants={staggerItem} className={`font-cormorant text-4xl md:text-5xl lg:text-6xl mb-6 ${isAr ? 'font-arabic' : ''}`}>
-            {isAr ? (
-              <>ستة محركات من <span className="italic text-[var(--gold)]">الدقة المالية</span></>
-            ) : (
-              <>Six engines of <span className="italic text-[var(--gold)]">financial precision</span></>
-            )}
+      <div className="max-w-7xl mx-auto px-6 relative z-10">
+        <motion.div
+          variants={staggerContainer}
+          initial="initial"
+          whileInView="animate"
+          viewport={{ once: true, margin: "-100px" }}
+          className="text-center max-w-3xl mx-auto mb-20"
+        >
+          <motion.div variants={staggerItem} className="inline-flex items-center gap-2 px-3.5 py-1 rounded-full bg-[var(--emerald)]/10 border border-[var(--emerald)]/20 text-[var(--emerald)] text-xs font-mono font-bold uppercase tracking-widest mb-4">
+            <Sparkles size={14} />
+            <span>{isAr ? "القدرات المؤسسية الكاملة" : "Sovereign Intelligence Capabilities"}</span>
+          </motion.div>
+
+          <motion.h2 variants={staggerItem} className="font-garamond text-4xl md:text-6xl font-bold text-white mb-6">
+            {isAr ? "منظومة متكاملة بمستوى البنوك الاستثمارية العالمية" : "Engineered for Institutional Capital Allocators"}
           </motion.h2>
-          <motion.p variants={staggerItem} className={`font-dm-sans text-[var(--text2)] max-w-[500px] leading-relaxed ${isAr ? 'font-arabic' : ''}`}>
+
+          <motion.p variants={staggerItem} className="text-slate-400 text-base md:text-lg">
             {isAr 
-              ? "كل وحدة صممت خصيصاً لأسواق المال السعودية، مع الالتزام بالمعايير المؤسسية واحتياجات البيانات الفورية."
-              : "Every module is purpose-built for the Saudi capital markets, adhering to institutional standards and real-time data needs."}
+              ? "مجموعة شاملة من الأدوات والنماذج التقييمية المصممة لمديري الصناديق والمحللين في السوق السعودي والخليجي."
+              : "A powerful matrix of financial engineering models, streaming generative intelligence, and AAOIFI compliance controls."
+            }
           </motion.p>
-        </div>
+        </motion.div>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-          {FEATURES.map((feature, i) => (
+        {/* 3D Tilt Feature Grid */}
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+          {features.map((feature, idx) => (
             <motion.div
-              key={i}
-              variants={staggerItem}
-              whileHover="hover"
-              initial="rest"
+              key={idx}
+              initial={{ opacity: 0, y: 30 }}
+              whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
-              className={`group relative bg-[var(--bg2)] border border-[var(--border)] rounded-2xl p-8 transition-all duration-500 hover:border-[var(--accent-border)] hover:shadow-2xl hover:shadow-[var(--accent)]/5 hover:-translate-y-2 lg:first:col-span-2 overflow-hidden`}
+              transition={{ duration: 0.5, delay: idx * 0.1 }}
+              whileHover={{ y: -8 }}
+              className="glass-card p-8 rounded-2xl border border-white/10 flex flex-col justify-between group hover:border-[var(--emerald)]/50 transition-all bg-[#0F1113]/80"
             >
-              {/* Radial Glow on Hover */}
-              <div className="absolute -top-24 -left-24 w-48 h-48 bg-[var(--gold-glow)] blur-[60px] opacity-0 group-hover:opacity-100 transition-opacity duration-700" />
-
-              
-              <div className="relative z-10 flex flex-col h-full">
-                <div className="flex justify-between items-start mb-8">
-                  <div className="w-11 h-11 bg-[var(--gold-dim)] border border-[var(--gold-dim)] rounded-xl flex items-center justify-center text-xl text-[var(--gold)]">
+              <div>
+                <div className="flex items-center justify-between mb-6">
+                  <div className="p-3.5 rounded-xl bg-white/5 border border-white/10 group-hover:bg-[var(--emerald)]/10 group-hover:border-[var(--emerald)]/30 transition-all">
                     {feature.icon}
                   </div>
-                  <div className="font-mono text-[9px] uppercase tracking-widest text-[var(--emerald)] px-2 py-1 bg-[var(--emerald)]/5 rounded-full border border-[var(--emerald)]/10">
-                    {isAr ? tagMapAr[feature.tag] : feature.tag}
-                  </div>
+                  <span className="text-[10px] font-mono font-bold uppercase tracking-widest px-2.5 py-1 rounded-md bg-white/5 text-[var(--gold)] border border-white/10">
+                    {feature.badge}
+                  </span>
                 </div>
 
-                <div className="flex justify-between items-end mb-4">
-                  <h3 className={`font-cormorant text-2xl font-semibold text-[var(--text1)] group-hover:text-[var(--gold-bright)] transition-colors ${isAr ? 'font-arabic' : ''}`}>
-                    {isAr ? feature.arabic : feature.title}
-                  </h3>
-                  {!isAr && (
-                    <span className="font-cairo text-xs text-[var(--text3)] group-hover:text-[var(--text2)] transition-colors text-right">
-                      {feature.arabic}
-                    </span>
-                  )}
-                </div>
-
-                <p className={`font-dm-sans text-xs md:text-[13px] text-[var(--text2)] leading-[1.7] mb-8 group-hover:text-[var(--text1)] transition-colors ${isAr ? 'font-arabic text-sm' : ''}`}>
-                  {isAr ? featureDescriptionsAr[feature.title] : feature.description}
+                <h3 className="font-bold text-white text-xl mb-3 group-hover:text-[var(--emerald)] transition-colors">
+                  {feature.title}
+                </h3>
+                <p className="text-slate-400 text-xs leading-relaxed mb-6">
+                  {feature.desc}
                 </p>
-
-                <div className="mt-auto pt-6 border-t border-[var(--border)] group-hover:border-[var(--border-gold)] transition-colors">
-                  <MiniViz type={feature.viz} isAr={isAr} />
-                </div>
               </div>
+
+              <Link
+                href="/dashboard"
+                className="inline-flex items-center gap-2 text-xs font-mono font-bold text-[var(--emerald)] group-hover:text-white transition-colors pt-4 border-t border-white/10"
+              >
+                <span>{isAr ? "تشغيل النموذج" : "Launch Engine"}</span>
+                <ChevronRight size={14} className="group-hover:translate-x-1 transition-transform" />
+              </Link>
             </motion.div>
           ))}
         </div>
-      </motion.div>
+      </div>
     </section>
   );
-};
-
-export default SolutionSection;
+}

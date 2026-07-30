@@ -1,62 +1,57 @@
 "use client";
 
 import React from "react";
-import { motion } from "framer-motion";
-import { staggerContainer, staggerItem } from "@/lib/motion";
 import Link from "next/link";
-import SectionLabel from "@/components/ui/SectionLabel";
+import { ArrowRight, ShieldCheck, Zap } from "lucide-react";
+import { useTerminalStore } from "@/store/useTerminalStore";
 
-const CTASection = () => {
+export default function CTASection() {
+  const { language } = useTerminalStore();
+  const isAr = language === 'ar';
+
   return (
-    <section id="company" className="relative py-[160px] flex items-center justify-center overflow-hidden bg-[var(--void)]">
-      {/* Background Effects */}
-      <div className="absolute inset-0 pointer-events-none">
-        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-full h-[600px] bg-radial-gradient from-[rgba(201,168,76,0.04)] to-transparent" />
-        <h2 className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 font-cairo text-[140px] md:text-[240px] text-[var(--gold)] opacity-5 select-none pointer-events-none">
-          محور
-        </h2>
-      </div>
-
-      {/* Content */}
-      <motion.div
-        variants={staggerContainer}
-        initial="hidden"
-        whileInView="visible"
-        viewport={{ once: true }}
-        className="relative z-10 flex flex-col items-center text-center px-6"
-      >
-        <SectionLabel label="Get Started" className="justify-center" />
-        
-        <motion.h2 variants={staggerItem} className="font-cormorant text-5xl md:text-6xl lg:text-7xl mb-8">
-          Ready to find your <span className="italic gold-gradient-text">axis</span>?
-        </motion.h2>
-
-        <motion.p variants={staggerItem} className="font-dm-sans text-lg text-[var(--text2)] max-w-[480px] leading-relaxed mb-12">
-          Join the next generation of Saudi analysts. Deep intelligence, absolute precision, zero friction.
-        </motion.p>
-
-        <motion.div variants={staggerItem} className="flex flex-wrap items-center justify-center gap-6">
-          <Link href="/dashboard">
-            <motion.button
-              whileHover={{ scale: 1.05, y: -2 }}
-              whileTap={{ scale: 0.98 }}
-              className="bg-[var(--gold)] text-[var(--bg1)] px-10 py-4 rounded-sm font-dm-sans text-base font-bold hover:bg-[var(--gold-bright)] transition-all shadow-[0_0_40px_rgba(201,168,76,0.2)]"
-            >
-              Enter Platform →
-            </motion.button>
-          </Link>
+    <section className="py-24 bg-[#0A0B0D] relative overflow-hidden" dir={isAr ? "rtl" : "ltr"}>
+      <div className="max-w-7xl mx-auto px-6 relative z-10">
+        <div className="rounded-3xl bg-gradient-to-r from-[#0E7C69] via-[#10957F] to-[#12A189] p-10 md:p-16 text-center relative overflow-hidden shadow-2xl shadow-[#0E7C69]/30 border border-white/20">
           
-          <motion.button
-            whileHover={{ scale: 1.05, y: -2 }}
-            whileTap={{ scale: 0.98 }}
-            className="border border-[var(--gold-dim)] text-[var(--gold)] px-10 py-4 rounded-sm font-dm-sans text-base font-bold hover:bg-[var(--gold-dim)] transition-all"
-          >
-            Explore Features
-          </motion.button>
-        </motion.div>
-      </motion.div>
+          {/* Subtle Ambient Glow Shapes */}
+          <div className="absolute -top-24 -left-24 w-72 h-72 bg-white/10 rounded-full blur-3xl pointer-events-none" />
+          <div className="absolute -bottom-24 -right-24 w-72 h-72 bg-[var(--gold)]/20 rounded-full blur-3xl pointer-events-none" />
+
+          <div className="max-w-3xl mx-auto relative z-10 space-y-6">
+            <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-white/10 border border-white/20 text-white font-mono text-xs font-bold uppercase tracking-widest backdrop-blur-md">
+              <Zap size={14} className="text-[var(--gold)]" />
+              <span>{isAr ? "جاهز للاستخدام اللحظي" : "Instant Institutional Access"}</span>
+            </div>
+
+            <h2 className="font-garamond text-4xl md:text-6xl font-bold text-white tracking-tight">
+              {isAr ? "ارتقِ بتحليلاتك المالية لمستوى المحطة السيادية" : "Elevate Your GCC Financial Intelligence Terminal Today"}
+            </h2>
+
+            <p className="text-emerald-50 text-base md:text-lg leading-relaxed max-w-2xl mx-auto">
+              {isAr 
+                ? "ابدأ بتوليد مذكرات الاستثمار الذكية ونمذجة التقييم المالي وسوق تداول المباشر بدون تعقيد."
+                : "Experience Wall Street analytical depth tailored specifically for Saudi & Gulf Capital Markets."
+              }
+            </p>
+
+            <div className="pt-4 flex flex-col sm:flex-row items-center justify-center gap-4">
+              <Link
+                href="/dashboard"
+                className="w-full sm:w-auto inline-flex items-center justify-center gap-3 px-8 py-4 rounded-xl bg-white text-[#0E7C69] font-extrabold text-sm shadow-xl hover:bg-slate-100 transition-all cursor-pointer group"
+              >
+                <span>{isAr ? "تشغيل محطة المحور الآن" : "Launch Mahwar Terminal"}</span>
+                <ArrowRight size={18} className="group-hover:translate-x-1 transition-transform" />
+              </Link>
+            </div>
+
+            <div className="pt-4 text-xs font-mono text-emerald-100/80 flex items-center justify-center gap-2">
+              <ShieldCheck size={14} />
+              <span>{isAr ? "مصمم ومطور بواسطة محمد سرمد نديم" : "Architected & Developed by Muhammad Sarmad Nadeem"}</span>
+            </div>
+          </div>
+        </div>
+      </div>
     </section>
   );
-};
-
-export default CTASection;
+}

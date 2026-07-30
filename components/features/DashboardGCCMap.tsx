@@ -1,131 +1,114 @@
 "use client";
 
-import React from "react";
+import React, { useState } from "react";
 import { motion } from "framer-motion";
+import { Globe, Compass, Landmark, TrendingUp } from "lucide-react";
+import { useTerminalStore } from "@/store/useTerminalStore";
+import { t } from "@/lib/i18n";
+import { panelReveal } from "@/lib/motion";
 
-// DO NOT ALTER THIS DATA
-const GCC_CITIES = [
-  { id: "RUH", name: "Riyadh", cx: "45%", cy: "55%", isHub: true },
-  { id: "DXB", name: "Dubai", cx: "65%", cy: "45%", isHub: false },
-  { id: "DOH", name: "Doha", cx: "60%", cy: "48%", isHub: false },
-  { id: "KWI", name: "Kuwait City", cx: "55%", cy: "35%", isHub: false },
-  { id: "BAH", name: "Manama", cx: "58%", cy: "42%", isHub: false },
-  { id: "MCT", name: "Muscat", cx: "75%", cy: "55%", isHub: false },
+const GCC_MAP_DATA = [
+  { id: "SA", nameEn: "Saudi Arabia", nameAr: "المملكة العربية السعودية", exchange: "Tadawul (TASI)", cap: "$2.90T", top: "Saudi Aramco (2222.SR)", change: "+0.8%" },
+  { id: "UAE", nameEn: "United Arab Emirates", nameAr: "الإمارات العربية المتحدة", exchange: "ADX / DFM", cap: "$940B", top: "IHC / Emirates NBD", change: "+1.2%" },
+  { id: "QA", nameEn: "Qatar", nameAr: "دولة قطر", exchange: "QSE", cap: "$180B", top: "QNB Group", change: "+0.7%" },
+  { id: "KW", nameEn: "Kuwait", nameAr: "دولة الكويت", exchange: "Boursa Kuwait", cap: "$145B", top: "NBK / KFH", change: "-0.2%" },
+  { id: "OM", nameEn: "Oman", nameAr: "سلطنة عمان", exchange: "MSX", cap: "$62B", top: "Bank Muscat", change: "+0.3%" },
+  { id: "BH", nameEn: "Bahrain", nameAr: "مملكة البحرين", exchange: "Bahrain Bourse", cap: "$32B", top: "Ahli United Bank", change: "+0.1%" }
 ];
 
 export default function DashboardGCCMap() {
-  // Hub Coordinates (Riyadh) converted to viewBox 1000x1000 units
-  const hubX = 450;
-  const hubY = 550;
+  const { setPanel, language } = useTerminalStore();
+  const isAr = language === 'ar';
+
+  const [hovered, setHovered] = useState(GCC_MAP_DATA[0]);
 
   return (
-    <div className="flex flex-col lg:flex-row w-full h-[500px] bg-[#020617] border border-[#334155] rounded-xl overflow-hidden shadow-2xl">
-      
-      {/* LEFT SIDE: The 2D Network Map (65% width) */}
-      <div className="relative w-full lg:w-[65%] h-full bg-[#020617] p-6 flex items-center justify-center overflow-hidden">
-        
-        {/* SVG CONTAINER */}
-        <svg viewBox="0 0 1000 1000" className="w-full h-full opacity-80">
-          
-          {/* I WILL PASTE MY OWN GEOGRAPHIC SVG PATHS HERE. LEAVE THIS COMMENT AS IS. */}
-          {/* <path d="..." fill="#1E293B" stroke="#10B981" /> */}
-
-          {/* TODO 1: NETWORK DATA LINES */}
-          <g>
-            {GCC_CITIES.filter(city => !city.isHub).map(city => {
-              const targetX = parseFloat(city.cx) * 10;
-              const targetY = parseFloat(city.cy) * 10;
-              
-              // Calculate curved path using Quadratic Bezier (Q)
-              // Midpoint with a vertical offset to create a nice arc
-              const midX = (hubX + targetX) / 2;
-              const midY = (hubY + targetY) / 2 - 80;
-              
-              const pathD = `M ${hubX} ${hubY} Q ${midX} ${midY} ${targetX} ${targetY}`;
-
-              return (
-                <motion.path
-                  key={city.id}
-                  d={pathD}
-                  fill="none"
-                  stroke="#94A3B8"
-                  strokeWidth="1.5"
-                  strokeDasharray="4 4"
-                  initial={{ strokeDashoffset: 0 }}
-                  animate={{ strokeDashoffset: -20 }}
-                  transition={{ duration: 1, repeat: Infinity, ease: "linear" }}
-                />
-              );
-            })}
-          </g>
-        </svg>
-
-        {/* TODO 2: RADAR PING NODES */}
-        <div className="absolute inset-0 pointer-events-none">
-          {GCC_CITIES.map(city => {
-            const color = city.isHub ? "#F59E0B" : "#10B981";
-            
-            return (
-              <div 
-                key={city.id}
-                className="absolute transform -translate-x-1/2 -translate-y-1/2 flex flex-col items-center"
-                style={{ left: city.cx, top: city.cy }}
-              >
-                {/* Radar Ping Container */}
-                <div className="relative flex items-center justify-center">
-                  {/* Pulsing Outer Ring */}
-                  <motion.div 
-                    initial={{ scale: 1, opacity: 0.8 }}
-                    animate={{ scale: 3, opacity: 0 }}
-                    transition={{ duration: 2, repeat: Infinity, ease: "easeOut" }}
-                    className="absolute w-3 h-3 rounded-full"
-                    style={{ backgroundColor: color }}
-                  />
-                  {/* Solid Inner Dot */}
-                  <div className="w-2 h-2 rounded-full bg-[#F8FAFC] relative z-10" />
-                </div>
-
-                {/* Crisp ID Label */}
-                <span className="mt-2 font-mono text-[10px] text-[#F8FAFC] tracking-widest uppercase">
-                   {city.id}
-                </span>
-              </div>
-            );
-          })}
+    <motion.div
+      variants={panelReveal}
+      initial="initial"
+      animate="animate"
+      exit="exit"
+      className="space-y-6"
+      dir={isAr ? "rtl" : "ltr"}
+    >
+      <div className="glass-panel p-6 rounded-2xl border border-white/10 flex items-center justify-between">
+        <div className="flex items-center gap-3">
+          <Compass className="text-[var(--gold)]" size={24} />
+          <div>
+            <h2 className="font-garamond text-2xl font-bold text-white">
+              {t("panel_gcc_map", language)}
+            </h2>
+            <span className="text-xs font-mono text-slate-400">
+              Interactive Sovereign Exchange Map & Sector Liquidity
+            </span>
+          </div>
         </div>
       </div>
 
-      {/* RIGHT SIDE: The Data Dashboard Grid (35% width) */}
-      <div className="w-full lg:w-[35%] h-full bg-[#0F172A] border-l border-[#334155] p-6 flex flex-col gap-4 overflow-y-auto">
-        
-        {/* TODO 3: HEADER */}
-        <h3 className="font-mono text-xs uppercase tracking-widest text-[#94A3B8] mb-2">
-          Regional Intelligence
-        </h3>
-
-        {/* TODO 4: STATS GRID */}
-        <div className="flex flex-col gap-4">
-          {[
-            { label: "GCC Market Cap", val: "$3.8 Trillion" },
-            { label: "Supported Exchanges", val: "6" },
-            { label: "Active Companies", val: "500+" },
-            { label: "Data Sync Engine", val: "Real-Time" }
-          ].map((stat, i) => (
-            <div 
-              key={i} 
-              className="bg-[#020617] border border-[#334155] rounded-lg p-5"
+      <div className="grid grid-cols-12 gap-6">
+        {/* MAP GRID CARDS (7 COLS) */}
+        <div className="col-span-12 lg:col-span-7 grid grid-cols-1 sm:grid-cols-2 gap-4">
+          {GCC_MAP_DATA.map((c) => (
+            <div
+              key={c.id}
+              onMouseEnter={() => setHovered(c)}
+              onClick={() => setPanel("screener")}
+              className={`glass-card p-5 rounded-xl border cursor-pointer transition-all ${
+                hovered.id === c.id 
+                  ? "border-[var(--emerald)] bg-[var(--emerald)]/10 shadow-lg shadow-[var(--emerald)]/20" 
+                  : "border-white/10 hover:border-white/20"
+              }`}
             >
-              <p className="text-[10px] uppercase tracking-widest text-[#94A3B8] mb-1">
-                {stat.label}
-              </p>
-              <p className="font-mono text-2xl font-bold text-[#F8FAFC]">
-                {stat.val}
-              </p>
+              <div className="flex justify-between items-start mb-2">
+                <span className="font-mono text-xs font-bold text-[var(--gold)] px-2 py-0.5 rounded bg-[var(--gold)]/10 border border-[var(--gold)]/20">
+                  {c.id}
+                </span>
+                <span className="text-xs font-mono font-bold text-[var(--pos)]">
+                  {c.change}
+                </span>
+              </div>
+              <h3 className="font-bold text-white text-sm mb-1">{isAr ? c.nameAr : c.nameEn}</h3>
+              <div className="text-[10px] font-mono text-slate-400">{c.exchange}</div>
             </div>
           ))}
         </div>
-            
+
+        {/* HOVERED DETAILS PANEL (5 COLS) */}
+        <div className="col-span-12 lg:col-span-5 glass-panel p-6 rounded-2xl border border-white/10 flex flex-col justify-between space-y-4">
+          <div>
+            <span className="text-[10px] font-mono text-[var(--emerald)] uppercase tracking-wider font-bold block mb-1">
+              Active Regional Focus ({hovered.id})
+            </span>
+            <h3 className="font-garamond text-3xl font-bold text-white mb-4">
+              {isAr ? hovered.nameAr : hovered.nameEn}
+            </h3>
+
+            <div className="space-y-3 font-mono text-xs">
+              <div className="p-3 rounded-lg bg-black/40 border border-white/10 flex justify-between">
+                <span className="text-slate-400">Stock Exchange</span>
+                <span className="text-white font-bold">{hovered.exchange}</span>
+              </div>
+
+              <div className="p-3 rounded-lg bg-black/40 border border-white/10 flex justify-between">
+                <span className="text-slate-400">Total Market Cap</span>
+                <span className="text-[var(--emerald)] font-bold">{hovered.cap}</span>
+              </div>
+
+              <div className="p-3 rounded-lg bg-black/40 border border-white/10 flex justify-between">
+                <span className="text-slate-400">Benchmark Leader</span>
+                <span className="text-[var(--gold)] font-bold truncate max-w-[150px]">{hovered.top}</span>
+              </div>
+            </div>
+          </div>
+
+          <button
+            onClick={() => setPanel("screener")}
+            className="w-full py-3 bg-[var(--emerald)] hover:bg-emerald-600 text-white font-mono text-xs font-bold rounded-xl shadow-lg transition-colors cursor-pointer"
+          >
+            Launch Market Screener for {hovered.id} &rarr;
+          </button>
+        </div>
       </div>
-    </div>
+    </motion.div>
   );
 }

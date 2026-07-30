@@ -1,207 +1,295 @@
 "use client";
 
-import React, { useState, useMemo, useCallback } from "react";
+import React, { useState } from "react";
 import { motion } from "framer-motion";
-import { Briefcase, CreditCard, DollarSign, Calculator, ArrowRightLeft, ChevronRight } from "lucide-react";
-import { runLbo, DebtTranche, LboYearInput } from "@/lib/finance/lbo";
-import { fmt } from "@/lib/fmt";
+import { Layers, PieChart, TrendingUp, DollarSign, Calculator, RefreshCw } from "lucide-react";
+import { ResponsiveContainer, BarChart, Bar, XAxis, YAxis, Tooltip, Cell, PieChart as RePieChart, Pie } from "recharts";
 import { useTerminalStore } from "@/store/useTerminalStore";
-import { useMarketData } from "@/hooks/useMarketData";
-import { useFX } from "@/hooks/useFX";
+import { t } from "@/lib/i18n";
+import { panelReveal } from "@/lib/motion";
 
-const DEFAULT_TRANCHES: DebtTranche[] = [
-  { name: "Senior Term Loan A", type: "SENIOR", openingBalance: 400, commitment: 400, spreadBps: 350, benchmarkRate: 0.055, amortPctPa: 0.05, cashSweepPct: 0.7, seniority: 1 },
-  { name: "Senior Term Loan B", type: "SENIOR", openingBalance: 200, commitment: 200, spreadBps: 450, benchmarkRate: 0.055, amortPctPa: 0.01, cashSweepPct: 0.2, seniority: 2 },
-  { name: "Mezzanine Note", type: "MEZZ", openingBalance: 150, commitment: 150, spreadBps: 800, benchmarkRate: 0.055, amortPctPa: 0, cashSweepPct: 0, seniority: 3 },
-];
+export default function LBOModel() {
+  const { activeTicker, language } = useTerminalStore();
+  const isAr = language === 'ar';
 
-const DEFAULT_YEARS_LBO: LboYearInput[] = [
-  { yearIndex: 1, year: 2025, revenue: 800, ebitdaMargin: 0.25, capex: 40, deltaNwc: 10, taxesZakat: 25 },
-  { yearIndex: 2, year: 2026, revenue: 880, ebitdaMargin: 0.26, capex: 44, deltaNwc: 12, taxesZakat: 28 },
-  { yearIndex: 3, year: 2027, revenue: 968, ebitdaMargin: 0.27, capex: 48, deltaNwc: 15, taxesZakat: 32 },
-  { yearIndex: 4, year: 2028, revenue: 1064, ebitdaMargin: 0.28, capex: 52, deltaNwc: 18, taxesZakat: 36 },
-  { yearIndex: 5, year: 2029, revenue: 1170, ebitdaMargin: 0.29, capex: 56, deltaNwc: 20, taxesZakat: 40 },
-];
+  const [purchasePrice, setPurchasePrice] = useState<number>(50000);
+  const [ebitdaMultiple, setEbitdaMultiple] = useState<number>(12);
+  const [mgmtEquityPct, setMgmtEquityPct] = useState<number>(15);
+  const [seniorDebt, setSeniorDebt] = useState<number>(15000);
+  const [seniorRate, setSeniorRate] = useState<number>(6.5);
+  const [mezzDebt, setMezzDebt] = useState<number>(5000);
+  const [mezzRate, setMezzRate] = useState<number>(9.0);
+  const [pikNotes, setPikNotes] = useState<number>(2500);
+  const [pikRate, setPikRate] = useState<number>(12.0);
+  const [holdPeriod, setHoldPeriod] = useState<number>(5);
+  const [exitMultiple, setExitMultiple] = useState<number>(11);
 
-export function LBOModel() {
-  const { activeTicker, currency } = useTerminalStore();
-  const { convert } = useFX();
-  const [tranches, setTranches] = useState<DebtTranche[]>(DEFAULT_TRANCHES);
+  // LBO computations
+  const totalDebt = seniorDebt + mezzDebt + pikNotes;
+  const sponsorEquity = purchasePrice - totalDebt;
+  const entryEBITDA = purchasePrice / ebitdaMultiple;
+
+  // Exit valuation at Year `holdPeriod`
+  const exitEBITDA = entryEBITDA * Math.pow(1.08, holdPeriod); // 8% EBITDA CAGR
+  const exitEV = exitEBITDA * exitMultiple;
   
-  const { data: globalData, isLoading: fetchLoading } = useMarketData(activeTicker);
+  // Amortized debt remaining
+  const remainingSenior = Math.max(0, seniorDebt - (seniorDebt * 0.15 * holdPeriod));
+  const remainingMezz = mezzDebt;
+  const remainingPik = pikNotes * Math.pow(1 + pikRate / 100, holdPeriod);
+  const totalRemainingDebt = remainingSenior + remainingMezz + remainingPik;
 
-  const [modelState, setModelState] = useState({
-    years: DEFAULT_YEARS_LBO,
-    entryEv: 1200,
-    exitMultiple: 8.5
+  const totalExitEquity = exitEV - totalRemainingDebt;
+  const mgmtProceeds = totalExitEquity * (mgmtEquityPct / 100);
+  const sponsorProceeds = totalExitEquity - mgmtProceeds;
+
+  const moic = sponsorProceeds / sponsorEquity;
+  const irr = (Math.pow(moic, 1 / holdPeriod) - 1) * 100;
+
+  // IRR by Hold Period Bar Chart Data
+  const irrData = [3, 4, 5, 6, 7].map((yr) => {
+    const exEBITDA = entryEBITDA * Math.pow(1.08, yr);
+    const exEV = exEBITDA * exitMultiple;
+    const remDebt = Math.max(0, seniorDebt - (seniorDebt * 0.15 * yr)) + mezzDebt + (pikNotes * Math.pow(1 + pikRate / 100, yr));
+    const eq = Math.max(0, exEV - remDebt) * (1 - mgmtEquityPct / 100);
+    const m = eq / sponsorEquity;
+    const i = (Math.pow(m, 1 / yr) - 1) * 100;
+    return {
+      year: `${yr}Y`,
+      irr: Number(i.toFixed(1)),
+      moic: Number(m.toFixed(2))
+    };
   });
 
-  const result = useMemo(
-    () => runLbo(tranches, modelState.years, modelState.entryEv, 200, 20, 5, modelState.exitMultiple),
-    [tranches, modelState]
-  );
-
-  const updateTranche = (index: number, key: keyof DebtTranche, val: number) => {
-    setTranches(prev => {
-      const next = [...prev];
-      (next[index] as any)[key] = val;
-      return next;
-    });
-  };
+  const waterfallData = [
+    { name: "Sponsor Equity Proceeds", value: Math.round(sponsorProceeds), fill: "#0E7C69" },
+    { name: "Management Equity Share", value: Math.round(mgmtProceeds), fill: "#C9A84C" },
+    { name: "Remaining Debt Repaid", value: Math.round(totalRemainingDebt), fill: "#E53E3E" }
+  ];
 
   return (
-    <motion.div 
-      className="flex flex-col gap-8 text-zinc-300"
-      initial={{ opacity: 0, y: 20 }}
-      animate={{ opacity: 1, y: 0 }}
-      transition={{ duration: 0.5 }}
+    <motion.div
+      variants={panelReveal}
+      initial="initial"
+      animate="animate"
+      exit="exit"
+      className="grid grid-cols-12 gap-8"
+      dir={isAr ? "rtl" : "ltr"}
     >
-      <header className="flex flex-col md:flex-row md:items-center justify-between gap-6 bg-[#0a0a0a]/50 backdrop-blur-xl border border-white/10 p-8 rounded-xl shadow-2xl">
-        <div className="flex items-center gap-6">
-          <div className="w-12 h-12 bg-white/5 flex items-center justify-center border border-white/10 rounded-lg">
-            <Briefcase className="text-zinc-50 w-5 h-5" />
-          </div>
-          <div>
-            <h1 className="font-mono text-xl font-bold uppercase tracking-widest text-zinc-50">Sovereign LBO Engine</h1>
-            <p className="text-zinc-500 text-[10px] font-mono tracking-widest uppercase mt-1">
-              {activeTicker?.replace(".SR", "") || "---"} • {currency} • TRANSACTION_LEVERAGE_SIMULATOR
-            </p>
-          </div>
-        </div>
-
-        <div className="flex items-center gap-12 bg-white/5 p-6 border border-white/10 rounded-xl">
-          <div className="text-right">
-            <div className="text-[9px] text-zinc-500 uppercase tracking-[0.2em] mb-1 font-bold">Entry Leverage</div>
-            <div className="text-3xl font-mono font-bold text-zinc-50 tracking-tighter">{result.sourcesUses.entryLeverage.toFixed(1)}x</div>
-          </div>
-          <div className="w-[1px] h-10 bg-white/10" />
-          <div className="text-right">
-            <div className="text-[9px] text-zinc-500 uppercase tracking-[0.2em] mb-1 font-bold">Projected IRR</div>
-            <div className="text-3xl font-mono font-bold text-zinc-50 tracking-tighter">{result.irr}%</div>
-          </div>
-        </div>
-      </header>
-
-      <div className="grid grid-cols-12 gap-8">
-        <aside className="col-span-12 xl:col-span-4 space-y-6">
-          <div className="bg-[#0a0a0a]/50 backdrop-blur-xl border border-white/10 p-6 rounded-xl shadow-xl">
-            <h3 className="text-[10px] font-bold text-zinc-500 uppercase tracking-widest mb-8 flex items-center gap-3">
-              <Calculator className="w-4 h-4 text-zinc-400" />
-              Deal Architecture
-            </h3>
-            <div className="space-y-6">
-                <div className="flex justify-between border-b border-white/10 pb-3">
-                   <span className="text-[9px] text-zinc-400 font-bold uppercase tracking-wider">Entry EV</span>
-                   <span className="font-mono text-xs text-zinc-50">{fmt.accounting(convert(result.sourcesUses.entryEv, 'SAR'))}</span>
-                </div>
-                <div className="flex justify-between border-b border-white/10 pb-3">
-                   <span className="text-[9px] text-zinc-400 font-bold uppercase tracking-wider">Equity Check</span>
-                   <span className="font-mono text-xs text-zinc-50">{fmt.accounting(convert(result.sourcesUses.equityCheck, 'SAR'))}</span>
-                </div>
-                <div className="pt-4">
-                   <label className="text-[10px] font-bold text-zinc-500 uppercase block mb-3">Exit Multiple: <span className="text-zinc-50">{modelState.exitMultiple}x</span></label>
-                   <input type="range" min="5" max="15" step="0.5" value={modelState.exitMultiple} 
-                     onChange={(e) => setModelState(prev => ({ ...prev, exitMultiple: parseFloat(e.target.value) }))}
-                     className="w-full h-1 bg-white/10 rounded-none appearance-none cursor-pointer accent-zinc-400"
-                   />
-                </div>
+      {/* LEFT COLUMN: INPUT PARAMETERS (4 COLS) */}
+      <div className="col-span-12 lg:col-span-4 space-y-6">
+        <div className="glass-panel p-6 rounded-2xl border border-white/10 space-y-4">
+          <div className="flex items-center gap-3 pb-3 border-b border-white/10">
+            <Layers className="text-[var(--gold)]" size={22} />
+            <div>
+              <h2 className="font-garamond text-xl font-bold text-white">
+                {t("lbo_inputs", language)}
+              </h2>
+              <span className="text-[10px] font-mono text-slate-400">Target: {activeTicker}</span>
             </div>
           </div>
 
-          <div className="bg-[#0a0a0a]/50 backdrop-blur-xl border border-white/10 p-6 rounded-xl shadow-xl">
-             <h3 className="text-[10px] font-bold text-zinc-500 uppercase tracking-widest mb-6 flex items-center gap-3">
-              <CreditCard className="w-4 h-4 text-zinc-400" />
-              Debt Tranches
-            </h3>
-            <div className="space-y-3">
-               {tranches.map((t, i) => (
-                 <div key={i} className="p-4 bg-white/5 border border-white/10 rounded-lg">
-                    <div className="flex justify-between mb-3 items-center">
-                       <span className="text-[10px] font-bold uppercase text-zinc-50 tracking-wider">{t.name}</span>
-                       <span className="text-[8px] border border-white/10 bg-white/5 px-2 py-0.5 rounded text-zinc-400">{t.type}</span>
-                    </div>
-                    <div className="grid grid-cols-2 gap-4">
-                       <div>
-                          <label className="text-[8px] uppercase tracking-wider text-zinc-500 block mb-1">Commitment ({currency})</label>
-                          <input type="number" value={t.commitment} onChange={e => updateTranche(i, 'commitment', parseFloat(e.target.value) || 0)}
-                            className="w-full bg-[#0a0a0a] border border-white/10 text-xs font-mono p-1.5 text-zinc-50 rounded outline-none focus:border-zinc-500 transition-colors"
-                          />
-                       </div>
-                       <div>
-                          <label className="text-[8px] uppercase tracking-wider text-zinc-500 block mb-1">Spread (bps)</label>
-                          <input type="number" value={t.spreadBps} onChange={e => updateTranche(i, 'spreadBps', parseFloat(e.target.value) || 0)}
-                            className="w-full bg-[#0a0a0a] border border-white/10 text-xs font-mono p-1.5 text-zinc-50 rounded outline-none focus:border-zinc-500 transition-colors"
-                          />
-                       </div>
-                    </div>
-                 </div>
-               ))}
+          <div className="space-y-3 font-mono text-xs">
+            <div className="flex justify-between items-center">
+              <label className="text-slate-300">{t("entry_price", language)}</label>
+              <input
+                type="number"
+                value={purchasePrice}
+                onChange={(e) => setPurchasePrice(Number(e.target.value))}
+                className="terminal-input w-24 text-right"
+              />
+            </div>
+
+            <div className="flex justify-between items-center">
+              <label className="text-slate-300">{t("entry_ebitda_mult", language)}</label>
+              <input
+                type="number"
+                step="0.5"
+                value={ebitdaMultiple}
+                onChange={(e) => setEbitdaMultiple(Number(e.target.value))}
+                className="terminal-input w-24 text-right"
+              />
+            </div>
+
+            <div className="flex justify-between items-center">
+              <label className="text-slate-300">{t("mgmt_equity_pct", language)}</label>
+              <input
+                type="number"
+                value={mgmtEquityPct}
+                onChange={(e) => setMgmtEquityPct(Number(e.target.value))}
+                className="terminal-input w-24 text-right"
+              />
+            </div>
+
+            <hr className="border-white/10" />
+
+            <div className="flex justify-between items-center">
+              <label className="text-slate-300">{t("senior_debt", language)}</label>
+              <input
+                type="number"
+                value={seniorDebt}
+                onChange={(e) => setSeniorDebt(Number(e.target.value))}
+                className="terminal-input w-24 text-right"
+              />
+            </div>
+
+            <div className="flex justify-between items-center">
+              <label className="text-slate-300">{t("mezz_debt", language)}</label>
+              <input
+                type="number"
+                value={mezzDebt}
+                onChange={(e) => setMezzDebt(Number(e.target.value))}
+                className="terminal-input w-24 text-right"
+              />
+            </div>
+
+            <div className="flex justify-between items-center">
+              <label className="text-slate-300">{t("pik_notes", language)}</label>
+              <input
+                type="number"
+                value={pikNotes}
+                onChange={(e) => setPikNotes(Number(e.target.value))}
+                className="terminal-input w-24 text-right"
+              />
+            </div>
+
+            <hr className="border-white/10" />
+
+            <div className="flex justify-between items-center">
+              <label className="text-slate-300">{t("hold_period", language)}</label>
+              <select
+                value={holdPeriod}
+                onChange={(e) => setHoldPeriod(Number(e.target.value))}
+                className="terminal-input w-24 text-right cursor-pointer"
+              >
+                {[3, 4, 5, 6, 7].map((y) => (
+                  <option key={y} value={y}>{y} Years</option>
+                ))}
+              </select>
+            </div>
+
+            <div className="flex justify-between items-center">
+              <label className="text-slate-300">{t("exit_multiple", language)}</label>
+              <input
+                type="number"
+                step="0.5"
+                value={exitMultiple}
+                onChange={(e) => setExitMultiple(Number(e.target.value))}
+                className="terminal-input w-24 text-right"
+              />
             </div>
           </div>
-        </aside>
+        </div>
+      </div>
 
-        <main className="col-span-12 xl:col-span-8 space-y-8">
-           <div className="bg-[#0a0a0a]/50 backdrop-blur-xl border border-white/10 rounded-xl overflow-hidden shadow-2xl">
-             <table className="w-full text-left text-xs border-collapse">
-               <thead>
-                 <tr className="bg-white/5 border-b border-white/10">
-                    <th className="py-4 px-6 font-bold uppercase tracking-widest text-zinc-500 text-[10px] w-1/3">Debt Service Schedule</th>
-                    {result.years.map(y => <th key={y.year} className="py-4 px-6 text-right font-bold uppercase tracking-widest text-zinc-500 text-[10px]">FY {y.year}E</th>)}
-                 </tr>
-               </thead>
-               <tbody className="divide-y divide-white/5">
-                  <TableRow label="EBITDA" values={result.years.map(y => fmt.accounting(convert(y.ebitda, 'SAR')))} />
-                  <TableRow label="CFADS" values={result.years.map(y => fmt.accounting(convert(y.cfads, 'SAR')))} isSub />
-                  <TableRow label="Mandatory Amortization" values={result.years.map(y => `(${fmt.accounting(convert(y.totA, 'SAR'))})`)} isSub />
-                  <TableRow label="Cash Sweep" values={result.years.map(y => `(${fmt.accounting(convert(y.totalSweep, 'SAR'))})`)} isSub />
-                  <TableRow label="Closing Debt Balance" values={result.years.map(y => fmt.accounting(convert(y.debtClose, 'SAR')))} isTotal />
-               </tbody>
-             </table>
-           </div>
+      {/* RIGHT COLUMN: RETURN METRICS & WATERFALL (8 COLS) */}
+      <div className="col-span-12 lg:col-span-8 space-y-6">
+        {/* BIG NUMBER RETURN HIGHLIGHTS */}
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+          <div className="glass-panel p-6 rounded-2xl border border-[var(--emerald)]/40 bg-[var(--emerald)]/10 text-center">
+            <span className="text-xs font-mono text-[var(--emerald)] uppercase tracking-wider font-bold block mb-1">
+              {t("moic", language)}
+            </span>
+            <span className="font-mono text-4xl font-extrabold text-white">
+              {moic.toFixed(2)}x
+            </span>
+          </div>
 
-           <div className="bg-[#0a0a0a]/50 backdrop-blur-xl border border-white/10 p-8 rounded-xl shadow-2xl">
-               <h3 className="text-[10px] font-bold text-zinc-500 uppercase tracking-widest mb-8">Returns Sensitivity (IRR %)</h3>
-               <div className="overflow-x-auto rounded-lg border border-white/10">
-                 <table className="w-full text-center border-collapse text-[10px] font-mono">
-                    <thead>
-                      <tr className="bg-white/5 border-b border-white/10">
-                        <th className="p-4 border-r border-white/10 text-left text-zinc-500 uppercase tracking-widest">Year \ Exit Mult</th>
-                        {result.exitMultipleRange.map(m => <th key={m} className="p-4 border-r last:border-0 border-white/10 text-zinc-300">{m}x</th>)}
-                      </tr>
-                    </thead>
-                    <tbody className="divide-y divide-white/5">
-                       {result.returnsSensitivity.map((row, ri) => (
-                         <tr key={ri} className="hover:bg-white/5 transition-colors">
-                            <td className="p-4 border-r border-white/10 font-bold text-zinc-400 text-left">Yr {row.exitYear}</td>
-                            {row.irrs.map((irr, ci) => (
-                              <td key={ci} className={`p-4 border-r last:border-0 border-white/10 font-bold ${irr > 20 ? 'text-zinc-50' : 'text-zinc-500'}`}>
-                                {irr}%
-                              </td>
-                            ))}
-                         </tr>
-                       ))}
-                    </tbody>
-                 </table>
-               </div>
-           </div>
-        </main>
+          <div className="glass-panel p-6 rounded-2xl border border-[var(--gold)]/40 bg-[var(--gold)]/10 text-center">
+            <span className="text-xs font-mono text-[var(--gold)] uppercase tracking-wider font-bold block mb-1">
+              Sponsor Project IRR ({holdPeriod}Y Hold)
+            </span>
+            <span className="font-mono text-4xl font-extrabold text-white">
+              {irr.toFixed(1)}%
+            </span>
+          </div>
+        </div>
+
+        {/* IRR BY HOLD PERIOD BAR CHART */}
+        <div className="glass-panel p-6 rounded-2xl border border-white/10">
+          <h3 className="font-mono text-xs font-bold text-white uppercase tracking-wider mb-4">
+            {t("irr_by_period", language)}
+          </h3>
+          <div className="h-[220px] w-full">
+            <ResponsiveContainer width="100%" height="100%">
+              <BarChart data={irrData}>
+                <XAxis dataKey="year" stroke="#64748B" fontSize={11} tickLine={false} />
+                <YAxis stroke="#64748B" fontSize={11} tickLine={false} />
+                <Tooltip
+                  contentStyle={{
+                    backgroundColor: "#0F1113",
+                    borderColor: "rgba(255,255,255,0.15)",
+                    borderRadius: "8px",
+                    color: "#F8FAFC"
+                  }}
+                />
+                <Bar dataKey="irr" radius={[4, 4, 0, 0]}>
+                  {irrData.map((entry, index) => (
+                    <Cell
+                      key={`cell-${index}`}
+                      fill={entry.year === `${holdPeriod}Y` ? "#0E7C69" : "#334155"}
+                    />
+                  ))}
+                </Bar>
+              </BarChart>
+            </ResponsiveContainer>
+          </div>
+        </div>
+
+        {/* SOURCES AND USES & WATERFALL */}
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+          <div className="glass-panel p-6 rounded-2xl border border-white/10">
+            <h3 className="font-mono text-xs font-bold text-white uppercase tracking-wider mb-4">
+              {t("sources_and_uses", language)}
+            </h3>
+            <div className="space-y-2 font-mono text-xs">
+              <div className="flex justify-between text-slate-300">
+                <span>Senior Secured Debt</span>
+                <span className="font-bold">SAR {seniorDebt.toLocaleString()}M</span>
+              </div>
+              <div className="flex justify-between text-slate-300">
+                <span>Mezzanine Debt</span>
+                <span className="font-bold">SAR {mezzDebt.toLocaleString()}M</span>
+              </div>
+              <div className="flex justify-between text-slate-300">
+                <span>PIK Notes</span>
+                <span className="font-bold">SAR {pikNotes.toLocaleString()}M</span>
+              </div>
+              <div className="flex justify-between text-[var(--gold)] font-bold border-t border-white/10 pt-2">
+                <span>Sponsor Equity</span>
+                <span>SAR {sponsorEquity.toLocaleString()}M</span>
+              </div>
+            </div>
+          </div>
+
+          <div className="glass-panel p-6 rounded-2xl border border-white/10 flex flex-col justify-between">
+            <h3 className="font-mono text-xs font-bold text-white uppercase tracking-wider mb-2">
+              Exit Equity Distribution
+            </h3>
+            <div className="h-[140px] w-full">
+              <ResponsiveContainer width="100%" height="100%">
+                <RePieChart>
+                  <Pie
+                    data={waterfallData}
+                    dataKey="value"
+                    nameKey="name"
+                    cx="50%"
+                    cy="50%"
+                    innerRadius={35}
+                    outerRadius={55}
+                    paddingAngle={3}
+                  >
+                    {waterfallData.map((entry, index) => (
+                      <Cell key={`cell-${index}`} fill={entry.fill} />
+                    ))}
+                  </Pie>
+                  <Tooltip contentStyle={{ backgroundColor: "#0F1113", borderColor: "rgba(255,255,255,0.15)", fontSize: "11px" }} />
+                </RePieChart>
+              </ResponsiveContainer>
+            </div>
+          </div>
+        </div>
       </div>
     </motion.div>
-  );
-}
-
-function TableRow({ label, values, isSub, isTotal }: any) {
-  return (
-    <tr className={`transition-colors hover:bg-white/5 ${isTotal ? 'bg-white/5' : ''}`}>
-      <td className={`py-4 px-6 text-left ${isSub ? 'pl-10 text-[11px] text-zinc-500' : 'text-[11px] font-bold uppercase tracking-wider text-zinc-300'} ${isTotal ? 'text-zinc-50' : ''}`}>
-        {isSub && <span className="mr-2 text-white/20">└</span>}
-        {label}
-      </td>
-      {values.map((v: any, i: number) => (
-        <td key={i} className={`py-4 px-6 text-right font-mono text-xs border-l border-white/5 ${isTotal ? 'font-bold text-zinc-50' : 'text-zinc-400'}`}>
-          {v}
-        </td>
-      ))}
-    </tr>
   );
 }

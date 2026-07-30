@@ -2,84 +2,114 @@ import { Variants } from "framer-motion";
 
 export const EASE_PREMIUM = [0.22, 1, 0.36, 1] as const;
 
-export const fadeUp: Variants = {
-  hidden: { opacity: 0, y: 28 },
-  visible: { 
+export const fadeInUp: Variants = {
+  initial: { opacity: 0, y: 30 },
+  animate: { 
     opacity: 1, 
     y: 0, 
     transition: { 
-      duration: 0.75, 
+      duration: 0.6, 
       ease: EASE_PREMIUM 
     } 
+  },
+  exit: { 
+    opacity: 0, 
+    y: -15, 
+    transition: { duration: 0.25, ease: "easeIn" } 
+  }
+};
+
+export const panelReveal: Variants = {
+  initial: { opacity: 0, scale: 0.98, y: 10 },
+  animate: { 
+    opacity: 1, 
+    scale: 1, 
+    y: 0,
+    transition: { 
+      duration: 0.45, 
+      ease: EASE_PREMIUM 
+    } 
+  },
+  exit: { 
+    opacity: 0, 
+    scale: 0.98,
+    transition: { duration: 0.2 } 
   }
 };
 
 export const staggerContainer: Variants = {
-  hidden: {},
-  visible: { 
+  initial: {},
+  animate: { 
     transition: { 
-      staggerChildren: 0.1, 
-      delayChildren: 0.05 
+      staggerChildren: 0.08, 
+      delayChildren: 0.04 
     } 
   }
 };
 
 export const staggerItem: Variants = {
-  hidden: { opacity: 0, y: 24 },
-  visible: { 
+  initial: { opacity: 0, y: 20 },
+  animate: { 
     opacity: 1, 
     y: 0, 
     transition: { 
-      duration: 0.65, 
+      duration: 0.5, 
       ease: EASE_PREMIUM 
     } 
   }
 };
 
-export const slideLeft: Variants = {
-  hidden: { opacity: 0, x: 48 },
-  visible: { 
-    opacity: 1, 
+export const slideInFromRight: Variants = {
+  initial: { x: 60, opacity: 0 },
+  animate: { 
     x: 0, 
-    transition: { 
-      duration: 0.75, 
-      ease: EASE_PREMIUM 
-    } 
-  }
-};
-
-export const slideRight: Variants = {
-  hidden: { opacity: 0, x: -48 },
-  visible: { 
     opacity: 1, 
-    x: 0, 
     transition: { 
-      duration: 0.75, 
+      duration: 0.6, 
       ease: EASE_PREMIUM 
     } 
   }
 };
 
-export const cardHover = {
-  rest: { y: 0 },
+export const slideInFromLeft: Variants = {
+  initial: { x: -60, opacity: 0 },
+  animate: { 
+    x: 0, 
+    opacity: 1, 
+    transition: { 
+      duration: 0.6, 
+      ease: EASE_PREMIUM 
+    } 
+  }
+};
+
+export const hoverLift = {
+  rest: { y: 0, scale: 1 },
   hover: { 
-    y: -6, 
+    y: -5, 
+    scale: 1.01,
     transition: { 
-      type: 'spring', 
-      damping: 28, 
-      stiffness: 180 
+      type: "spring", 
+      stiffness: 250, 
+      damping: 20 
     } 
   }
+};
+
+export const numberSpring = {
+  type: "spring",
+  stiffness: 80,
+  damping: 20
 };
 
 export const drawPath: Variants = {
-  hidden: { pathLength: 0, opacity: 0 },
-  visible: { 
+  initial: { pathLength: 0, opacity: 0 },
+  animate: { 
     pathLength: 1, 
     opacity: 1, 
     transition: { 
-      duration: 2, 
-      ease: 'easeInOut' 
+      duration: 1.8, 
+      ease: "easeInOut" 
     } 
   }
 };

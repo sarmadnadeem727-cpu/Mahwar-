@@ -1,176 +1,291 @@
 "use client";
 
-import React, { useState, useRef } from "react";
-import { useTerminalStore } from "@/store/useTerminalStore";
-import { useMarketData } from "@/hooks/useMarketData";
-import LoadingScreen from "@/components/ui/LoadingScreen";
+import React, { useState } from "react";
+import { motion } from "framer-motion";
+import { Sparkles, Download, Copy, Check, Send, History, Cpu, FileText } from "lucide-react";
 import ReactMarkdown from "react-markdown";
+import jsPDF from "jspdf";
+import { useTerminalStore } from "@/store/useTerminalStore";
+import { t } from "@/lib/i18n";
+import { panelReveal } from "@/lib/motion";
 
-export function AIResearch() {
-  const { activeTicker, language, setLanguage } = useTerminalStore();
-  const isAr = language === "ar";
-  const [status, setStatus] = useState<"idle" | "streaming" | "done">("idle");
-  const [reportText, setReportText] = useState("");
-  const [query, setQuery] = useState("");
-  const abortRef = useRef<AbortController | null>(null);
+export default function AIResearch() {
+  const { activeTicker, setTicker, language } = useTerminalStore();
+  const isAr = language === 'ar';
 
-  const { data: globalData, isLoading: fetchLoading } = useMarketData(activeTicker);
-  const companyName = globalData?.quote?.longName || globalData?.quote?.shortName || activeTicker || "Unknown";
+  const [inputTicker, setInputTicker] = useState(activeTicker);
+  const [customQuery, setCustomQuery] = useState("");
+  const [reportMarkdown, setReportMarkdown] = useState<string>("");
+  const [isGenerating, setIsGenerating] = useState(false);
+  const [copied, setCopied] = useState(false);
+  const [recentHistory, setRecentHistory] = useState<string[]>(["2222.SR", "1120.SR", "1180.SR", "2010.SR", "7010.SR"]);
 
-  const generate = async () => {
-    if (abortRef.current) abortRef.current.abort();
-    abortRef.current = new AbortController();
-    setStatus("streaming");
-    setReportText("");
+  const handleGenerateReport = async (target: string = inputTicker) => {
+    if (!target) return;
+    setIsGenerating(true);
+    setReportMarkdown("");
 
     try {
-      const res = await fetch("/api/research", {
+      // Step 1: Fetch fundamentals
+      const fundRes = await fetch(`/api/market/fundamentals?ticker=${target}`);
+      const fundData = await fundRes.json();
+
+      // Step 2: Stream AI response
+      const response = await fetch("/api/research", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
-          ticker: activeTicker,
-          fundamentals: JSON.stringify(globalData?.fundamentals || {}),
-          query: query.trim() || null,
+          ticker: target,
+          fundamentals: fundData,
+          query: customQuery,
+          language
         }),
-        signal: abortRef.current.signal,
       });
 
-      const reader = res.body!.getReader();
-      const decoder = new TextDecoder();
+      if (!response.ok) {
+        throw new Error("AI research generation service failed");
+      }
 
-      while (true) {
+      const reader = response.body?.getReader();
+      const decoder = new TextDecoder();
+      let accumulated = "";
+
+      while (reader) {
         const { done, value } = await reader.read();
         if (done) break;
+
         const chunk = decoder.decode(value, { stream: true });
+        // Handle SSE stream lines
         const lines = chunk.split("\n");
         for (const line of lines) {
           if (line.startsWith("data: ")) {
-            const json = line.slice(6).trim();
-            if (!json || json === "[DONE]") continue;
+            const raw = line.slice(6).trim();
+            if (raw === "[DONE]") break;
             try {
-              const parsed = JSON.parse(json);
-              const text = parsed?.candidates?.[0]?.content?.parts?.[0]?.text ?? "";
-              setReportText((prev) => prev + text);
+              const parsed = JSON.parse(raw);
+              const text = parsed.candidates?.[0]?.content?.parts?.[0]?.text || "";
+              accumulated += text;
+              setReportMarkdown(accumulated);
             } catch {
-              // ignore parse errors in partial SSE chunks
+              // ignore parse errors on partial chunks
+            }
+          } else if (line.trim()) {
+            try {
+              const parsed = JSON.parse(line.trim());
+              const text = parsed.candidates?.[0]?.content?.parts?.[0]?.text || "";
+              accumulated += text;
+              setReportMarkdown(accumulated);
+            } catch {
+              // raw chunk
             }
           }
         }
       }
-      setStatus("done");
-    } catch (e: unknown) {
-      if (e instanceof Error && e.name !== "AbortError") setStatus("idle");
+
+      if (!recentHistory.includes(target)) {
+        setRecentHistory((prev) => [target, ...prev.slice(0, 4)]);
+      }
+    } catch (error) {
+      console.error("AI Research Error:", error);
+      setReportMarkdown(
+        isAr 
+          ? "### ⚠️ خطأ في خدمة الأبحاث\nتعذر توليد التقرير في الوقت الحالي. يرجى التأكد من مفتاح Gemini API والمحاولة مرة أخرى."
+          : "### ⚠️ Research Service Error\nUnable to generate research memo. Please verify Gemini API key configuration."
+      );
+    } finally {
+      setIsGenerating(false);
     }
   };
 
+  const handleCopy = () => {
+    navigator.clipboard.writeText(reportMarkdown);
+    setCopied(true);
+    setTimeout(() => setCopied(false), 2000);
+  };
+
+  const handleDownloadPDF = () => {
+    const doc = new jsPDF();
+    doc.setFont("helvetica", "bold");
+    doc.setFontSize(16);
+    doc.text(`MAHWAR INSTITUTIONAL RESEARCH: ${inputTicker}`, 14, 20);
+    doc.setFontSize(10);
+    doc.setFont("helvetica", "normal");
+    doc.text(`Generated on ${new Date().toLocaleDateString()} | Author: Muhammad Sarmad Nadeem`, 14, 28);
+    doc.setLineWidth(0.5);
+    doc.line(14, 32, 196, 32);
+
+    const splitText = doc.splitTextToSize(reportMarkdown.replace(/#/g, ""), 180);
+    doc.setFontSize(9);
+    doc.text(splitText, 14, 40);
+    doc.save(`MAHWAR_EQUITY_RESEARCH_${inputTicker}.pdf`);
+  };
+
   return (
-    <div className="grid grid-cols-1 md:grid-cols-[320px_1fr] gap-5 items-start">
-      {/* Left config */}
-      <div className="flex flex-col gap-4 sticky top-[84px]">
-        <div className="bg-[#0F172A] border border-[#334155] rounded-xl p-5 shadow-sm">
-          <h3 className="font-serif text-lg font-bold mb-4 flex items-center gap-2 text-[#F8FAFC]">
-            <span className="text-[#F59E0B]">✦</span> {isAr ? "مذكرة الأبحاث" : "Research Memo"}
-          </h3>
-
-          <div className="p-3 bg-[#1E293B] border border-[#334155] rounded-lg mb-4">
-            <div className="text-[10px] text-[#64748B] uppercase mb-1">{isAr ? "الأصل المحدد" : "Selected Asset"}</div>
-            <div className="text-sm text-[#F8FAFC] font-bold">{activeTicker}</div>
-            <div className="text-xs text-[#94A3B8]">{companyName}</div>
+    <motion.div
+      variants={panelReveal}
+      initial="initial"
+      animate="animate"
+      exit="exit"
+      className="grid grid-cols-12 gap-8"
+      dir={isAr ? "rtl" : "ltr"}
+    >
+      {/* LEFT COLUMN (40% = 5 COLS) */}
+      <div className="col-span-12 lg:col-span-5 space-y-6">
+        <div className="glass-panel p-6 rounded-2xl border border-white/10 space-y-5">
+          <div className="flex items-center gap-3 pb-4 border-b border-white/10">
+            <Sparkles className="text-[var(--gold)] shrink-0" size={24} />
+            <div>
+              <h2 className="font-garamond text-2xl font-bold text-white">
+                {t("ai_research_title", language)}
+              </h2>
+              <p className="text-xs font-mono text-slate-400">
+                {t("model_badge", language)}
+              </p>
+            </div>
           </div>
 
-          <label className="block font-mono text-[9px] tracking-widest uppercase text-[#94A3B8] mb-1 font-bold">
-            {isAr ? "سؤال بحثي مخصص" : "Custom Research Question"}
-          </label>
-          <textarea 
-            className="w-full bg-[#1E293B] border border-[#334155] rounded-lg p-3 font-mono text-xs text-[#F8FAFC] outline-none appearance-none mb-3 transition-colors focus:border-[#F59E0B] min-h-[100px] resize-none" 
-            placeholder={isAr ? "مثال: ما هي أحدث توزيعات الأرباح؟" : "e.g. What are the latest dividend announcements?"}
-            value={query}
-            onChange={(e) => setQuery(e.target.value)}
-          />
-
-          <div className="flex flex-wrap gap-2 mb-4">
-            {(isAr 
-              ? ["توقعات ٢٠٢٥", "تحليل المنافسين", "أثر الزكاة"] 
-              : ["2025 Outlook", "Peer Analysis", "Zakat Impact"]
-            ).map((q) => (
-              <button 
-                key={q} 
-                onClick={() => setQuery(q)}
-                className="text-[10px] px-2 py-1 rounded bg-[#1E293B] border border-[#334155] text-[#94A3B8] hover:border-[#F59E0B] transition-all"
-              >
-                + {q}
-              </button>
-            ))}
-          </div>
-
-          <div className="grid grid-cols-2 gap-1 bg-[#1E293B] border border-[#334155] rounded-lg p-1 mb-4">
-            {(["en", "ar"] as const).map((l) => (
+          {/* Ticker Input */}
+          <div className="space-y-2">
+            <label className="text-xs font-mono font-bold text-slate-300 uppercase tracking-wider block">
+              {t("ai_ticker_label", language)}
+            </label>
+            <div className="flex gap-2">
+              <input
+                type="text"
+                value={inputTicker}
+                onChange={(e) => setInputTicker(e.target.value.toUpperCase())}
+                placeholder="e.g. 2222.SR, 1120.SR"
+                className="terminal-input flex-1 uppercase"
+              />
               <button
-                key={l}
-                type="button"
-                onClick={() => setLanguage(l)}
-                className={`py-2 px-4 rounded-md text-[10px] font-bold uppercase tracking-widest transition-all ${
-                  language === l ? "bg-[#F59E0B] text-[#0F172A]" : "text-[#64748B] hover:text-[#F8FAFC]"
-                }`}
-                style={{ fontFamily: l === "ar" ? "'Cairo', sans-serif" : "'IBM Plex Mono', sans-serif" }}
+                onClick={() => setTicker(inputTicker)}
+                className="px-3 py-2 bg-white/10 hover:bg-white/20 text-xs font-mono text-white rounded cursor-pointer"
               >
-                {l === "en" ? "English" : "العربية"}
+                Set Active
               </button>
-            ))}
+            </div>
           </div>
 
-          <button onClick={generate} disabled={status === "streaming" || fetchLoading} className="w-full py-3 px-5 rounded-lg bg-[#F59E0B] text-[#0F172A] border-none text-xs font-bold tracking-wider cursor-pointer flex items-center justify-center gap-2 transition-all disabled:opacity-70 disabled:cursor-not-allowed font-sans">
-            <span>{status === "streaming" ? "⟳" : "✦"}</span>
-            <span>{status === "idle" ? (isAr ? "توليد المذكرة" : "Generate AI Report") : status === "streaming" ? (isAr ? "جاري التوليد…" : "Generating…") : (isAr ? "إعادة التوليد" : "Regenerate")}</span>
+          {/* Research Query Input */}
+          <div className="space-y-2">
+            <label className="text-xs font-mono font-bold text-slate-300 uppercase tracking-wider block">
+              Custom Research Query (Optional)
+            </label>
+            <textarea
+              rows={3}
+              value={customQuery}
+              onChange={(e) => setCustomQuery(e.target.value)}
+              placeholder={t("ai_query_placeholder", language)}
+              className="terminal-input w-full resize-none text-xs"
+            />
+          </div>
+
+          {/* Model Badge Notice */}
+          <div className="p-3 rounded-lg bg-[var(--gold)]/10 border border-[var(--gold)]/20 text-[11px] font-mono text-[var(--gold)] flex items-center gap-2">
+            <Cpu size={14} className="shrink-0" />
+            <span>Gemini 2.5 Flash + Real-Time Search Grounding Enabled</span>
+          </div>
+
+          {/* Generate Button */}
+          <button
+            onClick={() => handleGenerateReport(inputTicker)}
+            disabled={isGenerating}
+            className="w-full py-3.5 rounded-xl bg-gradient-to-r from-[#0E7C69] to-[#12A189] hover:brightness-110 text-white font-bold text-xs uppercase tracking-wider shadow-lg shadow-[#0E7C69]/25 flex items-center justify-center gap-2 disabled:opacity-50 transition-all cursor-pointer"
+          >
+            {isGenerating ? (
+              <>
+                <span className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin" />
+                <span>Streaming Research Memo...</span>
+              </>
+            ) : (
+              <>
+                <Send size={15} />
+                <span>{t("generate_memo", language)}</span>
+              </>
+            )}
           </button>
         </div>
+
+        {/* Recent Search History */}
+        <div className="glass-panel p-5 rounded-2xl border border-white/10 space-y-3">
+          <div className="flex items-center gap-2 text-xs font-mono font-bold text-slate-400 uppercase tracking-wider">
+            <History size={14} />
+            <span>{t("recent_searches", language)}</span>
+          </div>
+          <div className="flex flex-wrap gap-2">
+            {recentHistory.map((tck) => (
+              <button
+                key={tck}
+                onClick={() => {
+                  setInputTicker(tck);
+                  setTicker(tck);
+                  handleGenerateReport(tck);
+                }}
+                className="px-3 py-1.5 rounded bg-white/5 hover:bg-[var(--emerald)]/20 border border-white/10 hover:border-[var(--emerald)] text-xs font-mono text-slate-200 transition-colors cursor-pointer"
+              >
+                {tck}
+              </button>
+            ))}
+          </div>
+        </div>
       </div>
 
-      {/* Right report shell */}
-      <div className="bg-[#0F172A] border border-[#334155] rounded-xl overflow-hidden min-h-[600px]">
-        {/* Toolbar */}
-        <div className="flex items-center justify-between py-3 px-5 bg-[#1E293B] border-b border-[#334155]">
-          <div className="flex items-center gap-3">
-            <div className="flex gap-2">
-              {["#EF4444", "#F59E0B", "#10B981"].map((c) => <div key={c} className="w-2.5 h-2.5 rounded-full" style={{ background: c }} />)}
-            </div>
-            <div className="flex items-center gap-2 font-mono text-[9px] tracking-widest uppercase font-bold text-[#64748B]">
-              <div className={`w-1.5 h-1.5 rounded-full ${status === "streaming" ? "bg-[#F59E0B] animate-pulse" : status === "done" ? "bg-[#10B981]" : "bg-[#334155]"}`} />
-              <span>{status === "idle" ? "Ready" : status === "streaming" ? "Live Grounding..." : "Complete"}</span>
-            </div>
+      {/* RIGHT COLUMN (60% = 7 COLS) */}
+      <div className="col-span-12 lg:col-span-7 space-y-4">
+        {/* REPORT ACTION HEADER */}
+        <div className="flex items-center justify-between p-4 glass-panel rounded-xl border border-white/10">
+          <div className="flex items-center gap-2">
+            <FileText size={16} className="text-[var(--gold)]" />
+            <span className="font-mono text-xs font-bold text-white uppercase tracking-wider">
+              {inputTicker} Institutional Memo Output
+            </span>
+          </div>
+
+          <div className="flex items-center gap-2">
+            <button
+              onClick={handleCopy}
+              disabled={!reportMarkdown}
+              className="flex items-center gap-1.5 px-3 py-1.5 rounded bg-white/5 hover:bg-white/10 border border-white/10 text-xs font-mono text-slate-200 disabled:opacity-40 transition-colors cursor-pointer"
+            >
+              {copied ? <Check size={13} className="text-[var(--pos)]" /> : <Copy size={13} />}
+              <span>{t("copy_report", language)}</span>
+            </button>
+
+            <button
+              onClick={handleDownloadPDF}
+              disabled={!reportMarkdown}
+              className="flex items-center gap-1.5 px-3 py-1.5 rounded bg-[var(--emerald)] hover:bg-emerald-600 text-xs font-mono font-bold text-white disabled:opacity-40 transition-colors cursor-pointer"
+            >
+              <Download size={13} />
+              <span>{t("download_pdf", language)}</span>
+            </button>
           </div>
         </div>
 
-        {/* Content */}
-        <div className="p-8 md:p-12 min-h-[540px]">
-          {fetchLoading && status === "idle" && (
-            <LoadingScreen />
-          )}
-
-          {!fetchLoading && status === "idle" && (
-            <div className="h-full flex flex-col items-center justify-center py-16 text-center">
-              <div className="text-5xl mb-5 opacity-20 text-[#F8FAFC]">✦</div>
-              <div className="font-serif text-2xl font-light text-[#94A3B8] mb-3">
-                {isAr ? "اختر شركة وقم بتوليد مذكرة بحثية" : "Select a company and generate a memo"}
-              </div>
-              <div className="text-sm text-[#64748B] max-w-sm leading-relaxed">
-                {isAr 
-                  ? "أبحاث أسهم من الدرجة المؤسسية مع معالجة الزكاة، سياق رؤية 2030، ولغة متوافقة مع هيئة السوق المالية - يتم توليدها في ثوانٍ." 
-                  : "Institutional-grade equity research with Zakat treatment, Vision 2030 context, and CMA-compliant language — generated in seconds."}
-              </div>
+        {/* STREAMING MARKDOWN PANEL */}
+        <div className="glass-panel p-8 rounded-2xl border border-white/10 min-h-[500px] max-h-[700px] overflow-y-auto font-sans leading-relaxed text-slate-200 space-y-4">
+          {reportMarkdown ? (
+            <div className="prose prose-invert max-w-none prose-headings:font-garamond prose-headings:text-[var(--gold)] prose-h1:text-2xl prose-h2:text-xl prose-p:text-xs prose-p:leading-relaxed prose-li:text-xs">
+              <ReactMarkdown>{reportMarkdown}</ReactMarkdown>
             </div>
-          )}
-
-          {(status === "streaming" || status === "done") && (
-            <div className="prose prose-invert prose-zinc max-w-none prose-headings:font-serif prose-headings:text-[#F8FAFC] prose-p:text-[#94A3B8] prose-a:text-[#F59E0B] prose-strong:text-[#F8FAFC] prose-ul:text-[#94A3B8] prose-li:marker:text-[#F59E0B]" dir={isAr ? "rtl" : "ltr"}>
-              <ReactMarkdown>{reportText}</ReactMarkdown>
-              {status === "streaming" && (
-                <span className="inline-block w-2 h-4 bg-[#F59E0B] ml-1 align-middle animate-pulse" />
-              )}
+          ) : (
+            <div className="h-full min-h-[400px] flex flex-col items-center justify-center text-center text-slate-500 space-y-4">
+              <Sparkles size={40} className="text-slate-600 animate-pulse" />
+              <div>
+                <p className="font-mono text-sm font-bold text-slate-400">
+                  {isAr ? "جاهز لتوليد تقرير الأبحاث بالذكاء الاصطناعي" : "Ready to Generate AI Equity Memo"}
+                </p>
+                <p className="text-xs text-slate-600 mt-1 max-w-sm">
+                  {isAr 
+                    ? "انقر على زر 'توليد مذكرة التقييم' لبدء التدفّق المباشر عبر Gemini 2.5."
+                    : "Click 'Generate Equity Memo' to stream institutional thesis for " + inputTicker
+                  }
+                </p>
+              </div>
             </div>
           )}
         </div>
       </div>
-    </div>
+    </motion.div>
   );
 }

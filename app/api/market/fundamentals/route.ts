@@ -1,19 +1,14 @@
-import { NextRequest, NextResponse } from "next/server";
-import { getFundamentals } from "@/lib/market/yahoo";
+import { NextRequest, NextResponse } from 'next/server';
+import { getFundamentals } from '@/lib/market/yahoo';
 
 export async function GET(req: NextRequest) {
-  const ticker = req.nextUrl.searchParams.get("ticker");
-  if (!ticker) {
-    return NextResponse.json({ error: "ticker required" }, { status: 400 });
-  }
+  const { searchParams } = new URL(req.url);
+  const ticker = searchParams.get('ticker') || '2222.SR';
 
   try {
     const data = await getFundamentals(ticker);
-    return NextResponse.json(data, {
-      headers: { "Cache-Control": "public, s-maxage=3600, stale-while-revalidate=7200" },
-    });
-  } catch (err) {
-    console.error("Fundamentals proxy error:", err);
-    return NextResponse.json({ error: "Failed to fetch fundamentals" }, { status: 500 });
+    return NextResponse.json(data);
+  } catch (error: any) {
+    return NextResponse.json({ error: error.message || 'Failed to fetch fundamentals' }, { status: 500 });
   }
 }

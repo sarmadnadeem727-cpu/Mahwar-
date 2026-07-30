@@ -4,36 +4,30 @@
 
 @layer base {
   :root {
-    /* Institutional High-Contrast Dark Terminal Theme */
-    --void: #020617;   /* Deepest Slate - Absolute Base */
-    --bg1: #0F172A;    /* Slate 900 - Component Surfaces */
-    --bg2: #1E293B;    /* Slate 800 - UI Elements */
-    --bg3: #334155;    /* Slate 700 - Active States */
+    /* Sovereign Dark Luxury Palette */
+    --void: #0A0B0D;       /* Deep obsidian base background */
+    --bg1: #0F1113;        /* Dark slate surface layer */
+    --bg2: #14171A;        /* Secondary panel surface */
+    --bg3: #1C2127;        /* Active surface & hover state */
     
-    --accent: #F59E0B; /* Bloomberg Gold for Primary Highlights */
-    --accent-dim: rgba(245, 158, 11, 0.1);
+    --emerald: #0E7C69;    /* Signature Mahwar Emerald */
+    --emerald-glow: rgba(14, 124, 105, 0.25);
+    --gold: #C9A84C;       /* Sovereign Saudi Gold */
+    --gold-glow: rgba(201, 168, 76, 0.25);
     
-    --pos: #10B981;    /* Emerald for Positive Deltas */
-    --pos-bg: rgba(16, 185, 129, 0.1);
-    --neg: #EF4444;    /* Standard Red for Negative Deltas */
-    --neg-bg: rgba(239, 68, 68, 0.1);
+    --pos: #16A34A;        /* Positive gain green */
+    --pos-bg: rgba(22, 163, 74, 0.12);
+    --neg: #E53E3E;        /* Negative loss red */
+    --neg-bg: rgba(229, 62, 62, 0.12);
     
-    --text1: #F8FAFC;  /* High-Contrast White for Data */
-    --text2: #94A3B8;  /* Sub-Headers and Labels */
-    --text3: #64748B;  /* Muted metadata */
+    --text1: #F8FAFC;      /* High contrast primary text */
+    --text2: #94A3B8;      /* Secondary label text */
+    --text3: #64748B;      /* Muted metadata text */
     
-    --border: #334155; /* Solid 1px UI border */
-    --border-strong: #475569;
-    
-    /* Functional Mapping Aliases */
-    --bg-primary: var(--bg1);
-    --bg-secondary: var(--bg2);
-    --bg-tertiary: var(--bg3);
-    --text-primary: var(--text1);
-    --text-secondary: var(--text2);
-    --text-tertiary: var(--text3);
-    --emerald: var(--pos);
-    --gold: var(--accent);
+    --border: rgba(255, 255, 255, 0.08);
+    --border-strong: rgba(255, 255, 255, 0.15);
+    --border-emerald: rgba(14, 124, 105, 0.4);
+    --border-gold: rgba(201, 168, 76, 0.4);
   }
 
   body {
@@ -44,10 +38,18 @@
     overflow-x: hidden;
   }
 
-  /* Strict Institutional Typography: Alignment is everything */
+  /* Typography Fonts */
+  .font-garamond {
+    font-family: var(--font-cormorant), Georgia, serif;
+  }
+
+  .font-cairo {
+    font-family: var(--font-cairo), sans-serif;
+  }
+
   .font-mono, .font-ibm-plex-mono {
-    font-family: 'JetBrains Mono', monospace;
-    font-variant-numeric: tabular-nums; /* Critical for data column alignment */
+    font-family: var(--font-mono), 'IBM Plex Mono', monospace;
+    font-variant-numeric: tabular-nums; /* Essential for aligned numerical data */
   }
 
   .lang-ar, [dir="rtl"] {
@@ -56,89 +58,141 @@
 }
 
 @layer components {
-  /* Bloomberg-Style Dense Table Architecture */
+  /* Glassmorphism Panels */
+  .glass-panel {
+    background: rgba(15, 17, 19, 0.75);
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+    border: 1px solid var(--border);
+  }
+
+  .glass-card {
+    background: rgba(20, 23, 26, 0.6);
+    backdrop-filter: blur(16px);
+    -webkit-backdrop-filter: blur(16px);
+    border: 1px solid var(--border);
+    transition: all 0.25s cubic-bezier(0.22, 1, 0.36, 1);
+  }
+
+  .glass-card:hover {
+    border-color: var(--border-emerald);
+    box-shadow: 0 10px 30px -10px rgba(14, 124, 105, 0.2);
+  }
+
+  .glass-card-gold:hover {
+    border-color: var(--border-gold);
+    box-shadow: 0 10px 30px -10px rgba(201, 168, 76, 0.2);
+  }
+
+  /* Terminal Table Architecture */
   .terminal-table {
     width: 100%;
-    border-collapse: collapse;
+    border-collapse: separate;
+    border-spacing: 0;
   }
-  
+
   .terminal-table thead th {
-    background: var(--bg2);
+    background: rgba(20, 23, 26, 0.9);
     color: var(--text2);
     font-size: 10px;
     font-weight: 700;
     text-transform: uppercase;
-    letter-spacing: 0.15em;
-    padding: 12px 16px;
+    letter-spacing: 0.12em;
+    padding: 10px 14px;
     text-align: left;
-    border-bottom: 1px solid var(--border);
+    border-bottom: 1px solid var(--border-strong);
     position: sticky;
     top: 0;
     z-index: 10;
   }
-  
+
+  [dir="rtl"] .terminal-table thead th {
+    text-align: right;
+  }
+
   .terminal-table tbody td {
-    padding: 8px 16px;
+    padding: 8px 14px;
     border-bottom: 1px solid var(--border);
     color: var(--text1);
-    font-family: 'JetBrains Mono', monospace;
+    font-family: var(--font-mono), monospace;
     font-variant-numeric: tabular-nums;
     font-size: 12px;
   }
-  
-  .terminal-table tbody tr:hover {
-    background: var(--bg2);
-  }
 
-  /* High-Contrast Card: No Blur, No Glow */
-  .terminal-card {
-    background: var(--bg1);
-    border: 1px solid var(--border);
-    border-radius: 2px; /* Professional sharp edges */
-    box-shadow: none !important;
+  .terminal-table tbody tr {
     transition: background 0.15s ease;
   }
 
-  .terminal-input {
-    background: var(--void);
-    border: 1px solid var(--border);
-    color: var(--text1);
-    padding: 6px 10px;
-    border-radius: 2px;
-    font-family: 'JetBrains Mono', monospace;
-    font-size: 11px;
-    transition: border-color 0.1s;
+  .terminal-table tbody tr:hover {
+    background: rgba(28, 33, 39, 0.7);
   }
-  
+
+  /* Inputs */
+  .terminal-input {
+    background: rgba(10, 11, 13, 0.8);
+    border: 1px solid var(--border-strong);
+    color: var(--text1);
+    padding: 8px 12px;
+    border-radius: 6px;
+    font-family: var(--font-mono), monospace;
+    font-size: 12px;
+    transition: all 0.2s ease;
+  }
+
   .terminal-input:focus {
     outline: none;
-    border-color: var(--accent);
+    border-color: var(--emerald);
+    box-shadow: 0 0 12px var(--emerald-glow);
+  }
+
+  /* Subtle CRT Scanline overlay */
+  .scanline-overlay {
+    background: linear-gradient(
+      rgba(18, 16, 16, 0) 50%, 
+      rgba(0, 0, 0, 0.15) 50%
+    );
+    background-size: 100% 4px;
+    pointer-events: none;
+  }
+
+  /* Hardware-Accelerated Infinite Ticker Marquee */
+  @keyframes marquee {
+    0% { transform: translateX(0%); }
+    100% { transform: translateX(-50%); }
+  }
+
+  @keyframes marquee-rtl {
+    0% { transform: translateX(0%); }
+    100% { transform: translateX(50%); }
+  }
+
+  .animate-marquee {
+    display: flex;
+    width: max-content;
+    animation: marquee 35s linear infinite;
+  }
+
+  .animate-marquee:hover {
+    animation-play-state: paused;
+  }
+
+  [dir="rtl"] .animate-marquee {
+    animation: marquee-rtl 35s linear infinite;
   }
 }
 
-/* Strip Legacy Visual Noise per User Requirement */
-.noise-overlay, .glow-filter, .glass-morphism {
-  display: none !important;
-  opacity: 0 !important;
-  pointer-events: none !important;
-}
-
-* {
-  box-shadow: none !important;
-  text-shadow: none !important;
-  filter: none !important; /* Disables all blur/glow filters */
-}
-
-/* Custom Scrollbar for Terminal aesthetic */
+/* Custom Scrollbar */
 ::-webkit-scrollbar {
-  width: 4px;
+  width: 5px;
+  height: 5px;
 }
 ::-webkit-scrollbar-track {
   background: var(--void);
 }
 ::-webkit-scrollbar-thumb {
-  background: var(--border);
+  background: rgba(255, 255, 255, 0.15);
+  border-radius: 4px;
 }
 ::-webkit-scrollbar-thumb:hover {
-  background: var(--text3);
+  background: var(--emerald);
 }

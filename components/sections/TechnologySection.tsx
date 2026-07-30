@@ -2,138 +2,98 @@
 
 import React from "react";
 import { motion } from "framer-motion";
-import { staggerContainer, staggerItem } from "@/lib/motion";
-import SectionLabel from "@/components/ui/SectionLabel";
-import { Zap, ShieldCheck, Globe, Brain } from "lucide-react";
+import { Cpu, Server, Code, Zap, Database } from "lucide-react";
 import { useTerminalStore } from "@/store/useTerminalStore";
+import { staggerContainer, staggerItem } from "@/lib/motion";
 
-const techCardsEn = [
-  {
-    title: "Institutional Engine",
-    desc: "Seamless financial data integration for both public and private GCC entities.",
-    icon: <Zap size={20} className="text-[var(--gold)]" />,
-  },
-  {
-    title: "Zakat Engine",
-    desc: "ZATCA-compliant treatment for all financial disclosures.",
-    icon: <ShieldCheck size={20} className="text-[var(--emerald)]" />,
-  },
-  {
-    title: "Bilingual Core",
-    desc: "Built-in RTL support for Arabic and English financial poetry.",
-    icon: <Globe size={20} className="text-[var(--gold)]" />,
-  },
-  {
-    title: "AI Research",
-    desc: "Gemini 2.0 Flash powering deep equity research memos.",
-    icon: <Brain size={20} className="text-[var(--emerald)]" />,
-  },
-];
-
-const techCardsAr = [
-  {
-    title: "المحرك المؤسسي",
-    desc: "تكامل سلس للبيانات المالية لكل من الشركات العامة والخاصة في الخليج.",
-    icon: <Zap size={20} className="text-[var(--gold)]" />,
-  },
-  {
-    title: "معالجة الزكاة",
-    desc: "معالجة متوافقة مع هيئة الزكاة والضريبة والجمارك لجميع الإفصاحات.",
-    icon: <ShieldCheck size={20} className="text-[var(--emerald)]" />,
-  },
-  {
-    title: "جوهر ثنائي اللغة",
-    desc: "دعم RTL مدمج للعربية والإنجليزية بلغة مالية رفيعة.",
-    icon: <Globe size={20} className="text-[var(--gold)]" />,
-  },
-  {
-    title: "أبحاث الذكاء الاصطناعي",
-    desc: "Gemini 2.0 Flash يدعم مذكرات أبحاث الأسهم العميقة.",
-    icon: <Brain size={20} className="text-[var(--emerald)]" />,
-  },
-];
-
-const pills = [
-  "Next.js 14", "TypeScript Strict", "Framer Motion", "React Three Fiber",
-  "TanStack Query", "Zustand", "Yahoo Finance", "Gemini 2.0 Flash", "SQLite", "Tailwind"
-];
-
-const TechnologySection = () => {
+export default function TechnologySection() {
   const { language } = useTerminalStore();
-  const isAr = language === "ar";
-  const techCards = isAr ? techCardsAr : techCardsEn;
+  const isAr = language === 'ar';
+
+  const techStack = [
+    {
+      name: "Google Gemini 2.5 Flash",
+      role: isAr ? "محرك الذكاء الاصطناعي اللحظي" : "Streaming AI Intelligence Engine",
+      desc: isAr ? "توليد مذكرات التقييم المالي والتحليل الائتماني مع الربط المباشر بمحرك البحث." : "SSE streaming institutional report generation with real-time web search grounding.",
+      icon: <Zap className="text-[var(--gold)]" size={28} />
+    },
+    {
+      name: "Next.js 15 & React 19",
+      role: isAr ? "معمارية التطبيق فائقة السرعة" : "App Router & Server Infrastructure",
+      desc: isAr ? "أداء لحظي وتوافق استثنائي مع متطلبات الأمان والتشفير للأعمال المالية." : "High-performance hybrid server components for sub-millisecond data rendering.",
+      icon: <Server className="text-[var(--emerald)]" size={28} />
+    },
+    {
+      name: "Yahoo Finance & EODHD",
+      role: isAr ? "مزود بيانات السوق والأسعار" : "Market Data & Fundamentals API",
+      desc: isAr ? "تأمين بيانات التداول والقوائم المالية التاريخية لأسواق الخليج العربي." : "Historical financials, balance sheets, dividend histories, and live quote pipelines.",
+      icon: <Database className="text-[var(--gold)]" size={28} />
+    },
+    {
+      name: "Framer Motion 12",
+      role: isAr ? "محرك الحركة والانتقالات" : "Hardware Accelerated Motion Physics",
+      desc: isAr ? "انتقالات انسيابية وتأثيرات بصرية تضفي هيبة واحترافية على واجهات التداول." : "Spring physics, cascading stagger lists, and dynamic chart draw-on animations.",
+      icon: <Code className="text-[var(--emerald)]" size={28} />
+    }
+  ];
+
   return (
-    <section id="security" className="relative py-[120px] px-6 lg:px-24 bg-[var(--void)] overflow-hidden">
-      <div className="container mx-auto grid grid-cols-1 lg:grid-cols-2 gap-20 items-center">
-        {/* Left Column: Tech Cards (reversed order in desktop) */}
+    <section id="tech" className="py-28 bg-[#0A0B0D] relative overflow-hidden" dir={isAr ? "rtl" : "ltr"}>
+      <div className="max-w-7xl mx-auto px-6 relative z-10">
         <motion.div
           variants={staggerContainer}
-          initial="hidden"
-          whileInView="visible"
+          initial="initial"
+          whileInView="animate"
           viewport={{ once: true, margin: "-100px" }}
-          className="grid grid-cols-1 md:grid-cols-2 gap-6 order-2 lg:order-1"
+          className="text-center max-w-3xl mx-auto mb-20"
         >
-          {techCards.map((card, i) => (
-            <motion.div
-              key={i}
-              variants={staggerItem}
-              whileHover={{ y: -3, borderColor: "var(--border-gold)", backgroundColor: "var(--bg3)" }}
-              className="bg-[var(--bg2)] border border-[var(--border)] rounded-xl p-6 transition-all duration-300"
-            >
+          <motion.div variants={staggerItem} className="inline-flex items-center gap-2 px-3.5 py-1 rounded-full bg-[var(--emerald)]/10 border border-[var(--emerald)]/20 text-[var(--emerald)] text-xs font-mono font-bold uppercase tracking-widest mb-4">
+            <Cpu size={14} />
+            <span>{isAr ? "النية البنائية والتقنيات" : "Architectural Powerhouse"}</span>
+          </motion.div>
 
-              <div className="w-10 h-10 rounded-lg bg-[var(--bg3)] border border-[var(--border)] flex items-center justify-center mb-6">
-                {card.icon}
+          <motion.h2 variants={staggerItem} className="font-garamond text-4xl md:text-6xl font-bold text-white mb-6">
+            {isAr ? "بنية تقنية متطورة للأداء المالي الحرج" : "Built Upon Next-Generation AI & Financial Stack"}
+          </motion.h2>
+
+          <motion.p variants={staggerItem} className="text-slate-400 text-base md:text-lg">
+            {isAr 
+              ? "استخدام أحدث النماذج المعتمدة في الذكاء الاصطناعي والبنية التحتية البرمجية لتقديم تحليل مؤسسي لا يضاهى."
+              : "Leveraging cutting-edge generative AI, streaming web architecture, and institutional financial primitives."
+            }
+          </motion.p>
+        </motion.div>
+
+        {/* Tech Stack Cards Grid */}
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
+          {techStack.map((tech, idx) => (
+            <motion.div
+              key={idx}
+              initial={{ opacity: 0, y: 30 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+              transition={{ duration: 0.5, delay: idx * 0.1 }}
+              whileHover={{ y: -6 }}
+              className="glass-card p-8 rounded-2xl border border-white/10 flex flex-col justify-between bg-[#0F1113]/90"
+            >
+              <div>
+                <div className="p-3.5 rounded-xl bg-white/5 border border-white/10 w-fit mb-6">
+                  {tech.icon}
+                </div>
+                <h3 className="font-mono text-lg font-bold text-white mb-2">
+                  {tech.name}
+                </h3>
+                <div className="text-xs font-mono font-semibold text-[var(--gold)] mb-4">
+                  {tech.role}
+                </div>
+                <p className="text-slate-400 text-xs leading-relaxed">
+                  {tech.desc}
+                </p>
               </div>
-              <h3 className={`font-cormorant text-xl font-semibold text-[var(--text1)] mb-3 ${isAr ? 'font-arabic' : ''}`}>
-                {card.title}
-              </h3>
-              <p className={`font-dm-sans text-xs text-[var(--text3)] leading-relaxed ${isAr ? 'font-arabic' : ''}`}>
-                {card.desc}
-              </p>
             </motion.div>
           ))}
-        </motion.div>
-
-        {/* Right Column: Copy */}
-        <motion.div
-          variants={staggerContainer}
-          initial="hidden"
-          whileInView="visible"
-          viewport={{ once: true, margin: "-100px" }}
-          className="flex flex-col order-1 lg:order-2"
-        >
-          <SectionLabel label={isAr ? "التقنيات المستخدمة" : "Our Stack"} />
-          <motion.h2 variants={staggerItem} className={`font-cormorant text-4xl md:text-5xl lg:text-6xl leading-tight mb-8 ${isAr ? 'font-arabic' : ''}`}>
-            {isAr ? (
-              <>هندسة متقنة <br /> <span className="italic text-[var(--gold)]">لمتطلبات مؤسسية</span></>
-            ) : (
-              <>Precision-engineered for <br /> <span className="italic text-[var(--gold)]">institutional demands</span></>
-            )}
-          </motion.h2>
-          <motion.p variants={staggerItem} className={`font-dm-sans text-lg text-[var(--text2)] leading-relaxed mb-12 max-w-[540px] ${isAr ? 'font-arabic' : ''}`}>
-            {isAr 
-              ? "لا نكتفي بالحلول التقليدية. تم اختيار كل طبقة من تقنياتنا لضمان الأداء والموثوقية والأمان."
-              : "We don't settle for generic solutions. Every layer of our technology stack is selected for performance, reliability, and security."}
-          </motion.p>
-
-          <motion.div
-            variants={staggerContainer}
-            className="flex flex-wrap gap-3"
-          >
-            {pills.map((pill, i) => (
-              <motion.span
-                key={i}
-                variants={staggerItem}
-                className="font-mono text-[10px] uppercase tracking-widest text-[var(--text3)] px-4 py-2 rounded-full border border-[var(--border)] bg-[var(--bg2)]/50 hover:text-[var(--gold)] hover:border-[var(--gold-dim)] transition-colors cursor-default"
-              >
-                {pill}
-              </motion.span>
-            ))}
-          </motion.div>
-        </motion.div>
+        </div>
       </div>
     </section>
   );
-};
-
-export default TechnologySection;
+}

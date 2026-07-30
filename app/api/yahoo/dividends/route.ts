@@ -1,14 +1,14 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { getQuote } from '@/lib/market/yahoo';
+import { getDividends } from '@/lib/market/yahoo';
 
 export async function GET(req: NextRequest) {
   const { searchParams } = new URL(req.url);
   const ticker = searchParams.get('ticker') || '2222.SR';
 
   try {
-    const data = await getQuote(ticker);
+    const data = await getDividends(ticker);
     return NextResponse.json(data);
   } catch (error: any) {
-    return NextResponse.json({ error: error.message || 'Failed to fetch quote' }, { status: 500 });
+    return NextResponse.json({ error: error.message || 'Failed to fetch dividends' }, { status: 500 });
   }
 }

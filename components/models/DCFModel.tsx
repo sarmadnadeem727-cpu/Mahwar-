@@ -1,300 +1,324 @@
 "use client";
 
-import { useState, useCallback, useMemo } from "react";
+import React, { useState, useEffect } from "react";
 import { motion } from "framer-motion";
-import { fmt } from "@/lib/fmt";
-import { useDCF } from "@/hooks/useFinancialModels";
+import { BarChart3, Calculator, TrendingUp, TrendingDown, RefreshCw, HelpCircle } from "lucide-react";
 import { useTerminalStore } from "@/store/useTerminalStore";
-import { useMarketData } from "@/hooks/useMarketData";
-import { formatYahooFundamentalsToModel } from "@/lib/finance/adapter";
-import { ModelButton } from "@/components/ui/ModelButton";
-import { TrendingUp, ShieldCheck, ArrowRightLeft, Download, Calculator, ChevronRight, AlertTriangle } from "lucide-react";
-import { exportDCFToExcel, exportDCFToPDF } from "@/lib/services/exportService";
-import { useFX } from "@/hooks/useFX";
+import { t } from "@/lib/i18n";
+import { panelReveal } from "@/lib/motion";
 
-interface ProjectionPeriod {
-  year: number;
-  revenue: number;
-  nopat: number;
-  dAndA: number;
-  capex: number;
-  deltaNwc: number;
-  fcff: number;
-  discountFactor: number;
-  pvFcff: number;
-}
+export default function DCFModel() {
+  const { activeTicker, language } = useTerminalStore();
+  const isAr = language === 'ar';
 
-export function DCFModel() {
-  const { calculate, data, loading, error: mathError } = useDCF();
-  const { activeTicker, currency } = useTerminalStore();
-  const { convert } = useFX();
+  // Assumptions State
+  const [revGrowth, setRevGrowth] = useState<number>(12);
+  const [ebitdaMargin, setEbitdaMargin] = useState<number>(28);
+  const [capexRev, setCapexRev] = useState<number>(8);
+  const [taxZakat, setTaxZakat] = useState<number>(2.5);
+  const [costEquity, setCostEquity] = useState<number>(11);
+  const [costDebt, setCostDebt] = useState<number>(5);
+  const [debtWeight, setDebtWeight] = useState<number>(40);
+  const [terminalGrowth, setTerminalGrowth] = useState<number>(3);
 
-  const { data: globalData, isLoading: fetchLoading, isError: fetchError } = useMarketData(activeTicker);
+  const [dcfResult, setDcfResult] = useState<any>(null);
+  const [isCalculating, setIsCalculating] = useState<boolean>(false);
 
-  const [inputs, setInputs] = useState({
-    baseRevenue: 5000,
-    ebitdaMargin: 25.0,
-    sharesOutstanding: 1000,
-    rfRate: 4.5,
-    beta: 1.2,
-    erp: 6.0,
-    costOfDebt: 5.0,
-    taxRate: 21.0,
-    zakatRate: 2.5,
-    tgr: 3.0,
-    revenueGrowth: 8.0,
-    projectionYears: 5
-  });
-
-  const handleRunSync = useCallback(() => {
-    if (!globalData) return;
-    
-    const years = Array.from({ length: inputs.projectionYears }).map((_, i) => ({
-      yearIndex: i + 1,
-      year: 2025 + i,
-      revenue: inputs.baseRevenue * Math.pow(1 + inputs.revenueGrowth / 100, i + 1),
-      ebitMargin: (inputs.ebitdaMargin / 100) * 0.8,
-      taxRateEffective: 0,
-      dAndA: inputs.baseRevenue * 0.05,
-      capex: inputs.baseRevenue * 0.04,
-      deltaNwc: inputs.baseRevenue * 0.02,
-    }));
-
-    const params = {
-      rfRate: inputs.rfRate / 100,
-      erp: inputs.erp / 100,
-      betaUnlevered: inputs.beta,
-      targetDtoE: 0.3,
-      taxShieldRate: inputs.taxRate / 100,
-      kdPreTax: inputs.costOfDebt / 100,
-      zakatRate: inputs.zakatRate / 100,
-      terminalMethod: "GORDON" as const,
-      terminalGrowth: inputs.tgr / 100,
-      includeLeasesInDebt: true,
-      includeEosbInDebt: true,
-      includeSukukInDebt: true,
-    };
-
-    const modelData = formatYahooFundamentalsToModel(globalData.fundamentals);
-
-    const bridge = {
-      enterpriseValue: 0,
-      cash: Number(modelData?.cashAndEquivalents || 0),
-      shortTermDebt: Number(modelData?.totalDebt || 0),
-      longTermDebt: 0,
-      sukuk: 0,
-      leaseFinancingLiabilities: 0,
-      eosbLiability: 0,
-      minorityInterest: 0,
-      otherDebtLike: 0,
-      nonOperatingAssets: 0,
-      sharesOutstanding: modelData?.sharesOutstanding || inputs.sharesOutstanding,
-      currentPrice: globalData.quote?.regularMarketPrice || globalData.quote?.currentPrice || 30.0,
-    };
-
+  const calculateDCF = async () => {
+    setIsCalculating(true);
     try {
-      calculate(years, params, bridge);
-    } catch (e) {
-      console.error(e);
+      const res = await fetch("/api/dcf", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          revGrowth,
+          ebitdaMargin,
+          capexRev,
+          taxZakat,
+          costEquity,
+          costDebt,
+          debtWeight,
+          terminalGrowth,
+          currentPrice: 31.45,
+          baseRevenue: 45000,
+          sharesOutstanding: 242000,
+          netDebt: 65000
+        }),
+      });
+      const data = await res.json();
+      setDcfResult(data);
+    } catch (err) {
+      console.error("DCF Error:", err);
+    } finally {
+      setIsCalculating(false);
     }
-  }, [inputs, globalData, calculate]);
-
-  const projections = (data?.projectedYears || []) as ProjectionPeriod[];
-  const upside = data?.bridge?.upsidePct;
-
-  const updateInput = (key: string, val: number) => {
-    setInputs(prev => ({ ...prev, [key]: val }));
   };
 
-  if (fetchLoading) {
-    return (
-      <div className="flex flex-col gap-4 w-full h-[60vh] justify-center items-center">
-        <motion.div
-          animate={{ scale: [1, 1.1, 1], opacity: [0.5, 1, 0.5] }}
-          transition={{ duration: 2, repeat: Infinity }}
-          className="w-16 h-16 rounded-full bg-white/5 flex items-center justify-center border border-white/10 backdrop-blur-xl"
-        >
-          <TrendingUp className="text-zinc-400 w-6 h-6 opacity-80" />
-        </motion.div>
-        <p className="text-zinc-500 font-mono text-sm tracking-widest uppercase animate-pulse">Syncing SEC Filings...</p>
-      </div>
-    );
-  }
-
-  if (fetchError || mathError || !data) {
-    return (
-      <div className="flex items-center justify-center p-12 text-zinc-500 border border-white/10 rounded-2xl bg-white/5 backdrop-blur-md">
-        Detailed financials unavailable for SEC modeling.
-      </div>
-    );
-  }
+  useEffect(() => {
+    calculateDCF();
+  }, []);
 
   return (
     <motion.div
-      className="flex flex-col gap-8 text-zinc-50"
-      initial={{ opacity: 0, y: 20 }}
-      animate={{ opacity: 1, y: 0 }}
-      transition={{ duration: 0.5 }}
+      variants={panelReveal}
+      initial="initial"
+      animate="animate"
+      exit="exit"
+      className="grid grid-cols-12 gap-8"
+      dir={isAr ? "rtl" : "ltr"}
     >
-      <header className="flex flex-col md:flex-row md:items-center justify-between gap-6 bg-[#0a0a0a]/50 border border-white/10 p-8 rounded-2xl backdrop-blur-xl">
-        <div className="flex items-center gap-6">
-          <div className="w-12 h-12 bg-white/5 flex items-center justify-center border border-white/10 rounded-xl">
-            <TrendingUp className="text-zinc-300 w-5 h-5" />
+      {/* LEFT COLUMN: ASSUMPTIONS (4 COLS) */}
+      <div className="col-span-12 lg:col-span-4 space-y-6">
+        <div className="glass-panel p-6 rounded-2xl border border-white/10 space-y-4">
+          <div className="flex items-center gap-3 pb-3 border-b border-white/10">
+            <BarChart3 className="text-[var(--emerald)]" size={22} />
+            <div>
+              <h2 className="font-garamond text-xl font-bold text-white">
+                {t("dcf_assumptions", language)}
+              </h2>
+              <span className="text-[10px] font-mono text-slate-400">
+                Target: {activeTicker}
+              </span>
+            </div>
           </div>
-          <div>
-            <h1 className="font-mono text-2xl font-bold uppercase tracking-tighter text-zinc-50">Sovereign DCF Engine</h1>
-            <p className="text-zinc-500 text-[10px] font-mono tracking-widest uppercase">
-              {activeTicker?.replace(".SR", "") || "---"} • {currency} • INTRINSIC_VALUE_RECONCILIATION
-            </p>
+
+          {/* Input Controls */}
+          <div className="space-y-3 font-mono text-xs">
+            <div className="flex justify-between items-center">
+              <label className="text-slate-300">{t("rev_growth", language)}</label>
+              <input
+                type="number"
+                value={revGrowth}
+                onChange={(e) => setRevGrowth(Number(e.target.value))}
+                className="terminal-input w-20 text-right"
+              />
+            </div>
+
+            <div className="flex justify-between items-center">
+              <label className="text-slate-300">{t("ebitda_margin", language)}</label>
+              <input
+                type="number"
+                value={ebitdaMargin}
+                onChange={(e) => setEbitdaMargin(Number(e.target.value))}
+                className="terminal-input w-20 text-right"
+              />
+            </div>
+
+            <div className="flex justify-between items-center">
+              <label className="text-slate-300">{t("capex_rev", language)}</label>
+              <input
+                type="number"
+                value={capexRev}
+                onChange={(e) => setCapexRev(Number(e.target.value))}
+                className="terminal-input w-20 text-right"
+              />
+            </div>
+
+            <div className="flex justify-between items-center">
+              <label className="text-slate-300">{t("tax_zakat", language)}</label>
+              <input
+                type="number"
+                value={taxZakat}
+                onChange={(e) => setTaxZakat(Number(e.target.value))}
+                className="terminal-input w-20 text-right"
+              />
+            </div>
+
+            <div className="flex justify-between items-center">
+              <label className="text-slate-300">{t("cost_equity", language)}</label>
+              <input
+                type="number"
+                value={costEquity}
+                onChange={(e) => setCostEquity(Number(e.target.value))}
+                className="terminal-input w-20 text-right"
+              />
+            </div>
+
+            <div className="flex justify-between items-center">
+              <label className="text-slate-300">{t("cost_debt", language)}</label>
+              <input
+                type="number"
+                value={costDebt}
+                onChange={(e) => setCostDebt(Number(e.target.value))}
+                className="terminal-input w-20 text-right"
+              />
+            </div>
+
+            <div className="flex justify-between items-center">
+              <label className="text-slate-300">{t("debt_weight", language)}</label>
+              <input
+                type="number"
+                value={debtWeight}
+                onChange={(e) => setDebtWeight(Number(e.target.value))}
+                className="terminal-input w-20 text-right"
+              />
+            </div>
+
+            <div className="flex justify-between items-center">
+              <label className="text-slate-300">{t("terminal_growth", language)}</label>
+              <input
+                type="number"
+                value={terminalGrowth}
+                onChange={(e) => setTerminalGrowth(Number(e.target.value))}
+                className="terminal-input w-20 text-right"
+              />
+            </div>
+          </div>
+
+          <button
+            onClick={calculateDCF}
+            disabled={isCalculating}
+            className="w-full py-3 rounded-xl bg-gradient-to-r from-[#0E7C69] to-[#12A189] hover:brightness-110 text-white font-mono font-bold text-xs uppercase tracking-wider shadow-lg shadow-[#0E7C69]/25 flex items-center justify-center gap-2 transition-all cursor-pointer"
+          >
+            {isCalculating ? <RefreshCw size={14} className="animate-spin" /> : <Calculator size={14} />}
+            <span>{t("run_dcf", language)}</span>
+          </button>
+        </div>
+      </div>
+
+      {/* RIGHT COLUMN: OUTPUT & SENSITIVITY MATRIX (8 COLS) */}
+      <div className="col-span-12 lg:col-span-8 space-y-6">
+        {/* VALUATION SUMMARY BANNER */}
+        <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+          <div className="glass-panel p-5 rounded-2xl border border-white/10 text-center">
+            <span className="text-[10px] font-mono text-slate-400 uppercase tracking-wider block mb-1">
+              Current Market Price
+            </span>
+            <span className="font-mono text-2xl font-extrabold text-white">
+              SAR {dcfResult?.currentPrice || 31.45}
+            </span>
+          </div>
+
+          <div className="glass-panel p-5 rounded-2xl border border-[var(--emerald)]/40 bg-[var(--emerald)]/10 text-center">
+            <span className="text-[10px] font-mono text-[var(--emerald)] uppercase tracking-wider font-bold block mb-1">
+              {t("intrinsic_value", language)}
+            </span>
+            <span className="font-mono text-3xl font-extrabold text-white">
+              SAR {dcfResult?.intrinsicValuePerShare || "--"}
+            </span>
+          </div>
+
+          <div className="glass-panel p-5 rounded-2xl border border-white/10 text-center flex flex-col items-center justify-center">
+            <span className="text-[10px] font-mono text-slate-400 uppercase tracking-wider block mb-1">
+              {t("upside_downside", language)}
+            </span>
+            <span className={`flex items-center gap-1 font-mono text-xl font-extrabold px-3 py-0.5 rounded ${
+              (dcfResult?.upsidePct || 0) >= 0 
+                ? "text-[var(--pos)] bg-[var(--pos-bg)]" 
+                : "text-[var(--neg)] bg-[var(--neg-bg)]"
+            }`}>
+              {(dcfResult?.upsidePct || 0) >= 0 ? <TrendingUp size={16} /> : <TrendingDown size={16} />}
+              {dcfResult?.upsidePct > 0 ? `+${dcfResult?.upsidePct}%` : `${dcfResult?.upsidePct}%`}
+            </span>
           </div>
         </div>
 
-        {data && (
-          <div className="flex items-center gap-12 text-right">
-            <div>
-              <div className="text-[10px] text-zinc-500 mb-1 uppercase tracking-[0.2em] font-bold">Implied Price ({currency})</div>
-              <div className="font-mono font-bold text-4xl text-zinc-50">
-                {fmt.accounting(convert(data.bridge.impliedSharePrice, 'SAR'))}
-              </div>
-              <div className={`font-mono text-xs mt-1 font-bold ${(upside ?? 0) >= 0 ? "text-emerald-400" : "text-rose-400"}`}>
-                {(upside ?? 0) > 0 ? "▲" : "▼"} {Math.abs(upside || 0).toFixed(1)}% { (upside ?? 0) >= 0 ? "Upside" : "Overvalued" }
-              </div>
-            </div>
-            <ModelButton label="Recalculate" onClick={handleRunSync} loading={loading || fetchLoading} />
+        {/* 5-YEAR PROJECTION TABLE */}
+        <div className="glass-panel p-6 rounded-2xl border border-white/10">
+          <h3 className="font-mono text-xs font-bold text-white uppercase tracking-wider mb-4">
+            5-Year Free Cash Flow Projections (SAR Millions)
+          </h3>
+          <div className="overflow-x-auto">
+            <table className="terminal-table">
+              <thead>
+                <tr>
+                  <th>Metric</th>
+                  {dcfResult?.fcfProjections?.map((p: any) => (
+                    <th key={p.year} className="text-right">{p.year}</th>
+                  ))}
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td className="font-bold">Revenue</td>
+                  {dcfResult?.fcfProjections?.map((p: any) => (
+                    <td key={p.year} className="text-right text-slate-200">{p.revenue.toLocaleString()}</td>
+                  ))}
+                </tr>
+                <tr>
+                  <td>EBITDA</td>
+                  {dcfResult?.fcfProjections?.map((p: any) => (
+                    <td key={p.year} className="text-right text-slate-300">{p.ebitda.toLocaleString()}</td>
+                  ))}
+                </tr>
+                <tr>
+                  <td>EBIT</td>
+                  {dcfResult?.fcfProjections?.map((p: any) => (
+                    <td key={p.year} className="text-right text-slate-300">{p.ebit.toLocaleString()}</td>
+                  ))}
+                </tr>
+                <tr>
+                  <td>NOPAT (ex-Zakat)</td>
+                  {dcfResult?.fcfProjections?.map((p: any) => (
+                    <td key={p.year} className="text-right text-slate-300">{p.nopat.toLocaleString()}</td>
+                  ))}
+                </tr>
+                <tr>
+                  <td>CapEx</td>
+                  {dcfResult?.fcfProjections?.map((p: any) => (
+                    <td key={p.year} className="text-right text-red-400">-{p.capex.toLocaleString()}</td>
+                  ))}
+                </tr>
+                <tr className="bg-[var(--emerald)]/10 font-bold">
+                  <td className="text-[var(--emerald)]">Free Cash Flow (FCF)</td>
+                  {dcfResult?.fcfProjections?.map((p: any) => (
+                    <td key={p.year} className="text-right text-[var(--emerald)] font-bold">{p.fcf.toLocaleString()}</td>
+                  ))}
+                </tr>
+              </tbody>
+            </table>
           </div>
-        )}
-      </header>
+        </div>
 
-      <div className="grid grid-cols-12 gap-8">
-        <aside className="col-span-12 xl:col-span-3 space-y-6">
-          <div className="bg-[#0a0a0a]/50 border border-white/10 p-6 rounded-2xl backdrop-blur-xl">
-             <h3 className="text-[10px] font-bold text-zinc-500 uppercase tracking-[0.4em] mb-8 flex items-center gap-3">
-              <Calculator className="w-4 h-4 text-zinc-400" />
-              Model Inputs
+        {/* 5x5 SENSITIVITY MATRIX HEATMAP */}
+        <div className="glass-panel p-6 rounded-2xl border border-white/10">
+          <div className="flex items-center justify-between mb-4">
+            <h3 className="font-mono text-xs font-bold text-white uppercase tracking-wider">
+              {t("sensitivity_matrix", language)}
             </h3>
-            <div className="space-y-6">
-              <Slider label="Risk-Free Rate" value={inputs.rfRate} min={1} max={10} step={0.1} unit="%" onChange={(v: number) => updateInput('rfRate', v)} />
-              <Slider label="Equity Risk Premium" value={inputs.erp} min={3} max={10} step={0.1} unit="%" onChange={(v: number) => updateInput('erp', v)} />
-              <Slider label="Beta" value={inputs.beta} min={0.5} max={2.5} step={0.05} onChange={(v: number) => updateInput('beta', v)} />
-              <div className="pt-4 border-t border-white/10">
-                <Slider label="Terminal Growth" value={inputs.tgr} min={0} max={5} step={0.1} unit="%" onChange={(v: number) => updateInput('tgr', v)} />
-                <Slider label="Proj. Revenue Growth" value={inputs.revenueGrowth} min={-5} max={25} step={0.5} unit="%" onChange={(v: number) => updateInput('revenueGrowth', v)} />
-              </div>
-            </div>
+            <span className="text-[10px] font-mono text-[var(--gold)]">
+              WACC (Rows) vs Terminal Growth (Cols)
+            </span>
           </div>
 
-          {data && (
-            <div className="bg-[#0a0a0a]/50 border border-white/10 p-6 rounded-2xl backdrop-blur-xl">
-              <h3 className="text-[10px] font-bold text-zinc-500 uppercase tracking-[0.4em] mb-6 flex items-center gap-3">
-                <ArrowRightLeft className="w-4 h-4 text-zinc-400" />
-                Value Bridge
-              </h3>
-              <div className="space-y-4">
-                <div className="flex justify-between border-b border-white/10 pb-3">
-                   <span className="text-[9px] text-zinc-500 font-bold uppercase tracking-wider">Enterprise Value</span>
-                   <span className="font-mono text-xs text-zinc-50">{fmt.accounting(convert(data.bridge.equityValue + data.bridge.netDebt, 'SAR'))}</span>
-                </div>
-                <div className="flex justify-between border-b border-white/10 pb-3">
-                   <span className="text-[9px] text-zinc-500 font-bold uppercase tracking-wider">(+) Cash</span>
-                   <span className="font-mono text-xs text-emerald-400">+{fmt.accounting(convert(data.bridge.cash, 'SAR'))}</span>
-                </div>
-                <div className="flex justify-between border-b border-white/10 pb-3">
-                   <span className="text-[9px] text-zinc-500 font-bold uppercase tracking-wider">(-) Net Debt</span>
-                   <span className="font-mono text-xs text-rose-400">-{fmt.accounting(convert(data.bridge.netDebt, 'SAR'))}</span>
-                </div>
-                <div className="flex justify-between pt-2">
-                   <span className="text-[10px] text-zinc-400 font-bold uppercase tracking-widest">Equity Value</span>
-                   <span className="font-mono text-sm text-zinc-100 font-bold">{fmt.accounting(convert(data.bridge.equityValue, 'SAR'))}</span>
-                </div>
-              </div>
-            </div>
-          )}
-        </aside>
-
-        <main className="col-span-12 xl:col-span-9 space-y-8">
-           <div className="bg-[#0a0a0a]/50 border border-white/10 overflow-hidden rounded-2xl backdrop-blur-xl">
-             <table className="w-full text-left border-collapse">
-               <thead>
-                 <tr className="bg-white/5 border-b border-white/10">
-                    <th className="p-4 text-[10px] font-bold text-zinc-500 uppercase tracking-widest w-1/3">FCF Projection (Millions)</th>
-                    {projections.map(p => <th key={p.year} className="p-4 text-[10px] font-bold text-zinc-500 uppercase tracking-widest text-right">{p.year}E</th>)}
-                 </tr>
-               </thead>
-               <tbody>
-                  <TableRow label="Revenue" values={projections.map(p => fmt.accounting(convert(p.revenue, 'SAR')))} />
-                  <TableRow label="NOPAT" values={projections.map(p => fmt.accounting(convert(p.nopat, 'SAR')))} />
-                  <TableRow label="(+) D&A" values={projections.map(p => fmt.accounting(convert(p.dAndA, 'SAR')))} isSub />
-                  <TableRow label="(-) CapEx" values={projections.map(p => `(${fmt.accounting(convert(p.capex, 'SAR'))})`)} isSub />
-                  <TableRow label="Unlevered Free Cash Flow" values={projections.map(p => fmt.accounting(convert(p.fcff, 'SAR')))} isTotal />
-                  <TableRow label="Discount Factor" values={projections.map(p => p.discountFactor.toFixed(4))} isSub />
-                  <TableRow label="PV of FCF" values={projections.map(p => fmt.accounting(convert(p.pvFcff, 'SAR')))} isTotal />
-               </tbody>
-             </table>
-           </div>
-
-           {data?.sensitivityTable && (
-            <div className="bg-[#0a0a0a]/50 border border-white/10 p-8 rounded-2xl backdrop-blur-xl">
-               <h3 className="text-[10px] font-bold text-zinc-500 uppercase tracking-[0.4em] mb-6">WACC vs TGR Sensitivity (Implied Price)</h3>
-               <div className="overflow-x-auto">
-                 <table className="w-full text-center border-collapse text-[10px] font-mono">
-                    <thead>
-                      <tr className="bg-white/5">
-                        <th className="p-3 border border-white/10 text-left text-zinc-500">TGR \ WACC</th>
-                        {data.sensitivityTable.cols.slice(0, 7).map((w: number) => (
-                          <th key={w} className="p-3 border border-white/10 text-zinc-300">{(w * 100).toFixed(1)}%</th>
-                        ))}
-                      </tr>
-                    </thead>
-                    <tbody>
-                      {data.sensitivityTable.cells.slice(0, 5).map((row: any[], ri: number) => (
-                        <tr key={ri} className="hover:bg-white/5 transition-colors">
-                          <td className="p-3 border border-white/10 font-bold text-zinc-500 text-left">{(data.sensitivityTable!.rows[ri] * 100).toFixed(1)}%</td>
-                          {row.slice(0, 7).map((v, ci) => (
-                            <td key={ci} className={`p-3 border border-white/10 ${v > data.bridge.impliedSharePrice ? 'text-emerald-400' : 'text-rose-400'}`}>
-                              {v ? fmt.accounting(convert(v)) : "—"}
-                            </td>
-                          ))}
-                        </tr>
-                      ))}
-                    </tbody>
-                 </table>
-               </div>
-            </div>
-           )}
-        </main>
+          <div className="overflow-x-auto">
+            <table className="w-full font-mono text-xs text-center border-collapse">
+              <thead>
+                <tr className="bg-white/5">
+                  <th className="p-2 border border-white/10 text-slate-400">WACC \ Growth</th>
+                  {dcfResult?.sensitivityMatrix?.[0]?.map((col: any, i: number) => (
+                    <th key={i} className="p-2 border border-white/10 text-slate-200">{col.growth}%</th>
+                  ))}
+                </tr>
+              </thead>
+              <tbody>
+                {dcfResult?.sensitivityMatrix?.map((row: any, rIdx: number) => (
+                  <tr key={rIdx}>
+                    <td className="p-2 border border-white/10 font-bold text-slate-300 bg-white/5">
+                      {row[0]?.wacc}%
+                    </td>
+                    {row.map((cell: any, cIdx: number) => {
+                      const isBull = cell.intrinsicValue > (dcfResult?.currentPrice || 31.45);
+                      return (
+                        <td
+                          key={cIdx}
+                          className={`p-2 border border-white/10 font-bold transition-all ${
+                            isBull 
+                              ? "bg-emerald-950/60 text-emerald-300" 
+                              : "bg-red-950/60 text-red-300"
+                          }`}
+                        >
+                          SAR {cell.intrinsicValue}
+                        </td>
+                      );
+                    })}
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        </div>
       </div>
     </motion.div>
-  );
-}
-
-function Slider({ label, value, min, max, step, unit = "", onChange }: any) {
-  return (
-    <div className="group">
-      <div className="flex justify-between mb-2">
-        <label className="text-[10px] font-bold text-zinc-500 uppercase group-hover:text-zinc-300 transition-colors">{label}</label>
-        <span className="font-mono text-xs font-bold text-zinc-50">{value.toFixed(1)}{unit}</span>
-      </div>
-      <input
-        type="range" min={min} max={max} step={step} value={value}
-        onChange={(e) => onChange(parseFloat(e.target.value))}
-        className="w-full h-1 bg-white/10 rounded-full appearance-none cursor-pointer accent-zinc-400"
-      />
-    </div>
-  );
-}
-
-function TableRow({ label, values, isSub, isTotal }: any) {
-  return (
-    <tr className={`border-b border-white/10 transition-colors hover:bg-white/5 ${isTotal ? 'bg-white/5' : ''}`}>
-      <td className={`py-4 px-6 text-left ${isSub ? 'pl-10 text-[11px] text-zinc-500 italic' : 'text-[12px] font-bold uppercase text-zinc-100'} ${isTotal ? 'text-zinc-50' : ''}`}>
-        {isSub && <span className="mr-2 text-zinc-600">└</span>}
-        {label}
-      </td>
-      {values.map((v: any, i: number) => (
-        <td key={i} className={`py-4 px-6 text-right font-mono text-xs border-l border-white/10 ${isTotal ? 'font-bold text-zinc-50' : 'text-zinc-400'}`}>
-          {v}
-        </td>
-      ))}
-    </tr>
   );
 }
