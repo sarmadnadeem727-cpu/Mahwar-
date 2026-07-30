@@ -20,7 +20,7 @@ export default function TimelineSteps({ spotlight = false }: TimelineStepsProps)
 
     const interval = setInterval(() => {
       setActiveStep((prev) => (prev + 1) % 3);
-    }, 2500);
+    }, 2800);
 
     return () => clearInterval(interval);
   }, [shouldReduceMotion]);
@@ -50,8 +50,8 @@ export default function TimelineSteps({ spotlight = false }: TimelineStepsProps)
   ];
 
   return (
-    <div className={`flex flex-col h-full font-mono select-none items-center justify-center p-3 ${spotlight ? "max-w-md w-full" : ""}`}>
-      <div className={`flex ${spotlight ? "flex-col md:flex-row gap-6 md:gap-4 items-center justify-between" : "flex-row gap-3 items-center"} w-full`}>
+    <div className={`flex flex-col h-full font-mono select-none items-center justify-center p-4 ${spotlight ? "max-w-md w-full" : ""}`}>
+      <div className={`flex ${spotlight ? "flex-col gap-8 items-center" : "flex-row gap-4 items-center"} w-full justify-between`}>
         {steps.map((step, idx) => {
           const isActive = activeStep === idx;
           const isDone = activeStep > idx;
@@ -60,7 +60,7 @@ export default function TimelineSteps({ spotlight = false }: TimelineStepsProps)
             <React.Fragment key={idx}>
               {/* Step Card */}
               <div
-                className={`p-2.5 rounded-lg border transition-all duration-300 flex items-center gap-2 text-[10px] ${
+                className={`p-3 rounded-lg border transition-all duration-300 flex items-center gap-3 text-[10px] w-full max-w-[160px] ${
                   isActive
                     ? "border-[var(--emerald)] bg-[var(--emerald)]/10 text-white"
                     : isDone
@@ -68,7 +68,7 @@ export default function TimelineSteps({ spotlight = false }: TimelineStepsProps)
                     : "border-white/5 bg-[#0A0B0D] text-slate-500"
                 }`}
               >
-                <div className={`p-1 rounded bg-black/40 ${isActive ? "text-[var(--emerald)]" : ""}`}>
+                <div className={`p-1.5 rounded bg-black/40 ${isActive ? "text-[var(--emerald)]" : ""}`}>
                   {step.icon}
                 </div>
                 <div className="flex flex-col items-start leading-tight">
@@ -77,16 +77,17 @@ export default function TimelineSteps({ spotlight = false }: TimelineStepsProps)
                 </div>
               </div>
 
-              {/* Connecting arrow/line */}
-              {idx < 2 && !spotlight && (
-                <div className="w-4 h-px bg-white/10 relative">
-                  {isActive && (
+              {/* Staggered connector flows */}
+              {idx < 2 && (
+                <div className={`relative ${spotlight ? "w-0.5 h-8" : "w-10 h-0.5"} bg-white/5`}>
+                  {!shouldReduceMotion && activeStep === idx && (
                     <motion.div
-                      layoutId="arrowGlow"
-                      className="absolute inset-y-0 left-0 bg-[var(--emerald)]"
-                      initial={{ width: 0 }}
-                      animate={{ width: "100%" }}
-                      transition={{ duration: 1.5, ease: "linear" }}
+                      className={`absolute rounded-full bg-[var(--emerald)] shadow-md shadow-[var(--emerald)] ${
+                        spotlight ? "w-1 h-2 left-1/2 -translate-x-1/2" : "h-1 w-2 top-1/2 -translate-y-1/2"
+                      }`}
+                      initial={spotlight ? { top: "0%" } : { left: "0%" }}
+                      animate={spotlight ? { top: "100%" } : { left: "100%" }}
+                      transition={{ duration: 1.5, repeat: Infinity, ease: "easeInOut" }}
                     />
                   )}
                 </div>
@@ -95,7 +96,7 @@ export default function TimelineSteps({ spotlight = false }: TimelineStepsProps)
           );
         })}
       </div>
-      <span className="text-[9px] text-slate-500 uppercase tracking-widest mt-4">// PIPELINE STAGGER TIMELINE</span>
+      <span className="text-[9px] text-slate-500 uppercase tracking-widest mt-6">// PIPELINE FLOW TIMELINE</span>
     </div>
   );
 }

@@ -21,36 +21,44 @@ export default function TickingNumber() {
     return () => clearInterval(interval);
   }, [shouldReduceMotion]);
 
-  // Small looping sparkline data
-  const points = "10,50 30,45 50,48 70,35 90,40 110,25 130,30 150,15 170,22 190,10";
+  // Two organic curves for morphing animations
+  const pathA = "M 10 40 Q 50 10, 100 40 T 190 20";
+  const pathB = "M 10 20 Q 60 50, 110 15 T 190 45";
 
   return (
     <div className="flex flex-col items-center justify-center h-full p-4 font-mono select-none">
       <div className="text-2xl font-bold text-[var(--gold)] mb-2 tracking-wider">
         SAR {val}
       </div>
-      <div className="w-full max-w-[180px] h-[40px] flex items-center justify-center">
+      <div className="w-full max-w-[180px] h-[40px] flex items-center justify-center relative">
+        {/* Morphing grid wave background */}
         <svg className="w-full h-full overflow-visible" viewBox="0 0 200 60">
-          <motion.polyline
+          <motion.path
             fill="none"
             stroke="var(--emerald)"
             strokeWidth="1.5"
-            points={points}
-            initial={shouldReduceMotion ? { pathLength: 1 } : { pathLength: 0 }}
-            animate={shouldReduceMotion ? {} : { pathLength: 1 }}
-            transition={{
-              duration: 2,
-              ease: "easeInOut",
-              repeat: Infinity,
-              repeatType: "reverse",
-            }}
+            initial={{ d: pathA }}
+            animate={
+              shouldReduceMotion
+                ? {}
+                : { d: [pathA, pathB, pathA] }
+            }
+            transition={
+              shouldReduceMotion
+                ? {}
+                : {
+                    duration: 3,
+                    repeat: Infinity,
+                    ease: "easeInOut"
+                  }
+            }
           />
           {/* Subtle dots */}
-          <circle cx="10" cy="50" r="2" fill="var(--emerald)" />
-          <circle cx="190" cy="10" r="2" fill="var(--emerald)" />
+          <circle cx="10" cy="40" r="2.5" fill="var(--emerald)" />
+          <circle cx="190" cy="20" r="2.5" fill="var(--emerald)" />
         </svg>
       </div>
-      <span className="text-[9px] text-slate-500 uppercase tracking-widest mt-2">// INTRINSIC VALUE MODEL</span>
+      <span className="text-[9px] text-slate-500 uppercase tracking-widest mt-3">// INTRINSIC VALUE MODEL</span>
     </div>
   );
 }

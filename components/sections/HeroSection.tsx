@@ -55,8 +55,9 @@ export default function HeroSection() {
     return () => clearTimeout(timer);
   }, [currentText, isDeleting, phraseIndex, phrases]);
 
-  // Dot matrix count: 4 rows of 12 dots
-  const dots = Array.from({ length: 48 });
+  const [hoveredIdx, setHoveredIdx] = useState<number | null>(null);
+  const dotsCount = 75; // 15 columns * 5 rows
+  const dots = Array.from({ length: dotsCount });
 
   return (
     <section className="relative min-h-screen flex flex-col justify-between pt-24 pb-12 overflow-hidden bg-[#0A0B0D]" dir={isAr ? "rtl" : "ltr"}>
@@ -103,22 +104,59 @@ export default function HeroSection() {
           }
         </motion.p>
 
-        {/* Calm auto-playing dot matrix animation */}
-        <div className="h-12 flex items-center justify-center">
-          <div className="grid grid-cols-12 gap-1.5 opacity-25">
-            {dots.map((_, i) => (
-              <motion.div
-                key={i}
-                className="w-1 h-1 rounded-full bg-[var(--emerald)]"
-                animate={shouldReduceMotion ? {} : { scale: [1, 1.5, 1], opacity: [0.6, 1, 0.6] }}
-                transition={shouldReduceMotion ? {} : {
-                  duration: 2,
-                  repeat: Infinity,
-                  delay: (i % 12) * 0.12 + Math.floor(i / 12) * 0.15,
-                  ease: "easeInOut"
-                }}
-              />
-            ))}
+        {/* Interactive staggered dot matrix wave animation */}
+        <div className="h-16 flex items-center justify-center">
+          <div 
+            style={{ display: "grid", gridTemplateColumns: "repeat(15, minmax(0, 1fr))" }}
+            className="gap-2"
+            onMouseLeave={() => setHoveredIdx(null)}
+          >
+            {dots.map((_, i) => {
+              const col = i % 15;
+              const row = Math.floor(i / 15);
+              
+              let distance = 0;
+              if (hoveredIdx !== null) {
+                const hoveredCol = hoveredIdx % 15;
+                const hoveredRow = Math.floor(hoveredIdx / 15);
+                const dx = col - hoveredCol;
+                const dy = row - hoveredRow;
+                distance = Math.sqrt(dx * dx + dy * dy);
+              }
+
+              return (
+                <motion.div
+                  key={i}
+                  onMouseEnter={() => setHoveredIdx(i)}
+                  className="w-1.5 h-1.5 rounded-full bg-[var(--emerald)] cursor-pointer"
+                  animate={
+                    shouldReduceMotion
+                      ? {}
+                      : hoveredIdx !== null
+                      ? {
+                          scale: Math.max(0.6, 2.0 - distance * 0.3),
+                          opacity: Math.max(0.2, 1.0 - distance * 0.15)
+                        }
+                      : {
+                          scale: [1, 1.3, 1],
+                          opacity: [0.3, 0.7, 0.3]
+                        }
+                  }
+                  transition={
+                    shouldReduceMotion
+                      ? {}
+                      : hoveredIdx !== null
+                      ? { type: "spring", stiffness: 200, damping: 15 }
+                      : {
+                          duration: 2,
+                          repeat: Infinity,
+                          delay: col * 0.08 + row * 0.1,
+                          ease: "easeInOut"
+                        }
+                  }
+                />
+              );
+            })}
           </div>
         </div>
 

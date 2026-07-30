@@ -10,6 +10,7 @@ interface HeatmapCell {
 
 export default function HeatmapCells() {
   const shouldReduceMotion = useReducedMotion();
+  const [hoveredIdx, setHoveredIdx] = useState<number | null>(null);
   const [cells, setCells] = useState<HeatmapCell[]>([
     { ticker: "2222", pct: 1.4 },
     { ticker: "1120", pct: -0.6 },
@@ -25,7 +26,7 @@ export default function HeatmapCells() {
     const interval = setInterval(() => {
       setCells((prev) =>
         prev.map((cell) => {
-          const change = (Math.random() - 0.5) * 1.2;
+          const change = (Math.random() - 0.5) * 1.5;
           const next = parseFloat((cell.pct + change).toFixed(1));
           return { ...cell, pct: next };
         })
@@ -36,8 +37,11 @@ export default function HeatmapCells() {
   }, [shouldReduceMotion]);
 
   return (
-    <div className="flex flex-col items-center justify-center h-full p-3 font-mono select-none">
-      <div className="grid grid-cols-3 gap-2 w-full max-w-[200px]">
+    <div className="flex flex-col items-center justify-center h-full p-3 font-mono select-none w-full">
+      <div 
+        className="grid grid-cols-3 gap-2 w-full max-w-[200px]"
+        onMouseLeave={() => setHoveredIdx(null)}
+      >
         {cells.map((cell, idx) => {
           const isPos = cell.pct >= 0;
           const valStr = isPos ? `+${cell.pct}%` : `${cell.pct}%`;
@@ -48,9 +52,20 @@ export default function HeatmapCells() {
           return (
             <motion.div
               key={cell.ticker}
-              layout
-              transition={{ type: "spring", stiffness: 120, damping: 15 }}
-              className={`p-2 rounded border flex flex-col items-center justify-center text-[9px] ${bgClass}`}
+              onMouseEnter={() => setHoveredIdx(idx)}
+              whileHover={shouldReduceMotion ? {} : { scale: 1.1, zIndex: 10 }}
+              animate={
+                shouldReduceMotion
+                  ? {}
+                  : hoveredIdx !== null
+                  ? {
+                      scale: idx === hoveredIdx ? 1.1 : 0.92,
+                      opacity: idx === hoveredIdx ? 1 : 0.65
+                    }
+                  : { scale: 1, opacity: 1 }
+              }
+              transition={{ type: "spring", stiffness: 200, damping: 14 }}
+              className={`p-2 rounded border flex flex-col items-center justify-center text-[9px] cursor-pointer ${bgClass}`}
             >
               <span className="font-bold">{cell.ticker}</span>
               <span className="text-[8px] opacity-80 mt-0.5">{valStr}</span>
@@ -58,7 +73,7 @@ export default function HeatmapCells() {
           );
         })}
       </div>
-      <span className="text-[9px] text-slate-500 uppercase tracking-widest mt-3">// GCC SECTOR HEATMAP</span>
+      <span className="text-[9px] text-slate-500 uppercase tracking-widest mt-4">// GCC SECTOR HEATMAP</span>
     </div>
   );
 }
