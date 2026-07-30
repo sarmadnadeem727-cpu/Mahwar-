@@ -1,12 +1,11 @@
 import { createClient } from '@supabase/supabase-js';
 import { PLAN_LIMITS } from '@/lib/billing/plan-limits';
 
-const supabaseService = createClient(
-  process.env.NEXT_PUBLIC_SUPABASE_URL!,
-  process.env.SUPABASE_SERVICE_ROLE_KEY!
-);
-
 export async function checkQuota(userId: string, endpoint: 'ai_research' | 'saved_models' | 'live_market') {
+  const supabaseService = createClient(
+    process.env.NEXT_PUBLIC_SUPABASE_URL || 'dummy_url',
+    process.env.SUPABASE_SERVICE_ROLE_KEY || 'dummy_key'
+  );
   try {
     // 1. Fetch user subscription
     const { data: subscription, error: subError } = await supabaseService
