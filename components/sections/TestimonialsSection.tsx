@@ -1,9 +1,10 @@
 "use client";
 
-import React, { useState, useEffect } from "react";
-import { motion, AnimatePresence } from "framer-motion";
-import { Quote, ChevronLeft, ChevronRight, Star } from "lucide-react";
+import React from "react";
+import { motion } from "framer-motion";
+import { Star, Quote } from "lucide-react";
 import { useTerminalStore } from "@/store/useTerminalStore";
+import { staggerContainer, staggerItem } from "@/lib/motion";
 
 const TESTIMONIALS = [
   {
@@ -35,81 +36,56 @@ const TESTIMONIALS = [
 export default function TestimonialsSection() {
   const { language } = useTerminalStore();
   const isAr = language === 'ar';
-  const [current, setCurrent] = useState(0);
-
-  useEffect(() => {
-    const interval = setInterval(() => {
-      setCurrent((prev) => (prev + 1) % TESTIMONIALS.length);
-    }, 6000);
-    return () => clearInterval(interval);
-  }, []);
-
-  const t = TESTIMONIALS[current];
 
   return (
-    <section id="testimonials" className="py-28 bg-[#0F1113] relative overflow-hidden border-t border-white/10" dir={isAr ? "rtl" : "ltr"}>
-      <div className="max-w-5xl mx-auto px-6 relative z-10 text-center">
-        <div className="inline-flex items-center gap-2 px-3.5 py-1 rounded-full bg-[var(--gold)]/10 border border-[var(--gold)]/20 text-[var(--gold)] text-xs font-mono font-bold uppercase tracking-widest mb-10">
-          <Star size={14} fill="currentColor" />
-          <span>{isAr ? "ثقة المؤسسات الاستثمارية" : "Institutional Validation"}</span>
+    <section id="testimonials" className="py-20 bg-[#0F1113] relative overflow-hidden border-t border-white/5" dir={isAr ? "rtl" : "ltr"}>
+      <div className="max-w-7xl mx-auto px-6 relative z-10">
+        
+        {/* Header */}
+        <div className="text-center max-w-3xl mx-auto mb-16">
+          <div className="inline-flex items-center gap-2 px-3 py-1 rounded bg-[var(--emerald)]/10 border border-[var(--emerald)]/25 text-[var(--emerald)] text-[10px] font-mono font-bold uppercase tracking-wider mb-4">
+            <Star size={12} fill="currentColor" />
+            <span>{isAr ? "ثقة المؤسسات الاستثمارية" : "Institutional Validation"}</span>
+          </div>
+
+          <h2 className="font-garamond text-3xl md:text-5xl font-extrabold text-white mb-5">
+            {isAr ? "توصيات قادة الفكر المالي بالخليج" : "Endorsed by Gulf Capital Managers"}
+          </h2>
         </div>
 
-        <div className="relative min-h-[260px] flex items-center justify-center">
-          <AnimatePresence mode="wait">
+        {/* Testimonials Static Grid */}
+        <motion.div
+          variants={staggerContainer}
+          initial="initial"
+          whileInView="animate"
+          viewport={{ once: true, margin: "-100px" }}
+          className="grid grid-cols-1 md:grid-cols-3 gap-6"
+        >
+          {TESTIMONIALS.map((item, idx) => (
             <motion.div
-              key={current}
-              initial={{ opacity: 0, scale: 0.96 }}
-              animate={{ opacity: 1, scale: 1 }}
-              exit={{ opacity: 0, scale: 0.96 }}
-              transition={{ duration: 0.5 }}
-              className="glass-panel p-8 md:p-12 rounded-3xl border border-white/10 bg-[#14171A] max-w-4xl"
+              key={idx}
+              variants={staggerItem}
+              className="p-6 rounded-xl border border-white/5 bg-[#0A0B0D]/40 flex flex-col justify-between space-y-6"
             >
-              <Quote size={36} className="text-[var(--emerald)] mx-auto mb-6 opacity-60" />
-
-              <p className="font-garamond text-xl md:text-3xl text-white italic leading-relaxed mb-8">
-                "{isAr ? t.quoteAr : t.quoteEn}"
-              </p>
+              <div className="space-y-4">
+                <Quote size={20} className="text-[var(--gold)] opacity-50" />
+                <p className="font-sans text-xs text-slate-300 leading-relaxed italic">
+                  "{isAr ? item.quoteAr : item.quoteEn}"
+                </p>
+              </div>
 
               <div>
-                <div className="font-bold text-white text-base md:text-lg">
-                  {t.author}
+                <div className="font-bold text-white text-xs">
+                  {item.author}
                 </div>
-                <div className="text-xs font-mono text-[var(--gold)] font-bold mt-0.5">
-                  {isAr ? t.roleAr : t.roleEn} · {t.institution}
+                <div className="text-[9px] font-mono text-[var(--emerald)] mt-1">
+                  {isAr ? item.roleAr : item.roleEn} &middot; {item.institution}
                 </div>
               </div>
             </motion.div>
-          </AnimatePresence>
-        </div>
+          ))}
+        </motion.div>
 
-        {/* Controls */}
-        <div className="flex items-center justify-center gap-4 mt-8">
-          <button
-            onClick={() => setCurrent((prev) => (prev === 0 ? TESTIMONIALS.length - 1 : prev - 1))}
-            className="p-2 rounded-full border border-white/10 bg-white/5 hover:bg-white/10 text-slate-300 transition-colors cursor-pointer"
-          >
-            <ChevronLeft size={18} />
-          </button>
-          
-          <div className="flex items-center gap-2">
-            {TESTIMONIALS.map((_, i) => (
-              <button
-                key={i}
-                onClick={() => setCurrent(i)}
-                className={`w-2.5 h-2.5 rounded-full transition-all cursor-pointer ${
-                  current === i ? "bg-[var(--emerald)] w-8" : "bg-white/20"
-                }`}
-              />
-            ))}
-          </div>
-
-          <button
-            onClick={() => setCurrent((prev) => (prev + 1) % TESTIMONIALS.length)}
-            className="p-2 rounded-full border border-white/10 bg-white/5 hover:bg-white/10 text-slate-300 transition-colors cursor-pointer"
-          >
-            <ChevronRight size={18} />
-          </button>
-        </div>
       </div>
     </section>
   );
