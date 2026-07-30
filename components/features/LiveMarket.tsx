@@ -6,14 +6,18 @@ import { Activity, RefreshCw, TrendingUp, TrendingDown } from "lucide-react";
 import { useTerminalStore } from "@/store/useTerminalStore";
 import { t } from "@/lib/i18n";
 import { panelReveal } from "@/lib/motion";
+import { useUserContext } from "@/components/providers/UserProvider";
 
 export default function LiveMarket() {
   const { setTicker, language } = useTerminalStore();
   const isAr = language === 'ar';
+  const { subscription } = useUserContext();
 
   const [quotes, setQuotes] = useState<any[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
-  const [countdown, setCountdown] = useState<number>(30);
+
+  const refreshIntervalSeconds = subscription?.plan === "free" ? 300 : 30;
+  const [countdown, setCountdown] = useState<number>(refreshIntervalSeconds);
 
   const fetchLiveQuotes = async () => {
     setLoading(true);
@@ -25,9 +29,13 @@ export default function LiveMarket() {
       console.error(err);
     } finally {
       setLoading(false);
-      setCountdown(30);
+      setCountdown(refreshIntervalSeconds);
     }
   };
+
+  useEffect(() => {
+    setCountdown(refreshIntervalSeconds);
+  }, [refreshIntervalSeconds]);
 
   useEffect(() => {
     fetchLiveQuotes();
@@ -35,13 +43,13 @@ export default function LiveMarket() {
       setCountdown((prev) => {
         if (prev <= 1) {
           fetchLiveQuotes();
-          return 30;
+          return refreshIntervalSeconds;
         }
         return prev - 1;
       });
     }, 1000);
     return () => clearInterval(interval);
-  }, []);
+  }, [refreshIntervalSeconds]);
 
   return (
     <motion.div

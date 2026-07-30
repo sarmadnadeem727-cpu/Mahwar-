@@ -1,4 +1,6 @@
-import { NextRequest } from 'next/server';
+import { NextRequest, NextResponse } from 'next/server';
+import { createClient } from '@/lib/supabase/server';
+import { checkQuota } from '@/lib/usage/checkQuota';
 
 export async function POST(req: NextRequest) {
   const GEMINI_API_KEY = process.env.GOOGLE_API_KEY;
@@ -8,6 +10,33 @@ export async function POST(req: NextRequest) {
       status: 500,
       headers: { 'Content-Type': 'application/json' }
     });
+  }
+
+  // Auth check
+  const supabase = await createClient();
+  const { data: { user } } = await supabase.auth.getUser();
+
+  if (!user) {
+    return new Response(JSON.stringify({ error: 'unauthorized', message: 'Authentication required' }), {
+      status: 401,
+      headers: { 'Content-Type': 'application/json' }
+    });
+  }
+
+  // Quota check
+  const quota = await checkQuota(user.id, 'ai_research');
+  if (!quota.allowed) {
+    return new Response(
+      JSON.stringify({ 
+        error: 'quota_exceeded', 
+        plan: quota.plan, 
+        upgradeUrl: '/pricing' 
+      }), 
+      { 
+        status: 402, 
+        headers: { 'Content-Type': 'application/json' } 
+      }
+    );
   }
 
   try {

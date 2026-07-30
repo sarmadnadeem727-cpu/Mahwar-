@@ -12,6 +12,7 @@ import {
 import { useTerminalStore } from "@/store/useTerminalStore";
 import { t } from "@/lib/i18n";
 import { panelReveal } from "@/lib/motion";
+import Watchlist from "./Watchlist";
 
 const BENCHMARK_DATA: Record<string, Array<{ time: string; price: number; tasi: number }>> = {
   "1D": [
@@ -296,51 +297,55 @@ export default function IntelligenceHub() {
           </div>
         </div>
 
-        {/* RESEARCH BANNERS (4 COLS) */}
-        <div className="col-span-12 lg:col-span-4 flex flex-col gap-4">
-          <div
-            onClick={() => setPanel("research")}
-            className="glass-card p-5 rounded-2xl border border-[var(--gold)]/30 bg-[var(--gold)]/5 cursor-pointer hover:border-[var(--gold)] transition-all"
-          >
-            <div className="flex items-center gap-3 mb-2">
-              <Sparkles className="text-[var(--gold)]" size={20} />
-              <h3 className="font-mono text-xs font-bold text-white uppercase tracking-wider">
-                {t("panel_ai_research", language)}
-              </h3>
-            </div>
-            <p className="text-xs text-slate-300">
-              Generate streaming institutional equity memos powered by Gemini 2.5.
-            </p>
-          </div>
+        {/* RESEARCH BANNERS & WATCHLIST (4 COLS) */}
+        <div className="col-span-12 lg:col-span-4 flex flex-col gap-6">
+          <Watchlist />
 
-          <div
-            onClick={() => setPanel("shariah")}
-            className="glass-card p-5 rounded-2xl border border-[var(--emerald)]/30 bg-[var(--emerald)]/5 cursor-pointer hover:border-[var(--emerald)] transition-all"
-          >
-            <div className="flex items-center gap-3 mb-2">
-              <ShieldCheck className="text-[var(--emerald)]" size={20} />
-              <h3 className="font-mono text-xs font-bold text-white uppercase tracking-wider">
-                {t("panel_shariah", language)}
-              </h3>
+          <div className="flex flex-col gap-4">
+            <div
+              onClick={() => setPanel("research")}
+              className="glass-card p-5 rounded-2xl border border-[var(--gold)]/30 bg-[var(--gold)]/5 cursor-pointer hover:border-[var(--gold)] transition-all"
+            >
+              <div className="flex items-center gap-3 mb-2">
+                <Sparkles className="text-[var(--gold)]" size={20} />
+                <h3 className="font-mono text-xs font-bold text-white uppercase tracking-wider">
+                  {t("panel_ai_research", language)}
+                </h3>
+              </div>
+              <p className="text-xs text-slate-300">
+                Generate streaming institutional equity memos powered by Gemini 2.5.
+              </p>
             </div>
-            <p className="text-xs text-slate-300">
-              AAOIFI Standard No. 21 ratio checks & purification calculation.
-            </p>
-          </div>
 
-          <div
-            onClick={() => setPanel("screener")}
-            className="glass-card p-5 rounded-2xl border border-white/10 cursor-pointer hover:border-white/30 transition-all"
-          >
-            <div className="flex items-center gap-3 mb-2">
-              <Filter className="text-slate-300" size={20} />
-              <h3 className="font-mono text-xs font-bold text-white uppercase tracking-wider">
-                {t("panel_screener", language)}
-              </h3>
+            <div
+              onClick={() => setPanel("shariah")}
+              className="glass-card p-5 rounded-2xl border border-[var(--emerald)]/30 bg-[var(--emerald)]/5 cursor-pointer hover:border-[var(--emerald)] transition-all"
+            >
+              <div className="flex items-center gap-3 mb-2">
+                <ShieldCheck className="text-[var(--emerald)]" size={20} />
+                <h3 className="font-mono text-xs font-bold text-white uppercase tracking-wider">
+                  {t("panel_shariah", language)}
+                </h3>
+              </div>
+              <p className="text-xs text-slate-300">
+                AAOIFI Standard No. 21 ratio checks & purification calculation.
+              </p>
             </div>
-            <p className="text-xs text-slate-300">
-              Scan all Tadawul stocks with Heatmap & Table views.
-            </p>
+
+            <div
+              onClick={() => setPanel("screener")}
+              className="glass-card p-5 rounded-2xl border border-white/10 cursor-pointer hover:border-white/30 transition-all"
+            >
+              <div className="flex items-center gap-3 mb-2">
+                <Filter className="text-slate-300" size={20} />
+                <h3 className="font-mono text-xs font-bold text-white uppercase tracking-wider">
+                  {t("panel_screener", language)}
+                </h3>
+              </div>
+              <p className="text-xs text-slate-300">
+                Scan all Tadawul stocks with Heatmap & Table views.
+              </p>
+            </div>
           </div>
         </div>
       </div>

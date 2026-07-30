@@ -3,6 +3,7 @@ import { Inter, JetBrains_Mono, Cairo, Cormorant_Garamond } from "next/font/goog
 import "./globals.css";
 import LoadingScreen from "@/components/ui/LoadingScreen";
 import QueryProvider from "@/components/providers/QueryProvider";
+import { UserProvider } from "@/components/providers/UserProvider";
 
 const inter = Inter({
   subsets: ["latin"],
@@ -45,8 +46,10 @@ export default function RootLayout({
     <html lang="en" className={`${inter.variable} ${jetbrainsMono.variable} ${cairo.variable} ${cormorant.variable}`}>
       <body className="bg-[var(--void)] text-[var(--text1)] min-h-screen">
         <QueryProvider>
-          <LoadingScreen />
-          {children}
+          <UserProvider>
+            <LoadingScreen />
+            {children}
+          </UserProvider>
         </QueryProvider>
       </body>
     </html>

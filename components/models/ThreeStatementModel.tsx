@@ -1,18 +1,24 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { motion } from "framer-motion";
-import { FileSpreadsheet, Download, FileText, ToggleLeft, ToggleRight, BarChart2 } from "lucide-react";
+import { FileSpreadsheet, Download, FileText, ToggleLeft, ToggleRight, BarChart2, Save, RefreshCw } from "lucide-react";
 import * as XLSX from "xlsx";
 import jsPDF from "jspdf";
 import autoTable from "jspdf-autotable";
 import { useTerminalStore } from "@/store/useTerminalStore";
 import { t } from "@/lib/i18n";
 import { panelReveal } from "@/lib/motion";
+import { createClient } from "@/lib/supabase/client";
+import { useUserContext } from "@/components/providers/UserProvider";
+import { PLAN_LIMITS } from "@/lib/billing/plan-limits";
+import UpgradeModal from "@/components/ui/UpgradeModal";
 
 export default function ThreeStatementModel() {
   const { activeTicker, language } = useTerminalStore();
   const isAr = language === 'ar';
+  const { user, subscription } = useUserContext();
+  const supabase = createClient();
 
   const [activeTab, setActiveTab] = useState<"income" | "balance" | "cashflow">("income");
   const [gaapMode, setGaapMode] = useState<"SAUDI_GAAP" | "IFRS">("SAUDI_GAAP");
@@ -22,6 +28,82 @@ export default function ThreeStatementModel() {
   const [growthRate, setGrowthRate] = useState<number>(10);
   const [cogsPct, setCogsPct] = useState<number>(65);
   const [opexPct, setOpexPct] = useState<number>(12);
+
+  // Saved Models State
+  const [savedModels, setSavedModels] = useState<any[]>([]);
+  const [modelName, setModelName] = useState("");
+  const [saving, setSaving] = useState(false);
+  const [showUpgradeModal, setShowUpgradeModal] = useState(false);
+
+  const loadSavedModels = async () => {
+    if (!user) return;
+    try {
+      const { data } = await supabase
+        .from("saved_models")
+        .select("*")
+        .eq("user_id", user.id)
+        .eq("model_type", "three_statement");
+      if (data) setSavedModels(data);
+    } catch (err) {
+      console.error("Failed to load Three-Statement models:", err);
+    }
+  };
+
+  const handleSaveModel = async () => {
+    if (!user || !modelName.trim()) return;
+
+    // Check Plan Limits
+    const plan = subscription?.plan || 'free';
+    const limit = PLAN_LIMITS[plan].savedModelsLimit;
+    if (savedModels.length >= limit) {
+      setShowUpgradeModal(true);
+      return;
+    }
+
+    setSaving(true);
+    const inputs = {
+      baseRev,
+      growthRate,
+      cogsPct,
+      opexPct,
+      gaapMode
+    };
+    try {
+      const { error } = await supabase.from("saved_models").insert({
+        user_id: user.id,
+        model_type: "three_statement",
+        ticker: activeTicker,
+        name: modelName,
+        inputs,
+        outputs: { projections }
+      });
+      if (!error) {
+        setModelName("");
+        loadSavedModels();
+      }
+    } catch (err) {
+      console.error("Save Three-Statement error:", err);
+    } finally {
+      setSaving(false);
+    }
+  };
+
+  const handleSelectModel = (model: any) => {
+    const { inputs } = model;
+    setBaseRev(inputs.baseRev);
+    setGrowthRate(inputs.growthRate);
+    setCogsPct(inputs.cogsPct);
+    setOpexPct(inputs.opexPct);
+    if (inputs.gaapMode) {
+      setGaapMode(inputs.gaapMode);
+    }
+  };
+
+  useEffect(() => {
+    if (user) {
+      loadSavedModels();
+    }
+  }, [user]);
 
   // Projections 5Y
   const projections = [1, 2, 3, 4, 5].map((yr) => {
@@ -101,21 +183,45 @@ export default function ThreeStatementModel() {
       dir={isAr ? "rtl" : "ltr"}
     >
       {/* HEADER ACTIONS & CONTROLS */}
-      <div className="glass-panel p-6 rounded-2xl border border-white/10 flex flex-col md:flex-row items-center justify-between gap-4">
-        <div className="flex items-center gap-3">
-          <FileSpreadsheet className="text-[var(--emerald)]" size={24} />
-          <div>
-            <h2 className="font-garamond text-2xl font-bold text-white">
-              {t("panel_three_statement", language)}
-            </h2>
-            <span className="text-xs font-mono text-slate-400">
-              Ticker: {activeTicker} · Mode: {gaapMode}
-            </span>
+      <div className="glass-panel p-6 rounded-2xl border border-white/10 flex flex-col xl:flex-row items-center justify-between gap-6">
+        <div className="flex flex-col md:flex-row items-start md:items-center gap-6 w-full xl:w-auto">
+          <div className="flex items-center gap-3">
+            <FileSpreadsheet className="text-[var(--emerald)]" size={24} />
+            <div>
+              <h2 className="font-garamond text-2xl font-bold text-white">
+                {t("panel_three_statement", language)}
+              </h2>
+              <span className="text-xs font-mono text-slate-400">
+                Ticker: {activeTicker} · Mode: {gaapMode}
+              </span>
+            </div>
           </div>
+
+          {/* Saved Models Dropdown */}
+          {user && savedModels.length > 0 && (
+            <div className="flex items-center gap-2 font-mono text-xs w-full md:w-auto">
+              <span className="text-slate-400 font-bold shrink-0">{t("saved_models_lbl", language)}:</span>
+              <select
+                onChange={(e) => {
+                  const m = savedModels.find((model) => model.id === e.target.value);
+                  if (m) handleSelectModel(m);
+                }}
+                className="bg-[#0A0B0D] border border-white/10 text-xs font-mono text-slate-300 px-3 py-1.5 rounded-lg focus:outline-none focus:border-[var(--emerald)] cursor-pointer min-w-[150px]"
+                defaultValue=""
+              >
+                <option value="" disabled>-- Load Save --</option>
+                {savedModels.map((m) => (
+                  <option key={m.id} value={m.id}>
+                    {m.name}
+                  </option>
+                ))}
+              </select>
+            </div>
+          )}
         </div>
 
         {/* CONTROLS */}
-        <div className="flex flex-wrap items-center gap-3 font-mono text-xs">
+        <div className="flex flex-wrap items-center gap-3 font-mono text-xs w-full xl:w-auto justify-start xl:justify-end">
           {/* GAAP / IFRS TOGGLE */}
           <button
             onClick={() => setGaapMode(gaapMode === "SAUDI_GAAP" ? "IFRS" : "SAUDI_GAAP")}
@@ -124,6 +230,27 @@ export default function ThreeStatementModel() {
             {gaapMode === "SAUDI_GAAP" ? <ToggleRight size={16} /> : <ToggleLeft size={16} />}
             <span>{gaapMode === "SAUDI_GAAP" ? "Saudi GAAP (Zakat 2.5%)" : "IFRS (Corp Tax 20%)"}</span>
           </button>
+
+          {/* Save Model Inputs */}
+          {user && (
+            <div className="flex items-center gap-2">
+              <input
+                type="text"
+                value={modelName}
+                onChange={(e) => setModelName(e.target.value)}
+                placeholder={t("model_name_placeholder", language)}
+                className="bg-[#0A0B0D] border border-white/10 text-xs font-mono text-white px-3 py-1.5 rounded-lg focus:outline-none focus:border-[var(--emerald)] max-w-[150px]"
+              />
+              <button
+                onClick={handleSaveModel}
+                disabled={saving || !modelName.trim()}
+                className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-white/5 border border-white/10 hover:bg-white/10 text-white font-bold transition-all disabled:opacity-50 cursor-pointer"
+              >
+                {saving ? <RefreshCw size={14} className="animate-spin" /> : <Save size={14} />}
+                <span>{t("save_model_btn", language)}</span>
+              </button>
+            </div>
+          )}
 
           <button
             onClick={exportExcel}
@@ -298,6 +425,11 @@ export default function ThreeStatementModel() {
           </tbody>
         </table>
       </div>
+
+      <UpgradeModal 
+        isOpen={showUpgradeModal} 
+        onClose={() => setShowUpgradeModal(false)} 
+      />
     </motion.div>
   );
 }

@@ -129,7 +129,55 @@ export const translations = {
     div_yield: "Div Yield",
     high_52w: "52W High",
     low_52w: "52W Low",
-    date: "Date"
+    date: "Date",
+    
+    // SaaS Auth
+    login_title: "Access Sovereign Terminal",
+    login_subtitle: "Sign in to your institutional account to access live data, models, and AI research.",
+    email_label: "Institutional Email",
+    password_label: "Secure Password",
+    forgot_password: "Forgot password?",
+    login_button: "Secure Authorization",
+    no_account: "Don't have an institutional credential?",
+    signup_link: "Register Account",
+    signup_title: "Create Institutional Account",
+    signup_subtitle: "Register below to initialize your workspace and financial intelligence dashboard.",
+    full_name_label: "Full Name",
+    company_name_label: "Organization / Company",
+    already_have_account: "Already registered?",
+    login_link: "Sign In",
+    reset_password_title: "Reset Access Password",
+    reset_password_subtitle: "Enter your email to receive a recovery link.",
+    send_reset_link: "Send Recovery Link",
+    back_to_login: "Back to Secure Login",
+    
+    // SaaS Billing & Pricing
+    pricing_title: "Sovereign Plan Subscriptions",
+    pricing_subtitle: "Select the tier tailored to your firm's research depth and capital requirements.",
+    free_plan_name: "Free Terminal",
+    pro_plan_name: "Pro Professional",
+    inst_plan_name: "Institutional Sovereign",
+    upgrade_cta: "Upgrade Tier",
+    current_plan: "Active Tier",
+    upgrade_modal_title: "Access Restricted",
+    upgrade_modal_desc: "You have reached the monthly limit for this resource on your current plan. Upgrade to a premium plan to continue.",
+    upgrade_now: "Upgrade Account",
+    cancel_action: "Dismiss",
+    billing_portal_btn: "Manage Subscription",
+
+    // Models Save
+    save_model_btn: "Save Model",
+    saved_models_lbl: "Saved Models",
+    save_success: "Model saved successfully",
+    load_success: "Model loaded successfully",
+    no_saved_models: "No saved models found",
+    model_name_placeholder: "Enter model name...",
+
+    // Watchlist
+    watchlist_title: "Corporate Watchlist",
+    add_to_watchlist: "Add Ticker",
+    remove_from_watchlist: "Remove Ticker",
+    no_watchlist_tickers: "No stocks in watchlist. Search and add tickers."
   },
   ar: {
     // Brand & Identity
@@ -259,7 +307,55 @@ export const translations = {
     div_yield: "عائد التوزيعات",
     high_52w: "أعلى 52 أسبوع",
     low_52w: "أدنى 52 أسبوع",
-    date: "التاريخ"
+    date: "التاريخ",
+
+    // SaaS Auth
+    login_title: "الدخول إلى المنصة السيادية",
+    login_subtitle: "سجل الدخول بحسابك المؤسسي للوصول إلى البيانات الحية والنماذج وأبحاث الذكاء الاصطناعي.",
+    email_label: "البريد الإلكتروني المؤسسي",
+    password_label: "كلمة المرور الآمنة",
+    forgot_password: "هل نسيت كلمة المرور؟",
+    login_button: "تفويض آمن بالدخول",
+    no_account: "ليس لديك حساب مؤسسي؟",
+    signup_link: "تسجيل حساب جديد",
+    signup_title: "إنشاء حساب مؤسسي",
+    signup_subtitle: "سجل بياناتك أدناه لتهيئة بيئة العمل ولوحة الاستخبارات المالية الخاصة بك.",
+    full_name_label: "الاسم الكامل",
+    company_name_label: "الجهة / الشركة",
+    already_have_account: "لديك حساب بالفعل؟",
+    login_link: "تسجيل الدخول",
+    reset_password_title: "إعادة تعيين كلمة المرور",
+    reset_password_subtitle: "أدخل بريدك الإلكتروني لتلقي رابط استعادة الحساب.",
+    send_reset_link: "إرسال رابط الاستعادة",
+    back_to_login: "العودة لتسجيل الدخول الآمن",
+
+    // SaaS Billing & Pricing
+    pricing_title: "الاشتراكات والخطط السيادية",
+    pricing_subtitle: "اختر الفئة المصممة خصيصاً لعمق أبحاث شركتك ومتطلبات رأس المال.",
+    free_plan_name: "المنصة المجانية",
+    pro_plan_name: "الاحترافية (Pro)",
+    inst_plan_name: "المؤسسية السيادية",
+    upgrade_cta: "ترقية الاشتراك",
+    current_plan: "الفئة النشطة",
+    upgrade_modal_title: "الوصول محدود",
+    upgrade_modal_desc: "لقد وصلت إلى الحد الأقصى المسموح به لهذا المورد في خطتك الحالية. يرجى الترقية إلى خطة مميزة للمتابعة.",
+    upgrade_now: "ترقية الحساب الآن",
+    cancel_action: "إلغاء",
+    billing_portal_btn: "إدارة الاشتراك",
+
+    // Models Save
+    save_model_btn: "حفظ النموذج",
+    saved_models_lbl: "النماذج المحفوظة",
+    save_success: "تم حفظ النموذج بنجاح",
+    load_success: "تم تحميل النموذج بنجاح",
+    no_saved_models: "لا توجد نماذج محفوظة",
+    model_name_placeholder: "أدخل اسم النموذج...",
+
+    // Watchlist
+    watchlist_title: "قائمة المراقبة المؤسسية",
+    add_to_watchlist: "إضافة سهم",
+    remove_from_watchlist: "حذف سهم",
+    no_watchlist_tickers: "لا توجد أسهم في قائمة المراقبة. ابحث وأضف رموزاً."
   }
 };
 

@@ -1,16 +1,22 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { motion } from "framer-motion";
-import { Layers, PieChart, TrendingUp, DollarSign, Calculator, RefreshCw } from "lucide-react";
+import { Layers, PieChart, TrendingUp, DollarSign, Calculator, RefreshCw, Save } from "lucide-react";
 import { ResponsiveContainer, BarChart, Bar, XAxis, YAxis, Tooltip, Cell, PieChart as RePieChart, Pie } from "recharts";
 import { useTerminalStore } from "@/store/useTerminalStore";
 import { t } from "@/lib/i18n";
 import { panelReveal } from "@/lib/motion";
+import { createClient } from "@/lib/supabase/client";
+import { useUserContext } from "@/components/providers/UserProvider";
+import { PLAN_LIMITS } from "@/lib/billing/plan-limits";
+import UpgradeModal from "@/components/ui/UpgradeModal";
 
 export default function LBOModel() {
   const { activeTicker, language } = useTerminalStore();
   const isAr = language === 'ar';
+  const { user, subscription } = useUserContext();
+  const supabase = createClient();
 
   const [purchasePrice, setPurchasePrice] = useState<number>(50000);
   const [ebitdaMultiple, setEbitdaMultiple] = useState<number>(12);
@@ -23,6 +29,92 @@ export default function LBOModel() {
   const [pikRate, setPikRate] = useState<number>(12.0);
   const [holdPeriod, setHoldPeriod] = useState<number>(5);
   const [exitMultiple, setExitMultiple] = useState<number>(11);
+
+  // Saved Models State
+  const [savedModels, setSavedModels] = useState<any[]>([]);
+  const [modelName, setModelName] = useState("");
+  const [saving, setSaving] = useState(false);
+  const [showUpgradeModal, setShowUpgradeModal] = useState(false);
+
+  const loadSavedModels = async () => {
+    if (!user) return;
+    try {
+      const { data } = await supabase
+        .from("saved_models")
+        .select("*")
+        .eq("user_id", user.id)
+        .eq("model_type", "lbo");
+      if (data) setSavedModels(data);
+    } catch (err) {
+      console.error("Failed to load LBO models:", err);
+    }
+  };
+
+  const handleSaveModel = async () => {
+    if (!user || !modelName.trim()) return;
+
+    // Check Plan Limits
+    const plan = subscription?.plan || 'free';
+    const limit = PLAN_LIMITS[plan].savedModelsLimit;
+    if (savedModels.length >= limit) {
+      setShowUpgradeModal(true);
+      return;
+    }
+
+    setSaving(true);
+    const inputs = {
+      purchasePrice,
+      ebitdaMultiple,
+      mgmtEquityPct,
+      seniorDebt,
+      seniorRate,
+      mezzDebt,
+      mezzRate,
+      pikNotes,
+      pikRate,
+      holdPeriod,
+      exitMultiple
+    };
+    try {
+      const { error } = await supabase.from("saved_models").insert({
+        user_id: user.id,
+        model_type: "lbo",
+        ticker: activeTicker,
+        name: modelName,
+        inputs,
+        outputs: { moic, irr }
+      });
+      if (!error) {
+        setModelName("");
+        loadSavedModels();
+      }
+    } catch (err) {
+      console.error("Save LBO error:", err);
+    } finally {
+      setSaving(false);
+    }
+  };
+
+  const handleSelectModel = (model: any) => {
+    const { inputs } = model;
+    setPurchasePrice(inputs.purchasePrice);
+    setEbitdaMultiple(inputs.ebitdaMultiple);
+    setMgmtEquityPct(inputs.mgmtEquityPct);
+    setSeniorDebt(inputs.seniorDebt);
+    setSeniorRate(inputs.seniorRate);
+    setMezzDebt(inputs.mezzDebt);
+    setMezzRate(inputs.mezzRate);
+    setPikNotes(inputs.pikNotes);
+    setPikRate(inputs.pikRate);
+    setHoldPeriod(inputs.holdPeriod);
+    setExitMultiple(inputs.exitMultiple);
+  };
+
+  useEffect(() => {
+    if (user) {
+      loadSavedModels();
+    }
+  }, [user]);
 
   // LBO computations
   const totalDebt = seniorDebt + mezzDebt + pikNotes;
@@ -79,15 +171,41 @@ export default function LBOModel() {
       {/* LEFT COLUMN: INPUT PARAMETERS (4 COLS) */}
       <div className="col-span-12 lg:col-span-4 space-y-6">
         <div className="glass-panel p-6 rounded-2xl border border-white/10 space-y-4">
-          <div className="flex items-center gap-3 pb-3 border-b border-white/10">
-            <Layers className="text-[var(--gold)]" size={22} />
-            <div>
-              <h2 className="font-garamond text-xl font-bold text-white">
-                {t("lbo_inputs", language)}
-              </h2>
-              <span className="text-[10px] font-mono text-slate-400">Target: {activeTicker}</span>
+          <div className="flex items-center justify-between pb-3 border-b border-white/10">
+            <div className="flex items-center gap-3">
+              <Layers className="text-[var(--gold)]" size={22} />
+              <div>
+                <h2 className="font-garamond text-xl font-bold text-white">
+                  {t("lbo_inputs", language)}
+                </h2>
+                <span className="text-[10px] font-mono text-slate-400">Target: {activeTicker}</span>
+              </div>
             </div>
           </div>
+
+          {/* Saved Models Dropdown */}
+          {user && savedModels.length > 0 && (
+            <div className="space-y-1.5 pb-3 border-b border-white/5 font-mono text-[11px]">
+              <label className="text-slate-400 block font-bold uppercase text-[9px] tracking-wider">
+                {t("saved_models_lbl", language)}
+              </label>
+              <select
+                onChange={(e) => {
+                  const m = savedModels.find((model) => model.id === e.target.value);
+                  if (m) handleSelectModel(m);
+                }}
+                className="w-full bg-[#0A0B0D] border border-white/10 text-xs font-mono text-slate-300 px-2 py-1.5 rounded-lg focus:outline-none focus:border-[var(--emerald)] cursor-pointer"
+                defaultValue=""
+              >
+                <option value="" disabled>-- Load Saved Model --</option>
+                {savedModels.map((m) => (
+                  <option key={m.id} value={m.id}>
+                    {m.name} ({m.ticker})
+                  </option>
+                ))}
+              </select>
+            </div>
+          )}
 
           <div className="space-y-3 font-mono text-xs">
             <div className="flex justify-between items-center">
@@ -179,6 +297,27 @@ export default function LBOModel() {
               />
             </div>
           </div>
+
+          {/* Save Model Action */}
+          {user && (
+            <div className="pt-3 border-t border-white/5 space-y-2">
+              <input
+                type="text"
+                value={modelName}
+                onChange={(e) => setModelName(e.target.value)}
+                placeholder={t("model_name_placeholder", language)}
+                className="w-full bg-[#0A0B0D] border border-white/10 text-xs font-mono text-white px-3 py-2 rounded-xl focus:outline-none focus:border-[var(--emerald)]"
+              />
+              <button
+                onClick={handleSaveModel}
+                disabled={saving || !modelName.trim()}
+                className="w-full py-2.5 rounded-xl bg-white/5 border border-white/10 hover:bg-white/10 text-white font-mono font-bold text-xs uppercase tracking-wider flex items-center justify-center gap-2 transition-all disabled:opacity-50 cursor-pointer"
+              >
+                {saving ? <RefreshCw size={12} className="animate-spin" /> : <Save size={12} />}
+                <span>{t("save_model_btn", language)}</span>
+              </button>
+            </div>
+          )}
         </div>
       </div>
 
@@ -290,6 +429,11 @@ export default function LBOModel() {
           </div>
         </div>
       </div>
+
+      <UpgradeModal 
+        isOpen={showUpgradeModal} 
+        onClose={() => setShowUpgradeModal(false)} 
+      />
     </motion.div>
   );
 }

@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { motion } from "framer-motion";
 import { Sparkles, Download, Copy, Check, Send, History, Cpu, FileText } from "lucide-react";
 import ReactMarkdown from "react-markdown";
@@ -8,17 +8,71 @@ import jsPDF from "jspdf";
 import { useTerminalStore } from "@/store/useTerminalStore";
 import { t } from "@/lib/i18n";
 import { panelReveal } from "@/lib/motion";
+import { createClient } from "@/lib/supabase/client";
+import { useUserContext } from "@/components/providers/UserProvider";
+import UpgradeModal from "@/components/ui/UpgradeModal";
 
 export default function AIResearch() {
   const { activeTicker, setTicker, language } = useTerminalStore();
   const isAr = language === 'ar';
+  const { user } = useUserContext();
+  const supabase = createClient();
 
   const [inputTicker, setInputTicker] = useState(activeTicker);
   const [customQuery, setCustomQuery] = useState("");
   const [reportMarkdown, setReportMarkdown] = useState<string>("");
   const [isGenerating, setIsGenerating] = useState(false);
   const [copied, setCopied] = useState(false);
-  const [recentHistory, setRecentHistory] = useState<string[]>(["2222.SR", "1120.SR", "1180.SR", "2010.SR", "7010.SR"]);
+  const [showUpgradeModal, setShowUpgradeModal] = useState(false);
+  const [dbHistory, setDbHistory] = useState<any[]>([]);
+
+  const loadHistory = async () => {
+    if (!user) return;
+    try {
+      const { data } = await supabase
+        .from("ai_research_reports")
+        .select("id, ticker, created_at")
+        .eq("user_id", user.id)
+        .order("created_at", { ascending: false });
+      if (data) {
+        // Group by ticker to get unique list
+        const unique: any[] = [];
+        const seen = new Set();
+        for (const item of data) {
+          if (!seen.has(item.ticker)) {
+            seen.add(item.ticker);
+            unique.push(item);
+          }
+        }
+        setDbHistory(unique.slice(0, 5));
+      }
+    } catch (err) {
+      console.error("Error loading research history:", err);
+    }
+  };
+
+  const loadSavedReport = async (reportId: string) => {
+    try {
+      const { data } = await supabase
+        .from("ai_research_reports")
+        .select("content, ticker")
+        .eq("id", reportId)
+        .single();
+      if (data) {
+        setReportMarkdown(data.content);
+        setInputTicker(data.ticker);
+        setTicker(data.ticker);
+      }
+    } catch (err) {
+      console.error("Error loading saved report:", err);
+    }
+  };
+
+  useEffect(() => {
+    if (user) {
+      loadHistory();
+    }
+  }, [user]);
 
   const handleGenerateReport = async (target: string = inputTicker) => {
     if (!target) return;
@@ -26,6 +80,25 @@ export default function AIResearch() {
     setReportMarkdown("");
 
     try {
+      // Step 0: Check DB Cache
+      if (user) {
+        const { data: cached } = await supabase
+          .from("ai_research_reports")
+          .select("content")
+          .eq("user_id", user.id)
+          .eq("ticker", target)
+          .eq("language", language)
+          .order("created_at", { ascending: false })
+          .limit(1)
+          .maybeSingle();
+
+        if (cached?.content) {
+          setReportMarkdown(cached.content);
+          setIsGenerating(false);
+          return;
+        }
+      }
+
       // Step 1: Fetch fundamentals
       const fundRes = await fetch(`/api/market/fundamentals?ticker=${target}`);
       const fundData = await fundRes.json();
@@ -41,6 +114,12 @@ export default function AIResearch() {
           language
         }),
       });
+
+      if (response.status === 402) {
+        setShowUpgradeModal(true);
+        setIsGenerating(false);
+        return;
+      }
 
       if (!response.ok) {
         throw new Error("AI research generation service failed");
@@ -82,8 +161,15 @@ export default function AIResearch() {
         }
       }
 
-      if (!recentHistory.includes(target)) {
-        setRecentHistory((prev) => [target, ...prev.slice(0, 4)]);
+      // Save newly generated report to DB cache
+      if (user && accumulated) {
+        await supabase.from("ai_research_reports").insert({
+          user_id: user.id,
+          ticker: target,
+          language,
+          content: accumulated
+        });
+        loadHistory();
       }
     } catch (error) {
       console.error("AI Research Error:", error);
@@ -213,19 +299,31 @@ export default function AIResearch() {
             <span>{t("recent_searches", language)}</span>
           </div>
           <div className="flex flex-wrap gap-2">
-            {recentHistory.map((tck) => (
-              <button
-                key={tck}
-                onClick={() => {
-                  setInputTicker(tck);
-                  setTicker(tck);
-                  handleGenerateReport(tck);
-                }}
-                className="px-3 py-1.5 rounded bg-white/5 hover:bg-[var(--emerald)]/20 border border-white/10 hover:border-[var(--emerald)] text-xs font-mono text-slate-200 transition-colors cursor-pointer"
-              >
-                {tck}
-              </button>
-            ))}
+            {dbHistory.length > 0 ? (
+              dbHistory.map((item) => (
+                <button
+                  key={item.id}
+                  onClick={() => loadSavedReport(item.id)}
+                  className="px-3 py-1.5 rounded bg-white/5 hover:bg-[var(--emerald)]/20 border border-white/10 hover:border-[var(--emerald)] text-xs font-mono text-slate-200 transition-colors cursor-pointer"
+                >
+                  {item.ticker}
+                </button>
+              ))
+            ) : (
+              ["2222.SR", "1120.SR", "1180.SR", "2010.SR", "7010.SR"].map((tck) => (
+                <button
+                  key={tck}
+                  onClick={() => {
+                    setInputTicker(tck);
+                    setTicker(tck);
+                    handleGenerateReport(tck);
+                  }}
+                  className="px-3 py-1.5 rounded bg-white/5 hover:bg-[var(--emerald)]/20 border border-white/10 hover:border-[var(--emerald)] text-xs font-mono text-slate-200 transition-colors cursor-pointer"
+                >
+                  {tck}
+                </button>
+              ))
+            )}
           </div>
         </div>
       </div>
@@ -286,6 +384,11 @@ export default function AIResearch() {
           )}
         </div>
       </div>
+
+      <UpgradeModal 
+        isOpen={showUpgradeModal} 
+        onClose={() => setShowUpgradeModal(false)} 
+      />
     </motion.div>
   );
 }

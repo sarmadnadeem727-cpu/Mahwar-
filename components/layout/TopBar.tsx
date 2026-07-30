@@ -1,9 +1,13 @@
 "use client";
 
-import React, { useState, useEffect } from "react";
-import { Search, Globe, TrendingUp, TrendingDown, DollarSign } from "lucide-react";
+import React, { useState, useEffect, useRef } from "react";
+import { Search, Globe, TrendingUp, TrendingDown, DollarSign, User as UserIcon, LogOut, CreditCard, ChevronDown } from "lucide-react";
 import { useTerminalStore, Currency } from "@/store/useTerminalStore";
 import { t } from "@/lib/i18n";
+import { useUserContext } from "@/components/providers/UserProvider";
+import { createClient } from "@/lib/supabase/client";
+import { useRouter } from "next/navigation";
+import Link from "next/link";
 
 const POPULAR_TICKERS = [
   { symbol: "2222.SR", name: "Saudi Aramco", price: "31.45", change: "+0.80%", positive: true },
@@ -20,6 +24,28 @@ export default function TopBar() {
     language, setLanguage, currency, setCurrency 
   } = useTerminalStore();
   const isAr = language === 'ar';
+
+  const { user, profile, subscription, isLoading } = useUserContext();
+  const supabase = createClient();
+  const router = useRouter();
+  const [userMenuOpen, setUserMenuOpen] = useState(false);
+  const userMenuRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    function handleClickOutside(event: MouseEvent) {
+      if (userMenuRef.current && !userMenuRef.current.contains(event.target as Node)) {
+        setUserMenuOpen(false);
+      }
+    }
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => document.removeEventListener("mousedown", handleClickOutside);
+  }, []);
+
+  const handleSignOut = async () => {
+    await supabase.auth.signOut();
+    router.push("/login");
+    router.refresh();
+  };
 
   const [query, setQuery] = useState("");
   const [dropdownOpen, setDropdownOpen] = useState(false);
@@ -146,6 +172,71 @@ export default function TopBar() {
           <Globe size={13} className="text-[var(--gold)]" />
           <span>{isAr ? "English" : "العربية"}</span>
         </button>
+
+        {/* User Profile Menu */}
+        {user && (
+          <div className="relative" ref={userMenuRef}>
+            <button
+              onClick={() => setUserMenuOpen(!userMenuOpen)}
+              className="flex items-center gap-2 px-3 py-1.5 bg-[#0A0B0D] border border-white/10 hover:bg-white/5 text-slate-200 rounded-lg transition-colors cursor-pointer"
+            >
+              <div className="w-5 h-5 rounded-full bg-[var(--emerald)] flex items-center justify-center text-[10px] font-bold text-white uppercase font-mono">
+                {profile?.full_name?.charAt(0) || user.email?.charAt(0) || "U"}
+              </div>
+              <span className="hidden sm:inline font-bold font-mono text-[11px] max-w-[80px] truncate">
+                {profile?.full_name || user.email}
+              </span>
+              <ChevronDown size={12} className="text-slate-400" />
+            </button>
+
+            {userMenuOpen && (
+              <div className={`absolute top-full mt-1.5 ${isAr ? "left-0" : "right-0"} w-56 bg-[#14171A] border border-white/10 rounded-xl shadow-2xl overflow-hidden z-50 font-sans`}>
+                {/* Header */}
+                <div className="p-4 border-b border-white/5 space-y-1">
+                  <p className="text-xs font-bold text-white truncate">
+                    {profile?.full_name || "Institutional User"}
+                  </p>
+                  <p className="text-[10px] text-slate-400 truncate">{user.email}</p>
+                  {/* Badge */}
+                  <span className="inline-block mt-1.5 px-2 py-0.5 rounded-full text-[9px] font-bold uppercase tracking-widest bg-[var(--gold)]/10 text-[var(--gold)] border border-[var(--gold)]/20 font-mono">
+                    {subscription?.plan || "free"} plan
+                  </span>
+                </div>
+
+                {/* Body */}
+                <div className="p-1.5 space-y-0.5">
+                  {/* Manage billing */}
+                  {subscription?.plan && subscription?.plan !== "free" ? (
+                    <a
+                      href="/api/billing/portal"
+                      className="flex items-center gap-2.5 px-3 py-2 text-slate-300 hover:text-white hover:bg-white/5 rounded-lg text-xs transition-colors"
+                    >
+                      <CreditCard size={14} className="text-[var(--gold)]" />
+                      <span>{t("billing_portal_btn", language)}</span>
+                    </a>
+                  ) : (
+                    <Link
+                      href="/pricing"
+                      className="flex items-center gap-2.5 px-3 py-2 text-slate-300 hover:text-white hover:bg-white/5 rounded-lg text-xs transition-colors"
+                    >
+                      <CreditCard size={14} className="text-[var(--gold)]" />
+                      <span>{t("upgrade_cta", language)}</span>
+                    </Link>
+                  )}
+
+                  {/* Sign out */}
+                  <button
+                    onClick={handleSignOut}
+                    className="w-full flex items-center gap-2.5 px-3 py-2 text-red-400 hover:text-red-300 hover:bg-red-950/20 rounded-lg text-xs transition-colors text-left cursor-pointer"
+                  >
+                    <LogOut size={14} />
+                    <span>{isAr ? "تسجيل الخروج" : "Sign Out"}</span>
+                  </button>
+                </div>
+              </div>
+            )}
+          </div>
+        )}
       </div>
     </header>
   );
