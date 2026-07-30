@@ -2,12 +2,11 @@ import { NextRequest, NextResponse } from 'next/server';
 import { createClient } from '@supabase/supabase-js';
 import { createClient as createServerClient } from '@/lib/supabase/server';
 
-const supabaseService = createClient(
-  process.env.NEXT_PUBLIC_SUPABASE_URL!,
-  process.env.SUPABASE_SERVICE_ROLE_KEY!
-);
-
 export async function GET(req: NextRequest) {
+  const supabaseService = createClient(
+    process.env.NEXT_PUBLIC_SUPABASE_URL || 'dummy_url',
+    process.env.SUPABASE_SERVICE_ROLE_KEY || 'dummy_key'
+  );
   try {
     // 1. Verify that the logged in user is actually an admin
     const supabase = await createClient();
