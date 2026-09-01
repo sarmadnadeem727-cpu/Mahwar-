@@ -71,6 +71,7 @@ export default function AIResearch() {
       // Save to Zustand store
       updateSessionAnalysis("researchMemo", {
         content: completedText,
+        companyName: companyName,
         computedAt: new Date().toISOString()
       });
 

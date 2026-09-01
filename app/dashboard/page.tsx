@@ -9,6 +9,7 @@ import { useTerminalStore } from "@/store/useTerminalStore";
 
 // Lazy loading feature modules with zero SSR for performance optimization
 const IntelligenceHub = dynamic(() => import("@/components/features/IntelligenceHub"), { ssr: false });
+const MarketIntelligence = dynamic(() => import("@/components/features/MarketIntelligence"), { ssr: false });
 const AIResearch = dynamic(() => import("@/components/features/AIResearch"), { ssr: false });
 const ShariahScreening = dynamic(() => import("@/components/features/ShariahScreening"), { ssr: false });
 const CompanyComparator = dynamic(() => import("@/components/features/CompanyComparator"), { ssr: false });
@@ -23,15 +24,16 @@ export default function DashboardPage() {
 
   const renderPanel = () => {
     switch (activePanel) {
-      case "research":    return <AIResearch />;
-      case "shariah":     return <ShariahScreening />;
-      case "screener":    return <CompanyComparator />;
-      case "bi_report":   return <BIReportEngine />;
-      case "DCF":         return <DCFModel />;
-      case "LBO":         return <LBOModel />;
-      case "FS":          return <ThreeStatementModel />;
+      case "market_intel": return <MarketIntelligence />;
+      case "research":     return <AIResearch />;
+      case "shariah":      return <ShariahScreening />;
+      case "screener":     return <CompanyComparator />;
+      case "bi_report":    return <BIReportEngine />;
+      case "DCF":          return <DCFModel />;
+      case "LBO":          return <LBOModel />;
+      case "FS":           return <ThreeStatementModel />;
       case "hub":
-      default:            return <IntelligenceHub />;
+      default:             return <IntelligenceHub />;
     }
   };
 
@@ -58,7 +60,7 @@ export default function DashboardPage() {
               initial={{ opacity: 0, scale: 0.98 }}
               animate={{ opacity: 1, scale: 1 }}
               exit={{ opacity: 0, scale: 0.98 }}
-              transition={{ duration: 0.35, ease: [0.22, 1, 0.36, 1] }}
+              transition={{ duration: 0.25, ease: [0.22, 1, 0.36, 1] }}
             >
               {renderPanel()}
             </motion.div>

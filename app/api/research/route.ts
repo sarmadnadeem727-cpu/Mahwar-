@@ -1,10 +1,11 @@
 import { NextRequest } from 'next/server';
+import { getServerEnv } from '@/lib/env';
 
 export async function POST(req: NextRequest) {
-  const GEMINI_API_KEY = process.env.GOOGLE_API_KEY;
+  const { GEMINI_API_KEY } = getServerEnv();
   
   if (!GEMINI_API_KEY) {
-    return new Response(JSON.stringify({ error: 'Gemini API key is not configured' }), { 
+    return new Response(JSON.stringify({ error: 'Gemini API key is not configured. Please set GEMINI_API_KEY in .env.local or Vercel Environment Variables.' }), { 
       status: 500,
       headers: { 'Content-Type': 'application/json' }
     });

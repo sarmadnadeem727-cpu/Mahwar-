@@ -24,6 +24,7 @@ export const translations = {
     nav_models: "SOVEREIGN FINANCIAL MODELS",
     
     panel_hub: "Intelligence Hub",
+    panel_market_intel: "Market Intelligence",
     panel_live_market: "Live KSA Market",
     panel_technical: "Technical Charts",
     panel_ai_research: "AI Research Memos",
@@ -202,6 +203,7 @@ export const translations = {
     nav_models: "النماذج المالية السيادية",
     
     panel_hub: "مركز الاستخبارات",
+    panel_market_intel: "استخبارات السوق الخليجي",
     panel_live_market: "السوق السعودي المباشر",
     panel_technical: "الرسوم البيانية الفنية",
     panel_ai_research: "مذكرات أبحاث الذكاء الاصطناعي",

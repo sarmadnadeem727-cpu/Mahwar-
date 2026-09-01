@@ -32,8 +32,16 @@ const sourceSerif = Source_Serif_4({
 });
 
 export const metadata: Metadata = {
-  title: "Mahwar | محور - GCC Corporate Modeling Suite",
-  description: "The Axis of financial intelligence for GCC capital markets.",
+  title: "Mahwar (محور) — Sovereign Financial Intelligence Terminal | GCC Capital Markets",
+  description: "The Axis of financial intelligence for GCC capital markets. Institutional 5-year DCF valuation, LBO deal builder, AAOIFI Shariah screening, live market wire, and Gemini 2.5 AI equity research.",
+  openGraph: {
+    title: "Mahwar (محور) — Sovereign Intelligence Terminal",
+    description: "GCC Capital Markets Financial Intelligence, Institutional Valuation, AAOIFI Compliance & AI Research.",
+    url: "https://mahwar.vercel.app",
+    siteName: "Mahwar",
+    locale: "en_US",
+    type: "website",
+  },
 };
 
 export default function RootLayout({

@@ -4,6 +4,7 @@ export type Currency = 'SAR' | 'AED' | 'KWD' | 'BHD' | 'OMR' | 'QAR' | 'USD';
 export type Language = 'en' | 'ar';
 export type PanelType = 
   | "hub" 
+  | "market_intel"
   | "research" 
   | "shariah" 
   | "screener" // renamed/repurposed as Company Comparator

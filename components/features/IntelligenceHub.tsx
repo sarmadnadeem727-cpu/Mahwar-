@@ -1,20 +1,48 @@
 "use client";
 
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { motion } from "framer-motion";
 import { 
   BarChart3, Layers, FileSpreadsheet, Sparkles, ShieldCheck, 
-  Filter, FileText, ChevronRight, CheckCircle2, Clock
+  Filter, FileText, ChevronRight, CheckCircle2, Clock, Newspaper,
+  TrendingUp, Activity, ArrowUpRight, ArrowDownRight, Globe
 } from "lucide-react";
 import { useTerminalStore } from "@/store/useTerminalStore";
 import { t } from "@/lib/i18n";
 import { panelReveal } from "@/lib/motion";
+
+interface MarketMover {
+  ticker: string;
+  name: string;
+  nameAr: string;
+  price: string;
+  change: string;
+  isPositive: boolean;
+  market: string;
+}
+
+const GCC_MOVERS: MarketMover[] = [
+  { ticker: "2222.SR", name: "Saudi Aramco", nameAr: "أرامكو السعودية", price: "27.85 SAR", change: "+1.2%", isPositive: true, market: "TASI" },
+  { ticker: "1120.SR", name: "Al Rajhi Bank", nameAr: "مصرف الراجحي", price: "88.40 SAR", change: "+0.8%", isPositive: true, market: "TASI" },
+  { ticker: "EMAAR.AE", name: "Emaar Properties", nameAr: "إعمار العقارية", price: "8.65 AED", change: "+2.1%", isPositive: true, market: "DFM" },
+  { ticker: "QNBK.QA", name: "QNB Group", nameAr: "مجموعة QNB", price: "16.20 QAR", change: "-0.4%", isPositive: false, market: "QSE" },
+  { ticker: "NBK.KW", name: "National Bank of Kuwait", nameAr: "بنك الكويت الوطني", price: "890 KWF", change: "+0.3%", isPositive: true, market: "BK" },
+];
 
 export default function IntelligenceHub() {
   const { sessionAnalyses, setPanel, language } = useTerminalStore();
   const isAr = language === 'ar';
 
   const overviewCards = [
+    {
+      id: "market_intel" as const,
+      title: isAr ? "استخبارات السوق وأخبار الخليج" : "Market Intelligence & Wire",
+      desc: isAr ? "موجز الأخبار المالية وإعلانات الصناديق السيادية" : "Live institutional wire & GCC sovereign announcements",
+      icon: <Newspaper className="text-[var(--emerald)]" size={20} />,
+      hasData: true,
+      statusLabel: isAr ? "بث مباشر نشط" : "Live Streaming",
+      tag: "INTELLIGENCE"
+    },
     {
       id: "DCF" as const,
       title: t("panel_dcf", language),
@@ -92,19 +120,47 @@ export default function IntelligenceHub() {
       className="space-y-8 text-[#171717]"
       dir={isAr ? "rtl" : "ltr"}
     >
+      {/* GCC LIVE MOVERS TAPE */}
+      <div className="bg-slate-50 border border-slate-200 rounded-xl p-3 shadow-xs">
+        <div className="flex items-center justify-between gap-4 overflow-x-auto text-xs font-mono">
+          <div className="flex items-center gap-2 text-[var(--emerald)] font-bold shrink-0">
+            <Activity size={14} className="animate-pulse" />
+            <span className="uppercase">{isAr ? "مؤشرات الخليج" : "GCC Bourses"}</span>
+          </div>
+
+          <div className="flex items-center gap-4 shrink-0">
+            {GCC_MOVERS.map((mover) => (
+              <div 
+                key={mover.ticker}
+                onClick={() => setPanel("market_intel")}
+                className="flex items-center gap-2 px-2.5 py-1 rounded bg-white border border-slate-200 hover:border-[var(--emerald)] transition-colors cursor-pointer"
+              >
+                <span className="font-bold text-slate-700">{mover.ticker}</span>
+                <span className="text-slate-500 font-sans text-[11px]">{isAr ? mover.nameAr : mover.name}</span>
+                <span className="font-semibold text-[#171717]">{mover.price}</span>
+                <span className={`flex items-center gap-0.5 font-bold ${mover.isPositive ? "text-emerald-600" : "text-rose-600"}`}>
+                  {mover.isPositive ? <ArrowUpRight size={12} /> : <ArrowDownRight size={12} />}
+                  <span>{mover.change}</span>
+                </span>
+              </div>
+            ))}
+          </div>
+        </div>
+      </div>
+
       {/* HUB HEADER BANNER */}
       <div className="bg-[#F7F7F5] p-8 rounded-xl border border-slate-200 flex flex-col md:flex-row justify-between items-start md:items-center gap-6 shadow-sm">
         <div className="space-y-2">
           <span className="px-3 py-1 text-[10px] font-mono text-[var(--emerald)] bg-[var(--emerald)]/10 border border-[var(--emerald)]/20 rounded-full font-bold uppercase tracking-wider">
-            {isAr ? "محطة عمل محور" : "Mahwar Workspace"}
+            {isAr ? "محطة عمل محور السيادية" : "Mahwar Sovereign Terminal"}
           </span>
           <h2 className="font-serif text-3xl font-bold text-[#171717] tracking-wide">
-            {isAr ? "لوحة التحكم ومركز التحليلات" : "Sovereign Analytics Workspace"}
+            {isAr ? "لوحة التحكم ومركز التحليلات المؤسسية" : "Sovereign Analytics & Intelligence Hub"}
           </h2>
           <p className="text-slate-600 text-xs leading-relaxed max-w-xl font-mono">
             {isAr 
-              ? "أدخل بياناتك المالية المخصصة، وقم بإجراء النمذجة الاستثمارية، الفحص الشرعي، وبث أبحاث الذكاء الاصطناعي، ثم أنشئ تقريرًا متكاملاً للتصدير." 
-              : "Enter your deal or company figures, run calculations, screening & AI research, and export a consolidated PDF synthesis report of your workspace session."
+              ? "استكشف بيانات الأسواق، النمذجة الاستثمارية المتقدمة (DCF & LBO)، الفحص الشرعي، وبث أبحاث الذكاء الاصطناعي مع التصدير المؤسسي." 
+              : "Access live GCC intelligence, build institutional valuation models (DCF & LBO), verify AAOIFI Shariah compliance, and synthesize outputs into executive PDF reports."
             }
           </p>
         </div>

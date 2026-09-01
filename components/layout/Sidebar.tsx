@@ -2,7 +2,7 @@
 
 import React from "react";
 import { 
-  Columns, Sparkles, ShieldCheck, Grid3X3, BarChart3, Layers, FileSpreadsheet, FileText
+  Columns, Sparkles, ShieldCheck, Grid3X3, BarChart3, Layers, FileSpreadsheet, FileText, Newspaper
 } from "lucide-react";
 import { useTerminalStore, PanelType } from "@/store/useTerminalStore";
 import { t } from "@/lib/i18n";
@@ -22,6 +22,7 @@ const NAV_GROUPS: NavGroup[] = [
     labelKey: "nav_platform",
     items: [
       { id: "hub", icon: <Columns size={15} />, labelKey: "panel_hub" },
+      { id: "market_intel", icon: <Newspaper size={15} />, labelKey: "panel_market_intel" },
       { id: "screener", icon: <Grid3X3 size={15} />, labelKey: "panel_screener" },
     ],
   },
@@ -50,7 +51,10 @@ export default function Sidebar() {
   return (
     <aside className="w-[220px] min-w-[220px] bg-slate-50 border-r border-slate-200 flex flex-col h-screen sticky top-0 z-30 select-none no-print" dir={isAr ? "rtl" : "ltr"}>
       {/* BRAND LOGO HEADER */}
-      <div className="p-4 border-b border-slate-200 flex items-center gap-3 bg-slate-100/55">
+      <div 
+        onClick={() => setPanel("hub")}
+        className="p-4 border-b border-slate-200 flex items-center gap-3 bg-slate-100/55 cursor-pointer hover:bg-slate-150 transition-colors"
+      >
         <MahwarLogo size={32} animate={true} />
         <div className="flex flex-col">
           <span className="font-mono text-sm font-extrabold tracking-[0.2em] text-[#171717]">
@@ -108,8 +112,8 @@ export default function Sidebar() {
         </div>
 
         <div className="text-[9px] font-mono text-slate-500 border-t border-slate-200/60 pt-1.5 flex justify-between">
-          <span>{isAr ? "نسخة غير محدودة" : "Full Free Access"}</span>
-          <span className="text-[#171717] font-bold">Offline Sandbox</span>
+          <span>{isAr ? "وصول غير محدود" : "Sovereign Access"}</span>
+          <span className="text-[#171717] font-bold">GCC Live</span>
         </div>
       </div>
     </aside>

@@ -85,12 +85,19 @@ export default function BIReportEngine() {
     window.print();
   };
 
-  const isDcfActive = selectedModules.includes("dcf") && sessionAnalyses.dcf;
-  const isLboActive = selectedModules.includes("lbo") && sessionAnalyses.lbo;
-  const isThreeStatementActive = selectedModules.includes("threeStatement") && sessionAnalyses.threeStatement;
-  const isShariahActive = selectedModules.includes("shariah") && sessionAnalyses.shariah;
-  const isComparatorActive = selectedModules.includes("comparator") && sessionAnalyses.comparator;
-  const isResearchMemoActive = selectedModules.includes("researchMemo") && sessionAnalyses.researchMemo;
+  const dcfData = sessionAnalyses.dcf;
+  const lboData = sessionAnalyses.lbo;
+  const threeStatementData = sessionAnalyses.threeStatement;
+  const shariahData = sessionAnalyses.shariah;
+  const comparatorData = sessionAnalyses.comparator;
+  const researchMemoData = sessionAnalyses.researchMemo;
+
+  const isDcfActive = selectedModules.includes("dcf") && !!dcfData;
+  const isLboActive = selectedModules.includes("lbo") && !!lboData;
+  const isThreeStatementActive = selectedModules.includes("threeStatement") && !!threeStatementData;
+  const isShariahActive = selectedModules.includes("shariah") && !!shariahData;
+  const isComparatorActive = selectedModules.includes("comparator") && !!comparatorData;
+  const isResearchMemoActive = selectedModules.includes("researchMemo") && !!researchMemoData;
 
   const hasAnySelection = selectedModules.length > 0;
 
@@ -256,7 +263,7 @@ export default function BIReportEngine() {
           <div className="space-y-12">
             
             {/* 1. DCF MODEL SECTION */}
-            {isDcfActive && (
+            {isDcfActive && dcfData && (
               <div className="space-y-4 border-b border-slate-200 pb-8">
                 <h3 className="font-serif text-xl font-bold text-[#171717] flex items-center gap-2">
                   <span className="text-[var(--emerald)]">◎</span>
@@ -269,15 +276,15 @@ export default function BIReportEngine() {
                 <div className="grid grid-cols-3 gap-4 font-mono text-xs text-center py-2">
                   <div className="p-3 bg-slate-50 border border-slate-200 rounded-lg">
                     <span className="text-slate-500 block text-[9px]">WACC</span>
-                    <span className="text-[#171717] font-bold text-sm">{sessionAnalyses.dcf.outputs.wacc}%</span>
+                    <span className="text-[#171717] font-bold text-sm">{dcfData.outputs.wacc}%</span>
                   </div>
                   <div className="p-3 bg-emerald-50 border border-emerald-200 rounded-lg">
                     <span className="text-[var(--emerald)] block text-[9px] font-bold">Intrinsic Value</span>
-                    <span className="text-[var(--emerald)] font-bold text-sm">SAR {sessionAnalyses.dcf.outputs.intrinsicValuePerShare}</span>
+                    <span className="text-[var(--emerald)] font-bold text-sm">SAR {dcfData.outputs.intrinsicValuePerShare}</span>
                   </div>
                   <div className="p-3 bg-slate-50 border border-slate-200 rounded-lg">
                     <span className="text-slate-500 block text-[9px]">Upside / Downside</span>
-                    <span className="text-[#171717] font-bold text-sm">{sessionAnalyses.dcf.outputs.upsidePct}%</span>
+                    <span className="text-[#171717] font-bold text-sm">{dcfData.outputs.upsidePct}%</span>
                   </div>
                 </div>
 
@@ -286,7 +293,7 @@ export default function BIReportEngine() {
                     <thead>
                       <tr className="border-b border-slate-250 text-slate-500 bg-slate-50">
                         <th className="p-2">Metric</th>
-                        {sessionAnalyses.dcf.outputs.fcfProjections?.map((p: any) => (
+                        {dcfData.outputs.fcfProjections?.map((p: any) => (
                           <th key={p.year} className="text-right p-2">{p.year}</th>
                         ))}
                       </tr>
@@ -294,19 +301,19 @@ export default function BIReportEngine() {
                     <tbody>
                       <tr className="border-b border-slate-200">
                         <td className="p-2 font-bold">Revenue (M)</td>
-                        {sessionAnalyses.dcf.outputs.fcfProjections?.map((p: any) => (
+                        {dcfData.outputs.fcfProjections?.map((p: any) => (
                           <td key={p.year} className="text-right p-2 text-slate-800">{p.revenue.toLocaleString()}</td>
                         ))}
                       </tr>
                       <tr className="border-b border-slate-200">
                         <td className="p-2">EBITDA (M)</td>
-                        {sessionAnalyses.dcf.outputs.fcfProjections?.map((p: any) => (
+                        {dcfData.outputs.fcfProjections?.map((p: any) => (
                           <td key={p.year} className="text-right p-2 text-slate-700">{p.ebitda.toLocaleString()}</td>
                         ))}
                       </tr>
                       <tr className="border-b border-slate-250 bg-emerald-50/50 font-bold text-[var(--emerald)]">
                         <td className="p-2">Free Cash Flow (FCF)</td>
-                        {sessionAnalyses.dcf.outputs.fcfProjections?.map((p: any) => (
+                        {dcfData.outputs.fcfProjections?.map((p: any) => (
                           <td key={p.year} className="text-right p-2 font-bold">{p.fcf.toLocaleString()}</td>
                         ))}
                       </tr>
@@ -317,7 +324,7 @@ export default function BIReportEngine() {
             )}
 
             {/* 2. LBO MODEL SECTION */}
-            {isLboActive && (
+            {isLboActive && lboData && (
               <div className="space-y-4 border-b border-slate-200 pb-8">
                 <h3 className="font-serif text-xl font-bold text-[#171717] flex items-center gap-2">
                   <span className="text-[var(--emerald)]">◎</span>
@@ -330,21 +337,21 @@ export default function BIReportEngine() {
                 <div className="grid grid-cols-3 gap-4 font-mono text-xs text-center py-2">
                   <div className="p-3 bg-slate-50 border border-slate-200 rounded-lg">
                     <span className="text-slate-500 block text-[9px]">Sponsor Equity Required</span>
-                    <span className="text-[#171717] font-bold text-sm">SAR {sessionAnalyses.lbo.outputs.sponsorEquity.toLocaleString()}M</span>
+                    <span className="text-[#171717] font-bold text-sm">SAR {lboData.outputs.sponsorEquity.toLocaleString()}M</span>
                   </div>
                   <div className="p-3 bg-slate-50 border border-slate-200 rounded-lg">
                     <span className="text-slate-500 block text-[9px]">MOIC Multiple</span>
-                    <span className="text-[#171717] font-bold text-sm">{sessionAnalyses.lbo.outputs.moic}x</span>
+                    <span className="text-[#171717] font-bold text-sm">{lboData.outputs.moic}x</span>
                   </div>
                   <div className="p-3 bg-emerald-50 border border-emerald-200 rounded-lg animate-pulse">
                     <span className="text-[var(--emerald)] block text-[9px] font-bold">Projected IRR</span>
-                    <span className="text-[var(--emerald)] font-bold text-sm">{sessionAnalyses.lbo.outputs.irr}%</span>
+                    <span className="text-[var(--emerald)] font-bold text-sm">{lboData.outputs.irr}%</span>
                   </div>
                 </div>
 
                 <div className="h-[200px] w-full pt-2">
                   <ResponsiveContainer width="100%" height="100%">
-                    <BarChart data={sessionAnalyses.lbo.outputs.irrData}>
+                    <BarChart data={lboData.outputs.irrData}>
                       <XAxis dataKey="year" stroke="#888888" fontSize={10} tickLine={false} />
                       <YAxis stroke="#888888" fontSize={10} tickLine={false} />
                       <Bar dataKey="irr" fill="#0E7C69" radius={[3, 3, 0, 0]} />
@@ -355,7 +362,7 @@ export default function BIReportEngine() {
             )}
 
             {/* 3. THREE STATEMENT PROJECTIONS */}
-            {isThreeStatementActive && (
+            {isThreeStatementActive && threeStatementData && (
               <div className="space-y-4 border-b border-slate-200 pb-8">
                 <h3 className="font-serif text-xl font-bold text-[#171717] flex items-center gap-2">
                   <span className="text-[var(--emerald)]">◎</span>
@@ -370,7 +377,7 @@ export default function BIReportEngine() {
                     <thead>
                       <tr className="border-b border-slate-250 text-slate-500 bg-slate-50">
                         <th className="p-2">Line Item (M)</th>
-                        {sessionAnalyses.threeStatement.outputs.projections?.map((p: any) => (
+                        {threeStatementData.outputs.projections?.map((p: any) => (
                           <th key={p.year} className="text-right p-2">{p.year}</th>
                         ))}
                       </tr>
@@ -378,25 +385,25 @@ export default function BIReportEngine() {
                     <tbody>
                       <tr className="border-b border-slate-200">
                         <td className="p-2 font-bold text-[var(--emerald)]">Revenue</td>
-                        {sessionAnalyses.threeStatement.outputs.projections?.map((p: any) => (
+                        {threeStatementData.outputs.projections?.map((p: any) => (
                           <td key={p.year} className="text-right p-2 font-bold text-[var(--emerald)]">{p.rev.toLocaleString()}</td>
                         ))}
                       </tr>
                       <tr className="border-b border-slate-200">
                         <td className="p-2">EBITDA</td>
-                        {sessionAnalyses.threeStatement.outputs.projections?.map((p: any) => (
+                        {threeStatementData.outputs.projections?.map((p: any) => (
                           <td key={p.year} className="text-right p-2 text-slate-700">{p.ebitda.toLocaleString()}</td>
                         ))}
                       </tr>
                       <tr className="border-b border-slate-200">
                         <td className="p-2">Zakat or Tax</td>
-                        {sessionAnalyses.threeStatement.outputs.projections?.map((p: any) => (
+                        {threeStatementData.outputs.projections?.map((p: any) => (
                           <td key={p.year} className="text-right p-2 text-red-650">-{p.zakatOrTax.toLocaleString()}</td>
                         ))}
                       </tr>
                       <tr className="border-b border-slate-250 font-bold bg-slate-50">
                         <td className="p-2 text-[#171717]">Net Income</td>
-                        {sessionAnalyses.threeStatement.outputs.projections?.map((p: any) => (
+                        {threeStatementData.outputs.projections?.map((p: any) => (
                           <td key={p.year} className="text-right p-2 font-bold text-[#171717]">{p.netIncome.toLocaleString()}</td>
                         ))}
                       </tr>
@@ -407,7 +414,7 @@ export default function BIReportEngine() {
             )}
 
             {/* 4. SHARIAH SCREENING */}
-            {isShariahActive && (
+            {isShariahActive && shariahData && (
               <div className="space-y-4 border-b border-slate-200 pb-8">
                 <h3 className="font-serif text-xl font-bold text-[#171717] flex items-center gap-2">
                   <span className="text-[var(--emerald)]">◎</span>
@@ -417,33 +424,33 @@ export default function BIReportEngine() {
                 <div className="flex items-center justify-between p-4 bg-emerald-50/50 border border-emerald-250 rounded-lg">
                   <div>
                     <span className="text-[10px] font-mono text-slate-500 block">Compliance Verdict</span>
-                    <span className="font-mono text-sm font-bold text-[var(--emerald)]">{sessionAnalyses.shariah.outputs.verdict}</span>
+                    <span className="font-mono text-sm font-bold text-[var(--emerald)]">{shariahData.outputs.verdict}</span>
                   </div>
                   <div className="text-right">
                     <span className="text-[10px] font-mono text-slate-500 block">Purification Fee / Share</span>
-                    <span className="font-mono text-sm font-bold text-slate-800">SAR {sessionAnalyses.shariah.outputs.purificationPerShare}</span>
+                    <span className="font-mono text-sm font-bold text-slate-800">SAR {shariahData.outputs.purificationPerShare}</span>
                   </div>
                 </div>
 
                 <div className="grid grid-cols-3 gap-4 text-center font-mono text-[10px] pt-2">
                   <div className="p-2 border border-slate-200 rounded">
                     <span className="text-slate-500 block">Debt Ratio</span>
-                    <span className="text-[#171717] font-bold">{sessionAnalyses.shariah.outputs.debtRatio}% / 33%</span>
+                    <span className="text-[#171717] font-bold">{shariahData.outputs.debtRatio}% / 33%</span>
                   </div>
                   <div className="p-2 border border-slate-200 rounded">
                     <span className="text-slate-500 block">Interest Ratio</span>
-                    <span className="text-[#171717] font-bold">{sessionAnalyses.shariah.outputs.interestRatio}% / 5%</span>
+                    <span className="text-[#171717] font-bold">{shariahData.outputs.interestRatio}% / 5%</span>
                   </div>
                   <div className="p-2 border border-slate-200 rounded">
                     <span className="text-slate-500 block">Receivables Ratio</span>
-                    <span className="text-[#171717] font-bold">{sessionAnalyses.shariah.outputs.receivablesRatio}% / 49%</span>
+                    <span className="text-[#171717] font-bold">{shariahData.outputs.receivablesRatio}% / 49%</span>
                   </div>
                 </div>
               </div>
             )}
 
             {/* 5. COMPANY COMPARATOR */}
-            {isComparatorActive && (
+            {isComparatorActive && comparatorData && (
               <div className="space-y-4 border-b border-slate-200 pb-8">
                 <h3 className="font-serif text-xl font-bold text-[#171717] flex items-center gap-2">
                   <span className="text-[var(--emerald)]">◎</span>
@@ -466,7 +473,7 @@ export default function BIReportEngine() {
                       </tr>
                     </thead>
                     <tbody>
-                      {sessionAnalyses.comparator.rows.map((row: any, idx: number) => (
+                      {comparatorData.rows.map((row: any, idx: number) => (
                         <tr key={idx} className="border-b border-slate-200">
                           <td className="p-2 font-bold text-[var(--emerald)]">{row.ticker}</td>
                           <td className="p-2 text-slate-800">{isAr ? row.nameAr : row.name}</td>
@@ -483,7 +490,7 @@ export default function BIReportEngine() {
             )}
 
             {/* 6. AI RESEARCH MEMO */}
-            {isResearchMemoActive && (
+            {isResearchMemoActive && researchMemoData && (
               <div className="space-y-4 pb-4">
                 <h3 className="font-serif text-xl font-bold text-[#171717] flex items-center gap-2">
                   <span className="text-[var(--emerald)]">◎</span>
@@ -491,7 +498,7 @@ export default function BIReportEngine() {
                 </h3>
                 <div className="p-6 rounded-lg bg-slate-50 border border-slate-200 font-sans text-slate-800 leading-relaxed text-xs">
                   <div className="prose prose-slate max-w-none prose-headings:font-serif prose-headings:text-[#171717] prose-headings:font-bold prose-h1:text-sm prose-h2:text-xs prose-p:text-[11px] prose-li:text-[11px] prose-strong:text-[#171717]">
-                    <ReactMarkdown>{sessionAnalyses.researchMemo.content}</ReactMarkdown>
+                    <ReactMarkdown>{researchMemoData.content}</ReactMarkdown>
                   </div>
                 </div>
               </div>
