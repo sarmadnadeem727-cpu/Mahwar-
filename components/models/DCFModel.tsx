@@ -6,6 +6,7 @@ import { BarChart3, Calculator, TrendingUp, TrendingDown, RefreshCw } from "luci
 import { useTerminalStore } from "@/store/useTerminalStore";
 import { t } from "@/lib/i18n";
 import { panelReveal } from "@/lib/motion";
+import NumberCounter from "@/components/ui/NumberCounter";
 
 export default function DCFModel() {
   const { language, updateSessionAnalysis } = useTerminalStore();
@@ -259,35 +260,43 @@ export default function DCFModel() {
       <div className="col-span-12 lg:col-span-8 space-y-6">
         {/* VALUATION SUMMARY BANNER */}
         <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
-          <div className="bg-slate-50 p-5 rounded-xl border border-slate-200 text-center shadow-sm">
-            <span className="text-[10px] font-mono text-slate-500 uppercase tracking-wider block mb-1">
+          <div className="bg-terminal-surface p-5 rounded-xl border border-terminal-border text-center shadow-xs">
+            <span className="text-[10px] font-mono text-slate-500 uppercase tracking-wider block mb-1 font-bold">
               Current Market Price
             </span>
-            <span className="font-mono text-2xl font-extrabold text-[#171717]">
-              SAR {currentPrice}
+            <span className="font-mono text-2xl font-extrabold text-terminal-text">
+              SAR <NumberCounter value={currentPrice} decimals={2} />
             </span>
           </div>
 
-          <div className="bg-emerald-50 p-5 rounded-xl border border-emerald-250 text-center shadow-sm">
-            <span className="text-[10px] font-mono text-[var(--emerald)] uppercase tracking-wider font-bold block mb-1">
+          <div className="bg-emerald-50 p-5 rounded-xl border border-emerald-200 text-center shadow-xs">
+            <span className="text-[10px] font-mono text-terminal-emerald uppercase tracking-wider font-bold block mb-1">
               {t("intrinsic_value", language)}
             </span>
-            <span className="font-mono text-3xl font-extrabold text-[var(--emerald)]">
-              SAR {dcfResult?.intrinsicValuePerShare || "--"}
+            <span className="font-mono text-3xl font-extrabold text-terminal-emerald">
+              {dcfResult?.intrinsicValuePerShare ? (
+                <>SAR <NumberCounter value={Number(dcfResult.intrinsicValuePerShare)} decimals={2} /></>
+              ) : (
+                "SAR --"
+              )}
             </span>
           </div>
 
-          <div className="bg-slate-50 p-5 rounded-xl border border-slate-200 text-center flex flex-col items-center justify-center shadow-sm">
-            <span className="text-[10px] font-mono text-slate-500 uppercase tracking-wider block mb-1">
+          <div className="bg-terminal-surface p-5 rounded-xl border border-terminal-border text-center flex flex-col items-center justify-center shadow-xs">
+            <span className="text-[10px] font-mono text-slate-500 uppercase tracking-wider block mb-1 font-bold">
               {t("upside_downside", language)}
             </span>
             <span className={`flex items-center gap-1 font-mono text-xl font-extrabold px-3 py-0.5 rounded ${
               (dcfResult?.upsidePct || 0) >= 0 
-                ? "text-green-700 bg-green-100" 
+                ? "text-emerald-700 bg-emerald-100" 
                 : "text-red-700 bg-red-100"
             }`}>
               {(dcfResult?.upsidePct || 0) >= 0 ? <TrendingUp size={16} /> : <TrendingDown size={16} />}
-              {dcfResult?.upsidePct > 0 ? `+${dcfResult?.upsidePct}%` : `${dcfResult?.upsidePct}%`}
+              {dcfResult?.upsidePct ? (
+                <NumberCounter value={Number(dcfResult.upsidePct)} decimals={1} prefix={Number(dcfResult.upsidePct) > 0 ? "+" : ""} suffix="%" />
+              ) : (
+                "0.0%"
+              )}
             </span>
           </div>
         </div>

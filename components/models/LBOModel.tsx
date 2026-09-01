@@ -7,6 +7,8 @@ import { ResponsiveContainer, BarChart, Bar, XAxis, YAxis, Tooltip, Cell, PieCha
 import { useTerminalStore } from "@/store/useTerminalStore";
 import { t } from "@/lib/i18n";
 import { panelReveal } from "@/lib/motion";
+import { TERMINAL_CHART_THEME } from "@/lib/chartTheme";
+import NumberCounter from "@/components/ui/NumberCounter";
 
 export default function LBOModel() {
   const { language, updateSessionAnalysis } = useTerminalStore();
@@ -234,39 +236,39 @@ export default function LBOModel() {
       <div className="col-span-12 lg:col-span-8 space-y-6">
         {/* METRICS HEADER CARDS */}
         <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
-          <div className="bg-slate-50 p-5 rounded-xl border border-slate-200 text-center shadow-sm">
-            <span className="text-[10px] font-mono text-slate-500 uppercase tracking-wider block mb-1">
+          <div className="bg-terminal-surface p-5 rounded-xl border border-terminal-border text-center shadow-xs">
+            <span className="text-[10px] font-mono text-slate-500 uppercase tracking-wider block mb-1 font-bold">
               Sponsor Equity Required
             </span>
-            <span className="font-mono text-xl font-extrabold text-[#171717]">
-              SAR {sponsorEquity.toLocaleString()}M
+            <span className="font-mono text-xl font-extrabold text-terminal-text">
+              SAR <NumberCounter value={sponsorEquity} decimals={0} />M
             </span>
           </div>
 
-          <div className="bg-emerald-50 p-5 rounded-xl border border-emerald-250 text-center shadow-sm">
-            <span className="text-[10px] font-mono text-[var(--emerald)] uppercase tracking-wider font-bold block mb-1">
+          <div className="bg-emerald-50 p-5 rounded-xl border border-emerald-200 text-center shadow-xs">
+            <span className="text-[10px] font-mono text-terminal-emerald uppercase tracking-wider font-bold block mb-1">
               {t("moic", language)}
             </span>
-            <span className="font-mono text-2xl font-extrabold text-[var(--emerald)]">
-              {moic.toFixed(2)}x
+            <span className="font-mono text-2xl font-extrabold text-terminal-emerald">
+              <NumberCounter value={moic} decimals={2} suffix="x" />
             </span>
           </div>
 
-          <div className="bg-slate-50 p-5 rounded-xl border border-slate-200 text-center shadow-sm">
-            <span className="text-[10px] font-mono text-slate-500 uppercase tracking-wider block mb-1">
+          <div className="bg-terminal-surface p-5 rounded-xl border border-terminal-border text-center shadow-xs">
+            <span className="text-[10px] font-mono text-slate-500 uppercase tracking-wider block mb-1 font-bold">
               Projected IRR
             </span>
-            <span className="font-mono text-2xl font-extrabold text-[var(--emerald)]">
-              {irr.toFixed(1)}%
+            <span className="font-mono text-2xl font-extrabold text-terminal-emerald">
+              <NumberCounter value={irr} decimals={1} suffix="%" />
             </span>
           </div>
         </div>
 
         {/* RETURNS WATERFALL CHART */}
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-          <div className="bg-white p-6 rounded-xl border border-slate-200 shadow-sm flex flex-col justify-between h-[320px]">
-            <h3 className="font-mono text-xs font-bold text-[#171717] uppercase tracking-wider mb-4 flex items-center gap-2">
-              <PieChart size={14} className="text-[var(--emerald)]" />
+          <div className="bg-white p-6 rounded-xl border border-terminal-border shadow-xs flex flex-col justify-between h-[320px]">
+            <h3 className="font-mono text-xs font-bold text-terminal-text uppercase tracking-wider mb-4 flex items-center gap-2">
+              <PieChart size={14} className="text-terminal-emerald" />
               <span>{t("sources_and_uses", language)}</span>
             </h3>
 
@@ -286,59 +288,43 @@ export default function LBOModel() {
                       <Cell key={`cell-${index}`} fill={entry.fill} />
                     ))}
                   </Pie>
-                  <Tooltip
-                    contentStyle={{
-                      backgroundColor: "#FFFFFF",
-                      borderColor: "#E2E8F0",
-                      borderRadius: "8px",
-                      fontSize: "11px",
-                      color: "#1E293B"
-                    }}
-                  />
+                  <Tooltip contentStyle={TERMINAL_CHART_THEME.tooltipStyle} />
                 </RePieChart>
               </ResponsiveContainer>
             </div>
 
-            <div className="flex justify-around text-[9px] font-mono text-slate-500">
+            <div className="flex justify-around text-[10px] font-mono text-slate-500 font-bold border-t border-terminal-border pt-2.5">
               <div className="flex items-center gap-1.5">
                 <span className="w-2.5 h-2.5 rounded-sm bg-[#0E7C69]" />
                 <span>Sponsor</span>
               </div>
               <div className="flex items-center gap-1.5">
-                <span className="w-2.5 h-2.5 rounded-sm bg-[#888888]" />
+                <span className="w-2.5 h-2.5 rounded-sm bg-[#64748B]" />
                 <span>Management</span>
               </div>
               <div className="flex items-center gap-1.5">
-                <span className="w-2.5 h-2.5 rounded-sm bg-[#E53E3E]" />
+                <span className="w-2.5 h-2.5 rounded-sm bg-[#DC2626]" />
                 <span>Debt</span>
               </div>
             </div>
           </div>
 
           {/* IRR BY HOLD PERIOD BAR CHART */}
-          <div className="bg-white p-6 rounded-xl border border-slate-200 shadow-sm flex flex-col justify-between h-[320px]">
-            <h3 className="font-mono text-xs font-bold text-[#171717] uppercase tracking-wider mb-4 flex items-center gap-2">
-              <TrendingUp size={14} className="text-[var(--emerald)]" />
+          <div className="bg-white p-6 rounded-xl border border-terminal-border shadow-xs flex flex-col justify-between h-[320px]">
+            <h3 className="font-mono text-xs font-bold text-terminal-text uppercase tracking-wider mb-4 flex items-center gap-2">
+              <TrendingUp size={14} className="text-terminal-emerald" />
               <span>{t("irr_by_period", language)}</span>
             </h3>
 
             <div className="h-[220px] w-full">
               <ResponsiveContainer width="100%" height="100%">
                 <BarChart data={irrData}>
-                  <XAxis dataKey="year" stroke="#64748B" fontSize={11} tickLine={false} />
-                  <YAxis stroke="#64748B" fontSize={11} tickLine={false} />
-                  <Tooltip
-                    contentStyle={{
-                      backgroundColor: "#FFFFFF",
-                      borderColor: "#E2E8F0",
-                      borderRadius: "8px",
-                      fontSize: "11px",
-                      color: "#1E293B"
-                    }}
-                  />
-                  <Bar dataKey="irr" fill="#0E7C69" radius={[4, 4, 0, 0]}>
+                  <XAxis dataKey="year" {...TERMINAL_CHART_THEME.axis} />
+                  <YAxis {...TERMINAL_CHART_THEME.axis} />
+                  <Tooltip contentStyle={TERMINAL_CHART_THEME.tooltipStyle} />
+                  <Bar dataKey="irr" fill={TERMINAL_CHART_THEME.colors.emerald} radius={[4, 4, 0, 0]}>
                     {irrData.map((entry, index) => (
-                      <Cell key={`cell-${index}`} fill={index === holdPeriod - 3 ? "#000000" : "#0E7C69"} />
+                      <Cell key={`cell-${index}`} fill={index === holdPeriod - 3 ? "#171717" : TERMINAL_CHART_THEME.colors.emerald} />
                     ))}
                   </Bar>
                 </BarChart>

@@ -6,6 +6,7 @@ import { ShieldCheck, HelpCircle } from "lucide-react";
 import { useTerminalStore } from "@/store/useTerminalStore";
 import { t } from "@/lib/i18n";
 import { panelReveal } from "@/lib/motion";
+import NumberCounter from "@/components/ui/NumberCounter";
 
 export default function ShariahScreening() {
   const { language, updateSessionAnalysis } = useTerminalStore();
@@ -149,35 +150,38 @@ export default function ShariahScreening() {
       {/* RIGHT COLUMN: SCREENING REPORT (8 COLS) */}
       <div className="col-span-12 lg:col-span-8 space-y-6">
         {/* COMPLIANCE VERDICT BANNER */}
-        <div className={`p-6 rounded-xl border flex flex-col sm:flex-row items-center justify-between gap-4 shadow-sm ${
+        <div className={`p-6 rounded-xl border flex flex-col sm:flex-row items-center justify-between gap-4 shadow-xs ${
           isCompliant 
-            ? "bg-green-50 border-green-250 text-green-800" 
-            : "bg-red-50 border-red-250 text-red-800"
+            ? "bg-emerald-50 border-emerald-200 text-emerald-950" 
+            : "bg-red-50 border-red-200 text-red-950"
         }`}>
           <div>
+            <div className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-[10px] font-mono font-bold uppercase tracking-wider mb-2 bg-white/80 border border-current">
+              <span>{isCompliant ? "AAOIFI PASS" : "AAOIFI FAIL"}</span>
+            </div>
             <h3 className="font-serif text-2xl font-bold uppercase tracking-wide">
-              {isCompliant ? (isAr ? "متوافق مع الشريعة" : "Shariah Compliant") : (isAr ? "غير متوافق" : "Non-Compliant")}
+              {isCompliant ? (isAr ? "متوافق مع الشريعة الإسلامية" : "Shariah Compliant") : (isAr ? "غير متوافق مع الشريعة" : "Non-Compliant")}
             </h3>
             <p className="text-xs font-mono mt-1 opacity-80">
               {isAr 
-                ? "تم الفحص بناءً على معايير الهيئة الشرعية للتمويل والاستثمار (AAOIFI)" 
-                : "Audited client-side against AAOIFI investment standard thresholds"}
+                ? "تم التدقيق الآلي وفق معايير هيئة المحاسبة والمراجعة للمؤسسات المالية الإسلامية (AAOIFI 21)" 
+                : "Audited against AAOIFI Standard No. 21 investment thresholds"}
             </p>
           </div>
 
-          <div className="text-center sm:text-right shrink-0">
-            <span className="text-[10px] font-mono uppercase tracking-wider block opacity-85">
-              {isAr ? "مبلغ التطهير لكل سهم" : "Purification per Share"}
+          <div className="text-center sm:text-right shrink-0 bg-white/70 px-4 py-3 rounded-lg border border-current/20">
+            <span className="text-[10px] font-mono uppercase tracking-wider block font-bold opacity-85">
+              {isAr ? "مبلغ التطهير لكل سهم" : "Purification / Share"}
             </span>
-            <span className="font-mono text-xl font-extrabold block mt-0.5">
-              SAR {purificationPerShare.toFixed(4)}
+            <span className="font-mono text-xl font-extrabold block mt-0.5 text-terminal-text">
+              SAR <NumberCounter value={purificationPerShare} decimals={4} />
             </span>
           </div>
         </div>
 
         {/* DETAILED SCREENING RATIOS METRIC CARDS */}
-        <div className="bg-white p-6 rounded-xl border border-slate-200 space-y-6 shadow-sm">
-          <h3 className="font-mono text-xs font-bold text-[#171717] uppercase tracking-wider">
+        <div className="bg-white p-6 rounded-xl border border-terminal-border space-y-6 shadow-xs">
+          <h3 className="font-mono text-xs font-bold text-terminal-text uppercase tracking-wider">
             {isAr ? "مؤشرات الامتثال المالي الشرعي" : "AAOIFI Compliance Ratio Analysis"}
           </h3>
 
@@ -185,51 +189,57 @@ export default function ShariahScreening() {
             {/* Ratio 1: Debt Ratio */}
             <div className="space-y-2">
               <div className="flex justify-between text-slate-700">
-                <span>{isAr ? "نسبة الديون إلى الأصول" : "Debt / Total Assets Ratio"}</span>
-                <span className="font-bold">{debtRatio.toFixed(2)}% / 33.00% max</span>
+                <span className="font-semibold">{isAr ? "نسبة الديون إلى الأصول" : "Debt / Total Assets Ratio"}</span>
+                <span className="font-bold text-terminal-text">
+                  <NumberCounter value={debtRatio} decimals={2} suffix="%" /> / 33.00% max
+                </span>
               </div>
               <div className="h-2 bg-slate-100 rounded-full overflow-hidden">
                 <div 
-                  className={`h-full rounded-full transition-all duration-500 ${isDebtCompliant ? "bg-[var(--emerald)]" : "bg-red-500"}`}
+                  className={`h-full rounded-full transition-all duration-500 ${isDebtCompliant ? "bg-terminal-emerald" : "bg-red-500"}`}
                   style={{ width: `${Math.min(100, debtRatio)}%` }}
                 />
               </div>
-              <span className={`text-[10px] block ${isDebtCompliant ? "text-green-600 font-bold" : "text-red-500 font-bold"}`}>
-                {isDebtCompliant ? (isAr ? "✓ ضمن الحدود الشرعية" : "✓ Within Limit") : (isAr ? "✗ يتجاوز الحد المسموح" : "✗ Exceeds Limit")}
+              <span className={`text-[10px] block font-bold ${isDebtCompliant ? "text-emerald-700" : "text-red-600"}`}>
+                {isDebtCompliant ? (isAr ? "✓ ضمن الحدود الشرعية (أقل من 33%)" : "✓ Within AAOIFI Limit (<33%)") : (isAr ? "✗ يتجاوز الحد المسموح" : "✗ Exceeds Maximum Threshold")}
               </span>
             </div>
 
             {/* Ratio 2: Interest Income Ratio */}
             <div className="space-y-2">
               <div className="flex justify-between text-slate-700">
-                <span>{isAr ? "نسبة الإيرادات المحرمة" : "Interest Income / Total Revenue"}</span>
-                <span className="font-bold">{interestRatio.toFixed(2)}% / 5.00% max</span>
+                <span className="font-semibold">{isAr ? "نسبة الإيرادات المحرمة" : "Interest Income / Total Revenue"}</span>
+                <span className="font-bold text-terminal-text">
+                  <NumberCounter value={interestRatio} decimals={2} suffix="%" /> / 5.00% max
+                </span>
               </div>
               <div className="h-2 bg-slate-100 rounded-full overflow-hidden">
                 <div 
-                  className={`h-full rounded-full transition-all duration-500 ${isInterestCompliant ? "bg-[var(--emerald)]" : "bg-red-500"}`}
-                  style={{ width: `${Math.min(100, interestRatio * 10)}%` }} // Scaled for visibility
+                  className={`h-full rounded-full transition-all duration-500 ${isInterestCompliant ? "bg-terminal-emerald" : "bg-red-500"}`}
+                  style={{ width: `${Math.min(100, interestRatio * 10)}%` }}
                 />
               </div>
-              <span className={`text-[10px] block ${isInterestCompliant ? "text-green-600 font-bold" : "text-red-500 font-bold"}`}>
-                {isInterestCompliant ? (isAr ? "✓ ضمن الحدود الشرعية" : "✓ Within Limit") : (isAr ? "✗ يتجاوز الحد المسموح" : "✗ Exceeds Limit")}
+              <span className={`text-[10px] block font-bold ${isInterestCompliant ? "text-emerald-700" : "text-red-600"}`}>
+                {isInterestCompliant ? (isAr ? "✓ ضمن الحدود الشرعية (أقل من 5%)" : "✓ Within AAOIFI Limit (<5%)") : (isAr ? "✗ يتجاوز الحد المسموح" : "✗ Exceeds Maximum Threshold")}
               </span>
             </div>
 
             {/* Ratio 3: Receivables Ratio */}
             <div className="space-y-2">
               <div className="flex justify-between text-slate-700">
-                <span>{isAr ? "نسبة الذمم المدينة إلى الأصول" : "Receivables / Total Assets Ratio"}</span>
-                <span className="font-bold">{receivablesRatio.toFixed(2)}% / 49.00% max</span>
+                <span className="font-semibold">{isAr ? "نسبة الذمم المدينة إلى الأصول" : "Receivables / Total Assets Ratio"}</span>
+                <span className="font-bold text-terminal-text">
+                  <NumberCounter value={receivablesRatio} decimals={2} suffix="%" /> / 49.00% max
+                </span>
               </div>
               <div className="h-2 bg-slate-100 rounded-full overflow-hidden">
                 <div 
-                  className={`h-full rounded-full transition-all duration-500 ${isReceivablesCompliant ? "bg-[var(--emerald)]" : "bg-red-500"}`}
+                  className={`h-full rounded-full transition-all duration-500 ${isReceivablesCompliant ? "bg-terminal-emerald" : "bg-red-500"}`}
                   style={{ width: `${Math.min(100, receivablesRatio)}%` }}
                 />
               </div>
-              <span className={`text-[10px] block ${isReceivablesCompliant ? "text-green-600 font-bold" : "text-red-500 font-bold"}`}>
-                {isReceivablesCompliant ? (isAr ? "✓ ضمن الحدود الشرعية" : "✓ Within Limit") : (isAr ? "✗ يتجاوز الحد المسموح" : "✗ Exceeds Limit")}
+              <span className={`text-[10px] block font-bold ${isReceivablesCompliant ? "text-emerald-700" : "text-red-600"}`}>
+                {isReceivablesCompliant ? (isAr ? "✓ ضمن الحدود الشرعية (أقل من 49%)" : "✓ Within AAOIFI Limit (<49%)") : (isAr ? "✗ يتجاوز الحد المسموح" : "✗ Exceeds Maximum Threshold")}
               </span>
             </div>
           </div>

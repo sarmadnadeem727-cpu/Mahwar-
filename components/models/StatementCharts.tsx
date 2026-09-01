@@ -26,13 +26,17 @@ interface StatementChartsProps {
   cfData: Record<string, Record<string, unknown>>;
 }
 
+import { TERMINAL_CHART_THEME } from "@/lib/chartTheme";
+
 const COLORS = {
-  gold: "var(--gold)",
-  goldDim: "rgba(14, 124, 105, 0.15)",
-  positive: "var(--pos)",
-  negative: "var(--neg)",
-  text2: "var(--text3)",
-  grid: "rgba(14, 124, 105, 0.1)",
+  emerald: TERMINAL_CHART_THEME.colors.emerald,
+  emeraldDim: TERMINAL_CHART_THEME.colors.emeraldDim,
+  positive: TERMINAL_CHART_THEME.colors.positive,
+  negative: TERMINAL_CHART_THEME.colors.negative,
+  text2: "#737373",
+  grid: TERMINAL_CHART_THEME.grid.stroke,
+  gold: TERMINAL_CHART_THEME.colors.emerald,
+  goldDim: TERMINAL_CHART_THEME.colors.emeraldDim,
 };
 
 

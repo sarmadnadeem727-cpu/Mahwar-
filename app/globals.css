@@ -4,30 +4,29 @@
 
 @layer base {
   :root {
-    /* Sovereign Light Warm Palette */
-    --void: #FFFFFF;       /* Pure white base background */
-    --bg1: #F7F7F5;        /* Warm off-white surface layer */
-    --bg2: #EFEFED;        /* Secondary panel surface */
-    --bg3: #E5E5E3;        /* Active surface & hover state */
+    /* Sovereign Institutional Palette */
+    --void: #FFFFFF;
+    --bg1: #F7F7F5;
+    --bg2: #EFEFED;
+    --bg3: #E5E5E3;
     
-    --emerald: #0E7C69;    /* Signature Mahwar Emerald */
+    --emerald: #0E7C69;
     --emerald-glow: rgba(14, 124, 105, 0.08);
-    --gold: #0E7C69;       /* Old Gold replaced with Emerald */
+    --gold: #0E7C69;
     --gold-glow: rgba(14, 124, 105, 0.08);
     
-    --pos: #16A34A;        /* Positive gain green */
+    --pos: #16A34A;
     --pos-bg: rgba(22, 163, 74, 0.08);
-    --neg: #E53E3E;        /* Negative loss red */
-    --neg-bg: rgba(229, 62, 62, 0.08);
+    --neg: #DC2626;
+    --neg-bg: rgba(220, 38, 38, 0.08);
     
-    --text1: #171717;      /* Near-black primary text */
-    --text2: #525252;      /* Secondary label text */
-    --text3: #737373;      /* Muted metadata text */
+    --text1: #171717;
+    --text2: #525252;
+    --text3: #737373;
     
     --border: rgba(0, 0, 0, 0.08);
-    --border-strong: rgba(0, 0, 0, 0.15);
-    --border-emerald: rgba(14, 124, 105, 0.3);
-    --border-gold: rgba(14, 124, 105, 0.3);
+    --border-strong: rgba(0, 0, 0, 0.16);
+    --border-emerald: rgba(14, 124, 105, 0.35);
   }
 
   body {
@@ -39,7 +38,7 @@
   }
 
   /* Typography Fonts */
-  .font-garamond, .font-serif {
+  .font-serif {
     font-family: var(--font-serif), Georgia, serif;
   }
 
@@ -58,24 +57,24 @@
 }
 
 @layer components {
-  /* Simple Surface Panels - Clean Border Design */
+  /* Institutional Surface Panels */
   .glass-panel {
     background: var(--bg1);
     border: 1px solid var(--border);
   }
 
   .glass-card {
-    background: var(--bg1);
+    background: #FFFFFF;
     border: 1px solid var(--border);
-    transition: all 0.2s cubic-bezier(0.22, 1, 0.36, 1);
+    transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
   }
 
   .glass-card:hover {
     border-color: var(--border-emerald);
-    background: var(--bg2);
+    box-shadow: 0 4px 20px -2px rgba(14, 124, 105, 0.12);
   }
 
-  /* Terminal Table Architecture */
+  /* Institutional Bloomberg-grade Table Architecture */
   .terminal-table {
     width: 100%;
     border-collapse: separate;
@@ -88,7 +87,7 @@
     font-size: 10px;
     font-weight: 750;
     text-transform: uppercase;
-    letter-spacing: 0.12em;
+    letter-spacing: 0.1em;
     padding: 10px 14px;
     text-align: left;
     border-bottom: 1px solid var(--border-strong);
@@ -102,7 +101,7 @@
   }
 
   .terminal-table tbody td {
-    padding: 8px 14px;
+    padding: 9px 14px;
     border-bottom: 1px solid var(--border);
     color: var(--text1);
     font-family: var(--font-mono), monospace;
@@ -111,14 +110,14 @@
   }
 
   .terminal-table tbody tr {
-    transition: background 0.15s ease;
+    transition: background 0.12s ease;
   }
 
   .terminal-table tbody tr:hover {
-    background: var(--bg3);
+    background: rgba(14, 124, 105, 0.04);
   }
 
-  /* Inputs */
+  /* Distinct input styling with active emerald focus */
   .terminal-input {
     background: #FFFFFF;
     border: 1px solid var(--border-strong);
@@ -127,13 +126,13 @@
     border-radius: 6px;
     font-family: var(--font-mono), monospace;
     font-size: 12px;
-    transition: all 0.2s ease;
+    transition: all 0.18s cubic-bezier(0.16, 1, 0.3, 1);
   }
 
   .terminal-input:focus {
     outline: none;
     border-color: var(--emerald);
-    box-shadow: 0 0 8px var(--emerald-glow);
+    box-shadow: 0 0 0 2px rgba(14, 124, 105, 0.2);
   }
 }
 
@@ -146,7 +145,7 @@
   background: var(--bg1);
 }
 ::-webkit-scrollbar-thumb {
-  background: var(--bg3);
+  background: #CBD5E1;
   border-radius: 3px;
 }
 ::-webkit-scrollbar-thumb:hover {

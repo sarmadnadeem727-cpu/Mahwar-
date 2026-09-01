@@ -1,39 +1,56 @@
 import { Variants } from "framer-motion";
 
-export const EASE_PREMIUM = [0.22, 1, 0.36, 1] as const;
+// Crisp institutional spring physics (fast, snappy, slightly overshooting)
+export const SPRING_SNAPPY = {
+  type: "spring",
+  stiffness: 380,
+  damping: 28,
+  mass: 0.6,
+} as const;
 
-export const fadeInUp: Variants = {
-  initial: { opacity: 0, y: 30 },
-  animate: { 
-    opacity: 1, 
-    y: 0, 
-    transition: { 
-      duration: 0.6, 
-      ease: EASE_PREMIUM 
-    } 
-  },
-  exit: { 
-    opacity: 0, 
-    y: -15, 
-    transition: { duration: 0.25, ease: "easeIn" } 
-  }
-};
+export const SPRING_GENTLE = {
+  type: "spring",
+  stiffness: 240,
+  damping: 24,
+  mass: 0.8,
+} as const;
 
+export const EASE_INSTITUTIONAL = [0.16, 1, 0.3, 1] as const;
+export const EASE_PREMIUM = EASE_INSTITUTIONAL;
+
+// Snappy panel reveal capped at ~280ms
 export const panelReveal: Variants = {
-  initial: { opacity: 0, scale: 0.98, y: 10 },
+  initial: { opacity: 0, scale: 0.985, y: 6 },
   animate: { 
     opacity: 1, 
     scale: 1, 
     y: 0,
     transition: { 
-      duration: 0.45, 
-      ease: EASE_PREMIUM 
+      duration: 0.28, 
+      ease: EASE_INSTITUTIONAL 
     } 
   },
   exit: { 
     opacity: 0, 
-    scale: 0.98,
-    transition: { duration: 0.2 } 
+    scale: 0.985,
+    transition: { duration: 0.15, ease: "easeIn" } 
+  }
+};
+
+export const fadeInUp: Variants = {
+  initial: { opacity: 0, y: 12 },
+  animate: { 
+    opacity: 1, 
+    y: 0, 
+    transition: { 
+      duration: 0.3, 
+      ease: EASE_INSTITUTIONAL 
+    } 
+  },
+  exit: { 
+    opacity: 0, 
+    y: -8, 
+    transition: { duration: 0.15, ease: "easeIn" } 
   }
 };
 
@@ -41,75 +58,34 @@ export const staggerContainer: Variants = {
   initial: {},
   animate: { 
     transition: { 
-      staggerChildren: 0.08, 
-      delayChildren: 0.04 
+      staggerChildren: 0.04, 
+      delayChildren: 0.02 
     } 
   }
 };
 
 export const staggerItem: Variants = {
-  initial: { opacity: 0, y: 20 },
+  initial: { opacity: 0, y: 8 },
   animate: { 
     opacity: 1, 
     y: 0, 
     transition: { 
-      duration: 0.5, 
-      ease: EASE_PREMIUM 
+      duration: 0.25, 
+      ease: EASE_INSTITUTIONAL 
     } 
   }
 };
 
-export const slideInFromRight: Variants = {
-  initial: { x: 60, opacity: 0 },
-  animate: { 
-    x: 0, 
-    opacity: 1, 
-    transition: { 
-      duration: 0.6, 
-      ease: EASE_PREMIUM 
-    } 
-  }
-};
-
-export const slideInFromLeft: Variants = {
-  initial: { x: -60, opacity: 0 },
-  animate: { 
-    x: 0, 
-    opacity: 1, 
-    transition: { 
-      duration: 0.6, 
-      ease: EASE_PREMIUM 
-    } 
-  }
-};
-
-export const hoverLift = {
-  rest: { y: 0, scale: 1 },
+export const interactiveHover = {
+  rest: { scale: 1, y: 0 },
   hover: { 
-    y: -5, 
-    scale: 1.01,
-    transition: { 
-      type: "spring", 
-      stiffness: 250, 
-      damping: 20 
-    } 
-  }
-};
-
-export const numberSpring = {
-  type: "spring",
-  stiffness: 80,
-  damping: 20
-};
-
-export const drawPath: Variants = {
-  initial: { pathLength: 0, opacity: 0 },
-  animate: { 
-    pathLength: 1, 
-    opacity: 1, 
-    transition: { 
-      duration: 1.8, 
-      ease: "easeInOut" 
-    } 
+    scale: 1.01, 
+    y: -2,
+    transition: SPRING_SNAPPY
+  },
+  tap: {
+    scale: 0.99,
+    y: 0,
+    transition: { duration: 0.05 }
   }
 };
