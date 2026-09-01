@@ -118,13 +118,14 @@ export async function GET(req: NextRequest) {
   }
 
   try {
-    let apiUrl = `https://api.finlight.me/v1/news/arabic?limit=15`;
+    let apiUrl = `https://api.finlight.me/v1/articles?limit=20`;
     if (search) {
-      apiUrl += `&q=${encodeURIComponent(search)}`;
+      apiUrl += `&query=${encodeURIComponent(search)}`;
     }
 
     const response = await fetch(apiUrl, {
       headers: {
+        'x-api-key': FINLIGHT_API_KEY,
         'Authorization': `Bearer ${FINLIGHT_API_KEY}`,
         'Content-Type': 'application/json',
       },
@@ -137,7 +138,7 @@ export async function GET(req: NextRequest) {
         data: FALLBACK_ARABIC_NEWS,
         total: FALLBACK_ARABIC_NEWS.length,
         fallbackMode: true,
-        notice: `Finlight API responded with status ${response.status}. Displaying backup feed.`,
+        notice: `Finlight API status ${response.status}. Displaying backup intelligence feed.`,
       });
     }
 
