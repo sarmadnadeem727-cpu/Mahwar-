@@ -5,8 +5,8 @@ import { motion } from "framer-motion";
 import Link from "next/link";
 import dynamic from "next/dynamic";
 import { 
-  ArrowRight, Sparkles, Activity, Terminal, ShieldCheck, 
-  BarChart3, Layers, Globe
+  ArrowRight, Activity, Terminal, ShieldCheck, 
+  BarChart3, Layers, Sparkles
 } from "lucide-react";
 import { useTerminalStore } from "@/store/useTerminalStore";
 import { t } from "@/lib/i18n";
@@ -17,9 +17,9 @@ import NumberCounter from "@/components/ui/NumberCounter";
 const GccGlobe3D = dynamic(() => import("@/components/ui/GccGlobe3D"), {
   ssr: false,
   loading: () => (
-    <div className="w-full h-[420px] sm:h-[480px] md:h-[540px] flex flex-col items-center justify-center text-slate-500 font-mono text-xs gap-3">
-      <div className="w-16 h-16 rounded-full border-2 border-emerald-500/30 border-t-emerald-400 animate-spin" />
-      <span>INITIALIZING GCC SOVEREIGN DATA SPHERE...</span>
+    <div className="w-full h-[400px] sm:h-[460px] md:h-[500px] flex flex-col items-center justify-center text-slate-500 font-mono text-xs gap-3">
+      <div className="w-12 h-12 rounded-full border-2 border-terminal-emerald/30 border-t-terminal-emerald animate-spin" />
+      <span className="font-semibold text-slate-600">INITIALIZING GCC SOVEREIGN DATA SPHERE...</span>
     </div>
   ),
 });
@@ -63,10 +63,9 @@ export default function HeroSection() {
   }, [charIndex, textIndex, typewriterPhrases]);
 
   return (
-    <section className="relative min-h-screen flex flex-col justify-center bg-[#07090D] text-slate-100 pt-28 pb-20 overflow-hidden border-b border-emerald-950/40 select-none">
-      {/* Background Cinematic Atmosphere & Precision Grid */}
-      <div className="absolute inset-0 bg-[radial-gradient(ellipse_80%_60%_at_50%_-10%,rgba(14,124,105,0.22),transparent_70%)] pointer-events-none" />
-      <div className="absolute inset-0 bg-[linear-gradient(to_right,rgba(255,255,255,0.025)_1px,transparent_1px),linear-gradient(to_bottom,rgba(255,255,255,0.025)_1px,transparent_1px)] bg-[size:3.5rem_3.5rem] [mask-image:radial-gradient(ellipse_80%_50%_at_50%_40%,#000_70%,transparent_100%)] pointer-events-none" />
+    <section className="relative min-h-[92vh] flex flex-col justify-center bg-[#FFFFFF] text-terminal-text pt-28 pb-16 overflow-hidden border-b border-terminal-border select-none">
+      {/* Background Precision Grid */}
+      <div className="absolute inset-0 bg-[linear-gradient(to_right,rgba(0,0,0,0.03)_1px,transparent_1px),linear-gradient(to_bottom,rgba(0,0,0,0.03)_1px,transparent_1px)] bg-[size:3rem_3rem] [mask-image:radial-gradient(ellipse_70%_50%_at_50%_40%,#000_70%,transparent_100%)] pointer-events-none" />
 
       <div className="max-w-7xl mx-auto px-6 relative z-10 w-full flex flex-col items-center">
         
@@ -75,23 +74,23 @@ export default function HeroSection() {
           variants={fadeInUp}
           initial="initial"
           animate="animate"
-          className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full border border-emerald-500/30 bg-emerald-950/40 text-emerald-400 text-[11px] font-mono font-bold uppercase tracking-widest mb-6 shadow-xl backdrop-blur-md"
+          className="inline-flex items-center gap-2 px-3.5 py-1 rounded-full border border-terminal-border-strong bg-terminal-surface text-terminal-emerald text-[11px] font-mono font-bold uppercase tracking-widest mb-6 shadow-xs"
         >
-          <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse" />
-          <span>{isAr ? "محطة الاستخبارات المالية السيادية الأولى" : "The Sovereign Intelligence Terminal v2.5"}</span>
+          <span className="w-2 h-2 rounded-full bg-terminal-emerald animate-pulse" />
+          <span>{isAr ? "محطة الاستخبارات المالية السيادية v2.5" : "The Sovereign Financial Terminal v2.5"}</span>
         </motion.div>
 
-        {/* MAIN CINEMATIC HEADLINE */}
+        {/* MAIN HEADLINE */}
         <motion.h1
           variants={fadeInUp}
           initial="initial"
           animate="animate"
-          className="font-serif text-4xl sm:text-6xl md:text-7xl lg:text-8xl font-bold tracking-tight text-white text-center max-w-6xl leading-[1.06] mb-4 drop-shadow-sm"
+          className="font-serif text-4xl sm:text-6xl md:text-7xl font-bold tracking-tight text-terminal-text text-center max-w-5xl leading-[1.08] mb-4"
         >
           {isAr ? (
-            <span>الاستخبارات المالية لأسواق المال الخليجية</span>
+            <span>الاستخبارات المالية لأسواق رأس المال الخليجية</span>
           ) : (
-            <span>Sovereign Financial Intelligence for GCC Markets</span>
+            <span>Sovereign Financial Intelligence for GCC Capital Markets</span>
           )}
         </motion.h1>
 
@@ -100,11 +99,11 @@ export default function HeroSection() {
           variants={fadeInUp}
           initial="initial"
           animate="animate"
-          className="font-sans text-sm sm:text-base md:text-lg text-slate-400 text-center max-w-2xl leading-relaxed mb-6"
+          className="font-sans text-sm sm:text-base text-terminal-text-secondary text-center max-w-2xl leading-relaxed mb-6"
         >
           {isAr
-            ? "محطة نمذجة استثمارية متكاملة لأسواق الخليج: تقييم DCF، صفقات LBO، القوائم المالية الثلاث بالمعايير والزكاة، وفحص AAOIFI الشرعي."
-            : "Institutional 5-year valuation, private equity LBO returns, GAAP/IFRS 3-statement forecasts, and AAOIFI compliance for GCC capital."
+            ? "بناء نماذج التقييم المؤسسية (DCF & LBO)، القوائم المالية الثلاث بمعايير المحاسبة والزكاة، الفحص الشرعي AAOIFI، وبث أبحاث الأسهم الفورية."
+            : "Institutional 5-year DCF & LBO modeling, GAAP/IFRS 3-statement forecasts, AAOIFI Shariah screening, and Gemini 2.5 AI research wire."
           }
         </motion.p>
 
@@ -113,11 +112,11 @@ export default function HeroSection() {
           variants={fadeInUp}
           initial="initial"
           animate="animate"
-          className="h-11 flex items-center justify-center font-mono text-xs sm:text-sm text-slate-200 mb-8 bg-[#0D1117]/80 border border-slate-800 px-6 py-2 rounded-xl shadow-2xl backdrop-blur-md max-w-xl w-full"
+          className="h-10 flex items-center justify-center font-mono text-xs sm:text-sm text-terminal-text mb-8 bg-terminal-surface border border-terminal-border px-5 py-2 rounded-lg shadow-xs max-w-xl w-full"
         >
-          <Terminal size={15} className="text-emerald-400 mr-2.5 rtl:mr-0 rtl:ml-2.5 shrink-0" />
-          <span className="truncate font-semibold">{currentText}</span>
-          <span className="text-emerald-400 font-bold animate-pulse ml-0.5">_</span>
+          <Terminal size={14} className="text-terminal-emerald mr-2 rtl:mr-0 rtl:ml-2 shrink-0" />
+          <span className="truncate font-semibold">{currentText || (isAr ? "جاهز لاستقبال الأوامر" : "Ready for execution")}</span>
+          <span className="text-terminal-emerald font-bold animate-pulse ml-0.5">_</span>
         </motion.div>
 
         {/* PRIMARY CALL TO ACTION BUTTONS */}
@@ -125,115 +124,115 @@ export default function HeroSection() {
           variants={fadeInUp}
           initial="initial"
           animate="animate"
-          className="flex flex-col sm:flex-row items-center gap-4 mb-10 w-full sm:w-auto"
+          className="flex flex-col sm:flex-row items-center gap-3.5 mb-10 w-full sm:w-auto"
         >
           <Link
             href="/dashboard"
-            className="w-full sm:w-auto flex items-center justify-center gap-2.5 px-8 py-4 rounded-xl bg-emerald-500 hover:bg-emerald-400 text-slate-950 font-mono font-extrabold text-xs uppercase tracking-wider shadow-[0_0_30px_rgba(16,185,129,0.35)] transition-all cursor-pointer group"
+            className="w-full sm:w-auto flex items-center justify-center gap-2.5 px-7 py-3.5 rounded-lg bg-terminal-emerald hover:bg-terminal-emerald-light text-white font-mono font-bold text-xs uppercase tracking-wider shadow-sm transition-all cursor-pointer group"
           >
             <span>{isAr ? "تشغيل المنصة السيادية" : "Enter Sovereign Terminal"}</span>
-            <ArrowRight size={16} className="group-hover:translate-x-1 rtl:group-hover:-translate-x-1 transition-transform" />
+            <ArrowRight size={15} className="group-hover:translate-x-1 rtl:group-hover:-translate-x-1 transition-transform" />
           </Link>
 
           <Link
             href="/dashboard"
-            className="w-full sm:w-auto flex items-center justify-center gap-2 px-7 py-4 rounded-xl bg-slate-900/80 border border-slate-800 hover:bg-slate-800 text-slate-200 font-mono font-bold text-xs transition-all cursor-pointer backdrop-blur-md"
+            className="w-full sm:w-auto flex items-center justify-center gap-2 px-6 py-3.5 rounded-lg bg-terminal-surface border border-terminal-border-strong hover:bg-terminal-hover text-terminal-text font-mono font-bold text-xs transition-all cursor-pointer"
           >
-            <Activity size={15} className="text-emerald-400" />
+            <Activity size={14} className="text-terminal-emerald" />
             <span>{isAr ? "استكشاف البيانات المباشرة" : "Explore Live Wire"}</span>
           </Link>
         </motion.div>
 
-        {/* 3D ROTATING GCC GLOBE CENTERPIECE */}
+        {/* 3D ROTATING GCC GLOBE CENTERPIECE (IN LIGHT-MODE CARD PANEL) */}
         <motion.div
-          initial={{ opacity: 0, scale: 0.94 }}
+          initial={{ opacity: 0, scale: 0.96 }}
           animate={{ opacity: 1, scale: 1 }}
-          transition={{ duration: 0.8, delay: 0.25, ease: [0.16, 1, 0.3, 1] }}
-          className="w-full max-w-5xl my-4 relative flex items-center justify-center"
+          transition={{ duration: 0.5, delay: 0.15, ease: [0.16, 1, 0.3, 1] }}
+          className="w-full max-w-5xl my-2 p-2 sm:p-4 rounded-2xl bg-white border border-terminal-border shadow-terminal-card flex items-center justify-center relative"
         >
           <GccGlobe3D isAr={isAr} />
         </motion.div>
 
         {/* LIVE TERMINAL INTERACTIVE MOCKUP PREVIEW */}
         <motion.div
-          initial={{ opacity: 0, y: 30 }}
+          initial={{ opacity: 0, y: 25 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
-          transition={{ duration: 0.5, ease: [0.16, 1, 0.3, 1] }}
-          className="w-full max-w-5xl mt-6 bg-[#0D1117]/90 rounded-2xl border border-slate-800 shadow-[0_20px_50px_rgba(0,0,0,0.6)] backdrop-blur-xl overflow-hidden text-left rtl:text-right"
+          transition={{ duration: 0.4, ease: [0.16, 1, 0.3, 1] }}
+          className="w-full max-w-5xl mt-6 bg-white rounded-xl border border-terminal-border-strong shadow-terminal-card overflow-hidden text-left rtl:text-right"
           dir={isAr ? "rtl" : "ltr"}
         >
           {/* MOCKUP HEADER BAR */}
-          <div className="h-10 bg-[#161B22] border-b border-slate-800 px-4 flex items-center justify-between font-mono text-[11px]">
+          <div className="h-10 bg-terminal-surface border-b border-terminal-border px-4 flex items-center justify-between font-mono text-[11px]">
             <div className="flex items-center gap-2">
-              <span className="w-2.5 h-2.5 rounded-full bg-slate-700" />
-              <span className="w-2.5 h-2.5 rounded-full bg-slate-700" />
-              <span className="w-2.5 h-2.5 rounded-full bg-slate-700" />
-              <span className="font-bold text-slate-200 ml-2">MAHWAR TERMINAL // GCC.2222.SR</span>
+              <span className="w-2.5 h-2.5 rounded-full bg-slate-300" />
+              <span className="w-2.5 h-2.5 rounded-full bg-slate-300" />
+              <span className="w-2.5 h-2.5 rounded-full bg-slate-300" />
+              <span className="font-bold text-terminal-text ml-2">MAHWAR TERMINAL // GCC.2222.SR</span>
             </div>
-            <div className="flex items-center gap-3 text-slate-400">
-              <span className="text-emerald-400 font-bold flex items-center gap-1.5">
-                <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse" />
+            <div className="flex items-center gap-3 text-slate-500">
+              <span className="text-terminal-emerald font-bold flex items-center gap-1">
+                <span className="w-1.5 h-1.5 rounded-full bg-terminal-emerald animate-pulse" />
                 <span>ONLINE 2.5 FLASH</span>
               </span>
             </div>
           </div>
 
           {/* MOCKUP CONTENT GRID */}
-          <div className="p-6 grid grid-cols-1 md:grid-cols-3 gap-5">
+          <div className="p-6 grid grid-cols-1 md:grid-cols-3 gap-5 bg-white">
             {/* KPI 1: INTRINSIC VALUE */}
-            <div className="p-4 rounded-xl bg-[#161B22]/70 border border-slate-800/90 flex flex-col justify-between">
+            <div className="p-4 rounded-lg bg-terminal-surface border border-terminal-border flex flex-col justify-between">
               <div className="flex justify-between items-start">
-                <span className="text-[10px] font-mono text-slate-400 uppercase font-bold tracking-wider">DCF Intrinsic Valuation</span>
-                <span className="px-1.5 py-0.5 text-[9px] font-mono font-bold text-emerald-400 bg-emerald-950/60 rounded border border-emerald-500/20">5Y WACC</span>
+                <span className="text-[10px] font-mono text-slate-500 uppercase font-bold tracking-wider">DCF Intrinsic Valuation</span>
+                <span className="px-1.5 py-0.5 text-[9px] font-mono font-bold text-terminal-emerald bg-emerald-50 rounded">5Y WACC</span>
               </div>
               <div className="my-3">
-                <span className="text-2xl font-mono font-extrabold text-white">
+                <span className="text-2xl font-mono font-extrabold text-terminal-text">
                   SAR <NumberCounter value={38.45} decimals={2} />
                 </span>
-                <span className="text-[11px] font-mono text-emerald-400 font-bold block mt-0.5">
+                <span className="text-[11px] font-mono text-terminal-positive font-bold block mt-0.5">
                   +18.4% Implied Upside
                 </span>
               </div>
-              <span className="text-[10px] font-mono text-slate-500 border-t border-slate-800 pt-2 block">
+              <span className="text-[10px] font-mono text-slate-400 border-t border-terminal-border pt-2 block">
                 Terminal Growth: 2.5% | Cost of Equity: 8.9%
               </span>
             </div>
 
             {/* KPI 2: LBO RETURNS WATERFALL */}
-            <div className="p-4 rounded-xl bg-[#161B22]/70 border border-slate-800/90 flex flex-col justify-between">
+            <div className="p-4 rounded-lg bg-terminal-surface border border-terminal-border flex flex-col justify-between">
               <div className="flex justify-between items-start">
-                <span className="text-[10px] font-mono text-slate-400 uppercase font-bold tracking-wider">LBO Private Equity IRR</span>
-                <span className="px-1.5 py-0.5 text-[9px] font-mono font-bold text-slate-300 bg-slate-800/80 rounded border border-slate-700">5Y HOLD</span>
+                <span className="text-[10px] font-mono text-slate-500 uppercase font-bold tracking-wider">LBO Private Equity IRR</span>
+                <span className="px-1.5 py-0.5 text-[9px] font-mono font-bold text-slate-700 bg-slate-200/60 rounded">5Y HOLD</span>
               </div>
               <div className="my-3">
-                <span className="text-2xl font-mono font-extrabold text-emerald-400">
+                <span className="text-2xl font-mono font-extrabold text-terminal-emerald">
                   <NumberCounter value={24.8} decimals={1} />%
                 </span>
-                <span className="text-[11px] font-mono text-slate-300 font-bold block mt-0.5">
+                <span className="text-[11px] font-mono text-slate-600 font-bold block mt-0.5">
                   2.65x MOIC Multiple
                 </span>
               </div>
-              <span className="text-[10px] font-mono text-slate-500 border-t border-slate-800 pt-2 block">
+              <span className="text-[10px] font-mono text-slate-400 border-t border-terminal-border pt-2 block">
                 Sponsor Equity: SAR 420M | Senior Debt: 55%
               </span>
             </div>
 
             {/* KPI 3: AAOIFI SHARIAH COMPLIANCE */}
-            <div className="p-4 rounded-xl bg-[#161B22]/70 border border-slate-800/90 flex flex-col justify-between">
+            <div className="p-4 rounded-lg bg-terminal-surface border border-terminal-border flex flex-col justify-between">
               <div className="flex justify-between items-start">
-                <span className="text-[10px] font-mono text-slate-400 uppercase font-bold tracking-wider">AAOIFI Compliance</span>
-                <span className="px-1.5 py-0.5 text-[9px] font-mono font-bold text-emerald-300 bg-emerald-950/80 rounded border border-emerald-500/30">PASS</span>
+                <span className="text-[10px] font-mono text-slate-500 uppercase font-bold tracking-wider">AAOIFI Compliance</span>
+                <span className="px-1.5 py-0.5 text-[9px] font-mono font-bold text-emerald-700 bg-emerald-100 rounded">PASS</span>
               </div>
               <div className="my-3">
-                <span className="text-sm font-mono font-extrabold text-emerald-400 block uppercase">
+                <span className="text-sm font-mono font-extrabold text-terminal-emerald block uppercase">
                   100% Shariah Compliant
                 </span>
-                <span className="text-[11px] font-mono text-slate-400 block mt-0.5">
+                <span className="text-[11px] font-mono text-slate-600 block mt-0.5">
                   Debt-to-Assets: 14.2% (Max 33%)
                 </span>
               </div>
-              <span className="text-[10px] font-mono text-slate-500 border-t border-slate-800 pt-2 block">
+              <span className="text-[10px] font-mono text-slate-400 border-t border-terminal-border pt-2 block">
                 Purification Rate: SAR 0.00 / Share
               </span>
             </div>
