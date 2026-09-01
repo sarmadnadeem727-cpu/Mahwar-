@@ -9,19 +9,13 @@ import { useTerminalStore } from "@/store/useTerminalStore";
 
 // Lazy loading feature modules with zero SSR for performance optimization
 const IntelligenceHub = dynamic(() => import("@/components/features/IntelligenceHub"), { ssr: false });
-const LiveMarket = dynamic(() => import("@/components/features/LiveMarket"), { ssr: false });
-const TechnicalCharts = dynamic(() => import("@/components/features/TechnicalCharts"), { ssr: false });
 const AIResearch = dynamic(() => import("@/components/features/AIResearch"), { ssr: false });
 const ShariahScreening = dynamic(() => import("@/components/features/ShariahScreening"), { ssr: false });
-const MarketScreener = dynamic(() => import("@/components/features/MarketScreener"), { ssr: false });
-const DividendAnalysis = dynamic(() => import("@/components/features/DividendAnalysis"), { ssr: false });
-const OwnershipDetails = dynamic(() => import("@/components/features/OwnershipDetails"), { ssr: false });
-const EconomicCalendar = dynamic(() => import("@/components/features/EconomicCalendar"), { ssr: false });
+const CompanyComparator = dynamic(() => import("@/components/features/CompanyComparator"), { ssr: false });
 const BIReportEngine = dynamic(() => import("@/components/features/BIReportEngine"), { ssr: false });
 const DCFModel = dynamic(() => import("@/components/models/DCFModel"), { ssr: false });
 const LBOModel = dynamic(() => import("@/components/models/LBOModel"), { ssr: false });
 const ThreeStatementModel = dynamic(() => import("@/components/models/ThreeStatementModel"), { ssr: false });
-const DashboardGCCMap = dynamic(() => import("@/components/features/DashboardGCCMap"), { ssr: false });
 
 export default function DashboardPage() {
   const { activePanel, language } = useTerminalStore();
@@ -29,19 +23,13 @@ export default function DashboardPage() {
 
   const renderPanel = () => {
     switch (activePanel) {
-      case "live_market": return <LiveMarket />;
-      case "technical":   return <TechnicalCharts />;
       case "research":    return <AIResearch />;
       case "shariah":     return <ShariahScreening />;
-      case "screener":    return <MarketScreener />;
-      case "dividends":   return <DividendAnalysis />;
-      case "ownership":   return <OwnershipDetails />;
-      case "calendar":    return <EconomicCalendar />;
+      case "screener":    return <CompanyComparator />;
       case "bi_report":   return <BIReportEngine />;
       case "DCF":         return <DCFModel />;
       case "LBO":         return <LBOModel />;
       case "FS":          return <ThreeStatementModel />;
-      case "gcc_map":     return <DashboardGCCMap />;
       case "hub":
       default:            return <IntelligenceHub />;
     }
@@ -49,7 +37,7 @@ export default function DashboardPage() {
 
   return (
     <div 
-      className={`flex min-h-screen bg-[#0A0B0D] text-slate-100 selection:bg-[var(--emerald)] selection:text-white ${
+      className={`flex min-h-screen bg-white text-[#171717] selection:bg-[var(--emerald)] selection:text-white ${
         isAr ? 'font-cairo' : ''
       }`}
       dir={isAr ? "rtl" : "ltr"}
@@ -58,12 +46,12 @@ export default function DashboardPage() {
       <Sidebar />
 
       {/* MAIN TERMINAL CONTAINER */}
-      <div className="flex-1 flex flex-col min-w-0 bg-[#0A0B0D]">
+      <div className="flex-1 flex flex-col min-w-0 bg-white">
         {/* STICKY 64px TOPBAR */}
         <TopBar />
 
         {/* MAIN PANEL CONTENT AREA */}
-        <main className="flex-1 p-6 lg:p-8 overflow-y-auto relative z-10">
+        <main className="flex-1 p-6 lg:p-8 overflow-y-auto relative z-10 no-print">
           <AnimatePresence mode="wait">
             <motion.div
               key={activePanel}

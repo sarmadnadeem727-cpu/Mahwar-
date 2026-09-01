@@ -4,22 +4,24 @@ export type Currency = 'SAR' | 'AED' | 'KWD' | 'BHD' | 'OMR' | 'QAR' | 'USD';
 export type Language = 'en' | 'ar';
 export type PanelType = 
   | "hub" 
-  | "live_market"
-  | "technical"
   | "research" 
   | "shariah" 
-  | "screener"
-  | "dividends" 
-  | "ownership" 
-  | "calendar" 
+  | "screener" // renamed/repurposed as Company Comparator
   | "bi_report"
   | "DCF" 
   | "LBO" 
-  | "FS"
-  | "gcc_map";
+  | "FS";
+
+export interface SessionAnalyses {
+  dcf?: { inputs: any; outputs: any; computedAt: string };
+  lbo?: { inputs: any; outputs: any; computedAt: string };
+  threeStatement?: { inputs: any; outputs: any; computedAt: string };
+  shariah?: { inputs: any; outputs: any; computedAt: string };
+  comparator?: { rows: any[]; computedAt: string };
+  researchMemo?: { content: string; companyName: string; computedAt: string };
+}
 
 interface TerminalState {
-  activeTicker: string;
   activePanel: PanelType;
   isLoading: boolean;
   globalError: string | null;
@@ -28,7 +30,11 @@ interface TerminalState {
   currency: Currency;
   searchQuery: string;
 
-  setTicker: (ticker: string) => void;
+  // Session analyses store
+  sessionAnalyses: SessionAnalyses;
+  updateSessionAnalysis: <K extends keyof SessionAnalyses>(key: K, data: SessionAnalyses[K]) => void;
+  clearSessionAnalyses: () => void;
+
   setPanel: (panel: PanelType) => void;
   setLoading: (loading: boolean) => void;
   setError: (error: string | null) => void;
@@ -38,7 +44,6 @@ interface TerminalState {
 }
 
 export const useTerminalStore = create<TerminalState>((set) => ({
-  activeTicker: "2222.SR", // Default Saudi Aramco
   activePanel: "hub",
   isLoading: false,
   globalError: null,
@@ -47,14 +52,15 @@ export const useTerminalStore = create<TerminalState>((set) => ({
   currency: "SAR",
   searchQuery: "",
 
-  setTicker: (ticker) => {
-    if (!ticker) return;
-    let formatted = ticker.toUpperCase().trim();
-    if (/^\d{4}$/.test(formatted)) {
-      formatted = `${formatted}.SR`;
-    }
-    set({ activeTicker: formatted, globalError: null });
-  },
+  sessionAnalyses: {},
+  updateSessionAnalysis: (key, data) => 
+    set((state) => ({
+      sessionAnalyses: {
+        ...state.sessionAnalyses,
+        [key]: data
+      }
+    })),
+  clearSessionAnalyses: () => set({ sessionAnalyses: {} }),
   
   setPanel: (activePanel) => set({ activePanel }),
   setLoading: (isLoading) => set({ isLoading }),
@@ -63,3 +69,4 @@ export const useTerminalStore = create<TerminalState>((set) => ({
   setCurrency: (currency) => set({ currency }),
   setSearchQuery: (searchQuery) => set({ searchQuery }),
 }));
+

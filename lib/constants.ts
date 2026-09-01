@@ -1,15 +1,4 @@
-export const TICKERS = [
-  { symbol: "2222", name: "Aramco", price: "28.40", change: "0.15", percent: "0.53", up: true },
-  { symbol: "1120", name: "Al Rajhi", price: "87.60", change: "1.20", percent: "1.39", up: true },
-  { symbol: "1150", name: "Alinma", price: "32.15", change: "-0.45", percent: "-1.38", up: false },
-  { symbol: "1010", name: "Riyad Bank", price: "26.85", change: "0.05", percent: "0.19", up: true },
-  { symbol: "7010", name: "STC", price: "41.20", change: "-0.10", percent: "-0.24", up: false },
-  { symbol: "2010", name: "SABIC", price: "74.50", change: "0.80", percent: "1.09", up: true },
-  { symbol: "1180", name: "SNB", price: "38.90", change: "1.10", percent: "2.91", up: true },
-  { symbol: "4003", name: "Extra", price: "92.30", change: "-1.50", percent: "-1.60", up: false },
-  { symbol: "1211", name: "Ma'aden", price: "45.10", change: "0.35", percent: "0.78", up: true },
-  { symbol: "5110", name: "Saudi Electricity", price: "18.42", change: "0.02", percent: "0.11", up: true },
-];
+export const TICKERS: { symbol: string; name: string; price: string; change: string; percent: string; up: boolean }[] = [];
 
 export const FEATURES = [
   {

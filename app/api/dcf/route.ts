@@ -4,19 +4,36 @@ export async function POST(req: NextRequest) {
   try {
     const body = await req.json();
     const {
-      revGrowth = 12,
-      ebitdaMargin = 28,
-      capexRev = 8,
-      taxZakat = 2.5,
-      costEquity = 11,
-      costDebt = 5,
-      debtWeight = 40,
-      terminalGrowth = 3,
-      currentPrice = 31.45,
-      baseRevenue = 45000, // SAR M
-      sharesOutstanding = 242000, // M
-      netDebt = 65000 // SAR M
+      revGrowth,
+      ebitdaMargin,
+      capexRev,
+      taxZakat,
+      costEquity,
+      costDebt,
+      debtWeight,
+      terminalGrowth,
+      currentPrice,
+      baseRevenue,
+      sharesOutstanding,
+      netDebt
     } = body;
+
+    // Validate required inputs to prevent division by zero
+    if (!baseRevenue || baseRevenue <= 0 || !sharesOutstanding || sharesOutstanding <= 0) {
+      return NextResponse.json({
+        error: 'Base revenue and shares outstanding must be greater than zero',
+        wacc: 0,
+        fcfProjections: [],
+        terminalValue: 0,
+        pvTerminalValue: 0,
+        enterpriseValue: 0,
+        equityValue: 0,
+        intrinsicValuePerShare: 0,
+        upsidePct: 0,
+        currentPrice: currentPrice || 0,
+        sensitivityMatrix: []
+      });
+    }
 
     // WACC computation
     const equityWeight = 100 - debtWeight;

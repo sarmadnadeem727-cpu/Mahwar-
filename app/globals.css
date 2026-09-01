@@ -4,30 +4,30 @@
 
 @layer base {
   :root {
-    /* Sovereign Dark Luxury Palette */
-    --void: #0A0B0D;       /* Deep obsidian base background */
-    --bg1: #0F1113;        /* Dark slate surface layer */
-    --bg2: #14171A;        /* Secondary panel surface */
-    --bg3: #1C2127;        /* Active surface & hover state */
+    /* Sovereign Light Warm Palette */
+    --void: #FFFFFF;       /* Pure white base background */
+    --bg1: #F7F7F5;        /* Warm off-white surface layer */
+    --bg2: #EFEFED;        /* Secondary panel surface */
+    --bg3: #E5E5E3;        /* Active surface & hover state */
     
     --emerald: #0E7C69;    /* Signature Mahwar Emerald */
-    --emerald-glow: rgba(14, 124, 105, 0.25);
-    --gold: #C9A84C;       /* Sovereign Saudi Gold */
-    --gold-glow: rgba(201, 168, 76, 0.25);
+    --emerald-glow: rgba(14, 124, 105, 0.08);
+    --gold: #0E7C69;       /* Old Gold replaced with Emerald */
+    --gold-glow: rgba(14, 124, 105, 0.08);
     
     --pos: #16A34A;        /* Positive gain green */
-    --pos-bg: rgba(22, 163, 74, 0.12);
+    --pos-bg: rgba(22, 163, 74, 0.08);
     --neg: #E53E3E;        /* Negative loss red */
-    --neg-bg: rgba(229, 62, 62, 0.12);
+    --neg-bg: rgba(229, 62, 62, 0.08);
     
-    --text1: #F8FAFC;      /* High contrast primary text */
-    --text2: #94A3B8;      /* Secondary label text */
-    --text3: #64748B;      /* Muted metadata text */
+    --text1: #171717;      /* Near-black primary text */
+    --text2: #525252;      /* Secondary label text */
+    --text3: #737373;      /* Muted metadata text */
     
-    --border: rgba(255, 255, 255, 0.08);
-    --border-strong: rgba(255, 255, 255, 0.15);
-    --border-emerald: rgba(14, 124, 105, 0.4);
-    --border-gold: rgba(201, 168, 76, 0.4);
+    --border: rgba(0, 0, 0, 0.08);
+    --border-strong: rgba(0, 0, 0, 0.15);
+    --border-emerald: rgba(14, 124, 105, 0.3);
+    --border-gold: rgba(14, 124, 105, 0.3);
   }
 
   body {
@@ -39,8 +39,8 @@
   }
 
   /* Typography Fonts */
-  .font-garamond {
-    font-family: var(--font-cormorant), Georgia, serif;
+  .font-garamond, .font-serif {
+    font-family: var(--font-serif), Georgia, serif;
   }
 
   .font-cairo {
@@ -49,7 +49,7 @@
 
   .font-mono, .font-ibm-plex-mono {
     font-family: var(--font-mono), 'IBM Plex Mono', monospace;
-    font-variant-numeric: tabular-nums; /* Essential for aligned numerical data */
+    font-variant-numeric: tabular-nums;
   }
 
   .lang-ar, [dir="rtl"] {
@@ -58,30 +58,21 @@
 }
 
 @layer components {
-  /* Glassmorphism Panels */
+  /* Simple Surface Panels - Clean Border Design */
   .glass-panel {
-    background: rgba(15, 17, 19, 0.75);
-    backdrop-filter: blur(20px);
-    -webkit-backdrop-filter: blur(20px);
+    background: var(--bg1);
     border: 1px solid var(--border);
   }
 
   .glass-card {
-    background: rgba(20, 23, 26, 0.6);
-    backdrop-filter: blur(16px);
-    -webkit-backdrop-filter: blur(16px);
+    background: var(--bg1);
     border: 1px solid var(--border);
-    transition: all 0.25s cubic-bezier(0.22, 1, 0.36, 1);
+    transition: all 0.2s cubic-bezier(0.22, 1, 0.36, 1);
   }
 
   .glass-card:hover {
     border-color: var(--border-emerald);
-    box-shadow: 0 10px 30px -10px rgba(14, 124, 105, 0.2);
-  }
-
-  .glass-card-gold:hover {
-    border-color: var(--border-gold);
-    box-shadow: 0 10px 30px -10px rgba(201, 168, 76, 0.2);
+    background: var(--bg2);
   }
 
   /* Terminal Table Architecture */
@@ -92,10 +83,10 @@
   }
 
   .terminal-table thead th {
-    background: rgba(20, 23, 26, 0.9);
+    background: var(--bg2);
     color: var(--text2);
     font-size: 10px;
-    font-weight: 700;
+    font-weight: 750;
     text-transform: uppercase;
     letter-spacing: 0.12em;
     padding: 10px 14px;
@@ -124,12 +115,12 @@
   }
 
   .terminal-table tbody tr:hover {
-    background: rgba(28, 33, 39, 0.7);
+    background: var(--bg3);
   }
 
   /* Inputs */
   .terminal-input {
-    background: rgba(10, 11, 13, 0.8);
+    background: #FFFFFF;
     border: 1px solid var(--border-strong);
     color: var(--text1);
     padding: 8px 12px;
@@ -142,56 +133,21 @@
   .terminal-input:focus {
     outline: none;
     border-color: var(--emerald);
-    box-shadow: 0 0 12px var(--emerald-glow);
-  }
-
-  /* Subtle CRT Scanline overlay */
-  .scanline-overlay {
-    background: linear-gradient(
-      rgba(18, 16, 16, 0) 50%, 
-      rgba(0, 0, 0, 0.15) 50%
-    );
-    background-size: 100% 4px;
-    pointer-events: none;
-  }
-
-  /* Hardware-Accelerated Infinite Ticker Marquee */
-  @keyframes marquee {
-    0% { transform: translateX(0%); }
-    100% { transform: translateX(-50%); }
-  }
-
-  @keyframes marquee-rtl {
-    0% { transform: translateX(0%); }
-    100% { transform: translateX(50%); }
-  }
-
-  .animate-marquee {
-    display: flex;
-    width: max-content;
-    animation: marquee 35s linear infinite;
-  }
-
-  .animate-marquee:hover {
-    animation-play-state: paused;
-  }
-
-  [dir="rtl"] .animate-marquee {
-    animation: marquee-rtl 35s linear infinite;
+    box-shadow: 0 0 8px var(--emerald-glow);
   }
 }
 
-/* Custom Scrollbar */
+/* Custom Scrollbar for Light Mode */
 ::-webkit-scrollbar {
-  width: 5px;
-  height: 5px;
+  width: 6px;
+  height: 6px;
 }
 ::-webkit-scrollbar-track {
-  background: var(--void);
+  background: var(--bg1);
 }
 ::-webkit-scrollbar-thumb {
-  background: rgba(255, 255, 255, 0.15);
-  border-radius: 4px;
+  background: var(--bg3);
+  border-radius: 3px;
 }
 ::-webkit-scrollbar-thumb:hover {
   background: var(--emerald);

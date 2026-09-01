@@ -1,9 +1,7 @@
 import type { Metadata } from "next";
-import { Inter, JetBrains_Mono, Cairo, Cormorant_Garamond } from "next/font/google";
+import { Inter, IBM_Plex_Mono, Cairo, Source_Serif_4 } from "next/font/google";
 import "./globals.css";
 import LoadingScreen from "@/components/ui/LoadingScreen";
-import QueryProvider from "@/components/providers/QueryProvider";
-import { UserProvider } from "@/components/providers/UserProvider";
 
 const inter = Inter({
   subsets: ["latin"],
@@ -11,9 +9,10 @@ const inter = Inter({
   display: "swap",
 });
 
-const jetbrainsMono = JetBrains_Mono({
+const ibmPlexMono = IBM_Plex_Mono({
   subsets: ["latin"],
   variable: "--font-mono",
+  weight: ["400", "500", "600", "700"],
   display: "swap",
 });
 
@@ -24,17 +23,17 @@ const cairo = Cairo({
   display: "swap",
 });
 
-const cormorant = Cormorant_Garamond({
+const sourceSerif = Source_Serif_4({
   subsets: ["latin"],
-  variable: "--font-cormorant",
+  variable: "--font-serif",
   weight: ["400", "500", "600", "700"],
   style: ["normal", "italic"],
   display: "swap",
 });
 
 export const metadata: Metadata = {
-  title: "Mahwar | محور - Saudi Capital Markets Intelligence",
-  description: "The Axis of financial intelligence for Saudi capital markets.",
+  title: "Mahwar | محور - GCC Corporate Modeling Suite",
+  description: "The Axis of financial intelligence for GCC capital markets.",
 };
 
 export default function RootLayout({
@@ -43,14 +42,10 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en" className={`${inter.variable} ${jetbrainsMono.variable} ${cairo.variable} ${cormorant.variable}`}>
-      <body className="bg-[var(--void)] text-[var(--text1)] min-h-screen">
-        <QueryProvider>
-          <UserProvider>
-            <LoadingScreen />
-            {children}
-          </UserProvider>
-        </QueryProvider>
+    <html lang="en" className={`${inter.variable} ${ibmPlexMono.variable} ${cairo.variable} ${sourceSerif.variable}`}>
+      <body className="bg-[#FFFFFF] text-[#171717] min-h-screen">
+          <LoadingScreen />
+          {children}
       </body>
     </html>
   );

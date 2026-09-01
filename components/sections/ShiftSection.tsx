@@ -3,54 +3,79 @@
 import React from "react";
 import { motion } from "framer-motion";
 import { staggerContainer, staggerItem } from "@/lib/motion";
-import { useTerminalStore } from "@/store/useTerminalStore";
 
-export default function ShiftSection() {
-  const { language } = useTerminalStore();
-  const isAr = language === 'ar';
-
+const ShiftSection = () => {
   return (
-    <section className="relative py-24 flex items-center justify-center overflow-hidden bg-[#0A0B0D] border-t border-white/5">
+    <section className="relative py-[160px] flex items-center justify-center overflow-hidden bg-white">
+      {/* Orbiting Rings Background */}
+      <div className="absolute inset-0 z-0 flex items-center justify-center pointer-events-none">
+        {[
+          { size: "300px", duration: 25, dir: 1 },
+          { size: "500px", duration: 35, dir: -1 },
+          { size: "700px", duration: 45, dir: 1 },
+        ].map((ring, i) => (
+          <motion.div
+            key={i}
+            animate={{ rotate: 360 * ring.dir }}
+            transition={{
+              duration: ring.duration,
+              repeat: Infinity,
+              ease: "linear",
+              repeatType: "loop"
+            }}
+            className="absolute border border-[var(--emerald)]/20 rounded-full"
+            style={{
+              width: ring.size,
+              height: ring.size,
+              opacity: 0.1 - i * 0.03,
+            }}
+          >
+            {/* Dot */}
+            <div className="absolute top-0 left-1/2 -translate-x-1/2 w-1.5 h-1.5 bg-[var(--emerald)] rounded-full" />
+          </motion.div>
+        ))}
+      </div>
+
       {/* Content */}
       <motion.div
         variants={staggerContainer}
-        initial="initial"
-        whileInView="animate"
+        initial="hidden"
+        whileInView="visible"
         viewport={{ once: true }}
         className="relative z-10 flex flex-col items-center text-center px-6"
       >
         <motion.div
           variants={staggerItem}
-          className="w-[1px] h-[80px] bg-gradient-to-b from-transparent via-[var(--gold)] to-transparent relative mb-6"
+          className="w-[1px] h-[120px] bg-gradient-to-b from-transparent via-[var(--emerald)] to-transparent relative mb-8"
         >
-          <div className="absolute top-0 left-1/2 -translate-x-1/2 w-1 h-1 bg-[var(--gold)] rounded-full" />
-          <div className="absolute bottom-0 left-1/2 -translate-x-1/2 w-1 h-1 bg-[var(--gold)] rounded-full" />
+          <div className="absolute top-0 left-1/2 -translate-x-1/2 w-1.5 h-1.5 bg-[var(--emerald)] rounded-full" />
+          <div className="absolute bottom-0 left-1/2 -translate-x-1/2 w-1.5 h-1.5 bg-[var(--emerald)] rounded-full" />
         </motion.div>
 
         <motion.h3
           variants={staggerItem}
-          className="font-garamond text-7xl md:text-9xl text-white/5 mb-4 select-none font-bold uppercase tracking-widest"
+          className="font-cairo text-8xl md:text-[120px] lg:text-[160px] text-[var(--emerald)]/20 opacity-30 mb-8 select-none"
         >
-          MAHWAR
+          محور
         </motion.h3>
 
         <motion.h2
           variants={staggerItem}
-          className="font-garamond text-3xl md:text-4xl font-light text-slate-100 mb-6 max-w-[500px] leading-tight"
+          className="font-serif text-4xl md:text-5xl font-light text-[#171717] mb-12 max-w-[600px] leading-tight"
         >
-          {isAr ? "كل شيء يلتقي عند المحور." : "Everything converges at the axis."}
+          Everything converges at the axis.
         </motion.h2>
 
         <motion.p
           variants={staggerItem}
-          className="text-slate-400 font-sans text-xs md:text-sm max-w-md leading-relaxed"
+          className="font-sans text-sm md:text-base text-slate-600 max-w-[500px] leading-relaxed"
         >
-          {isAr 
-            ? "منصة استخبارات موحدة. بيانات تداول حية. نماذج تقييم مؤسسية. تقارير ذكاء اصطناعي. صُممت للمحلل الذي يطلب الدقة والريادة."
-            : "One unified terminal. Real-time data streams. Institutional-grade models. Generative AI memos. Built for the allocator who demands absolute precision."
-          }
+          One unified platform. Institutional deal models. Custom peer comparators. AI research. <br />
+          Built for the GCC analyst who demands precision.
         </motion.p>
       </motion.div>
     </section>
   );
-}
+};
+
+export default ShiftSection;

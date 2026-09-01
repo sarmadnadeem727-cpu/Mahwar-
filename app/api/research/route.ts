@@ -1,6 +1,4 @@
-import { NextRequest, NextResponse } from 'next/server';
-import { createClient } from '@/lib/supabase/server';
-import { checkQuota } from '@/lib/usage/checkQuota';
+import { NextRequest } from 'next/server';
 
 export async function POST(req: NextRequest) {
   const GEMINI_API_KEY = process.env.GOOGLE_API_KEY;
@@ -12,47 +10,17 @@ export async function POST(req: NextRequest) {
     });
   }
 
-  // Auth check
-  const supabase = await createClient();
-  const { data: { user } } = await supabase.auth.getUser();
-
-  if (!user) {
-    return new Response(JSON.stringify({ error: 'unauthorized', message: 'Authentication required' }), {
-      status: 401,
-      headers: { 'Content-Type': 'application/json' }
-    });
-  }
-
-  // Quota check
-  const quota = await checkQuota(user.id, 'ai_research');
-  if (!quota.allowed) {
-    return new Response(
-      JSON.stringify({ 
-        error: 'quota_exceeded', 
-        plan: quota.plan, 
-        upgradeUrl: '/pricing' 
-      }), 
-      { 
-        status: 402, 
-        headers: { 'Content-Type': 'application/json' } 
-      }
-    );
-  }
-
   try {
     const body = (await req.json()) as {
-      ticker: string;
-      fundamentals: any;
+      companyName: string;
+      companyContext: string;
+      financials: string;
       query?: string;
       language?: 'en' | 'ar';
     };
     
-    const { ticker, fundamentals, query, language = 'en' } = body;
+    const { companyName, companyContext, financials, query, language = 'en' } = body;
     const isAr = language === 'ar';
-
-    const fundamentalsString = typeof fundamentals === 'string' 
-      ? fundamentals 
-      : JSON.stringify(fundamentals, null, 2);
 
     const researchFocus = query 
       ? (isAr 
@@ -62,10 +30,13 @@ export async function POST(req: NextRequest) {
           ? '\nتركيز البحث: تقديم تحليل شامل لأوضاع الشركة بالسوق، والتقييم المالي، وأطروحة الاستثمار.' 
           : '\nRESEARCH FOCUS: Provide a comprehensive state-of-the-market analysis, valuation breakdown, and investment thesis.');
 
-    const prompt = isAr ? `أنت محلل أول لأسهم الشركات في بنك استثماري مرموق بالخليج العربي. اكتب مذكرة أبحاث استثمارية مؤسسية رفيعة المستوى لشركة ذات الرمز ${ticker}.
+    const prompt = isAr ? `أنت محلل أول لأسهم الشركات في بنك استثماري مرموق بالخليج العربي. اكتب مذكرة أبحاث استثمارية مؤسسية رفيعة المستوى لشركة ${companyName}.
 
-بيانات الشركة المالية (YAHOO FINANCE FUNDAMENTALS):
-${fundamentalsString}
+سياق الشركة وأعمالها:
+${companyContext}
+
+البيانات المالية للشركة:
+${financials}
 
 ${researchFocus}
 
@@ -92,10 +63,13 @@ ${researchFocus}
 (التوصية: شراء / احتفاظ / بيع، نسبة القناعة %، وأطروحة العائد الكلي)
 
 ا ختم التقرير بفقرة إخلاء مسؤولية قياسية معتمدة من هيئة السوق المالية (CMA).`
-      : `You are a senior equity research analyst at a premier Gulf investment bank. Write an institutional-grade equity research memo for the GCC company with ticker ${ticker}.
+      : `You are a senior equity research analyst at a premier Gulf investment bank. Write an institutional-grade equity research memo for the GCC company ${companyName}.
 
-COMPANY FUNDAMENTALS (YAHOO FINANCE):
-${fundamentalsString}
+COMPANY CONTEXT & BUSINESS OVERVIEW:
+${companyContext}
+
+COMPANY FINANCIALS:
+${financials}
 
 ${researchFocus}
 
