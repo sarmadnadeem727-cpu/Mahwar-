@@ -38,7 +38,7 @@ export default function TechnologySection() {
   ];
 
   return (
-    <section id="tech" className="py-28 bg-white relative overflow-hidden" dir={isAr ? "rtl" : "ltr"}>
+    <section id="tech" className="py-24 bg-terminal-surface relative overflow-hidden border-t border-terminal-border" dir={isAr ? "rtl" : "ltr"}>
       <div className="max-w-7xl mx-auto px-6 relative z-10">
         <motion.div
           variants={staggerContainer}
@@ -47,16 +47,16 @@ export default function TechnologySection() {
           viewport={{ once: true, margin: "-100px" }}
           className="text-center max-w-3xl mx-auto mb-20"
         >
-          <motion.div variants={staggerItem} className="inline-flex items-center gap-2 px-3.5 py-1 rounded-full bg-[var(--emerald)]/10 border border-[var(--emerald)]/20 text-[var(--emerald)] text-xs font-mono font-bold uppercase tracking-widest mb-4">
-            <Cpu size={14} />
-            <span>{isAr ? "النية البنائية والتقنيات" : "Architectural Powerhouse"}</span>
+          <motion.div variants={staggerItem} className="inline-flex items-center gap-2 px-3.5 py-1 bg-terminal-emerald/10 border border-terminal-emerald/20 text-terminal-emerald text-[10px] font-mono font-bold uppercase tracking-[0.2em] mb-4">
+            <Cpu size={12} />
+            <span>{isAr ? "النية البنائية والتقنيات" : "CORE STACK"}</span>
           </motion.div>
 
-          <motion.h2 variants={staggerItem} className="font-serif text-4xl md:text-6xl font-bold text-[#171717] mb-6">
+          <motion.h2 variants={staggerItem} className="font-serif text-3xl md:text-5xl font-bold text-terminal-text mb-6">
             {isAr ? "بنية تقنية متطورة للأداء المالي الحرج" : "Built Upon Next-Generation Stack"}
           </motion.h2>
 
-          <motion.p variants={staggerItem} className="text-slate-650 text-base md:text-lg">
+          <motion.p variants={staggerItem} className="text-terminal-text-secondary text-sm md:text-base font-sans">
             {isAr 
               ? "استخدام أحدث النماذج المعتمدة في الذكاء الاصطناعي والبنية التحتية البرمجية لتقديم تحليل مؤسسي لا يضاهى."
               : "Leveraging cutting-edge generative AI, local browser execution, and institutional financial primitives."
@@ -74,19 +74,19 @@ export default function TechnologySection() {
               viewport={{ once: true }}
               transition={{ duration: 0.5, delay: idx * 0.1 }}
               whileHover={{ y: -6 }}
-              className="bg-[#F7F7F5] p-8 rounded-2xl border border-slate-200 flex flex-col justify-between"
+              className="bg-terminal-panel p-6 border border-terminal-border flex flex-col justify-between rounded-sm shadow-sm"
             >
               <div>
-                <div className="p-3.5 rounded-xl bg-white border border-slate-200 w-fit mb-6">
+                <div className="p-2 bg-terminal-surface border border-terminal-border w-fit mb-5 rounded-sm">
                   {tech.icon}
                 </div>
-                <h3 className="font-sans text-lg font-bold text-[#171717] mb-2">
+                <h3 className="font-mono text-sm font-bold text-terminal-text mb-2 uppercase tracking-wide">
                   {tech.name}
                 </h3>
-                <div className="text-xs font-mono font-bold text-[var(--emerald)] mb-4">
+                <div className="text-[10px] font-mono font-bold text-terminal-emerald mb-4 uppercase tracking-wider">
                   {tech.role}
                 </div>
-                <p className="text-slate-600 text-xs leading-relaxed font-sans">
+                <p className="text-terminal-text-secondary text-xs leading-relaxed font-sans">
                   {tech.desc}
                 </p>
               </div>

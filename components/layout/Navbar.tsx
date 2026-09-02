@@ -48,14 +48,14 @@ export default function Navbar() {
         </Link>
 
         {/* Center Links */}
-        <div className="hidden md:flex items-center gap-8 text-xs font-semibold tracking-wider text-slate-600">
-          <a href="#problem" className="hover:text-[var(--emerald)] transition-colors">
+        <div className="hidden md:flex items-center gap-8 text-[11px] uppercase tracking-[0.2em] font-mono font-bold text-terminal-text-secondary">
+          <a href="#problem" className="hover:text-terminal-emerald transition-colors">
             {isAr ? "التحدي" : "Market Gap"}
           </a>
-          <a href="#solution" className="hover:text-[var(--emerald)] transition-colors">
+          <a href="#solution" className="hover:text-terminal-emerald transition-colors">
             {isAr ? "القدرات" : "Platform Suite"}
           </a>
-          <a href="#tech" className="hover:text-[var(--emerald)] transition-colors">
+          <a href="#tech" className="hover:text-terminal-emerald transition-colors">
             {isAr ? "التقنيات" : "Core Stack"}
           </a>
 
@@ -65,17 +65,17 @@ export default function Navbar() {
         <div className="hidden md:flex items-center gap-4">
           <button
             onClick={() => setLanguage(isAr ? 'en' : 'ar')}
-            className="flex items-center gap-2 px-3 py-1.5 rounded-lg border border-slate-200 bg-slate-50 hover:bg-slate-100 text-xs font-bold text-slate-700 transition-all cursor-pointer"
+            className="flex items-center gap-2 px-3 py-1.5 rounded-sm border border-terminal-border bg-terminal-surface hover:bg-terminal-hover text-xs font-mono font-bold text-terminal-text transition-all cursor-pointer"
           >
-            <Globe size={13} className="text-[var(--emerald)]" />
+            <Globe size={13} className="text-terminal-emerald" />
             <span>{isAr ? "English" : "العربية"}</span>
           </button>
 
           <Link
             href="/dashboard"
-            className="flex items-center gap-2 px-5 py-2 rounded-lg bg-[var(--emerald)] hover:bg-[#12A189] text-white text-xs font-bold shadow-sm transition-all cursor-pointer group"
+            className="flex items-center gap-2 px-5 py-2 rounded-sm bg-terminal-emerald hover:bg-terminal-emerald-light text-white text-xs font-mono font-bold uppercase tracking-wider shadow-sm transition-all cursor-pointer group"
           >
-            <span>{isAr ? "تشغيل المنصة" : "Enter Terminal"}</span>
+            <span>{isAr ? "تشغيل المنصة" : "ENTER TERMINAL"}</span>
             <ArrowRight size={14} className="group-hover:translate-x-1 transition-transform" />
           </Link>
         </div>

@@ -10,25 +10,21 @@ export default function CTASection() {
   const isAr = language === 'ar';
 
   return (
-    <section className="py-24 bg-white relative overflow-hidden" dir={isAr ? "rtl" : "ltr"}>
+    <section className="py-24 bg-terminal-bg relative overflow-hidden" dir={isAr ? "rtl" : "ltr"}>
       <div className="max-w-7xl mx-auto px-6 relative z-10">
-        <div className="rounded-3xl bg-gradient-to-r from-[#0E7C69] via-[#10957F] to-[#12A189] p-10 md:p-16 text-center relative overflow-hidden shadow-lg border border-slate-200/20">
-          
-          {/* Subtle Ambient Glow Shapes */}
-          <div className="absolute -top-24 -left-24 w-72 h-72 bg-white/10 rounded-full blur-3xl pointer-events-none" />
-          <div className="absolute -bottom-24 -right-24 w-72 h-72 bg-white/5 rounded-full blur-3xl pointer-events-none" />
+        <div className="rounded-sm bg-terminal-panel p-10 md:p-16 text-center relative overflow-hidden shadow-sm border border-terminal-border">
 
           <div className="max-w-3xl mx-auto relative z-10 space-y-6">
-            <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-white/10 border border-white/20 text-white font-mono text-xs font-bold uppercase tracking-widest backdrop-blur-sm">
-              <Zap size={14} className="text-white" />
-              <span>{isAr ? "جاهز للاستخدام الفوري" : "Instant Institutional Access"}</span>
+            <div className="inline-flex items-center gap-2 px-4 py-1.5 bg-terminal-emerald/10 border border-terminal-emerald/20 text-terminal-emerald font-mono text-[10px] font-bold uppercase tracking-[0.2em]">
+              <Zap size={12} className="text-terminal-emerald" />
+              <span>{isAr ? "جاهز للاستخدام الفوري" : "INSTANT INSTITUTIONAL ACCESS"}</span>
             </div>
 
-            <h2 className="font-serif text-4xl md:text-6xl font-bold text-white tracking-tight">
+            <h2 className="font-serif text-3xl md:text-5xl font-bold text-terminal-text tracking-tight">
               {isAr ? "ارتقِ بتحليلاتك المالية لمستوى المحطة السيادية" : "Elevate Your GCC Financial Intelligence Terminal Today"}
             </h2>
 
-            <p className="text-emerald-50 text-base md:text-lg leading-relaxed max-w-2xl mx-auto font-sans">
+            <p className="text-terminal-text-secondary text-sm md:text-base leading-relaxed max-w-2xl mx-auto font-sans">
               {isAr 
                 ? "ابدأ بتوليد مذكرات الاستثمار الذكية ونمذجة التقييم المالي والتقارير الموحدة بدون أي تعقيد."
                 : "Experience Wall Street analytical depth tailored specifically for Saudi & Gulf Capital Markets."
@@ -38,15 +34,15 @@ export default function CTASection() {
             <div className="pt-4 flex flex-col sm:flex-row items-center justify-center gap-4">
               <Link
                 href="/dashboard"
-                className="w-full sm:w-auto inline-flex items-center justify-center gap-3 px-8 py-4 rounded-xl bg-white text-[#0E7C69] font-extrabold text-sm shadow-md hover:bg-slate-50 transition-all cursor-pointer group"
+                className="w-full sm:w-auto inline-flex items-center justify-center gap-3 px-8 py-4 rounded-sm bg-terminal-emerald text-white font-mono font-bold text-xs uppercase tracking-wider hover:bg-terminal-emerald-light transition-all cursor-pointer group shadow-sm"
               >
                 <span>{isAr ? "تشغيل محطة المحور" : "Launch Mahwar Terminal"}</span>
-                <ArrowRight size={18} className="group-hover:translate-x-1 transition-transform" />
+                <ArrowRight size={14} className="group-hover:translate-x-1 transition-transform" />
               </Link>
             </div>
 
-            <div className="pt-4 text-xs font-mono text-emerald-100/80 flex items-center justify-center gap-2">
-              <ShieldCheck size={14} />
+            <div className="pt-6 mt-6 border-t border-terminal-border border-dashed text-[10px] uppercase tracking-wider font-mono text-terminal-text-secondary flex items-center justify-center gap-2">
+              <ShieldCheck size={12} />
               <span>{isAr ? "مصمم ومطور بواسطة محمد سرمد نديم" : "Architected & Developed by Muhammad Sarmad Nadeem"}</span>
             </div>
           </div>

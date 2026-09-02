@@ -51,9 +51,7 @@ export default function SolutionSection() {
   ];
 
   return (
-    <section id="solution" className="py-28 bg-white relative overflow-hidden" dir={isAr ? "rtl" : "ltr"}>
-      {/* Soft background light */}
-      <div className="absolute top-1/3 right-1/4 w-[500px] h-[500px] bg-[var(--emerald-glow)] rounded-full blur-[180px] opacity-40 pointer-events-none" />
+    <section id="solution" className="py-24 bg-terminal-panel relative overflow-hidden border-t border-terminal-border" dir={isAr ? "rtl" : "ltr"}>
 
       <div className="max-w-7xl mx-auto px-6 relative z-10">
         <motion.div
@@ -63,12 +61,12 @@ export default function SolutionSection() {
           viewport={{ once: true, margin: "-100px" }}
           className="text-center max-w-3xl mx-auto mb-20"
         >
-          <motion.div variants={staggerItem} className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-[var(--emerald)]/10 border border-[var(--emerald)]/20 text-[var(--emerald)] text-xs font-mono font-bold uppercase tracking-widest mb-4">
-            <Sparkles size={14} />
-            <span>{isAr ? "قدرات المنصة" : "Platform Suite"}</span>
+          <motion.div variants={staggerItem} className="inline-flex items-center gap-2 px-3 py-1 bg-terminal-emerald/10 border border-terminal-emerald/20 text-terminal-emerald text-[10px] font-mono font-bold uppercase tracking-[0.2em] mb-4">
+            <Sparkles size={12} />
+            <span>{isAr ? "قدرات المنصة" : "PLATFORM SUITE"}</span>
           </motion.div>
 
-          <motion.h2 variants={staggerItem} className="font-serif text-4xl md:text-5xl font-bold text-[#171717] mb-6">
+          <motion.h2 variants={staggerItem} className="font-serif text-3xl md:text-5xl font-bold text-terminal-text mb-6">
             {isAr ? "أدوات مخصصة للتحليل المالي الخليجي" : "Built for the Nuances of Gulf Capital Markets"}
           </motion.h2>
 
@@ -90,22 +88,23 @@ export default function SolutionSection() {
               viewport={{ once: true }}
               transition={{ duration: 0.5, delay: idx * 0.1 }}
               whileHover={{ y: -4 }}
-              className="bg-white p-6 rounded-2xl border border-slate-200 hover:border-[var(--emerald)] hover:shadow-md transition-all flex flex-col justify-between h-[230px]"
+              className="bg-terminal-surface p-6 border border-terminal-border hover:border-terminal-emerald transition-all flex flex-col justify-between h-[230px]"
             >
               <div>
                 <div className="flex justify-between items-start mb-4">
-                  <div className="p-2.5 rounded bg-slate-50 border border-slate-100 text-[var(--emerald)]">
+                  <div className="p-2 rounded-sm bg-terminal-panel border border-terminal-border text-terminal-emerald">
                     {feature.icon}
                   </div>
-                  <span className="px-2.5 py-0.5 rounded-full text-[9px] bg-slate-100 text-slate-600 font-mono font-bold tracking-wider uppercase">
+                  <span className="flex items-center gap-1.5 px-2 py-0.5 border border-terminal-border bg-terminal-panel text-terminal-text-secondary text-[9px] font-mono font-bold tracking-wider uppercase rounded-sm">
+                    <span className="w-1 h-1 bg-terminal-emerald rounded-full animate-pulse"></span>
                     {feature.badge}
                   </span>
                 </div>
 
-                <h3 className="font-serif text-lg font-bold text-[#171717] mb-2">
+                <h3 className="font-mono text-xs font-bold text-terminal-text mb-2 tracking-wide uppercase">
                   {feature.title}
                 </h3>
-                <p className="text-slate-600 text-xs leading-normal font-sans">
+                <p className="text-terminal-text-secondary text-xs leading-relaxed font-sans">
                   {feature.desc}
                 </p>
               </div>
@@ -123,10 +122,10 @@ export default function SolutionSection() {
         >
           <Link
             href="/dashboard"
-            className="inline-flex items-center gap-2 text-sm font-bold text-[var(--emerald)] hover:text-[#12A189] transition-colors group cursor-pointer"
+            className="inline-flex items-center gap-2 text-xs font-mono font-bold text-terminal-emerald hover:text-terminal-emerald-light transition-colors group cursor-pointer uppercase tracking-wider"
           >
             <span>{isAr ? "ابدأ النمذجة الآن" : "Launch Free Sandbox Terminal"}</span>
-            <ChevronRight size={16} className="group-hover:translate-x-1 transition-transform" />
+            <ChevronRight size={14} className="group-hover:translate-x-1 transition-transform" />
           </Link>
         </motion.div>
       </div>

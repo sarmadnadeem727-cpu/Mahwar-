@@ -13,13 +13,12 @@ import { t } from "@/lib/i18n";
 import { fadeInUp, staggerContainer, staggerItem } from "@/lib/motion";
 import NumberCounter from "@/components/ui/NumberCounter";
 
-// Lazy-load the 3D rotating GCC globe with zero SSR impact
-const GccGlobe3D = dynamic(() => import("@/components/ui/GccGlobe3D"), {
+// Lazy-load the 2D GCC Map with zero SSR impact
+const GccMap2D = dynamic(() => import("@/components/ui/GccMap2D"), {
   ssr: false,
   loading: () => (
     <div className="w-full h-[400px] sm:h-[460px] md:h-[500px] flex flex-col items-center justify-center text-slate-500 font-mono text-xs gap-3">
-      <div className="w-12 h-12 rounded-full border-2 border-terminal-emerald/30 border-t-terminal-emerald animate-spin" />
-      <span className="font-semibold text-slate-600">INITIALIZING GCC SOVEREIGN DATA SPHERE...</span>
+      <span className="font-semibold text-slate-600">INITIALIZING GCC SOVEREIGN MAP...</span>
     </div>
   ),
 });
@@ -99,7 +98,7 @@ export default function HeroSection() {
           variants={fadeInUp}
           initial="initial"
           animate="animate"
-          className="font-sans text-sm sm:text-base text-terminal-text-secondary text-center max-w-2xl leading-relaxed mb-6"
+          className="font-mono text-xs sm:text-sm text-terminal-text-secondary text-center max-w-2xl leading-relaxed mb-6 uppercase tracking-wide"
         >
           {isAr
             ? "بناء نماذج التقييم المؤسسية (DCF & LBO)، القوائم المالية الثلاث بمعايير المحاسبة والزكاة، الفحص الشرعي AAOIFI، وبث أبحاث الأسهم الفورية."
@@ -143,14 +142,14 @@ export default function HeroSection() {
           </Link>
         </motion.div>
 
-        {/* 3D ROTATING GCC GLOBE CENTERPIECE (IN LIGHT-MODE CARD PANEL) */}
+        {/* 2D GCC MAP CENTERPIECE (IN LIGHT-MODE CARD PANEL) */}
         <motion.div
           initial={{ opacity: 0, scale: 0.96 }}
           animate={{ opacity: 1, scale: 1 }}
           transition={{ duration: 0.5, delay: 0.15, ease: [0.16, 1, 0.3, 1] }}
-          className="w-full max-w-5xl my-2 p-2 sm:p-4 rounded-2xl bg-white border border-terminal-border shadow-terminal-card flex items-center justify-center relative"
+          className="w-full max-w-5xl my-2 p-1 sm:p-2 bg-terminal-surface border border-terminal-border flex items-center justify-center relative rounded-sm"
         >
-          <GccGlobe3D isAr={isAr} />
+          <GccMap2D isAr={isAr} />
         </motion.div>
 
         {/* LIVE TERMINAL INTERACTIVE MOCKUP PREVIEW */}
@@ -159,7 +158,7 @@ export default function HeroSection() {
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
           transition={{ duration: 0.4, ease: [0.16, 1, 0.3, 1] }}
-          className="w-full max-w-5xl mt-6 bg-white rounded-xl border border-terminal-border-strong shadow-terminal-card overflow-hidden text-left rtl:text-right"
+          className="w-full max-w-5xl mt-6 bg-terminal-panel rounded-sm border border-terminal-border overflow-hidden text-left rtl:text-right shadow-sm"
           dir={isAr ? "rtl" : "ltr"}
         >
           {/* MOCKUP HEADER BAR */}
@@ -179,12 +178,12 @@ export default function HeroSection() {
           </div>
 
           {/* MOCKUP CONTENT GRID */}
-          <div className="p-6 grid grid-cols-1 md:grid-cols-3 gap-5 bg-white">
+          <div className="p-0 grid grid-cols-1 md:grid-cols-3 divide-y md:divide-y-0 md:divide-x divide-terminal-border bg-terminal-panel">
             {/* KPI 1: INTRINSIC VALUE */}
-            <div className="p-4 rounded-lg bg-terminal-surface border border-terminal-border flex flex-col justify-between">
+            <div className="p-4 flex flex-col justify-between">
               <div className="flex justify-between items-start">
                 <span className="text-[10px] font-mono text-slate-500 uppercase font-bold tracking-wider">DCF Intrinsic Valuation</span>
-                <span className="px-1.5 py-0.5 text-[9px] font-mono font-bold text-terminal-emerald bg-emerald-50 rounded">5Y WACC</span>
+                <span className="px-1.5 py-0.5 text-[9px] font-mono font-bold text-terminal-emerald bg-emerald-50 rounded-sm">5Y WACC</span>
               </div>
               <div className="my-3">
                 <span className="text-2xl font-mono font-extrabold text-terminal-text">
@@ -194,16 +193,16 @@ export default function HeroSection() {
                   +18.4% Implied Upside
                 </span>
               </div>
-              <span className="text-[10px] font-mono text-slate-400 border-t border-terminal-border pt-2 block">
+              <span className="text-[10px] font-mono text-slate-400 border-t border-terminal-border border-dashed pt-2 block">
                 Terminal Growth: 2.5% | Cost of Equity: 8.9%
               </span>
             </div>
 
             {/* KPI 2: LBO RETURNS WATERFALL */}
-            <div className="p-4 rounded-lg bg-terminal-surface border border-terminal-border flex flex-col justify-between">
+            <div className="p-4 flex flex-col justify-between">
               <div className="flex justify-between items-start">
                 <span className="text-[10px] font-mono text-slate-500 uppercase font-bold tracking-wider">LBO Private Equity IRR</span>
-                <span className="px-1.5 py-0.5 text-[9px] font-mono font-bold text-slate-700 bg-slate-200/60 rounded">5Y HOLD</span>
+                <span className="px-1.5 py-0.5 text-[9px] font-mono font-bold text-slate-700 bg-slate-200/60 rounded-sm">5Y HOLD</span>
               </div>
               <div className="my-3">
                 <span className="text-2xl font-mono font-extrabold text-terminal-emerald">
@@ -213,16 +212,16 @@ export default function HeroSection() {
                   2.65x MOIC Multiple
                 </span>
               </div>
-              <span className="text-[10px] font-mono text-slate-400 border-t border-terminal-border pt-2 block">
+              <span className="text-[10px] font-mono text-slate-400 border-t border-terminal-border border-dashed pt-2 block">
                 Sponsor Equity: SAR 420M | Senior Debt: 55%
               </span>
             </div>
 
             {/* KPI 3: AAOIFI SHARIAH COMPLIANCE */}
-            <div className="p-4 rounded-lg bg-terminal-surface border border-terminal-border flex flex-col justify-between">
+            <div className="p-4 flex flex-col justify-between">
               <div className="flex justify-between items-start">
                 <span className="text-[10px] font-mono text-slate-500 uppercase font-bold tracking-wider">AAOIFI Compliance</span>
-                <span className="px-1.5 py-0.5 text-[9px] font-mono font-bold text-emerald-700 bg-emerald-100 rounded">PASS</span>
+                <span className="px-1.5 py-0.5 text-[9px] font-mono font-bold text-emerald-700 bg-emerald-100 rounded-sm">PASS</span>
               </div>
               <div className="my-3">
                 <span className="text-sm font-mono font-extrabold text-terminal-emerald block uppercase">
@@ -232,7 +231,7 @@ export default function HeroSection() {
                   Debt-to-Assets: 14.2% (Max 33%)
                 </span>
               </div>
-              <span className="text-[10px] font-mono text-slate-400 border-t border-terminal-border pt-2 block">
+              <span className="text-[10px] font-mono text-slate-400 border-t border-terminal-border border-dashed pt-2 block">
                 Purification Rate: SAR 0.00 / Share
               </span>
             </div>

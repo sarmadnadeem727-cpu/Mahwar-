@@ -11,10 +11,9 @@ export default function ProblemSection() {
   const isAr = language === 'ar';
 
   return (
-    <section id="problem" className="py-28 bg-[#F7F7F5] relative overflow-hidden border-t border-slate-200" dir={isAr ? "rtl" : "ltr"}>
+    <section id="problem" className="py-20 bg-terminal-surface relative overflow-hidden border-t border-terminal-border" dir={isAr ? "rtl" : "ltr"}>
       {/* Background Accent Grid */}
-      <div className="absolute inset-0 bg-[linear-gradient(to_right,rgba(0,0,0,0.01)_1px,transparent_1px),linear-gradient(to_bottom,rgba(0,0,0,0.01)_1px,transparent_1px)] bg-[size:3rem_3rem] pointer-events-none" />
-      <div className="absolute top-1/2 left-0 w-96 h-96 bg-[var(--emerald)]/5 rounded-full blur-[140px] pointer-events-none" />
+      <div className="absolute inset-0 bg-[linear-gradient(to_right,rgba(0,0,0,0.02)_1px,transparent_1px),linear-gradient(to_bottom,rgba(0,0,0,0.02)_1px,transparent_1px)] bg-[size:3rem_3rem] pointer-events-none" />
 
       <div className="max-w-7xl mx-auto px-6 relative z-10">
         <motion.div
@@ -24,12 +23,12 @@ export default function ProblemSection() {
           viewport={{ once: true, margin: "-100px" }}
           className="text-center max-w-3xl mx-auto mb-20"
         >
-          <motion.div variants={staggerItem} className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-[var(--emerald)]/10 border border-[var(--emerald)]/20 text-[var(--emerald)] text-xs font-mono font-bold uppercase tracking-widest mb-4">
-            <AlertTriangle size={14} />
-            <span>{isAr ? "التحدي الهيكلي بالسوق" : "The GCC Structural Void"}</span>
+          <motion.div variants={staggerItem} className="inline-flex items-center gap-2 px-3 py-1 bg-terminal-emerald/10 border border-terminal-emerald/20 text-terminal-emerald text-[10px] font-mono font-bold uppercase tracking-[0.2em] mb-4">
+            <AlertTriangle size={12} />
+            <span>{isAr ? "التحدي الهيكلي بالسوق" : "MARKET GAP // GCC STRUCTURAL VOID"}</span>
           </motion.div>
 
-          <motion.h2 variants={staggerItem} className="font-serif text-4xl md:text-6xl font-bold text-[#171717] mb-6 leading-tight">
+          <motion.h2 variants={staggerItem} className="font-serif text-3xl md:text-5xl font-bold text-terminal-text mb-6 leading-tight">
             {isAr ? "السوق الخليجي بحاجة لبديل بلومبرغ عربي" : "GCC Markets Operating Without Local Financial Intelligence"}
           </motion.h2>
 
@@ -42,9 +41,9 @@ export default function ProblemSection() {
         </motion.div>
 
         {/* Comparison Callout Panel */}
-        <div className="bg-white p-8 md:p-12 rounded-3xl border border-slate-200 grid grid-cols-1 md:grid-cols-2 gap-8 items-center shadow-sm">
+        <div className="bg-terminal-panel p-8 md:p-12 border border-terminal-border grid grid-cols-1 md:grid-cols-2 gap-8 items-center shadow-sm rounded-sm">
           <div>
-            <h3 className="font-serif text-2xl md:text-3xl font-bold text-[#171717] mb-4">
+            <h3 className="font-serif text-2xl md:text-3xl font-bold text-terminal-text mb-4">
               {isAr ? "لماذا المحور وليس البدائل التقليدية؟" : "The Mahwar Institutional Paradigm Shift"}
             </h3>
             <p className="text-slate-600 text-sm leading-relaxed mb-6 font-sans">
@@ -66,11 +65,11 @@ export default function ProblemSection() {
                 desc: isAr ? "بث أبحاث الاستثمار الذكية بضغطة زر واحدة." : "Constructing custom equity research summaries in seconds."
               }
             ].map((item, idx) => (
-              <div key={idx} className="flex gap-4 p-4 rounded-xl hover:bg-slate-50 transition-colors border border-transparent hover:border-slate-100">
-                <span className="w-2.5 h-2.5 rounded-full bg-[var(--emerald)] mt-1.5 shrink-0" />
+              <div key={idx} className="flex gap-4 p-4 border border-transparent border-l-2 border-l-terminal-border hover:bg-terminal-surface hover:border-terminal-border hover:border-l-terminal-emerald transition-colors">
+                <span className="w-1.5 h-1.5 bg-terminal-emerald mt-2 shrink-0 animate-pulse" />
                 <div>
-                  <h4 className="font-bold text-slate-800 text-sm">{item.title}</h4>
-                  <p className="text-slate-500 text-xs mt-0.5">{item.desc}</p>
+                  <h4 className="font-bold font-mono text-terminal-text text-xs uppercase tracking-wider">{item.title}</h4>
+                  <p className="text-terminal-text-secondary text-xs mt-1 font-sans">{item.desc}</p>
                 </div>
               </div>
             ))}
