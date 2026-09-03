@@ -26,6 +26,7 @@ export default function TopBar() {
   const getPanelDisplayName = () => {
     switch (activePanel) {
       case "hub": return isAr ? "مركز الاستخبارات" : "Intelligence Hub";
+      case "news": return isAr ? "الأخبار المالية (NewsAPI)" : "News Wire";
       case "research": return isAr ? "أبحاث الذكاء الاصطناعي" : "AI Research";
       case "shariah": return isAr ? "الفحص الشرعي AAOIFI" : "AAOIFI Screening";
       case "screener": return isAr ? "مقارنة الشركات" : "Company Comparator";

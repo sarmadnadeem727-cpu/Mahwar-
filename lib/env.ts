@@ -5,6 +5,7 @@
 
 export interface ServerEnv {
   GEMINI_API_KEY?: string;
+  NEWS_API_KEY?: string;
 }
 
 /**
@@ -16,9 +17,11 @@ export function getServerEnv(): ServerEnv {
   }
 
   const geminiKey = process.env.GEMINI_API_KEY || process.env.GOOGLE_API_KEY || process.env.NEXT_PUBLIC_GEMINI_API_KEY;
+  const newsApiKey = process.env.NEWS_API_KEY || "8b0c8e1f404a4cdda9e06d9e3f044211";
 
   return {
     GEMINI_API_KEY: geminiKey,
+    NEWS_API_KEY: newsApiKey,
   };
 }
 

@@ -3,7 +3,7 @@
 import React, { useState, useEffect, useRef } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { 
-  Search, Command, ArrowRight, CornerDownLeft, Sparkles,
+  Search, Command, ArrowRight, CornerDownLeft, Sparkles, Newspaper,
   BarChart3, Layers, FileSpreadsheet, ShieldCheck, Filter, 
   FileText, X
 } from "lucide-react";
@@ -34,6 +34,15 @@ const STATIC_TOOLS: LocalTool[] = [
     categoryAr: "المنصة",
     keywords: ["hub", "home", "dashboard", "overview", "main", "مركز", "الرئيسية"],
     icon: <BarChart3 className="text-[var(--emerald)]" size={16} />
+  },
+  {
+    id: "news",
+    name: "Live Financial News Wire (NewsAPI.org)",
+    nameAr: "شريط الأخبار المالية المباشرة",
+    category: "Wire",
+    categoryAr: "الأخبار",
+    keywords: ["news", "wire", "newsapi", "headlines", "market", "أخبار", "السوق"],
+    icon: <Newspaper className="text-[var(--emerald)]" size={16} />
   },
   {
     id: "DCF",
