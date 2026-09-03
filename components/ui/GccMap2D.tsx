@@ -5,7 +5,7 @@ import { ComposableMap, Geographies, Geography, Marker } from "react-simple-maps
 
 const geoUrl = "https://unpkg.com/world-atlas@2.0.2/countries-110m.json";
 
-const GCC_COUNTRIES = ["SAU", "ARE", "QAT", "KWT", "BHR", "OMN"];
+const GCC_COUNTRIES = ["SAU", "ARE", "QAT", "KWT", "BHR", "OMN", "682", "784", "634", "414", "048", "48", "512"];
 
 const GCC_HUBS = [
   { name: "Riyadh (TASI)", coordinates: [46.6753, 24.7136], dx: -45, dy: -15, isAr: "الرياض (TASI)" },
@@ -47,7 +47,7 @@ const MapChart = ({ isAr = false }: { isAr?: boolean }) => {
         <Geographies geography={geoUrl}>
           {({ geographies }) =>
             geographies.map((geo) => {
-              const isGCC = GCC_COUNTRIES.includes(geo.id);
+              const isGCC = GCC_COUNTRIES.includes(String(geo.id)) || GCC_COUNTRIES.includes(geo.properties?.ISO_A3) || GCC_COUNTRIES.includes(geo.properties?.iso_a3);
               return (
                 <Geography
                   key={geo.rsmKey}
