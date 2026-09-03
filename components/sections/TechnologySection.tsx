@@ -38,7 +38,7 @@ export default function TechnologySection() {
   ];
 
   return (
-    <section id="tech" className="py-24 bg-[#0B0E14] relative overflow-hidden border-t border-[#1E293B]" dir={isAr ? "rtl" : "ltr"}>
+    <section id="tech" className="py-24 bg-[#F8FAFC] relative overflow-hidden border-t border-[#E2E8F0] font-sans" dir={isAr ? "rtl" : "ltr"}>
       <div className="max-w-7xl mx-auto px-6 relative z-10">
         <motion.div
           variants={staggerContainer}
@@ -47,16 +47,16 @@ export default function TechnologySection() {
           viewport={{ once: true, margin: "-100px" }}
           className="text-center max-w-3xl mx-auto mb-16"
         >
-          <motion.div variants={staggerItem} className="inline-flex items-center gap-2 px-3.5 py-1 bg-terminal-emerald-dim border border-terminal-border-emerald text-terminal-emerald text-[10px] font-mono font-bold uppercase tracking-[0.2em] mb-4 rounded-sm shadow-md">
+          <motion.div variants={staggerItem} className="inline-flex items-center gap-2 px-3.5 py-1 bg-emerald-dim border border-emerald-border text-emerald text-xs font-mono font-bold uppercase tracking-wider mb-4 rounded-full shadow-2xs">
             <Cpu size={12} />
             <span>{isAr ? "النية البنائية والتقنيات" : "CORE TECHNICAL STACK"}</span>
           </motion.div>
 
-          <motion.h2 variants={staggerItem} className="font-mono text-3xl md:text-5xl font-extrabold text-white mb-6 uppercase">
+          <motion.h2 variants={staggerItem} className="font-serif text-3xl md:text-5xl font-bold text-slate-900 mb-6">
             {isAr ? "بنية تقنية متطورة للأداء المالي الحرج" : "Built Upon Next-Generation Stack"}
           </motion.h2>
 
-          <motion.p variants={staggerItem} className="text-slate-400 text-sm md:text-base font-mono">
+          <motion.p variants={staggerItem} className="text-slate-600 text-base font-sans font-medium">
             {isAr 
               ? "استخدام أحدث النماذج المعتمدة في الذكاء الاصطناعي والبنية التحتية البرمجية لتقديم تحليل مؤسسي لا يضاهى."
               : "Leveraging cutting-edge generative AI, local browser execution, and institutional financial primitives."
@@ -74,19 +74,19 @@ export default function TechnologySection() {
               viewport={{ once: true }}
               transition={{ duration: 0.4, delay: idx * 0.08 }}
               whileHover={{ y: -6 }}
-              className="bg-[#121721] p-6 border border-[#1E293B] flex flex-col justify-between rounded-sm shadow-lg group hover:border-terminal-emerald transition-all"
+              className="bg-white p-6 border border-[#E2E8F0] flex flex-col justify-between rounded-lg shadow-sm hover:shadow-md group hover:border-emerald transition-all"
             >
               <div>
-                <div className="p-2.5 bg-[#0B0E14] border border-[#1E293B] w-fit mb-5 rounded-sm group-hover:border-terminal-emerald transition-colors">
+                <div className="p-3 bg-slate-50 border border-[#E2E8F0] w-fit mb-5 rounded-lg text-emerald group-hover:border-emerald transition-colors">
                   {tech.icon}
                 </div>
-                <h3 className="font-mono text-xs font-bold text-white mb-2 uppercase tracking-wide group-hover:text-terminal-emerald transition-colors">
+                <h3 className="font-serif text-base font-bold text-slate-900 mb-2 tracking-wide group-hover:text-emerald transition-colors">
                   {tech.name}
                 </h3>
-                <div className="text-[10px] font-mono font-bold text-terminal-emerald mb-4 uppercase tracking-wider">
+                <div className="text-xs font-mono font-bold text-emerald mb-3 uppercase tracking-wider">
                   {tech.role}
                 </div>
-                <p className="text-slate-400 text-xs leading-relaxed font-mono">
+                <p className="text-slate-600 text-xs leading-relaxed font-sans">
                   {tech.desc}
                 </p>
               </div>

@@ -51,7 +51,7 @@ export default function SolutionSection() {
   ];
 
   return (
-    <section id="solution" className="py-24 bg-[#0B0E14] relative overflow-hidden border-t border-[#1E293B]" dir={isAr ? "rtl" : "ltr"}>
+    <section id="solution" className="py-24 bg-white relative overflow-hidden border-t border-[#E2E8F0] font-sans" dir={isAr ? "rtl" : "ltr"}>
 
       <div className="max-w-7xl mx-auto px-6 relative z-10">
         <motion.div
@@ -61,16 +61,16 @@ export default function SolutionSection() {
           viewport={{ once: true, margin: "-100px" }}
           className="text-center max-w-3xl mx-auto mb-16"
         >
-          <motion.div variants={staggerItem} className="inline-flex items-center gap-2 px-3 py-1 bg-terminal-emerald-dim border border-terminal-border-emerald text-terminal-emerald text-[10px] font-mono font-bold uppercase tracking-[0.2em] mb-4 rounded-sm shadow-md">
+          <motion.div variants={staggerItem} className="inline-flex items-center gap-2 px-3.5 py-1 bg-emerald-dim border border-emerald-border text-emerald text-xs font-mono font-bold uppercase tracking-wider mb-4 rounded-full shadow-2xs">
             <Sparkles size={12} />
             <span>{isAr ? "قدرات المحرك التكتيكي" : "MODELING ENGINE SUITE"}</span>
           </motion.div>
 
-          <motion.h2 variants={staggerItem} className="font-mono text-3xl md:text-5xl font-extrabold text-white mb-6 uppercase">
+          <motion.h2 variants={staggerItem} className="font-serif text-3xl md:text-5xl font-bold text-slate-900 mb-6">
             {isAr ? "أدوات مخصصة للتحليل المالي الخليجي" : "Built for the Nuances of Gulf Capital Markets"}
           </motion.h2>
 
-          <motion.p variants={staggerItem} className="text-slate-400 text-sm md:text-base leading-relaxed font-mono">
+          <motion.p variants={staggerItem} className="text-slate-600 text-base leading-relaxed font-sans font-medium">
             {isAr
               ? "تحليل شامل وهندسة مالية متكاملة لبياناتك الخاصة. حسابات دقيقة للتطهير الشرعي، نسب مديونية الأقران، نماذج التدفقات، وتوليد تقارير موحدة قابلة للطباعة."
               : "Consolidated, secure workspace for custom financial modeling. Run intrinsic evaluations, Shariah audits, peer multiples comparisons, and instantly download client-ready synthesis PDF reports."
@@ -88,23 +88,23 @@ export default function SolutionSection() {
               viewport={{ once: true }}
               transition={{ duration: 0.4, delay: idx * 0.08 }}
               whileHover={{ y: -4 }}
-              className="bg-[#121721] p-6 border border-[#1E293B] hover:border-terminal-emerald transition-all flex flex-col justify-between h-[230px] rounded-sm shadow-lg group"
+              className="bg-white p-6 border border-[#E2E8F0] hover:border-emerald transition-all flex flex-col justify-between h-[230px] rounded-lg shadow-sm hover:shadow-md group"
             >
               <div>
                 <div className="flex justify-between items-start mb-4">
-                  <div className="p-2 rounded-sm bg-[#0B0E14] border border-[#1E293B] text-terminal-emerald group-hover:border-terminal-emerald transition-colors">
+                  <div className="p-2.5 rounded-lg bg-slate-50 border border-[#E2E8F0] text-emerald group-hover:border-emerald transition-colors">
                     {feature.icon}
                   </div>
-                  <span className="flex items-center gap-1.5 px-2 py-0.5 border border-[#1E293B] bg-[#0B0E14] text-slate-300 text-[9px] font-mono font-bold tracking-wider uppercase rounded-sm">
-                    <span className="w-1.5 h-1.5 bg-terminal-emerald rounded-full animate-pulse"></span>
+                  <span className="flex items-center gap-1.5 px-2 py-0.5 border border-[#E2E8F0] bg-slate-50 text-slate-700 text-[10px] font-mono font-bold tracking-wider uppercase rounded-md">
+                    <span className="w-1.5 h-1.5 bg-emerald rounded-full animate-pulse"></span>
                     {feature.badge}
                   </span>
                 </div>
 
-                <h3 className="font-mono text-xs font-bold text-white mb-2 tracking-wide uppercase group-hover:text-terminal-emerald transition-colors">
+                <h3 className="font-serif text-base font-bold text-slate-900 mb-2 tracking-wide group-hover:text-emerald transition-colors">
                   {feature.title}
                 </h3>
-                <p className="text-slate-400 text-xs leading-relaxed font-mono">
+                <p className="text-slate-600 text-xs leading-relaxed font-sans">
                   {feature.desc}
                 </p>
               </div>
@@ -122,7 +122,7 @@ export default function SolutionSection() {
         >
           <Link
             href="/dashboard"
-            className="inline-flex items-center gap-2 text-xs font-mono font-bold text-terminal-emerald hover:text-terminal-emerald-light transition-colors group cursor-pointer uppercase tracking-wider"
+            className="inline-flex items-center gap-2 text-xs font-mono font-bold text-emerald hover:underline transition-colors group cursor-pointer uppercase tracking-wider"
           >
             <span>{isAr ? "ابدأ النمذجة الآن" : "Launch Engine Sandbox"}</span>
             <ChevronRight size={14} className="group-hover:translate-x-1 transition-transform" />

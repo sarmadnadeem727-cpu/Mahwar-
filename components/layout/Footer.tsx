@@ -69,7 +69,7 @@ const Footer = () => {
   };
 
   return (
-    <footer className="relative bg-[#0B0E14] border-t border-[#1E293B] pt-16 pb-10 px-6 lg:px-24 text-slate-400 font-mono">
+    <footer className="relative bg-white border-t border-[#E2E8F0] pt-16 pb-10 px-6 lg:px-24 text-slate-600 font-sans">
       <div className="container mx-auto">
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-12 mb-16">
           {/* Brand Column */}
@@ -78,15 +78,15 @@ const Footer = () => {
               <MahwarLogo size={32} animate={false} />
 
               <div className="flex flex-col leading-tight">
-                <span className="font-mono text-xl font-bold text-white">
+                <span className="font-serif text-xl font-bold text-slate-900">
                   Mahwar
                 </span>
-                <span className="font-mono text-[11px] text-terminal-emerald -mt-1 font-bold">
-                  محور · CAD TERMINAL
+                <span className="font-mono text-xs text-emerald -mt-0.5 font-bold">
+                  محور · SOVEREIGN TERMINAL
                 </span>
               </div>
             </div>
-            <p className={`text-xs text-slate-400 max-w-[260px] leading-relaxed font-mono ${isAr ? 'font-arabic' : ''}`}>
+            <p className={`text-xs text-slate-600 max-w-[260px] leading-relaxed font-sans ${isAr ? 'font-arabic' : ''}`}>
               {isAr 
                 ? "منصة استخبارات ونمذجة أسواق المال الخليجية. هندسة دقيقة للمحللين وصناع القرار."
                 : "The premium Saudi & GCC capital markets intelligence terminal. Precision-engineered for quantitative deal modeling."}
@@ -96,7 +96,7 @@ const Footer = () => {
           {/* Link Columns */}
           {columns.map((col, idx) => (
             <div key={idx} className="flex flex-col gap-6">
-              <h4 className={`font-mono text-[10px] uppercase tracking-[0.18em] text-terminal-emerald ${isAr ? 'font-arabic' : ''} font-bold`}>
+              <h4 className={`font-mono text-xs uppercase tracking-wider text-emerald ${isAr ? 'font-arabic' : ''} font-bold`}>
                 {col.title}
               </h4>
               <ul className="flex flex-col gap-3">
@@ -105,7 +105,7 @@ const Footer = () => {
                     <Link
                       href={getHref(link)}
                       onClick={(e) => handleLinkClick(e, link)}
-                      className={`font-mono text-[12px] text-slate-400 hover:text-terminal-emerald transition-colors ${isAr ? 'font-arabic' : ''}`}
+                      className={`font-sans text-xs text-slate-600 hover:text-emerald transition-colors ${isAr ? 'font-arabic' : ''}`}
                     >
                       {link}
                     </Link>
@@ -117,15 +117,15 @@ const Footer = () => {
         </div>
 
         {/* Footer Bottom */}
-        <div className="pt-10 border-t border-[#1E293B] flex flex-col md:flex-row items-center justify-between gap-6">
-          <div className={`font-mono text-[11px] text-slate-400 ${isAr ? 'font-arabic' : ''}`}>
+        <div className="pt-10 border-t border-[#E2E8F0] flex flex-col md:flex-row items-center justify-between gap-6">
+          <div className={`font-mono text-xs text-slate-500 ${isAr ? 'font-arabic' : ''}`}>
             {isAr ? "© ٢٠٢٥ محور · جميع الحقوق محفوظة" : "© 2025 Mahwar · All Rights Reserved"}
           </div>
-          <div className={`font-mono text-[10px] text-slate-500 hidden lg:block ${isAr ? 'font-arabic' : ''}`}>
+          <div className={`font-mono text-xs text-slate-500 hidden lg:block ${isAr ? 'font-arabic' : ''}`}>
             {isAr ? "محور · نبض أسواق المال السعودية" : "محور · The Axis of Saudi & GCC Capital Markets"}
           </div>
-          <div className={`font-mono text-[11px] text-slate-400 ${isAr ? 'font-arabic' : ''}`}>
-            {isAr ? "تطوير" : "Developed by"} <span className="text-terminal-emerald font-bold">Muhammad Sarmad Nadeem</span>
+          <div className={`font-mono text-xs text-slate-600 ${isAr ? 'font-arabic' : ''}`}>
+            {isAr ? "تطوير" : "Developed by"} <span className="text-emerald font-bold">Muhammad Sarmad Nadeem</span>
           </div>
         </div>
       </div>

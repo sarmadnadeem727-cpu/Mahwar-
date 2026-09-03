@@ -11,7 +11,7 @@ import Footer from "@/components/layout/Footer";
 
 export default function LandingPage() {
   return (
-    <div className="min-h-screen bg-terminal-bg text-terminal-text flex flex-col selection:bg-terminal-emerald selection:text-black">
+    <div className="min-h-screen bg-white text-slate-900 flex flex-col font-sans selection:bg-emerald selection:text-white">
       <Navbar />
       <main className="flex-1">
         <HeroSection />

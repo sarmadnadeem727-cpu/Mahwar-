@@ -33,7 +33,7 @@ const MapChart = ({ isAr = false }: { isAr?: boolean }) => {
   }
 
   return (
-    <div className="w-full h-[400px] sm:h-[460px] md:h-[500px] flex items-center justify-center relative overflow-hidden bg-[#121721] border border-[#1E293B] rounded-sm">
+    <div className="w-full h-[400px] sm:h-[460px] md:h-[500px] flex items-center justify-center relative overflow-hidden bg-white border border-[#E2E8F0] rounded-lg shadow-sm">
       <ComposableMap
         projection="geoMercator"
         projectionConfig={{
@@ -52,12 +52,12 @@ const MapChart = ({ isAr = false }: { isAr?: boolean }) => {
                 <Geography
                   key={geo.rsmKey}
                   geography={geo}
-                  fill={isGCC ? "rgba(0, 255, 157, 0.25)" : "#18202E"}
-                  stroke={isGCC ? "#00FF9D" : "#2B374A"}
+                  fill={isGCC ? "rgba(14, 124, 105, 0.18)" : "#F1F5F9"}
+                  stroke={isGCC ? "#0E7C69" : "#CBD5E1"}
                   strokeWidth={isGCC ? 1.2 : 0.5}
                   style={{
                     default: { outline: "none" },
-                    hover: { outline: "none", fill: isGCC ? "rgba(0, 255, 157, 0.4)" : "#1F2B3E" },
+                    hover: { outline: "none", fill: isGCC ? "rgba(14, 124, 105, 0.35)" : "#E2E8F0" },
                     pressed: { outline: "none" }
                   }}
                 />
@@ -68,31 +68,31 @@ const MapChart = ({ isAr = false }: { isAr?: boolean }) => {
 
         {GCC_HUBS.map((hub) => (
           <Marker key={hub.name} coordinates={hub.coordinates as [number, number]}>
-            <circle r={3.5} fill="#00FF9D" stroke="#0B0E14" strokeWidth={1.5} />
+            <circle r={4} fill="#0E7C69" stroke="#FFFFFF" strokeWidth={1.5} />
             <line
               x1={0}
               y1={0}
               x2={hub.dx}
               y2={hub.dy}
-              stroke="#00FF9D"
-              strokeWidth={0.8}
+              stroke="#0E7C69"
+              strokeWidth={1}
               strokeDasharray="2,2"
             />
             <rect
-              x={hub.dx > 0 ? hub.dx : hub.dx - 84}
-              y={hub.dy - 8}
-              width={84}
-              height={16}
-              fill="rgba(18, 23, 33, 0.95)"
-              stroke="#00FF9D"
-              strokeWidth={0.8}
-              rx={2}
+              x={hub.dx > 0 ? hub.dx : hub.dx - 88}
+              y={hub.dy - 9}
+              width={88}
+              height={18}
+              fill="rgba(255, 255, 255, 0.95)"
+              stroke="#0E7C69"
+              strokeWidth={1}
+              rx={4}
             />
             <text
-              x={hub.dx > 0 ? hub.dx + 4 : hub.dx - 80}
+              x={hub.dx > 0 ? hub.dx + 4 : hub.dx - 84}
               y={hub.dy + 3}
               textAnchor="start"
-              className="font-mono text-[9px] font-bold fill-[#00FF9D]"
+              className="font-mono text-[9px] font-bold fill-[#0E7C69]"
             >
               {isAr ? hub.isAr : hub.name}
             </text>
@@ -101,11 +101,11 @@ const MapChart = ({ isAr = false }: { isAr?: boolean }) => {
       </ComposableMap>
 
       {/* Status Panel overlay */}
-      <div className="absolute bottom-4 right-4 bg-[#0B0E14]/90 border border-[#1E293B] px-3 py-1.5 flex items-center gap-2 font-mono text-[10px] shadow-lg">
-        <span className="w-2 h-2 rounded-full bg-terminal-emerald animate-pulse" />
-        <span className="text-terminal-emerald font-bold tracking-widest uppercase">GCC Bourse Grid</span>
-        <span className="text-slate-600">|</span>
-        <span className="text-slate-300 font-bold">7 ACTIVE</span>
+      <div className="absolute bottom-4 right-4 bg-white/95 border border-[#E2E8F0] px-3 py-1.5 flex items-center gap-2 font-mono text-[10px] shadow-sm rounded-md">
+        <span className="w-2 h-2 rounded-full bg-emerald animate-pulse" />
+        <span className="text-emerald font-bold tracking-wider uppercase">GCC Bourse Grid</span>
+        <span className="text-slate-300">|</span>
+        <span className="text-slate-700 font-bold">7 ACTIVE</span>
       </div>
     </div>
   );
