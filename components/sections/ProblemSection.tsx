@@ -11,9 +11,9 @@ export default function ProblemSection() {
   const isAr = language === 'ar';
 
   return (
-    <section id="problem" className="py-20 bg-terminal-surface relative overflow-hidden border-t border-terminal-border" dir={isAr ? "rtl" : "ltr"}>
+    <section id="problem" className="py-20 bg-[#0B0E14] relative overflow-hidden border-t border-[#1E293B]" dir={isAr ? "rtl" : "ltr"}>
       {/* Background Accent Grid */}
-      <div className="absolute inset-0 bg-[linear-gradient(to_right,rgba(0,0,0,0.02)_1px,transparent_1px),linear-gradient(to_bottom,rgba(0,0,0,0.02)_1px,transparent_1px)] bg-[size:3rem_3rem] pointer-events-none" />
+      <div className="absolute inset-0 bg-[linear-gradient(to_right,rgba(30,41,59,0.2)_1px,transparent_1px),linear-gradient(to_bottom,rgba(30,41,59,0.2)_1px,transparent_1px)] bg-[size:3rem_3rem] pointer-events-none" />
 
       <div className="max-w-7xl mx-auto px-6 relative z-10">
         <motion.div
@@ -21,18 +21,18 @@ export default function ProblemSection() {
           initial="initial"
           whileInView="animate"
           viewport={{ once: true, margin: "-100px" }}
-          className="text-center max-w-3xl mx-auto mb-20"
+          className="text-center max-w-3xl mx-auto mb-16"
         >
-          <motion.div variants={staggerItem} className="inline-flex items-center gap-2 px-3 py-1 bg-terminal-emerald/10 border border-terminal-emerald/20 text-terminal-emerald text-[10px] font-mono font-bold uppercase tracking-[0.2em] mb-4">
+          <motion.div variants={staggerItem} className="inline-flex items-center gap-2 px-3 py-1 bg-terminal-emerald-dim border border-terminal-border-emerald text-terminal-emerald text-[10px] font-mono font-bold uppercase tracking-[0.2em] mb-4 rounded-sm shadow-md">
             <AlertTriangle size={12} />
             <span>{isAr ? "التحدي الهيكلي بالسوق" : "MARKET GAP // GCC STRUCTURAL VOID"}</span>
           </motion.div>
 
-          <motion.h2 variants={staggerItem} className="font-serif text-3xl md:text-5xl font-bold text-terminal-text mb-6 leading-tight">
-            {isAr ? "السوق الخليجي بحاجة لبديل بلومبرغ عربي" : "GCC Markets Operating Without Local Financial Intelligence"}
+          <motion.h2 variants={staggerItem} className="font-mono text-3xl md:text-5xl font-extrabold text-white mb-6 leading-tight uppercase">
+            {isAr ? "السوق الخليجي بحاجة لمكينة نمذجة مالية تكتيكية" : "GCC Markets Operating Without Precision Financial Workbench"}
           </motion.h2>
 
-          <motion.p variants={staggerItem} className="text-slate-600 text-base md:text-lg leading-relaxed font-sans">
+          <motion.p variants={staggerItem} className="text-slate-400 text-base md:text-lg leading-relaxed font-mono">
             {isAr 
               ? "تعتمد صناديق الاستثمار في الرياض وأبوظبي ودبي على أدوات غريبة عن البيئة الخليجية تفتقر للدعم العربي الكامل والمعالجة الشرعية الدقيقة وفق معايير AAOIFI ونماذج الزكاة."
               : "Institutional fund managers in Riyadh, Abu Dhabi, and Dubai are forced to adapt Western financial legacy terminals that lack Arabic RTL native workflows, AAOIFI Shariah screening, and Zakat tax provisions."
@@ -41,15 +41,15 @@ export default function ProblemSection() {
         </motion.div>
 
         {/* Comparison Callout Panel */}
-        <div className="bg-terminal-panel p-8 md:p-12 border border-terminal-border grid grid-cols-1 md:grid-cols-2 gap-8 items-center shadow-sm rounded-sm">
+        <div className="bg-[#121721] p-8 md:p-12 border border-[#1E293B] grid grid-cols-1 md:grid-cols-2 gap-8 items-center rounded-sm shadow-2xl">
           <div>
-            <h3 className="font-serif text-2xl md:text-3xl font-bold text-terminal-text mb-4">
+            <h3 className="font-mono text-2xl md:text-3xl font-extrabold text-white mb-4 uppercase">
               {isAr ? "لماذا المحور وليس البدائل التقليدية؟" : "The Mahwar Institutional Paradigm Shift"}
             </h3>
-            <p className="text-slate-600 text-sm leading-relaxed mb-6 font-sans">
+            <p className="text-slate-400 text-sm leading-relaxed mb-6 font-mono">
               {isAr 
-                ? "تم بناء محور خصيصاً ليجمع بين السرعة الفائقة، أبحاث Gemini 2.5 اللحظية، دعم اللغة العربية والاتجاه من اليمين لليسار، مع محركات التقييم المؤسسي DCF & LBO المستندة لبيانات تداول المباشرة."
-                : "Mahwar combines Wall Street analytical rigor with Gulf market nuance: instant Gemini 2.5 streaming memos, AAOIFI Shariah ratio screening, native RTL Arabic UI, and SEC/Tadawul data bindings."
+                ? "تم بناء محور خصيصاً ليجمع بين النمذجة المتقدمة (DCF & LBO)، محرك التقارير التنفيذية، دعم اللغة العربية والاتجاه من اليمين لليسار، مع الفحص الشرعي AAOIFI وبث الأخبار المالية الحية."
+                : "Mahwar combines Wall Street analytical rigor with Gulf market nuance: 5-year DCF & LBO deal engines, AAOIFI Shariah ratio screening, native RTL Arabic UI, and live NewsAPI financial wire."
               }
             </p>
           </div>
@@ -61,15 +61,15 @@ export default function ProblemSection() {
                 desc: isAr ? "دعم كامل للغة العربية ونماذج الزكاة السعودية ونظام التقويم الهجري." : "Native Arabic RTL, Saudi GAAP zakat provision algorithms."
               },
               {
-                title: isAr ? "أبحاث فورية معتمدة على الذكاء الاصطناعي" : "Immediate Gemini Memos",
-                desc: isAr ? "بث أبحاث الاستثمار الذكية بضغطة زر واحدة." : "Constructing custom equity research summaries in seconds."
+                title: isAr ? "محرك تقارير الأعمال وتصدير PDF" : "Consolidated BI Report Engine",
+                desc: isAr ? "تخليق وتجميع نتائج التحليل المالي وتصديرها بصيغة PDF مؤسسية." : "Synthesizing and consolidating financial modeling outputs into executive PDF reports."
               }
             ].map((item, idx) => (
-              <div key={idx} className="flex gap-4 p-4 border border-transparent border-l-2 border-l-terminal-border hover:bg-terminal-surface hover:border-terminal-border hover:border-l-terminal-emerald transition-colors">
-                <span className="w-1.5 h-1.5 bg-terminal-emerald mt-2 shrink-0 animate-pulse" />
+              <div key={idx} className="flex gap-4 p-4 border border-[#1E293B] border-l-2 border-l-terminal-emerald bg-[#0B0E14] rounded-sm transition-all hover:border-terminal-emerald-light">
+                <span className="w-1.5 h-1.5 bg-terminal-emerald mt-2 shrink-0 animate-pulse rounded-full" />
                 <div>
-                  <h4 className="font-bold font-mono text-terminal-text text-xs uppercase tracking-wider">{item.title}</h4>
-                  <p className="text-terminal-text-secondary text-xs mt-1 font-sans">{item.desc}</p>
+                  <h4 className="font-bold font-mono text-white text-xs uppercase tracking-wider">{item.title}</h4>
+                  <p className="text-slate-400 text-xs mt-1 font-mono">{item.desc}</p>
                 </div>
               </div>
             ))}
