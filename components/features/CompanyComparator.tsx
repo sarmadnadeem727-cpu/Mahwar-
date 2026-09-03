@@ -6,6 +6,7 @@ import { Filter, Trash2, Plus, ArrowUpDown, ChevronDown } from "lucide-react";
 import { useTerminalStore } from "@/store/useTerminalStore";
 import { t } from "@/lib/i18n";
 import { panelReveal } from "@/lib/motion";
+import ComparatorScatterPlot from "@/components/charts/ComparatorScatterPlot";
 
 interface CompanyRow {
   ticker: string;
@@ -270,8 +271,10 @@ export default function CompanyComparator() {
         </div>
       </div>
 
-      {/* RIGHT COLUMN: COMPARATOR TABLE GRID */}
+      {/* RIGHT COLUMN: COMPARATOR TABLE GRID & SCATTER MATRIX */}
       <div className="col-span-12 lg:col-span-8 space-y-6">
+        <ComparatorScatterPlot />
+
         <div className="bg-[#121721] p-6 rounded-sm border border-[#1E293B] shadow-xl overflow-x-auto">
           <table className="w-full font-mono text-xs text-left rtl:text-right border-collapse">
             <thead>

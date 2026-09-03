@@ -1,26 +1,44 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { motion } from "framer-motion";
-import { BarChart3, Calculator, TrendingUp, TrendingDown, RefreshCw } from "lucide-react";
+import { BarChart3, Calculator, TrendingUp, TrendingDown, RefreshCw, Activity, PieChart, Sliders } from "lucide-react";
 import { useTerminalStore } from "@/store/useTerminalStore";
 import { t } from "@/lib/i18n";
 import { panelReveal } from "@/lib/motion";
 import NumberCounter from "@/components/ui/NumberCounter";
+import ScenarioToggle, { ScenarioCase, ScenarioValues } from "@/components/features/ScenarioToggle";
+import FootballFieldChart from "@/components/charts/FootballFieldChart";
+import TornadoChart from "@/components/charts/TornadoChart";
+import MonteCarloSimulation from "@/components/features/MonteCarloSimulation";
 
 export default function DCFModel() {
   const { language, updateSessionAnalysis } = useTerminalStore();
   const isAr = language === 'ar';
 
-  // Assumptions State
-  const [revGrowth, setRevGrowth] = useState<number>(8);
-  const [ebitdaMargin, setEbitdaMargin] = useState<number>(35);
-  const [capexRev, setCapexRev] = useState<number>(10);
+  // Base assumptions
+  const [baseRevGrowth, setBaseRevGrowth] = useState<number>(8);
+  const [baseEbitdaMargin, setBaseEbitdaMargin] = useState<number>(35);
+  const [baseCapexRev, setBaseCapexRev] = useState<number>(10);
   const [taxZakat, setTaxZakat] = useState<number>(2.5);
   const [costEquity, setCostEquity] = useState<number>(9.5);
   const [costDebt, setCostDebt] = useState<number>(4.5);
   const [debtWeight, setDebtWeight] = useState<number>(20);
-  const [terminalGrowth, setTerminalGrowth] = useState<number>(2.5);
+  const [baseTerminalGrowth, setBaseTerminalGrowth] = useState<number>(2.5);
+
+  // Active scenario overrides
+  const [activeScenario, setActiveScenario] = useState<ScenarioCase>("BASE");
+  const [scenarioDeltas, setScenarioDeltas] = useState<ScenarioValues>({
+    revGrowthDelta: 0,
+    ebitdaMarginDelta: 0,
+    waccDelta: 0,
+    terminalGrowthDelta: 0,
+  });
+
+  // Effective drivers (base + scenario delta)
+  const revGrowth = baseRevGrowth + scenarioDeltas.revGrowthDelta;
+  const ebitdaMargin = baseEbitdaMargin + scenarioDeltas.ebitdaMarginDelta;
+  const terminalGrowth = baseTerminalGrowth + scenarioDeltas.terminalGrowthDelta;
 
   // Editable Base Financial Metrics
   const [baseRevenue, setBaseRevenue] = useState<number>(1200);
@@ -30,6 +48,7 @@ export default function DCFModel() {
 
   const [dcfResult, setDcfResult] = useState<any>(null);
   const [isCalculating, setIsCalculating] = useState<boolean>(false);
+  const [activeTab, setActiveTab] = useState<"PROJECTIONS" | "FOOTBALL" | "TORNADO" | "MONTE_CARLO">("PROJECTIONS");
 
   const calculateDCF = async () => {
     if (baseRevenue <= 0 || sharesOutstanding <= 0) return;
@@ -42,9 +61,9 @@ export default function DCFModel() {
         body: JSON.stringify({
           revGrowth,
           ebitdaMargin,
-          capexRev,
+          capexRev: baseCapexRev,
           taxZakat,
-          costEquity,
+          costEquity: costEquity + scenarioDeltas.waccDelta,
           costDebt,
           debtWeight,
           terminalGrowth,
@@ -61,7 +80,7 @@ export default function DCFModel() {
         inputs: {
           revGrowth,
           ebitdaMargin,
-          capexRev,
+          capexRev: baseCapexRev,
           taxZakat,
           costEquity,
           costDebt,
@@ -70,7 +89,8 @@ export default function DCFModel() {
           currentPrice,
           baseRevenue,
           sharesOutstanding,
-          netDebt
+          netDebt,
+          activeScenario
         },
         outputs: data,
         computedAt: new Date().toISOString()
@@ -79,6 +99,17 @@ export default function DCFModel() {
       console.error("DCF Error:", err);
     } finally {
       setIsCalculating(false);
+    }
+  };
+
+  useEffect(() => {
+    calculateDCF();
+  }, [activeScenario, scenarioDeltas]);
+
+  const handleScenarioChange = (c: ScenarioCase, values?: ScenarioValues) => {
+    setActiveScenario(c);
+    if (values) {
+      setScenarioDeltas(values);
     }
   };
 
@@ -91,8 +122,14 @@ export default function DCFModel() {
       className="grid grid-cols-12 gap-8 text-slate-100 font-mono"
       dir={isAr ? "rtl" : "ltr"}
     >
-      {/* LEFT COLUMN: ASSUMPTIONS (4 COLS) */}
+      {/* LEFT COLUMN: ASSUMPTIONS & SCENARIOS (4 COLS) */}
       <div className="col-span-12 lg:col-span-4 space-y-6">
+        {/* SCENARIO CASE TOGGLE */}
+        <ScenarioToggle
+          activeCase={activeScenario}
+          onSelectCase={handleScenarioChange}
+        />
+
         <div className="bg-[#121721] p-6 rounded-sm border border-[#1E293B] space-y-4 shadow-xl">
           <div className="flex items-center justify-between pb-3 border-b border-[#1E293B]">
             <div className="flex items-center gap-3">
@@ -166,8 +203,8 @@ export default function DCFModel() {
               <label className="text-slate-300">{t("rev_growth", language)} (%)</label>
               <input
                 type="number"
-                value={revGrowth}
-                onChange={(e) => setRevGrowth(Number(e.target.value))}
+                value={baseRevGrowth}
+                onChange={(e) => setBaseRevGrowth(Number(e.target.value))}
                 className="w-20 px-2 py-1 bg-[#0B0E14] border border-[#1E293B] focus:border-terminal-emerald rounded-sm text-right text-white font-mono text-xs focus:outline-none"
               />
             </div>
@@ -176,8 +213,8 @@ export default function DCFModel() {
               <label className="text-slate-300">{t("ebitda_margin", language)} (%)</label>
               <input
                 type="number"
-                value={ebitdaMargin}
-                onChange={(e) => setEbitdaMargin(Number(e.target.value))}
+                value={baseEbitdaMargin}
+                onChange={(e) => setBaseEbitdaMargin(Number(e.target.value))}
                 className="w-20 px-2 py-1 bg-[#0B0E14] border border-[#1E293B] focus:border-terminal-emerald rounded-sm text-right text-white font-mono text-xs focus:outline-none"
               />
             </div>
@@ -186,18 +223,8 @@ export default function DCFModel() {
               <label className="text-slate-300">{t("capex_rev", language)} (%)</label>
               <input
                 type="number"
-                value={capexRev}
-                onChange={(e) => setCapexRev(Number(e.target.value))}
-                className="w-20 px-2 py-1 bg-[#0B0E14] border border-[#1E293B] focus:border-terminal-emerald rounded-sm text-right text-white font-mono text-xs focus:outline-none"
-              />
-            </div>
-
-            <div className="flex justify-between items-center">
-              <label className="text-slate-300">{t("tax_zakat", language)} (%)</label>
-              <input
-                type="number"
-                value={taxZakat}
-                onChange={(e) => setTaxZakat(Number(e.target.value))}
+                value={baseCapexRev}
+                onChange={(e) => setBaseCapexRev(Number(e.target.value))}
                 className="w-20 px-2 py-1 bg-[#0B0E14] border border-[#1E293B] focus:border-terminal-emerald rounded-sm text-right text-white font-mono text-xs focus:outline-none"
               />
             </div>
@@ -213,31 +240,11 @@ export default function DCFModel() {
             </div>
 
             <div className="flex justify-between items-center">
-              <label className="text-slate-300">{t("cost_debt", language)} (%)</label>
-              <input
-                type="number"
-                value={costDebt}
-                onChange={(e) => setCostDebt(Number(e.target.value))}
-                className="w-20 px-2 py-1 bg-[#0B0E14] border border-[#1E293B] focus:border-terminal-emerald rounded-sm text-right text-white font-mono text-xs focus:outline-none"
-              />
-            </div>
-
-            <div className="flex justify-between items-center">
-              <label className="text-slate-300">{t("debt_weight", language)} (%)</label>
-              <input
-                type="number"
-                value={debtWeight}
-                onChange={(e) => setDebtWeight(Number(e.target.value))}
-                className="w-20 px-2 py-1 bg-[#0B0E14] border border-[#1E293B] focus:border-terminal-emerald rounded-sm text-right text-white font-mono text-xs focus:outline-none"
-              />
-            </div>
-
-            <div className="flex justify-between items-center">
               <label className="text-slate-300">{t("terminal_growth", language)} (%)</label>
               <input
                 type="number"
-                value={terminalGrowth}
-                onChange={(e) => setTerminalGrowth(Number(e.target.value))}
+                value={baseTerminalGrowth}
+                onChange={(e) => setBaseTerminalGrowth(Number(e.target.value))}
                 className="w-20 px-2 py-1 bg-[#0B0E14] border border-[#1E293B] focus:border-terminal-emerald rounded-sm text-right text-white font-mono text-xs focus:outline-none"
               />
             </div>
@@ -254,7 +261,7 @@ export default function DCFModel() {
         </div>
       </div>
 
-      {/* RIGHT COLUMN: OUTPUT & SENSITIVITY MATRIX (8 COLS) */}
+      {/* RIGHT COLUMN: OUTPUT & VISUALIZATION SUITE (8 COLS) */}
       <div className="col-span-12 lg:col-span-8 space-y-6">
         {/* VALUATION SUMMARY BANNER */}
         <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
@@ -269,7 +276,7 @@ export default function DCFModel() {
 
           <div className="bg-terminal-emerald-dim p-5 rounded-sm border border-terminal-border-emerald text-center shadow-lg">
             <span className="text-[10px] font-mono text-terminal-emerald uppercase tracking-wider font-bold block mb-1">
-              {t("intrinsic_value", language)}
+              {t("intrinsic_value", language)} ({activeScenario})
             </span>
             <span className="font-mono text-3xl font-extrabold text-terminal-emerald">
               {dcfResult?.intrinsicValuePerShare ? (
@@ -299,112 +306,163 @@ export default function DCFModel() {
           </div>
         </div>
 
-        {/* 5-YEAR PROJECTION TABLE */}
-        <div className="bg-[#121721] p-6 rounded-sm border border-[#1E293B] shadow-xl">
-          <h3 className="font-mono text-xs font-bold text-white uppercase tracking-wider mb-4">
-            5-Year Free Cash Flow Projections (SAR Millions)
-          </h3>
-          <div className="overflow-x-auto">
-            <table className="w-full font-mono text-xs text-left rtl:text-right border-collapse">
-              <thead>
-                <tr className="bg-[#0B0E14] text-slate-400 border-b border-[#1E293B]">
-                  <th className="p-2.5">Metric</th>
-                  {dcfResult?.fcfProjections?.map((p: any) => (
-                    <th key={p.year} className="p-2.5 text-right">{p.year}</th>
-                  ))}
-                </tr>
-              </thead>
-              <tbody className="divide-y divide-[#1E293B]">
-                <tr>
-                  <td className="p-2.5 font-bold text-white">Revenue</td>
-                  {dcfResult?.fcfProjections?.map((p: any) => (
-                    <td key={p.year} className="p-2.5 text-right text-slate-200">{p.revenue.toLocaleString()}</td>
-                  ))}
-                </tr>
-                <tr>
-                  <td className="p-2.5 text-slate-300">EBITDA</td>
-                  {dcfResult?.fcfProjections?.map((p: any) => (
-                    <td key={p.year} className="p-2.5 text-right text-slate-300">{p.ebitda.toLocaleString()}</td>
-                  ))}
-                </tr>
-                <tr>
-                  <td className="p-2.5 text-slate-300">EBIT</td>
-                  {dcfResult?.fcfProjections?.map((p: any) => (
-                    <td key={p.year} className="p-2.5 text-right text-slate-300">{p.ebit.toLocaleString()}</td>
-                  ))}
-                </tr>
-                <tr>
-                  <td className="p-2.5 text-slate-300">NOPAT (ex-Zakat)</td>
-                  {dcfResult?.fcfProjections?.map((p: any) => (
-                    <td key={p.year} className="p-2.5 text-right text-slate-300">{p.nopat.toLocaleString()}</td>
-                  ))}
-                </tr>
-                <tr>
-                  <td className="p-2.5 text-slate-400">CapEx</td>
-                  {dcfResult?.fcfProjections?.map((p: any) => (
-                    <td key={p.year} className="p-2.5 text-right text-rose-400">-{p.capex.toLocaleString()}</td>
-                  ))}
-                </tr>
-                <tr className="bg-terminal-emerald-dim font-bold border-t border-terminal-border-emerald">
-                  <td className="p-2.5 text-terminal-emerald">Free Cash Flow (FCF)</td>
-                  {dcfResult?.fcfProjections?.map((p: any) => (
-                    <td key={p.year} className="p-2.5 text-right text-terminal-emerald font-bold">{p.fcf.toLocaleString()}</td>
-                  ))}
-                </tr>
-              </tbody>
-            </table>
-          </div>
+        {/* VISUALIZATION SUITE NAVIGATION TABS */}
+        <div className="flex items-center gap-2 border-b border-[#1E293B] pb-3 overflow-x-auto">
+          {[
+            { id: "PROJECTIONS", label: isAr ? "توقعات التدفقات" : "5Y Cash Flows" },
+            { id: "FOOTBALL", label: isAr ? "ملعب التقييم" : "Football Field" },
+            { id: "TORNADO", label: isAr ? "تورنادو الحساسية" : "Tornado Chart" },
+            { id: "MONTE_CARLO", label: isAr ? "مونت كارلو (1000)" : "Monte Carlo (1K)" },
+          ].map((tab) => {
+            const active = activeTab === tab.id;
+            return (
+              <button
+                key={tab.id}
+                onClick={() => setActiveTab(tab.id as any)}
+                className={`px-4 py-2 text-xs font-mono font-bold rounded-sm transition-all cursor-pointer whitespace-nowrap ${
+                  active
+                    ? "bg-terminal-emerald text-black shadow-md"
+                    : "bg-[#121721] text-slate-400 border border-[#1E293B] hover:text-white"
+                }`}
+              >
+                {tab.label}
+              </button>
+            );
+          })}
         </div>
 
-        {/* 5x5 SENSITIVITY MATRIX HEATMAP */}
-        <div className="bg-[#121721] p-6 rounded-sm border border-[#1E293B] shadow-xl">
-          <div className="flex items-center justify-between mb-4">
-            <h3 className="font-mono text-xs font-bold text-white uppercase tracking-wider">
-              {t("sensitivity_matrix", language)}
-            </h3>
-            <span className="text-[10px] font-mono text-terminal-emerald font-bold">
-              WACC (Rows) vs Terminal Growth (Cols)
-            </span>
-          </div>
+        {/* TAB CONTENTS */}
+        {activeTab === "PROJECTIONS" && (
+          <div className="space-y-6">
+            <div className="bg-[#121721] p-6 rounded-sm border border-[#1E293B] shadow-xl">
+              <h3 className="font-mono text-xs font-bold text-white uppercase tracking-wider mb-4">
+                5-Year Free Cash Flow Projections (SAR Millions)
+              </h3>
+              <div className="overflow-x-auto">
+                <table className="w-full font-mono text-xs text-left rtl:text-right border-collapse">
+                  <thead>
+                    <tr className="bg-[#0B0E14] text-slate-400 border-b border-[#1E293B]">
+                      <th className="p-2.5">Metric</th>
+                      {dcfResult?.fcfProjections?.map((p: any) => (
+                        <th key={p.year} className="p-2.5 text-right">{p.year}</th>
+                      ))}
+                    </tr>
+                  </thead>
+                  <tbody className="divide-y divide-[#1E293B]">
+                    <tr>
+                      <td className="p-2.5 font-bold text-white">Revenue</td>
+                      {dcfResult?.fcfProjections?.map((p: any) => (
+                        <td key={p.year} className="p-2.5 text-right text-slate-200">{p.revenue.toLocaleString()}</td>
+                      ))}
+                    </tr>
+                    <tr>
+                      <td className="p-2.5 text-slate-300">EBITDA</td>
+                      {dcfResult?.fcfProjections?.map((p: any) => (
+                        <td key={p.year} className="p-2.5 text-right text-slate-300">{p.ebitda.toLocaleString()}</td>
+                      ))}
+                    </tr>
+                    <tr>
+                      <td className="p-2.5 text-slate-300">EBIT</td>
+                      {dcfResult?.fcfProjections?.map((p: any) => (
+                        <td key={p.year} className="p-2.5 text-right text-slate-300">{p.ebit.toLocaleString()}</td>
+                      ))}
+                    </tr>
+                    <tr>
+                      <td className="p-2.5 text-slate-300">NOPAT (ex-Zakat)</td>
+                      {dcfResult?.fcfProjections?.map((p: any) => (
+                        <td key={p.year} className="p-2.5 text-right text-slate-300">{p.nopat.toLocaleString()}</td>
+                      ))}
+                    </tr>
+                    <tr>
+                      <td className="p-2.5 text-slate-400">CapEx</td>
+                      {dcfResult?.fcfProjections?.map((p: any) => (
+                        <td key={p.year} className="p-2.5 text-right text-rose-400">-{p.capex.toLocaleString()}</td>
+                      ))}
+                    </tr>
+                    <tr className="bg-terminal-emerald-dim font-bold border-t border-terminal-border-emerald">
+                      <td className="p-2.5 text-terminal-emerald">Free Cash Flow (FCF)</td>
+                      {dcfResult?.fcfProjections?.map((p: any) => (
+                        <td key={p.year} className="p-2.5 text-right text-terminal-emerald font-bold">{p.fcf.toLocaleString()}</td>
+                      ))}
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
+            </div>
 
-          <div className="overflow-x-auto">
-            <table className="w-full font-mono text-xs text-center border-collapse">
-              <thead>
-                <tr className="bg-[#0B0E14]">
-                  <th className="p-2 border border-[#1E293B] text-slate-400">WACC \ Growth</th>
-                  {dcfResult?.sensitivityMatrix?.[0]?.map((col: any, i: number) => (
-                    <th key={i} className="p-2 border border-[#1E293B] text-slate-300">{col.growth}%</th>
-                  ))}
-                </tr>
-              </thead>
-              <tbody>
-                {dcfResult?.sensitivityMatrix?.map((row: any, rIdx: number) => (
-                  <tr key={rIdx}>
-                    <td className="p-2 border border-[#1E293B] font-bold text-slate-200 bg-[#0B0E14]">
-                      {row[0]?.wacc}%
-                    </td>
-                    {row.map((cell: any, cIdx: number) => {
-                      const isBull = cell.intrinsicValue > currentPrice;
-                      return (
-                        <td
-                          key={cIdx}
-                          className={`p-2 border border-[#1E293B] font-bold transition-all ${
-                            isBull 
-                              ? "bg-terminal-emerald-dim text-terminal-emerald" 
-                              : "bg-rose-950/40 text-rose-300"
-                          }`}
-                        >
-                          SAR {cell.intrinsicValue}
+            {/* 5x5 SENSITIVITY MATRIX HEATMAP */}
+            <div className="bg-[#121721] p-6 rounded-sm border border-[#1E293B] shadow-xl">
+              <div className="flex items-center justify-between mb-4">
+                <h3 className="font-mono text-xs font-bold text-white uppercase tracking-wider">
+                  {t("sensitivity_matrix", language)}
+                </h3>
+                <span className="text-[10px] font-mono text-terminal-emerald font-bold">
+                  WACC (Rows) vs Terminal Growth (Cols)
+                </span>
+              </div>
+
+              <div className="overflow-x-auto">
+                <table className="w-full font-mono text-xs text-center border-collapse">
+                  <thead>
+                    <tr className="bg-[#0B0E14]">
+                      <th className="p-2 border border-[#1E293B] text-slate-400">WACC \ Growth</th>
+                      {dcfResult?.sensitivityMatrix?.[0]?.map((col: any, i: number) => (
+                        <th key={i} className="p-2 border border-[#1E293B] text-slate-300">{col.growth}%</th>
+                      ))}
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {dcfResult?.sensitivityMatrix?.map((row: any, rIdx: number) => (
+                      <tr key={rIdx}>
+                        <td className="p-2 border border-[#1E293B] font-bold text-slate-200 bg-[#0B0E14]">
+                          {row[0]?.wacc}%
                         </td>
-                      );
-                    })}
-                  </tr>
-                ))}
-              </tbody>
-            </table>
+                        {row.map((cell: any, cIdx: number) => {
+                          const isBull = cell.intrinsicValue > currentPrice;
+                          return (
+                            <td
+                              key={cIdx}
+                              className={`p-2 border border-[#1E293B] font-bold transition-all ${
+                                isBull 
+                                  ? "bg-terminal-emerald-dim text-terminal-emerald" 
+                                  : "bg-rose-950/40 text-rose-300"
+                              }`}
+                            >
+                              SAR {cell.intrinsicValue}
+                            </td>
+                          );
+                        })}
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+            </div>
           </div>
-        </div>
+        )}
+
+        {activeTab === "FOOTBALL" && (
+          <FootballFieldChart
+            currentPrice={currentPrice}
+            dcfBasePx={dcfResult?.intrinsicValuePerShare ? Number(dcfResult.intrinsicValuePerShare) : 38.45}
+            dcfBearPx={dcfResult?.intrinsicValuePerShare ? Number((Number(dcfResult.intrinsicValuePerShare) * 0.85).toFixed(2)) : 32.10}
+            dcfBullPx={dcfResult?.intrinsicValuePerShare ? Number((Number(dcfResult.intrinsicValuePerShare) * 1.18).toFixed(2)) : 45.80}
+          />
+        )}
+
+        {activeTab === "TORNADO" && (
+          <TornadoChart
+            baseSharePrice={dcfResult?.intrinsicValuePerShare ? Number(dcfResult.intrinsicValuePerShare) : 38.45}
+          />
+        )}
+
+        {activeTab === "MONTE_CARLO" && (
+          <MonteCarloSimulation
+            baseSharePrice={dcfResult?.intrinsicValuePerShare ? Number(dcfResult.intrinsicValuePerShare) : 38.45}
+          />
+        )}
       </div>
     </motion.div>
   );
 }
+
