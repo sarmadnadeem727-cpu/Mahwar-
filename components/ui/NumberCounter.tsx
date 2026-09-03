@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useEffect, useState } from "react";
-import { useSpring, motion, useTransform } from "framer-motion";
+import { useSpring } from "framer-motion";
 
 interface NumberCounterProps {
   value: number;
@@ -18,15 +18,19 @@ export default function NumberCounter({
   suffix = "",
   className = "",
 }: NumberCounterProps) {
-  const spring = useSpring(0, {
+  const spring = useSpring(value, {
     stiffness: 120,
     damping: 18,
     mass: 0.8,
   });
 
-  const [displayValue, setDisplayValue] = useState<string>(
-    `${prefix}${Number(0).toFixed(decimals)}${suffix}`
-  );
+  const [displayValue, setDisplayValue] = useState<string>(() => {
+    const formatted = Number(value).toLocaleString(undefined, {
+      minimumFractionDigits: decimals,
+      maximumFractionDigits: decimals,
+    });
+    return `${prefix}${formatted}${suffix}`;
+  });
 
   useEffect(() => {
     spring.set(value);
@@ -49,3 +53,4 @@ export default function NumberCounter({
     </span>
   );
 }
+

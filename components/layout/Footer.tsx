@@ -165,7 +165,7 @@ const Footer = () => {
         {/* Footer Bottom */}
         <div className="pt-10 border-t border-[#E2E8F0] flex flex-col md:flex-row items-center justify-between gap-6">
           <div className={`font-mono text-xs text-slate-500 ${isAr ? 'font-arabic' : ''}`}>
-            {isAr ? "© ٢٠٢٥ محور · جميع الحقوق محفوظة" : "© 2025 Mahwar · All Rights Reserved"}
+            {isAr ? `© ${new Date().getFullYear()} محور · جميع الحقوق محفوظة` : `© ${new Date().getFullYear()} Mahwar · All Rights Reserved`}
           </div>
           <div className={`font-mono text-xs text-slate-500 hidden lg:block ${isAr ? 'font-arabic' : ''}`}>
             {isAr ? "محور · نبض أسواق المال السعودية" : "محور · The Axis of Saudi & GCC Capital Markets"}

@@ -176,9 +176,12 @@ export default function HeroSection() {
               <span className="font-bold text-slate-900 ml-2">WORKBENCH // SAUDI_ARAMCO_DCF.MODEL</span>
             </div>
             <div className="flex items-center gap-3 text-slate-500">
-              <span className="text-emerald font-bold flex items-center gap-1">
+              <span className="px-2 py-0.5 text-[10px] font-mono font-bold text-emerald bg-emerald-dim border border-emerald-border rounded">
+                SAMPLE MODEL OUTPUT // 2222.SR
+              </span>
+              <span className="text-emerald font-bold flex items-center gap-1 hidden sm:flex">
                 <span className="w-1.5 h-1.5 rounded-full bg-emerald animate-pulse" />
-                <span>DYNAMIC TELEMETRY</span>
+                <span>LIVE CALCULATION</span>
               </span>
             </div>
           </div>

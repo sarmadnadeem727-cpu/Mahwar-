@@ -57,12 +57,12 @@ export default function ProblemSection() {
           <div className="space-y-4">
             {[
               {
-                title: isAr ? "محلي بالكامل ومخصص" : "Sovereign-First Context",
-                desc: isAr ? "دعم كامل للغة العربية ونماذج الزكاة السعودية ونظام التقويم الهجري." : "Native Arabic RTL, Saudi GAAP zakat provision algorithms."
+                title: isAr ? "معايير المحاسبة والزكاة المحلية" : "Saudi GAAP & Zakat Provision Engine",
+                desc: isAr ? "دعم كامل للغة العربية، حساب مخصص الزكاة الشرعية بنسبة 2.5% من الأصول الزكوية." : "Native Arabic RTL, Saudi GAAP zakat provision algorithms (2.5% net asset rules)."
               },
               {
-                title: isAr ? "محرك تقارير الأعمال وتصدير PDF" : "Consolidated BI Report Engine",
-                desc: isAr ? "تخليق وتجميع نتائج التحليل المالي وتصديرها بصيغة PDF مؤسسية." : "Synthesizing and consolidating financial modeling outputs into executive PDF reports."
+                title: isAr ? "محرك تقارير الأعمال وتصدير PDF" : "Consolidated Executive Report Engine",
+                desc: isAr ? "تخليق وتجميع نتائج التحليل المالي وتصديرها بصيغة PDF مؤسسية بلمح البصر." : "Synthesizing and consolidating financial modeling outputs into executive PDF & Excel reports."
               }
             ].map((item, idx) => (
               <div key={idx} className="flex gap-4 p-4 border border-[#E2E8F0] border-l-2 border-l-emerald bg-slate-50 rounded-md transition-all hover:border-emerald">

@@ -61,6 +61,20 @@ function PanelContent() {
   );
 }
 
+function TerminalSkeleton() {
+  return (
+    <div className="space-y-6 animate-pulse font-sans">
+      <div className="h-10 bg-white border border-[#E2E8F0] rounded-lg w-full" />
+      <div className="h-36 bg-white border border-[#E2E8F0] rounded-lg w-full" />
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+        <div className="h-44 bg-white border border-[#E2E8F0] rounded-lg" />
+        <div className="h-44 bg-white border border-[#E2E8F0] rounded-lg" />
+        <div className="h-44 bg-white border border-[#E2E8F0] rounded-lg" />
+      </div>
+    </div>
+  );
+}
+
 export default function DashboardPage() {
   const { language } = useTerminalStore();
   const isAr = language === 'ar';
@@ -80,7 +94,7 @@ export default function DashboardPage() {
         <TopBar />
 
         <main className="flex-1 overflow-y-auto p-6 md:p-8 bg-[#F8FAFC]">
-          <Suspense fallback={<div className="p-8 font-mono text-xs text-slate-500">Loading terminal engine...</div>}>
+          <Suspense fallback={<TerminalSkeleton />}>
             <PanelContent />
           </Suspense>
         </main>
