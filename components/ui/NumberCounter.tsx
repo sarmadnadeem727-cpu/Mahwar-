@@ -25,7 +25,7 @@ export default function NumberCounter({
   });
 
   const [displayValue, setDisplayValue] = useState<string>(() => {
-    const formatted = Number(value).toLocaleString(undefined, {
+    const formatted = Number(value).toLocaleString("en-US", {
       minimumFractionDigits: decimals,
       maximumFractionDigits: decimals,
     });
@@ -38,7 +38,7 @@ export default function NumberCounter({
 
   useEffect(() => {
     const unsubscribe = spring.on("change", (latest) => {
-      const formatted = Number(latest).toLocaleString(undefined, {
+      const formatted = Number(latest).toLocaleString("en-US", {
         minimumFractionDigits: decimals,
         maximumFractionDigits: decimals,
       });

@@ -19,15 +19,29 @@ const GCC_HUBS = [
 
 const MapChart = ({ isAr = false }: { isAr?: boolean }) => {
   const [mounted, setMounted] = useState(false);
+  const [hasError, setHasError] = useState(false);
 
   useEffect(() => {
     setMounted(true);
+    // Pre-check network fetch for geoUrl
+    fetch(geoUrl)
+      .then((res) => {
+        if (!res.ok) setHasError(true);
+      })
+      .catch(() => setHasError(true));
   }, []);
 
-  if (!mounted) {
+  if (!mounted || hasError) {
     return (
-      <div className="w-full h-full flex items-center justify-center font-mono text-xs text-slate-500">
-        LOADING MAP MODULE...
+      <div className="w-full h-[400px] sm:h-[460px] md:h-[500px] flex flex-col items-center justify-center bg-slate-50 border border-[#E2E8F0] rounded-lg shadow-sm font-mono text-xs text-slate-500 gap-3 p-6 text-center">
+        <span className="font-bold text-emerald text-sm uppercase">GCC SOVEREIGN BOURSE GRID</span>
+        <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 max-w-md w-full mt-2">
+          {GCC_HUBS.map((h) => (
+            <div key={h.name} className="p-2.5 bg-white border border-[#E2E8F0] rounded text-[11px] font-bold text-slate-700">
+              {isAr ? h.isAr : h.name}
+            </div>
+          ))}
+        </div>
       </div>
     );
   }

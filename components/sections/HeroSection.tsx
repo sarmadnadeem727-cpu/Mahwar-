@@ -32,23 +32,25 @@ export default function HeroSection() {
   const [textIndex, setTextIndex] = useState(0);
   const [charIndex, setCharIndex] = useState(0);
 
-  const typewriterPhrases = isAr ? [
-    "محرك تقييم التدفقات النقدية المخصومة (5-Year DCF Engine)",
-    "باني صفقات الاستحواذ المدعوم بالديون (LBO Deal Builder)",
-    "الفحص الشرعي المعتمد وفق معيار أيوفي (AAOIFI Standard 21)",
-    "أبحاث الأسهم الفورية المدعومة بـ Gemini 2.5 Flash",
-  ] : [
-    "5-Year Institutional DCF Valuation Engine",
-    "Private Equity Leveraged Buyout (LBO) Deal Builder",
-    "AAOIFI Standard No. 21 Shariah Screening Engine",
-    "Real-Time Gemini 2.5 Flash Equity Research Memos",
-  ];
-
   useEffect(() => {
-    const currentPhrase = typewriterPhrases[textIndex];
+    const phrases = isAr ? [
+      "محرك تقييم التدفقات النقدية المخصومة (5-Year DCF Engine)",
+      "باني صفقات الاستحواذ المدعوم بالديون (LBO Deal Builder)",
+      "الفحص الشرعي المعتمد وفق معيار أيوفي (AAOIFI Standard 21)",
+      "أبحاث الأسهم الفورية المدعومة بـ Gemini 2.5 Flash",
+    ] : [
+      "5-Year Institutional DCF Valuation Engine",
+      "Private Equity Leveraged Buyout (LBO) Deal Builder",
+      "AAOIFI Standard No. 21 Shariah Screening Engine",
+      "Real-Time Gemini 2.5 Flash Equity Research Memos",
+    ];
+
+    const safeTextIndex = textIndex % phrases.length;
+    const currentPhrase = phrases[safeTextIndex] || "";
+
     if (charIndex < currentPhrase.length) {
       const timeout = setTimeout(() => {
-        setCurrentText((prev) => prev + currentPhrase[charIndex]);
+        setCurrentText((prev) => prev + (currentPhrase[charIndex] || ""));
         setCharIndex((prev) => prev + 1);
       }, 35);
       return () => clearTimeout(timeout);
@@ -56,11 +58,11 @@ export default function HeroSection() {
       const timeout = setTimeout(() => {
         setCurrentText("");
         setCharIndex(0);
-        setTextIndex((prev) => (prev + 1) % typewriterPhrases.length);
+        setTextIndex((prev) => (prev + 1) % phrases.length);
       }, 2500);
       return () => clearTimeout(timeout);
     }
-  }, [charIndex, textIndex, typewriterPhrases]);
+  }, [charIndex, textIndex, isAr]);
 
   return (
     <section className="relative min-h-[92vh] flex flex-col justify-center bg-white text-slate-900 pt-28 pb-16 overflow-hidden border-b border-[#E2E8F0] select-none font-sans">
