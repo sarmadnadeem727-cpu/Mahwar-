@@ -103,7 +103,7 @@ export default function Navbar() {
           </a>
 
           
-          <hr className="border-slate-100" />
+          <hr className="border-terminal-border" />
           
           <div className="flex flex-col gap-3 pt-2">
             <button
@@ -111,18 +111,18 @@ export default function Navbar() {
                 setLanguage(isAr ? 'en' : 'ar');
                 setMobileOpen(false);
               }}
-              className="w-full flex items-center justify-center gap-2 py-2 rounded border border-slate-250 text-slate-700 font-bold"
+              className="w-full flex items-center justify-center gap-2 py-2 rounded-sm border border-terminal-border bg-terminal-surface text-terminal-text font-mono text-xs font-bold"
             >
-              <Globe size={14} className="text-[var(--emerald)]" />
+              <Globe size={14} className="text-terminal-emerald" />
               <span>{isAr ? "English" : "العربية"}</span>
             </button>
 
             <Link
               href="/dashboard"
               onClick={() => setMobileOpen(false)}
-              className="w-full text-center py-2.5 rounded bg-[var(--emerald)] hover:bg-[#12A189] text-white font-bold block"
+              className="w-full text-center py-2.5 rounded-sm bg-terminal-emerald hover:bg-terminal-emerald-light text-white font-mono text-xs font-bold uppercase tracking-wider block"
             >
-              {isAr ? "تشغيل المنصة" : "Enter Terminal"}
+              <span>{isAr ? "تشغيل المنصة" : "ENTER TERMINAL"}</span>
             </Link>
           </div>
         </div>
