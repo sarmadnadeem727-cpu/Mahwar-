@@ -55,9 +55,6 @@ export default function Navbar() {
           <a href="#solution" className="hover:text-emerald transition-colors">
             {isAr ? "القدرات" : "Engine Suite"}
           </a>
-          <a href="#tech" className="hover:text-emerald transition-colors">
-            {isAr ? "التقنيات" : "Core Architecture"}
-          </a>
         </div>
 
         {/* Right Actions */}
@@ -96,9 +93,6 @@ export default function Navbar() {
           </a>
           <a href="#solution" onClick={() => setMobileOpen(false)} className="block py-2">
             {isAr ? "القدرات" : "Platform Suite"}
-          </a>
-          <a href="#tech" onClick={() => setMobileOpen(false)} className="block py-2">
-            {isAr ? "التقنيات" : "Core Architecture"}
           </a>
 
           

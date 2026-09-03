@@ -5,7 +5,6 @@ import Navbar from "@/components/layout/Navbar";
 import HeroSection from "@/components/sections/HeroSection";
 import ProblemSection from "@/components/sections/ProblemSection";
 import SolutionSection from "@/components/sections/SolutionSection";
-import TechnologySection from "@/components/sections/TechnologySection";
 import CTASection from "@/components/sections/CTASection";
 import Footer from "@/components/layout/Footer";
 
@@ -17,10 +16,10 @@ export default function LandingPage() {
         <HeroSection />
         <ProblemSection />
         <SolutionSection />
-        <TechnologySection />
         <CTASection />
       </main>
       <Footer />
     </div>
   );
 }
+
