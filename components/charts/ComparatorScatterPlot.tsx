@@ -63,19 +63,19 @@ export default function ComparatorScatterPlot({
   };
 
   return (
-    <div className="bg-[#121721] p-6 rounded-sm border border-[#1E293B] shadow-xl font-mono text-xs space-y-4">
-      <div className="flex justify-between items-center pb-3 border-b border-[#1E293B]">
+    <div className="bg-white p-6 rounded-lg border border-[#E2E8F0] shadow-sm font-mono text-xs space-y-4">
+      <div className="flex justify-between items-center pb-3 border-b border-[#E2E8F0]">
         <div>
           <span className="text-emerald font-bold uppercase tracking-wider text-[11px] block mb-1">
             {isAr ? "مخطط التشتت للمقارنة" : "Peer Valuation Scatter Matrix"}
           </span>
-          <h3 className="text-sm font-extrabold text-white font-serif">
+          <h3 className="text-sm font-extrabold text-slate-900 font-serif">
             {isAr ? "مضاعف EV/EBITDA مقابل معدل نمو الإيرادات (%)" : "EV/EBITDA Multiple vs Revenue Growth Rate (%)"}
           </h3>
         </div>
         <div className="flex items-center gap-2">
           <span className="w-3 h-3 rounded-full bg-emerald inline-block" />
-          <span className="text-slate-300 font-bold text-[11px]">{targetTicker} (Target)</span>
+          <span className="text-slate-800 font-bold text-[11px]">{targetTicker} (Target)</span>
         </div>
       </div>
 

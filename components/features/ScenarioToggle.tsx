@@ -57,9 +57,9 @@ export default function ScenarioToggle({
   ];
 
   return (
-    <div className="bg-[#121721] p-4 rounded-sm border border-[#1E293B] shadow-xl font-mono text-xs space-y-3">
-      <div className="flex justify-between items-center pb-2 border-b border-[#1E293B]">
-        <span className="text-slate-400 font-bold uppercase tracking-wider text-[10px]">
+    <div className="bg-white p-4 rounded-lg border border-[#E2E8F0] shadow-sm font-mono text-xs space-y-3">
+      <div className="flex justify-between items-center pb-2 border-b border-[#E2E8F0]">
+        <span className="text-slate-500 font-bold uppercase tracking-wider text-[10px]">
           {isAr ? "تبديل سيناريو التقييم" : "Model Scenario Switcher"}
         </span>
         <span className="text-emerald font-bold text-[10px] uppercase">
@@ -74,17 +74,17 @@ export default function ScenarioToggle({
             <button
               key={c.id}
               onClick={() => onSelectCase(c.id, c.values)}
-              className={`p-3 rounded-sm border transition-all text-left rtl:text-right cursor-pointer flex flex-col justify-between h-[75px] ${
+              className={`p-3 rounded-lg border transition-all text-left rtl:text-right cursor-pointer flex flex-col justify-between h-[75px] ${
                 isActive
-                  ? "bg-terminal-emerald-dim border-terminal-border-emerald text-white shadow-sm"
-                  : "bg-[#0B0E14] border-[#1E293B] hover:border-slate-700 text-slate-300"
+                  ? "bg-emerald-dim border-emerald-border text-slate-900 font-bold shadow-2xs"
+                  : "bg-slate-50 border-[#E2E8F0] hover:border-slate-300 text-slate-700"
               }`}
             >
               <div className="flex justify-between items-center w-full">
                 <span className="font-bold text-xs">{c.label}</span>
                 {c.icon}
               </div>
-              <span className="text-[10px] text-slate-400 truncate">{c.desc}</span>
+              <span className="text-[10px] text-slate-500 truncate">{c.desc}</span>
             </button>
           );
         })}

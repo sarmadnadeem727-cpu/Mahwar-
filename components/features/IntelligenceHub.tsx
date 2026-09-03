@@ -92,8 +92,8 @@ export default function IntelligenceHub() {
     {
       id: "research" as const,
       title: t("panel_ai_research", language),
-      desc: isAr ? "مذكرات أبحاث استثمارية من Gemini 2.5 Flash" : "Equity research memos backed by Gemini 2.5 Flash",
-      icon: <Sparkles className="text-terminal-emerald" size={20} />,
+      desc: isAr ? "مذكرات أبحاث مالية استثمارية متخصصة" : "Institutional equity research memos and financial syntheses",
+      icon: <Sparkles className="text-emerald" size={20} />,
       hasData: !!sessionAnalyses.researchMemo,
       statusLabel: !!sessionAnalyses.researchMemo 
         ? (isAr ? "المذكرة نشطة" : "Active Memo")

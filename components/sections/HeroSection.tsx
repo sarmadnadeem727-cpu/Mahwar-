@@ -37,12 +37,12 @@ export default function HeroSection() {
       "محرك تقييم التدفقات النقدية المخصومة (5-Year DCF Engine)",
       "باني صفقات الاستحواذ المدعوم بالديون (LBO Deal Builder)",
       "الفحص الشرعي المعتمد وفق معيار أيوفي (AAOIFI Standard 21)",
-      "أبحاث الأسهم الفورية المدعومة بـ Gemini 2.5 Flash",
+      "مذكرات أبحاث الأسهم والتقارير الموحدة (Equity Research Memos)",
     ] : [
       "5-Year Institutional DCF Valuation Engine",
       "Private Equity Leveraged Buyout (LBO) Deal Builder",
       "AAOIFI Standard No. 21 Shariah Screening Engine",
-      "Real-Time Gemini 2.5 Flash Equity Research Memos",
+      "Real-Time Institutional Equity Research Memos",
     ];
 
     const safeTextIndex = textIndex % phrases.length;

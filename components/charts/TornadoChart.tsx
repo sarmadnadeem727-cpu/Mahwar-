@@ -117,17 +117,17 @@ export default function TornadoChart({
   const maxDev = Math.max(...drivers.map(d => Math.max(Math.abs(d.highPx - baseSharePrice), Math.abs(d.lowPx - baseSharePrice)))) * 1.25;
 
   return (
-    <div className="bg-[#121721] p-6 rounded-sm border border-[#1E293B] shadow-xl font-mono text-xs space-y-6">
-      <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 pb-4 border-b border-[#1E293B]">
+    <div className="bg-white p-6 rounded-lg border border-[#E2E8F0] shadow-sm font-mono text-xs space-y-6">
+      <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 pb-4 border-b border-[#E2E8F0]">
         <div>
           <div className="flex items-center gap-2 text-emerald font-bold uppercase tracking-wider text-[11px] mb-1">
             <span>{isAr ? "مخطط تورنادو الحساسية" : "DCF Driver Sensitivity Tornado Chart"}</span>
           </div>
-          <h3 className="text-sm font-extrabold text-white font-serif">
+          <h3 className="text-sm font-extrabold text-slate-900 font-serif">
             {isAr ? "ترتيب افتراضات النمذجة حسب حجم تأثيرها على القيمة العادلة" : "Share Price Swing Impact Ranked by Valuation Driver"}
           </h3>
         </div>
-        <div className="px-3 py-1 bg-[#0B0E14] border border-[#1E293B] rounded text-emerald font-bold">
+        <div className="px-3 py-1 bg-slate-50 border border-[#E2E8F0] rounded text-emerald font-bold">
           Base: SAR {baseSharePrice.toFixed(2)}
         </div>
       </div>

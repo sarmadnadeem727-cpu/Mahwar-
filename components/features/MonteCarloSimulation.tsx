@@ -150,14 +150,14 @@ export default function MonteCarloSimulation({
   }, [baseWacc, baseGrowth, baseSharePrice]);
 
   return (
-    <div className="bg-[#121721] p-6 rounded-sm border border-[#1E293B] shadow-xl font-mono text-xs space-y-6">
-      <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 pb-4 border-b border-[#1E293B]">
+    <div className="bg-white p-6 rounded-lg border border-[#E2E8F0] shadow-sm font-mono text-xs space-y-6">
+      <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 pb-4 border-b border-[#E2E8F0]">
         <div>
           <div className="flex items-center gap-2 text-emerald font-bold uppercase tracking-wider text-[11px] mb-1">
             <Sparkles size={14} />
-            <span>{isAr ? "محاكات مونت كارلو الاحتمالية" : "1,000-Run Client-Side Monte Carlo Engine"}</span>
+            <span>{isAr ? "محاكاة مونت كارلو الاحتمالية" : "1,000-Run Client-Side Monte Carlo Engine"}</span>
           </div>
-          <h3 className="text-sm font-extrabold text-white font-serif">
+          <h3 className="text-sm font-extrabold text-slate-900 font-serif">
             {isAr ? "توزيع احتمالية القيمة العادلة للسهم (Probabilistic Valuation)" : "Implied Valuation Probability Distribution"}
           </h3>
         </div>
@@ -165,7 +165,7 @@ export default function MonteCarloSimulation({
         <button
           onClick={runSimulation}
           disabled={isRunning}
-          className="px-4 py-2 bg-emerald hover:bg-emerald-light text-black font-bold rounded-sm flex items-center gap-2 cursor-pointer transition-all uppercase tracking-wider text-xs shadow-md"
+          className="px-4 py-2 bg-emerald hover:bg-emerald-light text-white font-bold rounded-lg flex items-center gap-2 cursor-pointer transition-all uppercase tracking-wider text-xs shadow-xs"
         >
           {isRunning ? <RefreshCw size={13} className="animate-spin" /> : <Play size={13} />}
           <span>{isAr ? "إعادة المحاكاة (1,000 جولة)" : "Run 1,000 Simulations"}</span>
@@ -175,8 +175,8 @@ export default function MonteCarloSimulation({
       {/* PERCENTILE CALLOUTS */}
       {simResults && (
         <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
-          <div className="p-4 bg-[#0B0E14] border border-[#1E293B] rounded-sm text-center">
-            <span className="text-[10px] text-slate-400 font-bold uppercase block mb-1">
+          <div className="p-4 bg-slate-50 border border-[#E2E8F0] rounded-lg text-center">
+            <span className="text-[10px] text-slate-500 font-bold uppercase block mb-1">
               {isAr ? "النسبة المئوية P10 (تحفظية)" : "P10 Percentile (Bear)"}
             </span>
             <span className="text-xl font-extrabold text-rose-400">

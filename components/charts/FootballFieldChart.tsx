@@ -64,22 +64,22 @@ export default function FootballFieldChart({
   const getWidthPct = (min: number, max: number) => Math.max(2, Math.min(100, ((max - min) / totalSpan) * 100));
 
   return (
-    <div className="bg-[#121721] p-6 rounded-sm border border-[#1E293B] shadow-xl font-mono text-xs space-y-6">
+    <div className="bg-white p-6 rounded-lg border border-[#E2E8F0] shadow-sm font-mono text-xs space-y-6">
       {/* Header */}
-      <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 pb-4 border-b border-[#1E293B]">
+      <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 pb-4 border-b border-[#E2E8F0]">
         <div>
           <div className="flex items-center gap-2 text-emerald font-bold uppercase tracking-wider text-[11px] mb-1">
             <span>{isAr ? "مخطط ملعب التقييم" : "Football Field Valuation Summary"}</span>
           </div>
-          <h3 className="text-sm font-extrabold text-white font-serif">
+          <h3 className="text-sm font-extrabold text-slate-900 font-serif">
             {isAr ? "مقارنة نطاقات التقييم للقيم العادلة" : "Implied Equity Value Per Share Across Methodologies"}
           </h3>
         </div>
 
         <div className="flex items-center gap-3">
-          <div className="flex items-center gap-2 px-3 py-1 bg-[#0B0E14] border border-[#1E293B] rounded text-[11px]">
+          <div className="flex items-center gap-2 px-3 py-1 bg-slate-50 border border-[#E2E8F0] rounded text-[11px]">
             <span className="w-2.5 h-0.5 bg-rose-500 rounded-full" />
-            <span className="text-slate-300 font-bold">{isAr ? "السعر الحالي:" : "Current Price:"} SAR {currentPrice.toFixed(2)}</span>
+            <span className="text-slate-800 font-bold">{isAr ? "السعر الحالي:" : "Current Price:"} SAR {currentPrice.toFixed(2)}</span>
           </div>
         </div>
       </div>

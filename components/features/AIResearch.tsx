@@ -100,10 +100,10 @@ export default function AIResearch() {
               <Sparkles className="text-[var(--emerald)]" size={22} />
               <div>
                 <h2 className="font-serif text-xl font-bold text-[#171717]">
-                  {isAr ? "أبحاث الذكاء الاصطناعي" : "AI Research Context"}
+                  {isAr ? "مذكرات أبحاث الأسهم" : "Equity Research Context"}
                 </h2>
                 <span className="text-[10px] font-mono text-slate-500">
-                  {isAr ? "تحليل Gemini 2.5 الفوري" : "Powered by Gemini 2.5 Flash"}
+                  {isAr ? "محرك التحليل المالي المستقل" : "Institutional Financial Synthesis Engine"}
                 </span>
               </div>
             </div>

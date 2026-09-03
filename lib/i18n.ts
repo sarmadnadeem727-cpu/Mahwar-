@@ -28,7 +28,7 @@ export const translations = {
     panel_market_intel: "Market Intelligence",
     panel_live_market: "Live KSA Market",
     panel_technical: "Technical Charts",
-    panel_ai_research: "AI Research Memos",
+    panel_ai_research: "Equity Research Memos",
     panel_shariah: "Shariah Screening",
     panel_screener: "Market Screener",
     panel_dividends: "Dividend Intelligence",
@@ -50,12 +50,12 @@ export const translations = {
     status_executed: "EXECUTED",
     status_pending: "PENDING",
 
-    // AI Research
-    ai_research_title: "AI Equity Research Generator",
+    // Equity Research
+    ai_research_title: "Institutional Equity Research Engine",
     ai_ticker_label: "Target Ticker",
     ai_query_placeholder: "Ask specific research question (e.g., Zakat impact on Q3 net margin)...",
     generate_memo: "Generate Equity Memo",
-    model_badge: "Gemini 2.5 Flash + Google Search Grounding",
+    model_badge: "Institutional Financial Engine + Real-Time Search Grounding",
     copy_report: "Copy Report",
     download_pdf: "Download PDF",
     recent_searches: "Recent Research History",
@@ -208,7 +208,7 @@ export const translations = {
     panel_market_intel: "استخبارات السوق الخليجي",
     panel_live_market: "السوق السعودي المباشر",
     panel_technical: "الرسوم البيانية الفنية",
-    panel_ai_research: "مذكرات أبحاث الذكاء الاصطناعي",
+    panel_ai_research: "مذكرات أبحاث الأسهم",
     panel_shariah: "الفحص الشرعي (AAOIFI)",
     panel_screener: "فاحص أسواق الخليج",
     panel_dividends: "تحليل توزيعات الأرباح",
@@ -230,12 +230,12 @@ export const translations = {
     status_executed: "منفذ",
     status_pending: "قيد التنفيذ",
 
-    // AI Research
-    ai_research_title: "مولد أبحاث الأسهم بالذكاء الاصطناعي",
+    // Equity Research
+    ai_research_title: "محرك تقارير ومذكرات أبحاث الأسهم",
     ai_ticker_label: "الرمز المستهدف",
     ai_query_placeholder: "طرح سؤال بحثي محدد (مثلاً: أثر الزكاة على هامش صافي الربح)...",
     generate_memo: "توليد مذكرة التقييم",
-    model_badge: "مدعوم بـ Gemini 2.5 Flash مع الربط بالبحث المباشر",
+    model_badge: "محرك التحليل المالي المؤسسي المباشر",
     copy_report: "نسخ التقرير",
     download_pdf: "تحميل PDF",
     recent_searches: "سجل الأبحاث الأخيرة",
