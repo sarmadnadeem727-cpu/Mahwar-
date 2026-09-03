@@ -2,7 +2,7 @@
 
 import React from "react";
 import { 
-  Columns, Sparkles, ShieldCheck, Grid3X3, BarChart3, Layers, FileSpreadsheet, FileText, Newspaper
+  Columns, Sparkles, ShieldCheck, Grid3X3, BarChart3, Layers, FileSpreadsheet, FileText
 } from "lucide-react";
 import { useTerminalStore, PanelType } from "@/store/useTerminalStore";
 import { t } from "@/lib/i18n";
@@ -22,7 +22,6 @@ const NAV_GROUPS: NavGroup[] = [
     labelKey: "nav_platform",
     items: [
       { id: "hub", icon: <Columns size={15} />, labelKey: "panel_hub" },
-      { id: "market_intel", icon: <Newspaper size={15} />, labelKey: "panel_market_intel" },
       { id: "screener", icon: <Grid3X3 size={15} />, labelKey: "panel_screener" },
     ],
   },

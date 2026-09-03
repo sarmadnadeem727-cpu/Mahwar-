@@ -5,8 +5,6 @@
 
 export interface ServerEnv {
   GEMINI_API_KEY?: string;
-  MARKETAUX_API_KEY?: string;
-  FINLIGHT_API_KEY?: string;
 }
 
 /**
@@ -18,13 +16,9 @@ export function getServerEnv(): ServerEnv {
   }
 
   const geminiKey = process.env.GEMINI_API_KEY || process.env.GOOGLE_API_KEY || process.env.NEXT_PUBLIC_GEMINI_API_KEY;
-  const marketauxKey = process.env.MARKETAUX_API_KEY;
-  const finlightKey = process.env.FINLIGHT_API_KEY;
 
   return {
     GEMINI_API_KEY: geminiKey,
-    MARKETAUX_API_KEY: marketauxKey,
-    FINLIGHT_API_KEY: finlightKey,
   };
 }
 

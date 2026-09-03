@@ -35,15 +35,6 @@ export default function IntelligenceHub() {
 
   const overviewCards = [
     {
-      id: "market_intel" as const,
-      title: isAr ? "استخبارات السوق وأخبار الخليج" : "Market Intelligence & Wire",
-      desc: isAr ? "موجز الأخبار المالية وإعلانات الصناديق السيادية" : "Live institutional wire & GCC sovereign announcements",
-      icon: <Newspaper className="text-[var(--emerald)]" size={20} />,
-      hasData: true,
-      statusLabel: isAr ? "بث مباشر نشط" : "Live Streaming",
-      tag: "INTELLIGENCE"
-    },
-    {
       id: "DCF" as const,
       title: t("panel_dcf", language),
       desc: isAr ? "نموذج تقييم التدفقات النقدية المخصومة 5 سنوات" : "5-Year Discounted Cash Flow valuation engine",
@@ -132,8 +123,7 @@ export default function IntelligenceHub() {
             {GCC_MOVERS.map((mover) => (
               <div 
                 key={mover.ticker}
-                onClick={() => setPanel("market_intel")}
-                className="flex items-center gap-2 px-2.5 py-1 rounded bg-white border border-slate-200 hover:border-[var(--emerald)] transition-colors cursor-pointer"
+                className="flex items-center gap-2 px-2.5 py-1 rounded bg-white border border-slate-200"
               >
                 <span className="font-bold text-slate-700">{mover.ticker}</span>
                 <span className="text-slate-500 font-sans text-[11px]">{isAr ? mover.nameAr : mover.name}</span>
