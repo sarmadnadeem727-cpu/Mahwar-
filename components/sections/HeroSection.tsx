@@ -12,6 +12,7 @@ import { useTerminalStore } from "@/store/useTerminalStore";
 import { t } from "@/lib/i18n";
 import { fadeInUp, staggerContainer, staggerItem } from "@/lib/motion";
 import NumberCounter from "@/components/ui/NumberCounter";
+import { MahwarBackgroundLogo } from "@/components/ui/MahwarSplash";
 
 // Lazy-load the 2D GCC Map with zero SSR impact
 const GccMap2D = dynamic(() => import("@/components/ui/GccMap2D"), {
@@ -66,6 +67,11 @@ export default function HeroSection() {
       {/* Background CAD Precision Grid */}
       <div className="absolute inset-0 bg-[linear-gradient(to_right,rgba(30,41,59,0.35)_1px,transparent_1px),linear-gradient(to_bottom,rgba(30,41,59,0.35)_1px,transparent_1px)] bg-[size:2.5rem_2.5rem] [mask-image:radial-gradient(ellipse_75%_60%_at_50%_40%,#000_70%,transparent_100%)] pointer-events-none" />
 
+      {/* GLOWING ANIMATED RADAR LOGO WATERMARK IN BACKGROUND */}
+      <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-[60%] w-[550px] h-[550px] sm:w-[700px] sm:h-[700px] opacity-25 pointer-events-none z-0">
+        <MahwarBackgroundLogo className="w-full h-full" />
+      </div>
+
       <div className="max-w-7xl mx-auto px-6 relative z-10 w-full flex flex-col items-center">
         
         {/* SOVEREIGN TERMINAL BADGE */}
@@ -84,7 +90,7 @@ export default function HeroSection() {
           variants={fadeInUp}
           initial="initial"
           animate="animate"
-          className="font-mono text-4xl sm:text-6xl md:text-7xl font-extrabold tracking-tight text-white text-center max-w-5xl leading-[1.08] mb-4"
+          className="font-mono text-4xl sm:text-6xl md:text-7xl font-extrabold tracking-tight text-white text-center max-w-5xl leading-[1.08] mb-4 drop-shadow-md"
         >
           {isAr ? (
             <span>الاستخبارات المالية السيادية والنمذجة الكمية لأسواق الخليج</span>
