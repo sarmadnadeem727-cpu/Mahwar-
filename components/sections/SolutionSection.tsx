@@ -112,67 +112,6 @@ export default function SolutionSection() {
           ))}
         </div>
 
-        {/* INTERACTIVE LIVE DCF SENSITIVITY MATRIX PREVIEW */}
-        <motion.div
-          initial={{ opacity: 0, y: 25 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true }}
-          transition={{ duration: 0.5, delay: 0.2 }}
-          className="mt-16 bg-slate-50 border border-[#E2E8F0] p-6 md:p-8 rounded-xl shadow-xs"
-        >
-          <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 mb-6">
-            <div>
-              <div className="flex items-center gap-2 text-emerald font-mono text-xs font-bold uppercase tracking-wider mb-1">
-                <BarChart3 size={14} />
-                <span>{isAr ? "مصفوفة حساسية التقييم (WACC vs Growth)" : "5x5 Sensitivity Heatmap Matrix"}</span>
-              </div>
-              <h3 className="font-serif text-xl font-bold text-slate-900">
-                {isAr ? "حساسية القيمة العادلة لتغير معدل الخصم والنمو النهائي" : "Saudi Aramco Intrinsic Value Sensitivity Heatmap"}
-              </h3>
-            </div>
-            <span className="px-3 py-1 bg-white border border-[#E2E8F0] rounded font-mono text-[11px] text-slate-600 font-bold">
-              {isAr ? "السعر الحالي: 27.85 ريال" : "Current Price: SAR 27.85"}
-            </span>
-          </div>
-
-          {/* HEATMAP TABLE GRID */}
-          <div className="overflow-x-auto">
-            <table className="w-full text-center font-mono text-xs border-collapse">
-              <thead>
-                <tr className="border-b border-[#E2E8F0] text-slate-500">
-                  <th className="p-3 text-left rtl:text-right font-bold text-slate-700">WACC \ Growth</th>
-                  <th className="p-3">1.5%</th>
-                  <th className="p-3">2.0%</th>
-                  <th className="p-3 bg-emerald-dim text-emerald font-bold border-x border-[#E2E8F0]">2.5% (Base)</th>
-                  <th className="p-3">3.0%</th>
-                  <th className="p-3">3.5%</th>
-                </tr>
-              </thead>
-              <tbody className="divide-y divide-[#E2E8F0]">
-                {[
-                  { wacc: "7.5%", vals: ["SAR 41.20", "SAR 43.10", "SAR 45.40", "SAR 48.10", "SAR 51.30"] },
-                  { wacc: "8.2%", vals: ["SAR 37.80", "SAR 39.45", "SAR 41.30", "SAR 43.50", "SAR 46.10"] },
-                  { wacc: "8.9% (Base)", vals: ["SAR 35.10", "SAR 36.60", "SAR 38.45", "SAR 40.20", "SAR 42.40"], isBase: true },
-                  { wacc: "9.5%", vals: ["SAR 32.90", "SAR 34.10", "SAR 35.60", "SAR 37.15", "SAR 39.00"] },
-                  { wacc: "10.2%", vals: ["SAR 30.80", "SAR 31.90", "SAR 33.20", "SAR 34.60", "SAR 36.20"] },
-                ].map((row, i) => (
-                  <tr key={i} className={row.isBase ? "bg-slate-100 font-bold" : "hover:bg-white"}>
-                    <td className="p-3 text-left rtl:text-right font-bold text-slate-800">{row.wacc}</td>
-                    {row.vals.map((v, j) => {
-                      const isCenter = row.isBase && j === 2;
-                      return (
-                        <td key={j} className={`p-3 ${isCenter ? "bg-emerald text-white font-extrabold rounded-md shadow-xs" : "text-slate-700"}`}>
-                          {v}
-                        </td>
-                      );
-                    })}
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-          </div>
-        </motion.div>
-
         {/* BOTTOM CTA LINK */}
         <motion.div
           initial={{ opacity: 0, y: 15 }}

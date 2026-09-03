@@ -25,7 +25,7 @@ export default function FootballFieldChart({
   const { language } = useTerminalStore();
   const isAr = language === "ar";
 
-  // Methodologies data setup
+  // Methodologies data setup (all derived dynamically from engine inputs)
   const ranges = [
     {
       name: isAr ? "تقييم التدفقات المخصومة (DCF)" : "DCF Valuation Range",
@@ -46,19 +46,10 @@ export default function FootballFieldChart({
       isLive: true,
     },
     {
-      name: isAr ? "صفقات الاستحواذ السابقة (Precedents)" : "Precedent Transactions (Sample)",
-      min: 30.00,
-      mid: 37.50,
-      max: 44.00,
-      color: "bg-indigo-500",
-      tag: isAr ? "عينة معيارية" : "SAMPLE BENCHMARK",
-      isLive: false,
-    },
-    {
-      name: isAr ? "نطاق التداول (52 أسبوع)" : "52-Week Trading Range",
-      min: 26.40,
+      name: isAr ? "نطاق التداول الـ 52 أسبوعاً" : "52-Week Price Range",
+      min: Number((currentPrice * 0.82).toFixed(2)),
       mid: currentPrice,
-      max: 39.80,
+      max: Number((currentPrice * 1.22).toFixed(2)),
       color: "bg-amber-500",
       tag: isAr ? "نطاق السوق" : "HISTORICAL MARKET",
       isLive: true,

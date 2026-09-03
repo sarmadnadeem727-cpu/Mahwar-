@@ -11,52 +11,49 @@ export interface NewsArticle {
   category: "GCC" | "SAUDI" | "MACRO" | "ISLAMIC_FINANCE";
 }
 
-const FALLBACK_NEWS: NewsArticle[] = [
-  {
-    id: "f1",
-    title: "Saudi Aramco Announces $31B Q2 Dividend & Hydrogen Expansion",
-    titleAr: "أرامكو السعودية تعلن عن توزيعات أرباح بقيمة 31 مليار دولار وتوسع في الهيدروجين",
-    summary: "Energy sovereign giant confirms robust free cash flow generation and strategic capex allocation in Vision 2030 initiatives.",
-    source: "Marketaux GCC Wire",
-    url: "https://www.marketaux.com",
-    publishedAt: new Date().toISOString(),
-    category: "SAUDI",
-  },
-  {
-    id: "f2",
-    title: "Tadawul All-Share Index Advances 1.2% Led by Banking & Al Rajhi",
-    titleAr: "مؤشر تداول يرتفع بنسبة 1.2% بقيادة القطاع المصرفي ومصرف الراجحي",
-    summary: "Institutional liquidity surges across GCC equity markets following AAOIFI compliant quarterly earnings reports.",
-    source: "Finlight Arabic Wire",
-    url: "https://finlight.ae",
-    publishedAt: new Date().toISOString(),
-    category: "GCC",
-  },
-  {
-    id: "f3",
-    title: "UAE Sovereign Wealth Funds Allocate $12B to Sustainable Sukuk",
-    titleAr: "صناديق الثروة السيادية للإمارات تخصص 12 مليار دولار للصكوك المستدامة",
-    summary: "Green Islamic debt instruments see 4x oversubscription rate across Middle East capital markets.",
-    source: "Marketaux GCC Wire",
-    url: "https://www.marketaux.com",
-    publishedAt: new Date().toISOString(),
-    category: "ISLAMIC_FINANCE",
-  },
-  {
-    id: "f4",
-    title: "Qatar Energy Signs LNG Long-Term Offtake Agreement with Asian Utility",
-    titleAr: "قطر للطاقة توقع اتفاقية توريد طويلة الأجل للغاز الطبيعي المسال",
-    summary: "27-year supply contract solidifies North Field expansion phase 2 capitalization targets.",
-    source: "Marketaux GCC Wire",
-    url: "https://www.marketaux.com",
-    publishedAt: new Date().toISOString(),
-    category: "MACRO",
-  },
-];
+function parseRssXml(xml: string): NewsArticle[] {
+  const articles: NewsArticle[] = [];
+  const itemMatches = xml.match(/<item>[\s\S]*?<\/item>/gi) || [];
+
+  itemMatches.slice(0, 12).forEach((itemXml, idx) => {
+    const titleMatch = itemXml.match(/<title>(.*?)<\/title>/i);
+    const linkMatch = itemXml.match(/<link>(.*?)<\/link>/i);
+    const pubDateMatch = itemXml.match(/<pubDate>(.*?)<\/pubDate>/i);
+    const sourceMatch = itemXml.match(/<source[^>]*>(.*?)<\/source>/i);
+
+    const rawTitle = titleMatch ? titleMatch[1].replace(/<!\[CDATA\[(.*?)\]\]>/gi, "$1") : "GCC Financial Update";
+    const link = linkMatch ? linkMatch[1] : "https://news.google.com";
+    const pubDate = pubDateMatch ? new Date(pubDateMatch[1]).toISOString() : new Date().toISOString();
+    const source = sourceMatch ? sourceMatch[1] : "Google News GCC";
+
+    // Clean title & source
+    const cleanTitle = rawTitle.replace(/ - [^-]+$/, "").trim();
+
+    let cat: "GCC" | "SAUDI" | "MACRO" | "ISLAMIC_FINANCE" = "GCC";
+    if (cleanTitle.toLowerCase().includes("saudi") || cleanTitle.toLowerCase().includes("tadawul") || cleanTitle.toLowerCase().includes("aramco")) {
+      cat = "SAUDI";
+    } else if (cleanTitle.toLowerCase().includes("sukuk") || cleanTitle.toLowerCase().includes("islamic")) {
+      cat = "ISLAMIC_FINANCE";
+    } else if (cleanTitle.toLowerCase().includes("energy") || cleanTitle.toLowerCase().includes("oil")) {
+      cat = "MACRO";
+    }
+
+    articles.push({
+      id: `rss-${idx}-${Date.now()}`,
+      title: cleanTitle,
+      summary: cleanTitle,
+      source: source,
+      url: link,
+      publishedAt: pubDate,
+      category: cat,
+    });
+  });
+
+  return articles;
+}
 
 export async function GET() {
   const marketauxKey = process.env.MARKETAUX_API_KEY;
-  const finlightKey = process.env.FINLIGHT_API_KEY;
 
   if (marketauxKey) {
     try {
@@ -80,13 +77,33 @@ export async function GET() {
         }
       }
     } catch (err) {
-      console.warn("Marketaux API error, falling back to sovereign wire:", err);
+      console.warn("Marketaux API error, falling back to RSS wire:", err);
     }
   }
 
+  // Live Google News RSS Wire for GCC & Tadawul capital markets
+  try {
+    const rssRes = await fetch(
+      "https://news.google.com/rss/search?q=Saudi+Tadawul+GCC+capital+markets&hl=en-US&gl=US&ceid=US:en",
+      { next: { revalidate: 300 } }
+    );
+
+    if (rssRes.ok) {
+      const xmlText = await rssRes.text();
+      const articles = parseRssXml(xmlText);
+      if (articles.length > 0) {
+        return NextResponse.json({
+          articles,
+          provider: "Live GCC Capital Markets Wire",
+        });
+      }
+    }
+  } catch (err) {
+    console.warn("Failed to fetch RSS wire:", err);
+  }
+
   return NextResponse.json({
-    articles: FALLBACK_NEWS,
-    provider: "Mahwar Live Sovereign Wire",
-    pendingKeys: !marketauxKey && !finlightKey,
+    articles: [],
+    provider: "GCC Market Wire",
   });
 }
