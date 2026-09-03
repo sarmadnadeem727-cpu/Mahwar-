@@ -35,78 +35,69 @@ export default function IntelligenceHub() {
 
   const overviewCards = [
     {
-      id: "news" as const,
-      title: isAr ? "شريط الأخبار المالية مباشر" : "Financial News Wire",
-      desc: isAr ? "موجز الأنباء المالية الحية عبر NewsAPI.org" : "Live financial news & market wire powered by NewsAPI.org",
-      icon: <Newspaper className="text-[var(--emerald)]" size={20} />,
-      hasData: true,
-      statusLabel: isAr ? "بث مباشر" : "Live Stream",
-      tag: "WIRE"
-    },
-    {
       id: "DCF" as const,
       title: t("panel_dcf", language),
       desc: isAr ? "نموذج تقييم التدفقات النقدية المخصومة 5 سنوات" : "5-Year Discounted Cash Flow valuation engine",
-      icon: <BarChart3 className="text-[var(--emerald)]" size={20} />,
+      icon: <BarChart3 className="text-terminal-emerald" size={20} />,
       hasData: !!sessionAnalyses.dcf,
       statusLabel: !!sessionAnalyses.dcf 
         ? `${isAr ? "تم الحساب: " : "Computed: "} SAR ${sessionAnalyses.dcf.outputs.intrinsicValuePerShare}`
-        : (isAr ? "لم يتم البدء" : "Not Started"),
+        : (isAr ? "جاهز للنمذجة" : "Ready for Inputs"),
       tag: "VALUATION"
     },
     {
       id: "LBO" as const,
       title: t("panel_lbo", language),
       desc: isAr ? "تحليل باني صفقات الاستحواذ المدعوم بالديون" : "Private equity leveraged buyout returns builder",
-      icon: <Layers className="text-[var(--emerald)]" size={20} />,
+      icon: <Layers className="text-terminal-emerald" size={20} />,
       hasData: !!sessionAnalyses.lbo,
       statusLabel: !!sessionAnalyses.lbo 
         ? `${isAr ? "العائد الداخلي: " : "IRR: "} ${sessionAnalyses.lbo.outputs.irr}%`
-        : (isAr ? "لم يتم البدء" : "Not Started"),
+        : (isAr ? "جاهز للنمذجة" : "Ready for Inputs"),
       tag: "PRIVATE EQUITY"
     },
     {
       id: "FS" as const,
       title: t("panel_three_statement", language),
       desc: isAr ? "توقعات القوائم الثلاث المتكاملة GAAP / IFRS" : "5-year integrated financial statement forecasts",
-      icon: <FileSpreadsheet className="text-[var(--emerald)]" size={20} />,
+      icon: <FileSpreadsheet className="text-terminal-emerald" size={20} />,
       hasData: !!sessionAnalyses.threeStatement,
       statusLabel: !!sessionAnalyses.threeStatement 
         ? (isAr ? "القوائم نشطة" : "Active Statement")
-        : (isAr ? "لم يتم البدء" : "Not Started"),
+        : (isAr ? "جاهز للنمذجة" : "Ready for Inputs"),
       tag: "ACCOUNTING"
     },
     {
       id: "shariah" as const,
       title: t("panel_shariah", language),
       desc: isAr ? "فحص الامتثال الشرعي وفق المعيار 21 (AAOIFI)" : "AAOIFI Standard No. 21 compliance screening",
-      icon: <ShieldCheck className="text-[var(--emerald)]" size={20} />,
+      icon: <ShieldCheck className="text-terminal-emerald" size={20} />,
       hasData: !!sessionAnalyses.shariah,
       statusLabel: !!sessionAnalyses.shariah 
         ? `${isAr ? "الحكم: " : "Verdict: "} ${sessionAnalyses.shariah.outputs.verdict}`
-        : (isAr ? "لم يتم البدء" : "Not Started"),
+        : (isAr ? "جاهز للتدقيق" : "Ready for Audit"),
       tag: "COMPLIANCE"
     },
     {
       id: "screener" as const,
       title: isAr ? "مقارنة الشركات" : "Company Comparator",
-      desc: isAr ? "مقارنة نسب ومؤشرات الشركات المدخلة يدوياً" : "Peer multiples, yields, and performance matrix",
-      icon: <Filter className="text-[var(--emerald)]" size={20} />,
+      desc: isAr ? "مقارنة نسب ومؤشرات الشركات والصفقات" : "Peer multiples, yields, and performance matrix",
+      icon: <Filter className="text-terminal-emerald" size={20} />,
       hasData: !!sessionAnalyses.comparator,
       statusLabel: !!sessionAnalyses.comparator 
         ? `${sessionAnalyses.comparator.rows.length} ${isAr ? "شركات مدخلة" : "Companies Added"}`
-        : (isAr ? "لم يتم البدء" : "Not Started"),
+        : (isAr ? "جاهز للمقارنة" : "Ready for Comparison"),
       tag: "COMPARISON"
     },
     {
       id: "research" as const,
       title: t("panel_ai_research", language),
       desc: isAr ? "مذكرات أبحاث استثمارية من Gemini 2.5 Flash" : "Equity research memos backed by Gemini 2.5 Flash",
-      icon: <Sparkles className="text-[var(--emerald)]" size={20} />,
+      icon: <Sparkles className="text-terminal-emerald" size={20} />,
       hasData: !!sessionAnalyses.researchMemo,
       statusLabel: !!sessionAnalyses.researchMemo 
         ? (isAr ? "المذكرة نشطة" : "Active Memo")
-        : (isAr ? "لم يتم البدء" : "Not Started"),
+        : (isAr ? "جاهز للتوليد" : "Ready for Synthesis"),
       tag: "RESEARCH"
     }
   ];
@@ -117,13 +108,13 @@ export default function IntelligenceHub() {
       initial="initial"
       animate="animate"
       exit="exit"
-      className="space-y-8 text-[#171717]"
+      className="space-y-8 text-slate-100 font-mono"
       dir={isAr ? "rtl" : "ltr"}
     >
       {/* GCC LIVE MOVERS TAPE */}
-      <div className="bg-slate-50 border border-slate-200 rounded-xl p-3 shadow-xs">
+      <div className="bg-[#121721] border border-[#1E293B] rounded-sm p-3 shadow-md">
         <div className="flex items-center justify-between gap-4 overflow-x-auto text-xs font-mono">
-          <div className="flex items-center gap-2 text-[var(--emerald)] font-bold shrink-0">
+          <div className="flex items-center gap-2 text-terminal-emerald font-bold shrink-0">
             <Activity size={14} className="animate-pulse" />
             <span className="uppercase">{isAr ? "مؤشرات الخليج" : "GCC Bourses"}</span>
           </div>
@@ -132,13 +123,13 @@ export default function IntelligenceHub() {
             {GCC_MOVERS.map((mover) => (
               <div 
                 key={mover.ticker}
-                onClick={() => setPanel("news")}
-                className="flex items-center gap-2 px-2.5 py-1 rounded bg-white border border-slate-200 hover:border-[var(--emerald)] transition-colors cursor-pointer"
+                onClick={() => setPanel("DCF")}
+                className="flex items-center gap-2 px-2.5 py-1 rounded-sm bg-[#0B0E14] border border-[#1E293B] hover:border-terminal-emerald transition-colors cursor-pointer"
               >
-                <span className="font-bold text-slate-700">{mover.ticker}</span>
-                <span className="text-slate-500 font-sans text-[11px]">{isAr ? mover.nameAr : mover.name}</span>
-                <span className="font-semibold text-[#171717]">{mover.price}</span>
-                <span className={`flex items-center gap-0.5 font-bold ${mover.isPositive ? "text-emerald-600" : "text-rose-600"}`}>
+                <span className="font-bold text-white">{mover.ticker}</span>
+                <span className="text-slate-400 font-mono text-[11px]">{isAr ? mover.nameAr : mover.name}</span>
+                <span className="font-semibold text-slate-200">{mover.price}</span>
+                <span className={`flex items-center gap-0.5 font-bold ${mover.isPositive ? "text-terminal-emerald" : "text-rose-400"}`}>
                   {mover.isPositive ? <ArrowUpRight size={12} /> : <ArrowDownRight size={12} />}
                   <span>{mover.change}</span>
                 </span>
@@ -149,35 +140,35 @@ export default function IntelligenceHub() {
       </div>
 
       {/* HUB HEADER BANNER */}
-      <div className="bg-[#F7F7F5] p-8 rounded-xl border border-slate-200 flex flex-col md:flex-row justify-between items-start md:items-center gap-6 shadow-sm">
+      <div className="bg-[#121721] p-8 rounded-sm border border-[#1E293B] flex flex-col md:flex-row justify-between items-start md:items-center gap-6 shadow-xl">
         <div className="space-y-2">
-          <span className="px-3 py-1 text-[10px] font-mono text-[var(--emerald)] bg-[var(--emerald)]/10 border border-[var(--emerald)]/20 rounded-full font-bold uppercase tracking-wider">
-            {isAr ? "محطة عمل محور السيادية" : "Mahwar Sovereign Terminal"}
+          <span className="px-3 py-1 text-[10px] font-mono text-terminal-emerald bg-terminal-emerald-dim border border-terminal-border-emerald rounded-sm font-bold uppercase tracking-widest shadow-md">
+            {isAr ? "محطة عمل النمذجة التكتيكية v2.5" : "Tactical CAD Modeling Engine v2.5"}
           </span>
-          <h2 className="font-serif text-3xl font-bold text-[#171717] tracking-wide">
-            {isAr ? "لوحة التحكم ومركز التحليلات المؤسسية" : "Sovereign Analytics & Intelligence Hub"}
+          <h2 className="font-mono text-3xl font-extrabold text-white tracking-wide uppercase">
+            {isAr ? "لوحة التحكم ومركز النمذجة الكمية" : "Quantitative Financial Workbench"}
           </h2>
-          <p className="text-slate-600 text-xs leading-relaxed max-w-xl font-mono">
+          <p className="text-slate-400 text-xs leading-relaxed max-w-xl font-mono">
             {isAr 
-              ? "استكشف بيانات الأسواق، النمذجة الاستثمارية المتقدمة (DCF & LBO)، الفحص الشرعي، وبث أبحاث الذكاء الاصطناعي مع التصدير المؤسسي." 
-              : "Access live GCC intelligence, build institutional valuation models (DCF & LBO), verify AAOIFI Shariah compliance, and synthesize outputs into executive PDF reports."
+              ? "استكشف أدوات النمذجة التكتيكية (DCF & LBO)، الفحص الشرعي AAOIFI، مقارنة الأقران، وتصنيع التقارير الموحدة." 
+              : "Build institutional financial models (DCF & LBO), verify AAOIFI Shariah compliance, run peer heatmaps, and synthesize outputs into executive PDF reports."
             }
           </p>
         </div>
 
         <button
           onClick={() => setPanel("bi_report")}
-          className="px-6 py-3 bg-[var(--emerald)] hover:bg-[#12A189] text-white font-mono text-xs font-bold rounded-lg flex items-center gap-2 shadow-sm cursor-pointer border border-transparent transition-colors"
+          className="px-6 py-3 bg-terminal-emerald hover:bg-terminal-emerald-light text-black font-mono text-xs font-black rounded-sm flex items-center gap-2 shadow-lg cursor-pointer transition-colors uppercase tracking-wider"
         >
           <FileText size={14} />
-          <span>{isAr ? "تصدير التقرير المتكامل" : "Generate Consolidation"}</span>
+          <span>{isAr ? "تصدير التقرير الموحد" : "Generate BI Report"}</span>
         </button>
       </div>
 
       {/* TOOLS & STATUS GRID */}
       <div className="space-y-4">
         <h3 className="font-mono text-xs font-bold text-slate-500 uppercase tracking-widest pl-1">
-          {isAr ? "أدوات التحليل والنمذجة" : "Analytical Tools & Current Session Status"}
+          {isAr ? "أدوات النمذجة والتحليل الكمي" : "Sovereign Modeling Tools & Workbench Status"}
         </h3>
 
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
@@ -185,42 +176,42 @@ export default function IntelligenceHub() {
             <div
               key={card.id}
               onClick={() => setPanel(card.id)}
-              className="bg-white p-6 rounded-xl border border-slate-200 hover:border-[var(--emerald)] transition-all cursor-pointer flex flex-col justify-between h-[180px] group relative shadow-sm"
+              className="bg-[#121721] p-6 rounded-sm border border-[#1E293B] hover:border-terminal-emerald transition-all cursor-pointer flex flex-col justify-between h-[180px] group relative shadow-lg"
             >
               <div>
                 <div className="flex justify-between items-start mb-3">
-                  <span className="text-[9px] font-mono font-bold text-slate-400 tracking-wider">
+                  <span className="text-[9px] font-mono font-bold text-slate-500 tracking-wider">
                     {card.tag}
                   </span>
-                  <div className="p-2 rounded bg-slate-50 border border-slate-200 group-hover:bg-[var(--emerald)]/10 group-hover:border-[var(--emerald)]/20 transition-colors">
+                  <div className="p-2 rounded-sm bg-[#0B0E14] border border-[#1E293B] group-hover:border-terminal-emerald transition-colors">
                     {card.icon}
                   </div>
                 </div>
 
-                <h4 className="font-sans text-xs font-bold text-[#171717] group-hover:text-[var(--emerald)] transition-colors">
+                <h4 className="font-mono text-xs font-bold text-white group-hover:text-terminal-emerald transition-colors uppercase">
                   {card.title}
                 </h4>
-                <p className="text-[10px] text-slate-650 mt-1 leading-normal font-sans">
+                <p className="text-[10px] text-slate-400 mt-1 leading-normal font-mono">
                   {card.desc}
                 </p>
               </div>
 
               {/* Status footer inside card */}
-              <div className="border-t border-slate-100 pt-3 mt-4 flex justify-between items-center text-[10px] font-mono">
+              <div className="border-t border-[#1E293B] pt-3 mt-4 flex justify-between items-center text-[10px] font-mono">
                 <span className="flex items-center gap-1">
                   {card.hasData ? (
                     <>
-                      <CheckCircle2 size={12} className="text-[var(--emerald)]" />
-                      <span className="text-[var(--emerald)] font-bold">{card.statusLabel}</span>
+                      <CheckCircle2 size={12} className="text-terminal-emerald" />
+                      <span className="text-terminal-emerald font-bold">{card.statusLabel}</span>
                     </>
                   ) : (
                     <>
-                      <Clock size={12} className="text-slate-400" />
-                      <span className="text-slate-400">{card.statusLabel}</span>
+                      <Clock size={12} className="text-slate-500" />
+                      <span className="text-slate-500">{card.statusLabel}</span>
                     </>
                   )}
                 </span>
-                <ChevronRight size={14} className="text-slate-400 group-hover:text-[var(--emerald)] transition-colors" />
+                <ChevronRight size={14} className="text-slate-500 group-hover:text-terminal-emerald transition-colors" />
               </div>
             </div>
           ))}

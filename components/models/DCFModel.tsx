@@ -13,26 +13,25 @@ export default function DCFModel() {
   const isAr = language === 'ar';
 
   // Assumptions State
-  const [revGrowth, setRevGrowth] = useState<number>(0);
-  const [ebitdaMargin, setEbitdaMargin] = useState<number>(0);
-  const [capexRev, setCapexRev] = useState<number>(0);
-  const [taxZakat, setTaxZakat] = useState<number>(0);
-  const [costEquity, setCostEquity] = useState<number>(0);
-  const [costDebt, setCostDebt] = useState<number>(0);
-  const [debtWeight, setDebtWeight] = useState<number>(0);
-  const [terminalGrowth, setTerminalGrowth] = useState<number>(0);
+  const [revGrowth, setRevGrowth] = useState<number>(8);
+  const [ebitdaMargin, setEbitdaMargin] = useState<number>(35);
+  const [capexRev, setCapexRev] = useState<number>(10);
+  const [taxZakat, setTaxZakat] = useState<number>(2.5);
+  const [costEquity, setCostEquity] = useState<number>(9.5);
+  const [costDebt, setCostDebt] = useState<number>(4.5);
+  const [debtWeight, setDebtWeight] = useState<number>(20);
+  const [terminalGrowth, setTerminalGrowth] = useState<number>(2.5);
 
   // Editable Base Financial Metrics
-  const [baseRevenue, setBaseRevenue] = useState<number>(0);
-  const [netDebt, setNetDebt] = useState<number>(0);
-  const [sharesOutstanding, setSharesOutstanding] = useState<number>(0);
-  const [currentPrice, setCurrentPrice] = useState<number>(0);
+  const [baseRevenue, setBaseRevenue] = useState<number>(1200);
+  const [netDebt, setNetDebt] = useState<number>(250);
+  const [sharesOutstanding, setSharesOutstanding] = useState<number>(100);
+  const [currentPrice, setCurrentPrice] = useState<number>(32.50);
 
   const [dcfResult, setDcfResult] = useState<any>(null);
   const [isCalculating, setIsCalculating] = useState<boolean>(false);
 
   const calculateDCF = async () => {
-    // Guard: don't call API with zero inputs
     if (baseRevenue <= 0 || sharesOutstanding <= 0) return;
 
     setIsCalculating(true);
@@ -58,7 +57,6 @@ export default function DCFModel() {
       const data = await res.json();
       setDcfResult(data);
 
-      // Save to terminal session state
       updateSessionAnalysis("dcf", {
         inputs: {
           revGrowth,
@@ -90,20 +88,20 @@ export default function DCFModel() {
       initial="initial"
       animate="animate"
       exit="exit"
-      className="grid grid-cols-12 gap-8 text-[#171717]"
+      className="grid grid-cols-12 gap-8 text-slate-100 font-mono"
       dir={isAr ? "rtl" : "ltr"}
     >
       {/* LEFT COLUMN: ASSUMPTIONS (4 COLS) */}
-      <div className="col-span-12 lg:col-span-4 space-y-6 animate-fade-in">
-        <div className="glass-panel p-6 rounded-xl border border-slate-200 space-y-4 shadow-sm">
-          <div className="flex items-center justify-between pb-3 border-b border-slate-200">
+      <div className="col-span-12 lg:col-span-4 space-y-6">
+        <div className="bg-[#121721] p-6 rounded-sm border border-[#1E293B] space-y-4 shadow-xl">
+          <div className="flex items-center justify-between pb-3 border-b border-[#1E293B]">
             <div className="flex items-center gap-3">
-              <BarChart3 className="text-[var(--emerald)]" size={22} />
+              <BarChart3 className="text-terminal-emerald" size={22} />
               <div>
-                <h2 className="font-serif text-xl font-bold text-[#171717]">
+                <h2 className="font-mono text-lg font-extrabold text-white uppercase">
                   {t("dcf_assumptions", language)}
                 </h2>
-                <span className="text-[10px] font-mono text-slate-500">
+                <span className="text-[10px] font-mono text-slate-400 uppercase">
                   {isAr ? "مدخلات التقييم اليدوية" : "Manual Valuation Inputs"}
                 </span>
               </div>
@@ -111,136 +109,136 @@ export default function DCFModel() {
           </div>
 
           {/* Base Financials Section */}
-          <div className="space-y-3 font-mono text-xs border-b border-slate-200 pb-4">
-            <span className="text-[10px] text-slate-500 font-bold uppercase tracking-wider block">
+          <div className="space-y-3 font-mono text-xs border-b border-[#1E293B] pb-4">
+            <span className="text-[10px] text-slate-400 font-bold uppercase tracking-wider block">
               {isAr ? "بيانات الشركة الأساسية" : "Company Base Figures"}
             </span>
 
             <div className="flex justify-between items-center">
-              <label className="text-slate-700">{isAr ? "الإيرادات الأساسية (مليون)" : "Base Revenue (M)"}</label>
+              <label className="text-slate-300">{isAr ? "الإيرادات الأساسية (مليون)" : "Base Revenue (M)"}</label>
               <input
                 type="number"
                 value={baseRevenue}
                 onChange={(e) => setBaseRevenue(Number(e.target.value))}
-                className="terminal-input w-24 text-right"
+                className="w-24 px-2 py-1 bg-[#0B0E14] border border-[#1E293B] focus:border-terminal-emerald rounded-sm text-right text-white font-mono text-xs focus:outline-none"
               />
             </div>
 
             <div className="flex justify-between items-center">
-              <label className="text-slate-700">{isAr ? "صافي الديون (مليون)" : "Net Debt (M)"}</label>
+              <label className="text-slate-300">{isAr ? "صافي الديون (مليون)" : "Net Debt (M)"}</label>
               <input
                 type="number"
                 value={netDebt}
                 onChange={(e) => setNetDebt(Number(e.target.value))}
-                className="terminal-input w-24 text-right"
+                className="w-24 px-2 py-1 bg-[#0B0E14] border border-[#1E293B] focus:border-terminal-emerald rounded-sm text-right text-white font-mono text-xs focus:outline-none"
               />
             </div>
 
             <div className="flex justify-between items-center">
-              <label className="text-slate-700">{isAr ? "الأسهم القائمة (مليون)" : "Shares Outstanding (M)"}</label>
+              <label className="text-slate-300">{isAr ? "الأسهم القائمة (مليون)" : "Shares Outstanding (M)"}</label>
               <input
                 type="number"
                 value={sharesOutstanding}
                 onChange={(e) => setSharesOutstanding(Number(e.target.value))}
-                className="terminal-input w-24 text-right"
+                className="w-24 px-2 py-1 bg-[#0B0E14] border border-[#1E293B] focus:border-terminal-emerald rounded-sm text-right text-white font-mono text-xs focus:outline-none"
               />
             </div>
 
             <div className="flex justify-between items-center">
-              <label className="text-slate-700">{isAr ? "سعر السهم الحالي" : "Current Price (SAR)"}</label>
+              <label className="text-slate-300">{isAr ? "سعر السهم الحالي" : "Current Price (SAR)"}</label>
               <input
                 type="number"
                 step="0.01"
                 value={currentPrice}
                 onChange={(e) => setCurrentPrice(Number(e.target.value))}
-                className="terminal-input w-24 text-right"
+                className="w-24 px-2 py-1 bg-[#0B0E14] border border-[#1E293B] focus:border-terminal-emerald rounded-sm text-right text-white font-mono text-xs focus:outline-none"
               />
             </div>
           </div>
 
           {/* Model Controls Section */}
           <div className="space-y-3 font-mono text-xs">
-            <span className="text-[10px] text-slate-500 font-bold uppercase tracking-wider block">
+            <span className="text-[10px] text-slate-400 font-bold uppercase tracking-wider block">
               {isAr ? "افتراضات التقييم" : "Model Drivers"}
             </span>
 
             <div className="flex justify-between items-center">
-              <label className="text-slate-700">{t("rev_growth", language)}</label>
+              <label className="text-slate-300">{t("rev_growth", language)} (%)</label>
               <input
                 type="number"
                 value={revGrowth}
                 onChange={(e) => setRevGrowth(Number(e.target.value))}
-                className="terminal-input w-20 text-right"
+                className="w-20 px-2 py-1 bg-[#0B0E14] border border-[#1E293B] focus:border-terminal-emerald rounded-sm text-right text-white font-mono text-xs focus:outline-none"
               />
             </div>
 
             <div className="flex justify-between items-center">
-              <label className="text-slate-700">{t("ebitda_margin", language)}</label>
+              <label className="text-slate-300">{t("ebitda_margin", language)} (%)</label>
               <input
                 type="number"
                 value={ebitdaMargin}
                 onChange={(e) => setEbitdaMargin(Number(e.target.value))}
-                className="terminal-input w-20 text-right"
+                className="w-20 px-2 py-1 bg-[#0B0E14] border border-[#1E293B] focus:border-terminal-emerald rounded-sm text-right text-white font-mono text-xs focus:outline-none"
               />
             </div>
 
             <div className="flex justify-between items-center">
-              <label className="text-slate-700">{t("capex_rev", language)}</label>
+              <label className="text-slate-300">{t("capex_rev", language)} (%)</label>
               <input
                 type="number"
                 value={capexRev}
                 onChange={(e) => setCapexRev(Number(e.target.value))}
-                className="terminal-input w-20 text-right"
+                className="w-20 px-2 py-1 bg-[#0B0E14] border border-[#1E293B] focus:border-terminal-emerald rounded-sm text-right text-white font-mono text-xs focus:outline-none"
               />
             </div>
 
             <div className="flex justify-between items-center">
-              <label className="text-slate-700">{t("tax_zakat", language)}</label>
+              <label className="text-slate-300">{t("tax_zakat", language)} (%)</label>
               <input
                 type="number"
                 value={taxZakat}
                 onChange={(e) => setTaxZakat(Number(e.target.value))}
-                className="terminal-input w-20 text-right"
+                className="w-20 px-2 py-1 bg-[#0B0E14] border border-[#1E293B] focus:border-terminal-emerald rounded-sm text-right text-white font-mono text-xs focus:outline-none"
               />
             </div>
 
             <div className="flex justify-between items-center">
-              <label className="text-slate-700">{t("cost_equity", language)}</label>
+              <label className="text-slate-300">{t("cost_equity", language)} (%)</label>
               <input
                 type="number"
                 value={costEquity}
                 onChange={(e) => setCostEquity(Number(e.target.value))}
-                className="terminal-input w-20 text-right"
+                className="w-20 px-2 py-1 bg-[#0B0E14] border border-[#1E293B] focus:border-terminal-emerald rounded-sm text-right text-white font-mono text-xs focus:outline-none"
               />
             </div>
 
             <div className="flex justify-between items-center">
-              <label className="text-slate-700">{t("cost_debt", language)}</label>
+              <label className="text-slate-300">{t("cost_debt", language)} (%)</label>
               <input
                 type="number"
                 value={costDebt}
                 onChange={(e) => setCostDebt(Number(e.target.value))}
-                className="terminal-input w-20 text-right"
+                className="w-20 px-2 py-1 bg-[#0B0E14] border border-[#1E293B] focus:border-terminal-emerald rounded-sm text-right text-white font-mono text-xs focus:outline-none"
               />
             </div>
 
             <div className="flex justify-between items-center">
-              <label className="text-slate-700">{t("debt_weight", language)}</label>
+              <label className="text-slate-300">{t("debt_weight", language)} (%)</label>
               <input
                 type="number"
                 value={debtWeight}
                 onChange={(e) => setDebtWeight(Number(e.target.value))}
-                className="terminal-input w-20 text-right"
+                className="w-20 px-2 py-1 bg-[#0B0E14] border border-[#1E293B] focus:border-terminal-emerald rounded-sm text-right text-white font-mono text-xs focus:outline-none"
               />
             </div>
 
             <div className="flex justify-between items-center">
-              <label className="text-slate-700">{t("terminal_growth", language)}</label>
+              <label className="text-slate-300">{t("terminal_growth", language)} (%)</label>
               <input
                 type="number"
                 value={terminalGrowth}
                 onChange={(e) => setTerminalGrowth(Number(e.target.value))}
-                className="terminal-input w-20 text-right"
+                className="w-20 px-2 py-1 bg-[#0B0E14] border border-[#1E293B] focus:border-terminal-emerald rounded-sm text-right text-white font-mono text-xs focus:outline-none"
               />
             </div>
           </div>
@@ -248,7 +246,7 @@ export default function DCFModel() {
           <button
             onClick={calculateDCF}
             disabled={isCalculating}
-            className="w-full py-3 rounded-lg bg-[var(--emerald)] hover:bg-[#12A189] text-white font-mono font-bold text-xs uppercase tracking-wider shadow-sm flex items-center justify-center gap-2 transition-all cursor-pointer border border-transparent"
+            className="w-full py-3 rounded-sm bg-terminal-emerald hover:bg-terminal-emerald-light text-black font-mono font-black text-xs uppercase tracking-wider shadow-lg flex items-center justify-center gap-2 transition-all cursor-pointer"
           >
             {isCalculating ? <RefreshCw size={14} className="animate-spin" /> : <Calculator size={14} />}
             <span>{t("run_dcf", language)}</span>
@@ -260,16 +258,16 @@ export default function DCFModel() {
       <div className="col-span-12 lg:col-span-8 space-y-6">
         {/* VALUATION SUMMARY BANNER */}
         <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
-          <div className="bg-terminal-surface p-5 rounded-xl border border-terminal-border text-center shadow-xs">
-            <span className="text-[10px] font-mono text-slate-500 uppercase tracking-wider block mb-1 font-bold">
+          <div className="bg-[#121721] p-5 rounded-sm border border-[#1E293B] text-center shadow-lg">
+            <span className="text-[10px] font-mono text-slate-400 uppercase tracking-wider block mb-1 font-bold">
               Current Market Price
             </span>
-            <span className="font-mono text-2xl font-extrabold text-terminal-text">
+            <span className="font-mono text-2xl font-extrabold text-white">
               SAR <NumberCounter value={currentPrice} decimals={2} />
             </span>
           </div>
 
-          <div className="bg-emerald-50 p-5 rounded-xl border border-emerald-200 text-center shadow-xs">
+          <div className="bg-terminal-emerald-dim p-5 rounded-sm border border-terminal-border-emerald text-center shadow-lg">
             <span className="text-[10px] font-mono text-terminal-emerald uppercase tracking-wider font-bold block mb-1">
               {t("intrinsic_value", language)}
             </span>
@@ -282,14 +280,14 @@ export default function DCFModel() {
             </span>
           </div>
 
-          <div className="bg-terminal-surface p-5 rounded-xl border border-terminal-border text-center flex flex-col items-center justify-center shadow-xs">
-            <span className="text-[10px] font-mono text-slate-500 uppercase tracking-wider block mb-1 font-bold">
+          <div className="bg-[#121721] p-5 rounded-sm border border-[#1E293B] text-center flex flex-col items-center justify-center shadow-lg">
+            <span className="text-[10px] font-mono text-slate-400 uppercase tracking-wider block mb-1 font-bold">
               {t("upside_downside", language)}
             </span>
-            <span className={`flex items-center gap-1 font-mono text-xl font-extrabold px-3 py-0.5 rounded ${
+            <span className={`flex items-center gap-1 font-mono text-xl font-extrabold px-3 py-0.5 rounded-sm ${
               (dcfResult?.upsidePct || 0) >= 0 
-                ? "text-emerald-700 bg-emerald-100" 
-                : "text-red-700 bg-red-100"
+                ? "text-terminal-emerald bg-terminal-emerald-dim border border-terminal-border-emerald" 
+                : "text-rose-400 bg-rose-950/40 border border-rose-800"
             }`}>
               {(dcfResult?.upsidePct || 0) >= 0 ? <TrendingUp size={16} /> : <TrendingDown size={16} />}
               {dcfResult?.upsidePct ? (
@@ -302,55 +300,55 @@ export default function DCFModel() {
         </div>
 
         {/* 5-YEAR PROJECTION TABLE */}
-        <div className="bg-white p-6 rounded-xl border border-slate-200 shadow-sm">
-          <h3 className="font-mono text-xs font-bold text-[#171717] uppercase tracking-wider mb-4">
+        <div className="bg-[#121721] p-6 rounded-sm border border-[#1E293B] shadow-xl">
+          <h3 className="font-mono text-xs font-bold text-white uppercase tracking-wider mb-4">
             5-Year Free Cash Flow Projections (SAR Millions)
           </h3>
           <div className="overflow-x-auto">
-            <table className="terminal-table">
+            <table className="w-full font-mono text-xs text-left rtl:text-right border-collapse">
               <thead>
-                <tr>
-                  <th>Metric</th>
+                <tr className="bg-[#0B0E14] text-slate-400 border-b border-[#1E293B]">
+                  <th className="p-2.5">Metric</th>
                   {dcfResult?.fcfProjections?.map((p: any) => (
-                    <th key={p.year} className="text-right">{p.year}</th>
+                    <th key={p.year} className="p-2.5 text-right">{p.year}</th>
                   ))}
                 </tr>
               </thead>
-              <tbody>
+              <tbody className="divide-y divide-[#1E293B]">
                 <tr>
-                  <td className="font-bold">Revenue</td>
+                  <td className="p-2.5 font-bold text-white">Revenue</td>
                   {dcfResult?.fcfProjections?.map((p: any) => (
-                    <td key={p.year} className="text-right text-slate-800">{p.revenue.toLocaleString()}</td>
+                    <td key={p.year} className="p-2.5 text-right text-slate-200">{p.revenue.toLocaleString()}</td>
                   ))}
                 </tr>
                 <tr>
-                  <td>EBITDA</td>
+                  <td className="p-2.5 text-slate-300">EBITDA</td>
                   {dcfResult?.fcfProjections?.map((p: any) => (
-                    <td key={p.year} className="text-right text-slate-700">{p.ebitda.toLocaleString()}</td>
+                    <td key={p.year} className="p-2.5 text-right text-slate-300">{p.ebitda.toLocaleString()}</td>
                   ))}
                 </tr>
                 <tr>
-                  <td>EBIT</td>
+                  <td className="p-2.5 text-slate-300">EBIT</td>
                   {dcfResult?.fcfProjections?.map((p: any) => (
-                    <td key={p.year} className="text-right text-slate-700">{p.ebit.toLocaleString()}</td>
+                    <td key={p.year} className="p-2.5 text-right text-slate-300">{p.ebit.toLocaleString()}</td>
                   ))}
                 </tr>
                 <tr>
-                  <td>NOPAT (ex-Zakat)</td>
+                  <td className="p-2.5 text-slate-300">NOPAT (ex-Zakat)</td>
                   {dcfResult?.fcfProjections?.map((p: any) => (
-                    <td key={p.year} className="text-right text-slate-700">{p.nopat.toLocaleString()}</td>
+                    <td key={p.year} className="p-2.5 text-right text-slate-300">{p.nopat.toLocaleString()}</td>
                   ))}
                 </tr>
                 <tr>
-                  <td>CapEx</td>
+                  <td className="p-2.5 text-slate-400">CapEx</td>
                   {dcfResult?.fcfProjections?.map((p: any) => (
-                    <td key={p.year} className="text-right text-red-650">-{p.capex.toLocaleString()}</td>
+                    <td key={p.year} className="p-2.5 text-right text-rose-400">-{p.capex.toLocaleString()}</td>
                   ))}
                 </tr>
-                <tr className="bg-emerald-50/70 font-bold border-t border-emerald-100">
-                  <td className="text-[var(--emerald)]">Free Cash Flow (FCF)</td>
+                <tr className="bg-terminal-emerald-dim font-bold border-t border-terminal-border-emerald">
+                  <td className="p-2.5 text-terminal-emerald">Free Cash Flow (FCF)</td>
                   {dcfResult?.fcfProjections?.map((p: any) => (
-                    <td key={p.year} className="text-right text-[var(--emerald)] font-bold">{p.fcf.toLocaleString()}</td>
+                    <td key={p.year} className="p-2.5 text-right text-terminal-emerald font-bold">{p.fcf.toLocaleString()}</td>
                   ))}
                 </tr>
               </tbody>
@@ -359,12 +357,12 @@ export default function DCFModel() {
         </div>
 
         {/* 5x5 SENSITIVITY MATRIX HEATMAP */}
-        <div className="bg-white p-6 rounded-xl border border-slate-200 shadow-sm">
+        <div className="bg-[#121721] p-6 rounded-sm border border-[#1E293B] shadow-xl">
           <div className="flex items-center justify-between mb-4">
-            <h3 className="font-mono text-xs font-bold text-[#171717] uppercase tracking-wider">
+            <h3 className="font-mono text-xs font-bold text-white uppercase tracking-wider">
               {t("sensitivity_matrix", language)}
             </h3>
-            <span className="text-[10px] font-mono text-[var(--emerald)] font-bold">
+            <span className="text-[10px] font-mono text-terminal-emerald font-bold">
               WACC (Rows) vs Terminal Growth (Cols)
             </span>
           </div>
@@ -372,17 +370,17 @@ export default function DCFModel() {
           <div className="overflow-x-auto">
             <table className="w-full font-mono text-xs text-center border-collapse">
               <thead>
-                <tr className="bg-slate-50">
-                  <th className="p-2 border border-slate-200 text-slate-500">WACC \ Growth</th>
+                <tr className="bg-[#0B0E14]">
+                  <th className="p-2 border border-[#1E293B] text-slate-400">WACC \ Growth</th>
                   {dcfResult?.sensitivityMatrix?.[0]?.map((col: any, i: number) => (
-                    <th key={i} className="p-2 border border-slate-200 text-slate-750">{col.growth}%</th>
+                    <th key={i} className="p-2 border border-[#1E293B] text-slate-300">{col.growth}%</th>
                   ))}
                 </tr>
               </thead>
               <tbody>
                 {dcfResult?.sensitivityMatrix?.map((row: any, rIdx: number) => (
                   <tr key={rIdx}>
-                    <td className="p-2 border border-slate-200 font-bold text-slate-700 bg-slate-50">
+                    <td className="p-2 border border-[#1E293B] font-bold text-slate-200 bg-[#0B0E14]">
                       {row[0]?.wacc}%
                     </td>
                     {row.map((cell: any, cIdx: number) => {
@@ -390,10 +388,10 @@ export default function DCFModel() {
                       return (
                         <td
                           key={cIdx}
-                          className={`p-2 border border-slate-200 font-bold transition-all ${
+                          className={`p-2 border border-[#1E293B] font-bold transition-all ${
                             isBull 
-                              ? "bg-green-50 text-green-750" 
-                              : "bg-red-50 text-red-750"
+                              ? "bg-terminal-emerald-dim text-terminal-emerald" 
+                              : "bg-rose-950/40 text-rose-300"
                           }`}
                         >
                           SAR {cell.intrinsicValue}

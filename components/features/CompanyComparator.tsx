@@ -119,36 +119,36 @@ export default function CompanyComparator() {
       initial="initial"
       animate="animate"
       exit="exit"
-      className="grid grid-cols-12 gap-8 text-[#171717]"
+      className="grid grid-cols-12 gap-8 text-slate-100 font-mono"
       dir={isAr ? "rtl" : "ltr"}
     >
       {/* LEFT COLUMN: FILTERS & ROW ADDER */}
       <div className="col-span-12 lg:col-span-4 space-y-6">
         {/* Filters */}
-        <div className="glass-panel p-6 rounded-xl border border-slate-200 space-y-4 shadow-sm">
-          <h3 className="font-serif text-sm font-bold text-[#171717] pb-2 border-b border-slate-200 flex items-center gap-2">
-            <Filter size={16} className="text-[var(--emerald)]" />
+        <div className="bg-[#121721] p-6 rounded-sm border border-[#1E293B] space-y-4 shadow-xl">
+          <h3 className="font-mono text-xs font-bold text-white uppercase tracking-wider pb-2 border-b border-[#1E293B] flex items-center gap-2">
+            <Filter size={16} className="text-terminal-emerald" />
             <span>{isAr ? "فرز وتصفية البيانات" : "Filters & Queries"}</span>
           </h3>
 
           <div className="space-y-3 font-mono text-xs">
             <div className="space-y-1">
-              <label className="text-slate-700">{isAr ? "البحث بالرمز أو الاسم" : "Search Symbol/Name"}</label>
+              <label className="text-slate-300 block">{isAr ? "البحث بالرمز أو الاسم" : "Search Symbol/Name"}</label>
               <input
                 type="text"
                 placeholder={isAr ? "مثال: 2222.SR..." : "e.g. 2222.SR..."}
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
-                className="terminal-input w-full"
+                className="w-full px-3 py-1.5 bg-[#0B0E14] border border-[#1E293B] focus:border-terminal-emerald rounded-sm text-white font-mono text-xs focus:outline-none"
               />
             </div>
 
             <div className="space-y-1">
-              <label className="text-slate-700">{isAr ? "تصفية حسب القطاع" : "Sector Filter"}</label>
+              <label className="text-slate-300 block">{isAr ? "تصفية حسب القطاع" : "Sector Filter"}</label>
               <select
                 value={selectedSector}
                 onChange={(e) => setSelectedSector(e.target.value)}
-                className="terminal-input w-full cursor-pointer bg-white"
+                className="w-full px-3 py-1.5 bg-[#0B0E14] border border-[#1E293B] focus:border-terminal-emerald rounded-sm text-white font-mono text-xs focus:outline-none cursor-pointer"
               >
                 {sectors.map((s) => (
                   <option key={s} value={s}>{s}</option>
@@ -159,31 +159,31 @@ export default function CompanyComparator() {
         </div>
 
         {/* Add Row Form */}
-        <div className="glass-panel p-6 rounded-xl border border-slate-200 space-y-4 shadow-sm">
-          <h3 className="font-serif text-sm font-bold text-[#171717] pb-2 border-b border-slate-200 flex items-center gap-2">
-            <Plus size={16} className="text-[var(--emerald)]" />
+        <div className="bg-[#121721] p-6 rounded-sm border border-[#1E293B] space-y-4 shadow-xl">
+          <h3 className="font-mono text-xs font-bold text-white uppercase tracking-wider pb-2 border-b border-[#1E293B] flex items-center gap-2">
+            <Plus size={16} className="text-terminal-emerald" />
             <span>{isAr ? "إضافة شركة جديدة" : "Add Custom Company"}</span>
           </h3>
 
           <form onSubmit={handleAddRow} className="space-y-3 font-mono text-xs">
             <div className="grid grid-cols-2 gap-3">
               <div className="space-y-1">
-                <label className="text-slate-700">Ticker *</label>
+                <label className="text-slate-300 block">Ticker *</label>
                 <input
                   type="text"
                   placeholder="e.g. 1120.SR"
                   required
                   value={newTicker}
                   onChange={(e) => setNewTicker(e.target.value)}
-                  className="terminal-input w-full"
+                  className="w-full px-3 py-1.5 bg-[#0B0E14] border border-[#1E293B] focus:border-terminal-emerald rounded-sm text-white font-mono text-xs focus:outline-none"
                 />
               </div>
               <div className="space-y-1">
-                <label className="text-slate-700">Sector</label>
+                <label className="text-slate-300 block">Sector</label>
                 <select
                   value={newSector}
                   onChange={(e) => setNewSector(e.target.value)}
-                  className="terminal-input w-full bg-white"
+                  className="w-full px-3 py-1.5 bg-[#0B0E14] border border-[#1E293B] focus:border-terminal-emerald rounded-sm text-white font-mono text-xs focus:outline-none cursor-pointer"
                 >
                   <option value="Energy">Energy</option>
                   <option value="Financials">Financials</option>
@@ -195,74 +195,74 @@ export default function CompanyComparator() {
             </div>
 
             <div className="space-y-1">
-              <label className="text-slate-700">Name (EN) *</label>
+              <label className="text-slate-300 block">Name (EN) *</label>
               <input
                 type="text"
                 required
                 value={newName}
                 onChange={(e) => setNewName(e.target.value)}
-                className="terminal-input w-full"
+                className="w-full px-3 py-1.5 bg-[#0B0E14] border border-[#1E293B] focus:border-terminal-emerald rounded-sm text-white font-mono text-xs focus:outline-none"
               />
             </div>
 
             <div className="space-y-1">
-              <label className="text-slate-700">Name (AR)</label>
+              <label className="text-slate-300 block">Name (AR)</label>
               <input
                 type="text"
                 value={newNameAr}
                 onChange={(e) => setNewNameAr(e.target.value)}
-                className="terminal-input w-full"
+                className="w-full px-3 py-1.5 bg-[#0B0E14] border border-[#1E293B] focus:border-terminal-emerald rounded-sm text-white font-mono text-xs focus:outline-none"
               />
             </div>
 
             <div className="grid grid-cols-2 gap-3">
               <div className="space-y-1">
-                <label className="text-slate-700">Price (SAR)</label>
+                <label className="text-slate-300 block">Price (SAR)</label>
                 <input
                   type="number"
                   step="0.01"
                   value={newPrice}
                   onChange={(e) => setNewPrice(e.target.value)}
-                  className="terminal-input w-full"
+                  className="w-full px-3 py-1.5 bg-[#0B0E14] border border-[#1E293B] focus:border-terminal-emerald rounded-sm text-white font-mono text-xs focus:outline-none"
                 />
               </div>
               <div className="space-y-1">
-                <label className="text-slate-700">P/E Ratio</label>
+                <label className="text-slate-300 block">P/E Ratio</label>
                 <input
                   type="number"
                   step="0.1"
                   value={newPE}
                   onChange={(e) => setNewPE(e.target.value)}
-                  className="terminal-input w-full"
+                  className="w-full px-3 py-1.5 bg-[#0B0E14] border border-[#1E293B] focus:border-terminal-emerald rounded-sm text-white font-mono text-xs focus:outline-none"
                 />
               </div>
             </div>
 
             <div className="grid grid-cols-2 gap-3">
               <div className="space-y-1">
-                <label className="text-slate-700">Yield (%)</label>
+                <label className="text-slate-300 block">Yield (%)</label>
                 <input
                   type="number"
                   step="0.01"
                   value={newYield}
                   onChange={(e) => setNewYield(e.target.value)}
-                  className="terminal-input w-full"
+                  className="w-full px-3 py-1.5 bg-[#0B0E14] border border-[#1E293B] focus:border-terminal-emerald rounded-sm text-white font-mono text-xs focus:outline-none"
                 />
               </div>
               <div className="space-y-1">
-                <label className="text-slate-700">Market Cap (M)</label>
+                <label className="text-slate-300 block">Market Cap (M)</label>
                 <input
                   type="number"
                   value={newCap}
                   onChange={(e) => setNewCap(e.target.value)}
-                  className="terminal-input w-full"
+                  className="w-full px-3 py-1.5 bg-[#0B0E14] border border-[#1E293B] focus:border-terminal-emerald rounded-sm text-white font-mono text-xs focus:outline-none"
                 />
               </div>
             </div>
 
             <button
               type="submit"
-              className="w-full py-2.5 rounded-lg bg-[var(--emerald)] hover:bg-[#12A189] text-white font-bold transition-all cursor-pointer text-xs"
+              className="w-full py-2.5 rounded-sm bg-terminal-emerald hover:bg-terminal-emerald-light text-black font-black uppercase tracking-wider transition-all cursor-pointer text-xs"
             >
               {isAr ? "إضافة السجل" : "Insert Profile"}
             </button>
@@ -272,45 +272,45 @@ export default function CompanyComparator() {
 
       {/* RIGHT COLUMN: COMPARATOR TABLE GRID */}
       <div className="col-span-12 lg:col-span-8 space-y-6">
-        <div className="bg-white p-6 rounded-xl border border-slate-200 shadow-sm overflow-x-auto">
-          <table className="terminal-table">
+        <div className="bg-[#121721] p-6 rounded-sm border border-[#1E293B] shadow-xl overflow-x-auto">
+          <table className="w-full font-mono text-xs text-left rtl:text-right border-collapse">
             <thead>
-              <tr>
-                <th onClick={() => toggleSort("ticker")} className="cursor-pointer select-none">
-                  <span className="flex items-center gap-1.5 hover:text-[#171717]">
+              <tr className="bg-[#0B0E14] border-b border-[#1E293B] text-slate-400">
+                <th onClick={() => toggleSort("ticker")} className="p-2.5 cursor-pointer select-none hover:text-terminal-emerald">
+                  <span className="flex items-center gap-1.5">
                     Ticker <ArrowUpDown size={12} />
                   </span>
                 </th>
-                <th onClick={() => toggleSort("name")} className="cursor-pointer select-none">
-                  <span className="flex items-center gap-1.5 hover:text-[#171717]">
+                <th onClick={() => toggleSort("name")} className="p-2.5 cursor-pointer select-none hover:text-terminal-emerald">
+                  <span className="flex items-center gap-1.5">
                     {isAr ? "الشركة" : "Company"} <ArrowUpDown size={12} />
                   </span>
                 </th>
-                <th>Sector</th>
-                <th onClick={() => toggleSort("price")} className="text-right cursor-pointer select-none">
-                  <span className="flex items-center gap-1.5 justify-end hover:text-[#171717]">
+                <th className="p-2.5">Sector</th>
+                <th onClick={() => toggleSort("price")} className="p-2.5 text-right cursor-pointer select-none hover:text-terminal-emerald">
+                  <span className="flex items-center gap-1.5 justify-end">
                     Price <ArrowUpDown size={12} />
                   </span>
                 </th>
-                <th onClick={() => toggleSort("pe")} className="text-right cursor-pointer select-none">
-                  <span className="flex items-center gap-1.5 justify-end hover:text-[#171717]">
+                <th onClick={() => toggleSort("pe")} className="p-2.5 text-right cursor-pointer select-none hover:text-terminal-emerald">
+                  <span className="flex items-center gap-1.5 justify-end">
                     P/E <ArrowUpDown size={12} />
                   </span>
                 </th>
-                <th onClick={() => toggleSort("divYield")} className="text-right cursor-pointer select-none">
-                  <span className="flex items-center gap-1.5 justify-end hover:text-[#171717]">
+                <th onClick={() => toggleSort("divYield")} className="p-2.5 text-right cursor-pointer select-none hover:text-terminal-emerald">
+                  <span className="flex items-center gap-1.5 justify-end">
                     Yield <ArrowUpDown size={12} />
                   </span>
                 </th>
-                <th onClick={() => toggleSort("marketCap")} className="text-right cursor-pointer select-none">
-                  <span className="flex items-center gap-1.5 justify-end hover:text-[#171717]">
+                <th onClick={() => toggleSort("marketCap")} className="p-2.5 text-right cursor-pointer select-none hover:text-terminal-emerald">
+                  <span className="flex items-center gap-1.5 justify-end">
                     Cap (M) <ArrowUpDown size={12} />
                   </span>
                 </th>
-                <th className="text-center">Action</th>
+                <th className="p-2.5 text-center">Action</th>
               </tr>
             </thead>
-            <tbody>
+            <tbody className="divide-y divide-[#1E293B]">
               {filteredRows.length === 0 ? (
                 <tr>
                   <td colSpan={8} className="text-center text-slate-500 py-10">
@@ -319,24 +319,24 @@ export default function CompanyComparator() {
                 </tr>
               ) : (
                 filteredRows.map((row) => (
-                  <tr key={row.ticker} className="hover:bg-slate-50">
-                    <td className="font-bold text-[var(--emerald)]">{row.ticker}</td>
-                    <td className="font-semibold text-slate-800">
+                  <tr key={row.ticker} className="hover:bg-[#161C28] transition-colors">
+                    <td className="p-2.5 font-bold text-terminal-emerald">{row.ticker}</td>
+                    <td className="p-2.5 font-semibold text-slate-200">
                       {isAr ? row.nameAr : row.name}
                     </td>
-                    <td>
-                      <span className="px-2 py-0.5 rounded-full text-[9px] bg-slate-100 border border-slate-200 text-slate-600 font-mono uppercase font-bold">
+                    <td className="p-2.5">
+                      <span className="px-2 py-0.5 rounded-sm text-[9px] bg-[#0B0E14] border border-[#1E293B] text-slate-300 font-mono uppercase font-bold">
                         {row.sector}
                       </span>
                     </td>
-                    <td className="text-right text-[#171717] font-bold">SAR {row.price.toFixed(2)}</td>
-                    <td className="text-right text-slate-700">{row.pe.toFixed(1)}x</td>
-                    <td className="text-right text-green-700 font-bold">{row.divYield.toFixed(2)}%</td>
-                    <td className="text-right text-slate-700">SAR {row.marketCap.toLocaleString()}</td>
-                    <td className="text-center">
+                    <td className="p-2.5 text-right text-white font-bold">SAR {row.price.toFixed(2)}</td>
+                    <td className="p-2.5 text-right text-slate-300">{row.pe.toFixed(1)}x</td>
+                    <td className="p-2.5 text-right text-terminal-emerald font-bold">{row.divYield.toFixed(2)}%</td>
+                    <td className="p-2.5 text-right text-slate-300">SAR {row.marketCap.toLocaleString()}</td>
+                    <td className="p-2.5 text-center">
                       <button
                         onClick={() => handleDeleteRow(row.ticker)}
-                        className="text-slate-400 hover:text-red-500 p-1.5 rounded transition-colors cursor-pointer"
+                        className="text-slate-500 hover:text-rose-400 p-1.5 rounded-sm transition-colors cursor-pointer"
                         title="Delete Row"
                       >
                         <Trash2 size={13} />

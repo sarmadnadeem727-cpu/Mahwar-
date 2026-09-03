@@ -3,7 +3,7 @@
 import React, { useState, useEffect, useRef } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { 
-  Search, Command, ArrowRight, CornerDownLeft, Sparkles, Newspaper,
+  Search, Command, ArrowRight, CornerDownLeft, Sparkles,
   BarChart3, Layers, FileSpreadsheet, ShieldCheck, Filter, 
   FileText, X
 } from "lucide-react";
@@ -33,16 +33,7 @@ const STATIC_TOOLS: LocalTool[] = [
     category: "Platform",
     categoryAr: "المنصة",
     keywords: ["hub", "home", "dashboard", "overview", "main", "مركز", "الرئيسية"],
-    icon: <BarChart3 className="text-[var(--emerald)]" size={16} />
-  },
-  {
-    id: "news",
-    name: "Live Financial News Wire (NewsAPI.org)",
-    nameAr: "شريط الأخبار المالية المباشرة",
-    category: "Wire",
-    categoryAr: "الأخبار",
-    keywords: ["news", "wire", "newsapi", "headlines", "market", "أخبار", "السوق"],
-    icon: <Newspaper className="text-[var(--emerald)]" size={16} />
+    icon: <BarChart3 className="text-terminal-emerald" size={16} />
   },
   {
     id: "DCF",
@@ -51,7 +42,7 @@ const STATIC_TOOLS: LocalTool[] = [
     category: "Sovereign Valuation",
     categoryAr: "التقييم السيادي",
     keywords: ["dcf", "valuation", "discounted cash flow", "wacc", "terminal growth", "intrinsic", "تدفقات", "خصم", "تقييم"],
-    icon: <BarChart3 className="text-[var(--emerald)]" size={16} />
+    icon: <BarChart3 className="text-terminal-emerald" size={16} />
   },
   {
     id: "LBO",
@@ -60,7 +51,7 @@ const STATIC_TOOLS: LocalTool[] = [
     category: "Private Equity",
     categoryAr: "الاستثمار الخاص",
     keywords: ["lbo", "private equity", "irr", "moic", "debt waterfall", "leverage", "استحواذ", "ديون", "عائد"],
-    icon: <Layers className="text-[var(--emerald)]" size={16} />
+    icon: <Layers className="text-terminal-emerald" size={16} />
   },
   {
     id: "FS",
@@ -69,7 +60,7 @@ const STATIC_TOOLS: LocalTool[] = [
     category: "Financial Accounting",
     categoryAr: "المحاسبة المالية",
     keywords: ["three statement", "income", "balance sheet", "cash flow", "zakat", "gaap", "ifrs", "قوائم", "دخل", "ميزانية", "زكاة"],
-    icon: <FileSpreadsheet className="text-[var(--emerald)]" size={16} />
+    icon: <FileSpreadsheet className="text-terminal-emerald" size={16} />
   },
   {
     id: "shariah",
@@ -78,7 +69,7 @@ const STATIC_TOOLS: LocalTool[] = [
     category: "Compliance",
     categoryAr: "الامتثال الشرعي",
     keywords: ["shariah", "aaoifi", "halal", "purification", "debt ratio", "compliance", "شرعي", "أيوفي", "تطهير", "حلال"],
-    icon: <ShieldCheck className="text-[var(--emerald)]" size={16} />
+    icon: <ShieldCheck className="text-terminal-emerald" size={16} />
   },
   {
     id: "screener",
@@ -87,7 +78,7 @@ const STATIC_TOOLS: LocalTool[] = [
     category: "Analysis",
     categoryAr: "التحليلات",
     keywords: ["comparator", "screener", "peer", "multiples", "comparison", "matrix", "مقارنة", "شركات", "أقران"],
-    icon: <Filter className="text-[var(--emerald)]" size={16} />
+    icon: <Filter className="text-terminal-emerald" size={16} />
   },
   {
     id: "research",
@@ -96,7 +87,7 @@ const STATIC_TOOLS: LocalTool[] = [
     category: "Research",
     categoryAr: "الأبحاث",
     keywords: ["research", "memo", "gemini", "ai", "report", "analyst", "بحث", "تقرير", "مذكرة"],
-    icon: <Sparkles className="text-[var(--emerald)]" size={16} />
+    icon: <Sparkles className="text-terminal-emerald" size={16} />
   },
   {
     id: "bi_report",
@@ -105,12 +96,12 @@ const STATIC_TOOLS: LocalTool[] = [
     category: "Export & Reporting",
     categoryAr: "التقارير والتصدير",
     keywords: ["bi report", "export", "pdf", "synthesis", "consolidation", "تقرير", "تصدير"],
-    icon: <FileText className="text-[var(--emerald)]" size={16} />
+    icon: <FileText className="text-terminal-emerald" size={16} />
   }
 ];
 
 export default function CommandPalette({ isOpen, onClose }: CommandPaletteProps) {
-  const { language, setPanel, sessionAnalyses } = useTerminalStore();
+  const { language, setPanel } = useTerminalStore();
   const isAr = language === 'ar';
 
   const [query, setQuery] = useState("");
@@ -163,7 +154,7 @@ export default function CommandPalette({ isOpen, onClose }: CommandPaletteProps)
   return (
     <AnimatePresence>
       <div 
-        className="fixed inset-0 z-50 flex items-start justify-center pt-16 sm:pt-24 px-4 bg-black/40 backdrop-blur-sm no-print"
+        className="fixed inset-0 z-50 flex items-start justify-center pt-16 sm:pt-24 px-4 bg-black/70 backdrop-blur-md no-print font-mono"
         onClick={onClose}
         dir={isAr ? "rtl" : "ltr"}
       >
@@ -172,11 +163,11 @@ export default function CommandPalette({ isOpen, onClose }: CommandPaletteProps)
           animate={{ opacity: 1, scale: 1, y: 0 }}
           exit={{ opacity: 0, scale: 0.96, y: -10 }}
           transition={{ duration: 0.2, ease: [0.22, 1, 0.36, 1] }}
-          className="w-full max-w-2xl bg-white rounded-xl border border-slate-200 shadow-2xl overflow-hidden flex flex-col max-h-[80vh]"
+          className="w-full max-w-2xl bg-[#0B0E14] rounded-sm border border-[#1E293B] shadow-2xl overflow-hidden flex flex-col max-h-[80vh]"
           onClick={(e) => e.stopPropagation()}
         >
           {/* SEARCH INPUT BAR */}
-          <div className="flex items-center px-4 border-b border-slate-200 bg-slate-50/70">
+          <div className="flex items-center px-4 border-b border-[#1E293B] bg-[#121721]">
             <Search size={18} className="text-slate-400 shrink-0" />
             <input
               ref={inputRef}
@@ -188,32 +179,32 @@ export default function CommandPalette({ isOpen, onClose }: CommandPaletteProps)
               }}
               onKeyDown={handleKeyDown}
               placeholder={isAr ? "ابحث عن أداة أو نموذج مالي (مثلاً: DCF, LBO, فحص شرعي)..." : "Search tool or financial engine (e.g. DCF, LBO, Shariah, Comparator)..."}
-              className="w-full px-3 py-4 text-xs sm:text-sm bg-transparent text-[#171717] focus:outline-none font-sans placeholder:text-slate-400 placeholder:text-xs"
+              className="w-full px-3 py-4 text-xs sm:text-sm bg-transparent text-white focus:outline-none font-mono placeholder:text-slate-500 placeholder:text-xs"
             />
             {query && (
               <button 
                 onClick={() => setQuery("")}
-                className="p-1 hover:bg-slate-200 rounded text-slate-400 hover:text-slate-600 transition-colors cursor-pointer mr-2"
+                className="p-1 hover:bg-[#161C28] rounded text-slate-400 hover:text-white transition-colors cursor-pointer mr-2"
               >
                 <X size={14} />
               </button>
             )}
-            <div className="flex items-center gap-1 shrink-0 px-1.5 py-0.5 rounded border border-slate-200 bg-white text-[10px] font-mono text-slate-400 font-bold">
+            <div className="flex items-center gap-1 shrink-0 px-1.5 py-0.5 rounded-sm border border-[#1E293B] bg-[#0B0E14] text-[10px] font-mono text-terminal-emerald font-bold">
               <span>ESC</span>
             </div>
           </div>
 
           {/* CONTENT RESULTS AREA */}
-          <div className="flex-1 overflow-y-auto p-3 space-y-4">
+          <div className="flex-1 overflow-y-auto p-3 space-y-4 bg-[#0B0E14]">
             {/* LOCAL TOOLS & MODELS MATCHES */}
             <div>
-              <div className="px-2 pb-2 text-[10px] font-mono font-bold text-slate-400 uppercase tracking-widest flex items-center justify-between">
-                <span>{isAr ? "الأدوات والنماذج المتوفرة" : "Terminal Tools & Models"}</span>
-                <span className="text-[9px] font-normal">{localMatches.length} {isAr ? "نتيجة" : "matches"}</span>
+              <div className="px-2 pb-2 text-[10px] font-mono font-bold text-slate-500 uppercase tracking-widest flex items-center justify-between">
+                <span>{isAr ? "الأدوات والنماذج المتوفرة" : "CAD Engine Workbench Tools"}</span>
+                <span className="text-[9px] font-normal text-terminal-emerald font-bold">{localMatches.length} {isAr ? "نتيجة" : "matches"}</span>
               </div>
 
               {localMatches.length === 0 ? (
-                <div className="p-6 text-center text-xs text-slate-400 font-mono">
+                <div className="p-6 text-center text-xs text-slate-500 font-mono">
                   {isAr ? "لا توجد أداة مطابقة." : "No local tool matches."}
                 </div>
               ) : (
@@ -228,21 +219,21 @@ export default function CommandPalette({ isOpen, onClose }: CommandPaletteProps)
                           onClose();
                         }}
                         onMouseEnter={() => setSelectedIndex(idx)}
-                        className={`px-3 py-2.5 rounded-lg flex items-center justify-between text-xs transition-colors cursor-pointer ${
+                        className={`px-3 py-2.5 rounded-sm flex items-center justify-between text-xs transition-colors cursor-pointer ${
                           isSelected
-                            ? "bg-[var(--emerald)]/10 text-[var(--emerald)] font-bold border border-[var(--emerald)]/30"
-                            : "text-slate-700 hover:bg-slate-50 border border-transparent"
+                            ? "bg-terminal-emerald-dim text-terminal-emerald font-bold border border-terminal-border-emerald"
+                            : "text-slate-300 hover:bg-[#121721] border border-transparent"
                         }`}
                       >
                         <div className="flex items-center gap-3 min-w-0">
-                          <div className={`p-1.5 rounded-md ${isSelected ? "bg-white text-[var(--emerald)]" : "bg-slate-100 text-slate-500"}`}>
+                          <div className={`p-1.5 rounded-sm ${isSelected ? "bg-[#0B0E14] text-terminal-emerald border border-terminal-emerald" : "bg-[#121721] text-slate-400"}`}>
                             {tool.icon}
                           </div>
                           <div className="truncate">
-                            <span className="font-semibold block truncate">
+                            <span className="font-bold block truncate uppercase">
                               {isAr ? tool.nameAr : tool.name}
                             </span>
-                            <span className="text-[10px] text-slate-400 font-mono">
+                            <span className="text-[10px] text-slate-500 font-mono">
                               {isAr ? tool.categoryAr : tool.category}
                             </span>
                           </div>
@@ -250,7 +241,7 @@ export default function CommandPalette({ isOpen, onClose }: CommandPaletteProps)
 
                         <div className="flex items-center gap-2 shrink-0">
                           {isSelected && (
-                            <span className="text-[10px] font-mono text-[var(--emerald)] flex items-center gap-1 font-bold">
+                            <span className="text-[10px] font-mono text-terminal-emerald flex items-center gap-1 font-bold">
                               <span>{isAr ? "فتح" : "Open"}</span>
                               <CornerDownLeft size={10} />
                             </span>
@@ -265,21 +256,21 @@ export default function CommandPalette({ isOpen, onClose }: CommandPaletteProps)
           </div>
 
           {/* FOOTER SHORTCUT HINTS */}
-          <div className="px-4 py-2.5 bg-slate-50 border-t border-slate-200 flex items-center justify-between text-[10px] font-mono text-slate-400 select-none">
+          <div className="px-4 py-2.5 bg-[#121721] border-t border-[#1E293B] flex items-center justify-between text-[10px] font-mono text-slate-400 select-none">
             <div className="flex items-center gap-3">
               <span className="flex items-center gap-1">
-                <kbd className="px-1.5 py-0.5 rounded bg-white border border-slate-200 font-bold">↑</kbd>
-                <kbd className="px-1.5 py-0.5 rounded bg-white border border-slate-200 font-bold">↓</kbd>
+                <kbd className="px-1.5 py-0.5 rounded-sm bg-[#0B0E14] border border-[#1E293B] font-bold text-white">↑</kbd>
+                <kbd className="px-1.5 py-0.5 rounded-sm bg-[#0B0E14] border border-[#1E293B] font-bold text-white">↓</kbd>
                 <span>{isAr ? "للتنقل" : "Navigate"}</span>
               </span>
               <span className="flex items-center gap-1">
-                <kbd className="px-1.5 py-0.5 rounded bg-white border border-slate-200 font-bold">↵</kbd>
+                <kbd className="px-1.5 py-0.5 rounded-sm bg-[#0B0E14] border border-[#1E293B] font-bold text-white">↵</kbd>
                 <span>{isAr ? "للاختيار" : "Select"}</span>
               </span>
             </div>
-            <div className="flex items-center gap-1 text-[var(--emerald)] font-bold">
+            <div className="flex items-center gap-1 text-terminal-emerald font-bold">
               <Sparkles size={11} />
-              <span>Mahwar Sovereign Engine v2.5</span>
+              <span>Mahwar CAD Engine v2.5</span>
             </div>
           </div>
         </motion.div>

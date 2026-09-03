@@ -13,12 +13,12 @@ export default function ShariahScreening() {
   const isAr = language === 'ar';
 
   // Manual inputs state
-  const [totalAssets, setTotalAssets] = useState<number>(0);
-  const [totalDebt, setTotalDebt] = useState<number>(0);
-  const [totalRevenue, setTotalRevenue] = useState<number>(0);
-  const [interestIncome, setInterestIncome] = useState<number>(0);
-  const [receivables, setReceivables] = useState<number>(0);
-  const [sharesOutstanding, setSharesOutstanding] = useState<number>(0);
+  const [totalAssets, setTotalAssets] = useState<number>(45000);
+  const [totalDebt, setTotalDebt] = useState<number>(8500);
+  const [totalRevenue, setTotalRevenue] = useState<number>(12000);
+  const [interestIncome, setInterestIncome] = useState<number>(120);
+  const [receivables, setReceivables] = useState<number>(9500);
+  const [sharesOutstanding, setSharesOutstanding] = useState<number>(500);
 
   // Client-side calculations
   const debtRatio = totalAssets > 0 ? (totalDebt / totalAssets) * 100 : 0;
@@ -63,20 +63,20 @@ export default function ShariahScreening() {
       initial="initial"
       animate="animate"
       exit="exit"
-      className="grid grid-cols-12 gap-8 text-[#171717]"
+      className="grid grid-cols-12 gap-8 text-slate-100 font-mono"
       dir={isAr ? "rtl" : "ltr"}
     >
       {/* LEFT COLUMN: MANUAL ENTRY FORM (4 COLS) */}
       <div className="col-span-12 lg:col-span-4 space-y-6">
-        <div className="glass-panel p-6 rounded-xl border border-slate-200 space-y-4 shadow-sm">
-          <div className="flex items-center justify-between pb-3 border-b border-slate-200">
+        <div className="bg-[#121721] p-6 rounded-sm border border-[#1E293B] space-y-4 shadow-xl">
+          <div className="flex items-center justify-between pb-3 border-b border-[#1E293B]">
             <div className="flex items-center gap-3">
-              <ShieldCheck className="text-[var(--emerald)]" size={22} />
+              <ShieldCheck className="text-terminal-emerald" size={22} />
               <div>
-                <h2 className="font-serif text-xl font-bold text-[#171717]">
-                  {isAr ? "الفحص الشرعي اليدوي" : "Shariah Screening Inputs"}
+                <h2 className="font-mono text-lg font-extrabold text-white uppercase">
+                  {isAr ? "الفحص الشرعي اليدوي" : "Shariah Audit Inputs"}
                 </h2>
-                <span className="text-[10px] font-mono text-slate-500">
+                <span className="text-[10px] font-mono text-slate-400 uppercase">
                   {isAr ? "مدخلات النسب الشرعية" : "AAOIFI Standard 21 Audit"}
                 </span>
               </div>
@@ -85,62 +85,62 @@ export default function ShariahScreening() {
 
           <div className="space-y-4 font-mono text-xs">
             <div className="space-y-1.5">
-              <label className="text-slate-700 block">{isAr ? "إجمالي الأصول (SAR)" : "Total Assets (SAR)"}</label>
+              <label className="text-slate-300 block">{isAr ? "إجمالي الأصول (SAR)" : "Total Assets (SAR)"}</label>
               <input
                 type="number"
                 value={totalAssets}
                 onChange={(e) => setTotalAssets(Number(e.target.value))}
-                className="terminal-input w-full"
+                className="w-full px-3 py-1.5 bg-[#0B0E14] border border-[#1E293B] focus:border-terminal-emerald rounded-sm text-white font-mono text-xs focus:outline-none"
               />
             </div>
 
             <div className="space-y-1.5">
-              <label className="text-slate-700 block">{isAr ? "إجمالي الديون الربوية (SAR)" : "Total Debt (SAR)"}</label>
+              <label className="text-slate-300 block">{isAr ? "إجمالي الديون الربوية (SAR)" : "Total Debt (SAR)"}</label>
               <input
                 type="number"
                 value={totalDebt}
                 onChange={(e) => setTotalDebt(Number(e.target.value))}
-                className="terminal-input w-full"
+                className="w-full px-3 py-1.5 bg-[#0B0E14] border border-[#1E293B] focus:border-terminal-emerald rounded-sm text-white font-mono text-xs focus:outline-none"
               />
             </div>
 
             <div className="space-y-1.5">
-              <label className="text-slate-700 block">{isAr ? "إجمالي الإيرادات (SAR)" : "Total Revenue (SAR)"}</label>
+              <label className="text-slate-300 block">{isAr ? "إجمالي الإيرادات (SAR)" : "Total Revenue (SAR)"}</label>
               <input
                 type="number"
                 value={totalRevenue}
                 onChange={(e) => setTotalRevenue(Number(e.target.value))}
-                className="terminal-input w-full"
+                className="w-full px-3 py-1.5 bg-[#0B0E14] border border-[#1E293B] focus:border-terminal-emerald rounded-sm text-white font-mono text-xs focus:outline-none"
               />
             </div>
 
             <div className="space-y-1.5">
-              <label className="text-slate-700 block">{isAr ? "الإيرادات المحرمة / الفوائد (SAR)" : "Interest/Non-Compliant Income (SAR)"}</label>
+              <label className="text-slate-300 block">{isAr ? "الإيرادات المحرمة / الفوائد (SAR)" : "Interest/Non-Compliant Income (SAR)"}</label>
               <input
                 type="number"
                 value={interestIncome}
                 onChange={(e) => setInterestIncome(Number(e.target.value))}
-                className="terminal-input w-full"
+                className="w-full px-3 py-1.5 bg-[#0B0E14] border border-[#1E293B] focus:border-terminal-emerald rounded-sm text-white font-mono text-xs focus:outline-none"
               />
             </div>
 
             <div className="space-y-1.5">
-              <label className="text-slate-700 block">{isAr ? "إجمالي الذمم المدينة والمدينون (SAR)" : "Receivables (SAR)"}</label>
+              <label className="text-slate-300 block">{isAr ? "إجمالي الذمم المدينة والمدينون (SAR)" : "Receivables (SAR)"}</label>
               <input
                 type="number"
                 value={receivables}
                 onChange={(e) => setReceivables(Number(e.target.value))}
-                className="terminal-input w-full"
+                className="w-full px-3 py-1.5 bg-[#0B0E14] border border-[#1E293B] focus:border-terminal-emerald rounded-sm text-white font-mono text-xs focus:outline-none"
               />
             </div>
 
             <div className="space-y-1.5">
-              <label className="text-slate-700 block">{isAr ? "الأسهم القائمة (مليون)" : "Shares Outstanding (M)"}</label>
+              <label className="text-slate-300 block">{isAr ? "الأسهم القائمة (مليون)" : "Shares Outstanding (M)"}</label>
               <input
                 type="number"
                 value={sharesOutstanding}
                 onChange={(e) => setSharesOutstanding(Number(e.target.value))}
-                className="terminal-input w-full"
+                className="w-full px-3 py-1.5 bg-[#0B0E14] border border-[#1E293B] focus:border-terminal-emerald rounded-sm text-white font-mono text-xs focus:outline-none"
               />
             </div>
           </div>
@@ -150,16 +150,16 @@ export default function ShariahScreening() {
       {/* RIGHT COLUMN: SCREENING REPORT (8 COLS) */}
       <div className="col-span-12 lg:col-span-8 space-y-6">
         {/* COMPLIANCE VERDICT BANNER */}
-        <div className={`p-6 rounded-xl border flex flex-col sm:flex-row items-center justify-between gap-4 shadow-xs ${
+        <div className={`p-6 rounded-sm border flex flex-col sm:flex-row items-center justify-between gap-4 shadow-xl ${
           isCompliant 
-            ? "bg-emerald-50 border-emerald-200 text-emerald-950" 
-            : "bg-red-50 border-red-200 text-red-950"
+            ? "bg-terminal-emerald-dim border-terminal-border-emerald text-terminal-emerald" 
+            : "bg-rose-950/40 border-rose-800 text-rose-300"
         }`}>
           <div>
-            <div className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-[10px] font-mono font-bold uppercase tracking-wider mb-2 bg-white/80 border border-current">
+            <div className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-sm text-[10px] font-mono font-bold uppercase tracking-wider mb-2 bg-[#0B0E14] border border-current">
               <span>{isCompliant ? "AAOIFI PASS" : "AAOIFI FAIL"}</span>
             </div>
-            <h3 className="font-serif text-2xl font-bold uppercase tracking-wide">
+            <h3 className="font-mono text-2xl font-extrabold uppercase tracking-wide text-white">
               {isCompliant ? (isAr ? "متوافق مع الشريعة الإسلامية" : "Shariah Compliant") : (isAr ? "غير متوافق مع الشريعة" : "Non-Compliant")}
             </h3>
             <p className="text-xs font-mono mt-1 opacity-80">
@@ -169,76 +169,76 @@ export default function ShariahScreening() {
             </p>
           </div>
 
-          <div className="text-center sm:text-right shrink-0 bg-white/70 px-4 py-3 rounded-lg border border-current/20">
-            <span className="text-[10px] font-mono uppercase tracking-wider block font-bold opacity-85">
+          <div className="text-center sm:text-right shrink-0 bg-[#0B0E14] px-4 py-3 rounded-sm border border-[#1E293B]">
+            <span className="text-[10px] font-mono uppercase tracking-wider block font-bold text-slate-400">
               {isAr ? "مبلغ التطهير لكل سهم" : "Purification / Share"}
             </span>
-            <span className="font-mono text-xl font-extrabold block mt-0.5 text-terminal-text">
+            <span className="font-mono text-xl font-extrabold block mt-0.5 text-white">
               SAR <NumberCounter value={purificationPerShare} decimals={4} />
             </span>
           </div>
         </div>
 
         {/* DETAILED SCREENING RATIOS METRIC CARDS */}
-        <div className="bg-white p-6 rounded-xl border border-terminal-border space-y-6 shadow-xs">
-          <h3 className="font-mono text-xs font-bold text-terminal-text uppercase tracking-wider">
+        <div className="bg-[#121721] p-6 rounded-sm border border-[#1E293B] space-y-6 shadow-xl">
+          <h3 className="font-mono text-xs font-bold text-white uppercase tracking-wider">
             {isAr ? "مؤشرات الامتثال المالي الشرعي" : "AAOIFI Compliance Ratio Analysis"}
           </h3>
 
           <div className="space-y-6 font-mono text-xs">
             {/* Ratio 1: Debt Ratio */}
             <div className="space-y-2">
-              <div className="flex justify-between text-slate-700">
+              <div className="flex justify-between text-slate-300">
                 <span className="font-semibold">{isAr ? "نسبة الديون إلى الأصول" : "Debt / Total Assets Ratio"}</span>
-                <span className="font-bold text-terminal-text">
+                <span className="font-bold text-white">
                   <NumberCounter value={debtRatio} decimals={2} suffix="%" /> / 33.00% max
                 </span>
               </div>
-              <div className="h-2 bg-slate-100 rounded-full overflow-hidden">
+              <div className="h-2 bg-[#0B0E14] rounded-sm overflow-hidden border border-[#1E293B]">
                 <div 
-                  className={`h-full rounded-full transition-all duration-500 ${isDebtCompliant ? "bg-terminal-emerald" : "bg-red-500"}`}
+                  className={`h-full rounded-sm transition-all duration-500 ${isDebtCompliant ? "bg-terminal-emerald" : "bg-rose-500"}`}
                   style={{ width: `${Math.min(100, debtRatio)}%` }}
                 />
               </div>
-              <span className={`text-[10px] block font-bold ${isDebtCompliant ? "text-emerald-700" : "text-red-600"}`}>
+              <span className={`text-[10px] block font-bold ${isDebtCompliant ? "text-terminal-emerald" : "text-rose-400"}`}>
                 {isDebtCompliant ? (isAr ? "✓ ضمن الحدود الشرعية (أقل من 33%)" : "✓ Within AAOIFI Limit (<33%)") : (isAr ? "✗ يتجاوز الحد المسموح" : "✗ Exceeds Maximum Threshold")}
               </span>
             </div>
 
             {/* Ratio 2: Interest Income Ratio */}
             <div className="space-y-2">
-              <div className="flex justify-between text-slate-700">
+              <div className="flex justify-between text-slate-300">
                 <span className="font-semibold">{isAr ? "نسبة الإيرادات المحرمة" : "Interest Income / Total Revenue"}</span>
-                <span className="font-bold text-terminal-text">
+                <span className="font-bold text-white">
                   <NumberCounter value={interestRatio} decimals={2} suffix="%" /> / 5.00% max
                 </span>
               </div>
-              <div className="h-2 bg-slate-100 rounded-full overflow-hidden">
+              <div className="h-2 bg-[#0B0E14] rounded-sm overflow-hidden border border-[#1E293B]">
                 <div 
-                  className={`h-full rounded-full transition-all duration-500 ${isInterestCompliant ? "bg-terminal-emerald" : "bg-red-500"}`}
+                  className={`h-full rounded-sm transition-all duration-500 ${isInterestCompliant ? "bg-terminal-emerald" : "bg-rose-500"}`}
                   style={{ width: `${Math.min(100, interestRatio * 10)}%` }}
                 />
               </div>
-              <span className={`text-[10px] block font-bold ${isInterestCompliant ? "text-emerald-700" : "text-red-600"}`}>
+              <span className={`text-[10px] block font-bold ${isInterestCompliant ? "text-terminal-emerald" : "text-rose-400"}`}>
                 {isInterestCompliant ? (isAr ? "✓ ضمن الحدود الشرعية (أقل من 5%)" : "✓ Within AAOIFI Limit (<5%)") : (isAr ? "✗ يتجاوز الحد المسموح" : "✗ Exceeds Maximum Threshold")}
               </span>
             </div>
 
             {/* Ratio 3: Receivables Ratio */}
             <div className="space-y-2">
-              <div className="flex justify-between text-slate-700">
+              <div className="flex justify-between text-slate-300">
                 <span className="font-semibold">{isAr ? "نسبة الذمم المدينة إلى الأصول" : "Receivables / Total Assets Ratio"}</span>
-                <span className="font-bold text-terminal-text">
+                <span className="font-bold text-white">
                   <NumberCounter value={receivablesRatio} decimals={2} suffix="%" /> / 49.00% max
                 </span>
               </div>
-              <div className="h-2 bg-slate-100 rounded-full overflow-hidden">
+              <div className="h-2 bg-[#0B0E14] rounded-sm overflow-hidden border border-[#1E293B]">
                 <div 
-                  className={`h-full rounded-full transition-all duration-500 ${isReceivablesCompliant ? "bg-terminal-emerald" : "bg-red-500"}`}
+                  className={`h-full rounded-sm transition-all duration-500 ${isReceivablesCompliant ? "bg-terminal-emerald" : "bg-rose-500"}`}
                   style={{ width: `${Math.min(100, receivablesRatio)}%` }}
                 />
               </div>
-              <span className={`text-[10px] block font-bold ${isReceivablesCompliant ? "text-emerald-700" : "text-red-600"}`}>
+              <span className={`text-[10px] block font-bold ${isReceivablesCompliant ? "text-terminal-emerald" : "text-rose-400"}`}>
                 {isReceivablesCompliant ? (isAr ? "✓ ضمن الحدود الشرعية (أقل من 49%)" : "✓ Within AAOIFI Limit (<49%)") : (isAr ? "✗ يتجاوز الحد المسموح" : "✗ Exceeds Maximum Threshold")}
               </span>
             </div>
@@ -246,10 +246,10 @@ export default function ShariahScreening() {
         </div>
 
         {/* PURIFICATION METRIC INFO CARD */}
-        <div className="bg-slate-50 p-4 rounded-xl border border-slate-200 text-slate-600 text-xs font-mono flex items-start gap-3">
-          <HelpCircle size={16} className="text-[var(--emerald)] shrink-0 mt-0.5" />
+        <div className="bg-[#121721] p-4 rounded-sm border border-[#1E293B] text-slate-400 text-xs font-mono flex items-start gap-3 shadow-xl">
+          <HelpCircle size={16} className="text-terminal-emerald shrink-0 mt-0.5" />
           <div className="space-y-1">
-            <h4 className="font-bold text-[#171717]">{isAr ? "معادلة التطهير الشرعي" : "Purification Action Guidelines"}</h4>
+            <h4 className="font-bold text-white uppercase">{isAr ? "معادلة التطهير الشرعي" : "Purification Action Guidelines"}</h4>
             <p className="leading-relaxed">
               {isAr 
                 ? "يجب استبعاد نسبة الإيرادات غير المتوافقة (الربوية) وتوجيهها للمشاريع الخيرية العامة. يتم احتساب التطهير لكل سهم عن طريق قسمة الإيرادات المحرمة الإجمالية على عدد الأسهم المصدرة." 

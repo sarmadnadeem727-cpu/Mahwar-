@@ -26,8 +26,7 @@ export default function TopBar() {
   const getPanelDisplayName = () => {
     switch (activePanel) {
       case "hub": return isAr ? "مركز الاستخبارات" : "Intelligence Hub";
-      case "news": return isAr ? "الأخبار المالية (NewsAPI)" : "News Wire";
-      case "research": return isAr ? "أبحاث الذكاء الاصطناعي" : "AI Research";
+      case "research": return isAr ? "أبحاث الذكاء الاصطناعي" : "AI Research Memos";
       case "shariah": return isAr ? "الفحص الشرعي AAOIFI" : "AAOIFI Screening";
       case "screener": return isAr ? "مقارنة الشركات" : "Company Comparator";
       case "bi_report": return isAr ? "تقرير الأعمال الموحد" : "BI Synthesis";
@@ -40,21 +39,21 @@ export default function TopBar() {
 
   return (
     <>
-      <header className="h-[64px] min-h-[64px] border-b border-slate-200 bg-white flex items-center justify-between px-6 sticky top-0 z-20 no-print" dir={isAr ? "rtl" : "ltr"}>
+      <header className="h-[64px] min-h-[64px] border-b border-[#1E293B] bg-[#0B0E14] flex items-center justify-between px-6 sticky top-0 z-20 no-print font-mono" dir={isAr ? "rtl" : "ltr"}>
         {/* LEFT: ACTIVE PANEL STATUS */}
         <div className="flex items-center gap-4">
           <div className="flex items-center gap-2">
             <span className="relative flex h-2 w-2">
-              <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-[var(--emerald)] opacity-75"></span>
-              <span className="relative inline-flex rounded-full h-2 w-2 bg-[var(--emerald)]"></span>
+              <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-terminal-emerald opacity-75"></span>
+              <span className="relative inline-flex rounded-full h-2 w-2 bg-terminal-emerald"></span>
             </span>
-            <span className="font-mono text-xs font-bold uppercase tracking-wider text-[#171717]">
+            <span className="font-mono text-xs font-bold uppercase tracking-wider text-white">
               {getPanelDisplayName()}
             </span>
           </div>
 
-          <div className="hidden lg:flex items-center gap-1.5 px-2 py-0.5 rounded bg-slate-50 border border-slate-200 text-[10px] font-mono text-slate-500">
-            <Activity size={11} className="text-[var(--emerald)]" />
+          <div className="hidden lg:flex items-center gap-1.5 px-2.5 py-1 rounded-sm bg-[#121721] border border-[#1E293B] text-[10px] font-mono text-slate-400">
+            <Activity size={11} className="text-terminal-emerald" />
             <span>TASI: 12,410.50 (+0.42%)</span>
           </div>
         </div>
@@ -62,13 +61,13 @@ export default function TopBar() {
         {/* CENTER: PERSISTENT SEARCH COMMAND PILL */}
         <button
           onClick={() => setIsPaletteOpen(true)}
-          className="flex items-center gap-3 px-3.5 py-1.5 bg-slate-50 hover:bg-slate-100/80 border border-slate-200 hover:border-[var(--emerald)]/40 rounded-lg text-xs text-slate-500 transition-all cursor-pointer shadow-xs max-w-sm w-full mx-4"
+          className="flex items-center gap-3 px-3.5 py-1.5 bg-[#121721] hover:bg-[#161C28] border border-[#1E293B] hover:border-terminal-emerald/60 rounded-sm text-xs text-slate-400 transition-all cursor-pointer shadow-md max-w-sm w-full mx-4"
         >
           <Search size={13} className="text-slate-400 shrink-0" />
-          <span className="truncate flex-1 text-left rtl:text-right font-sans text-xs">
-            {isAr ? "ابحث عن أداة أو اسأل Gemini (Ctrl+K)..." : "Search model or ask Gemini AI (Cmd+K)..."}
+          <span className="truncate flex-1 text-left rtl:text-right font-mono text-xs text-slate-300">
+            {isAr ? "ابحث عن أداة نمذجة (Cmd+K)..." : "Search model or command (Cmd+K)..."}
           </span>
-          <div className="flex items-center gap-0.5 px-1.5 py-0.5 rounded bg-white border border-slate-200 text-[10px] font-mono font-bold text-slate-400 shrink-0">
+          <div className="flex items-center gap-0.5 px-1.5 py-0.5 rounded-sm bg-[#0B0E14] border border-[#1E293B] text-[10px] font-mono font-bold text-terminal-emerald shrink-0">
             <Command size={10} />
             <span>K</span>
           </div>
@@ -81,7 +80,7 @@ export default function TopBar() {
             <select
               value={currency}
               onChange={(e) => setCurrency(e.target.value as Currency)}
-              className="bg-slate-50 border border-slate-200 text-xs font-mono font-bold text-slate-800 px-2.5 py-1.5 rounded-lg focus:outline-none focus:border-[var(--emerald)] cursor-pointer"
+              className="bg-[#121721] border border-[#1E293B] text-xs font-mono font-bold text-white px-2.5 py-1.5 rounded-sm focus:outline-none focus:border-terminal-emerald cursor-pointer"
             >
               {['SAR', 'AED', 'KWD', 'BHD', 'OMR', 'QAR', 'USD'].map((cur) => (
                 <option key={cur} value={cur}>{cur}</option>
@@ -92,9 +91,9 @@ export default function TopBar() {
           {/* EN / AR Language Toggle */}
           <button
             onClick={() => setLanguage(isAr ? 'en' : 'ar')}
-            className="flex items-center gap-1.5 px-3 py-1.5 bg-slate-50 border border-slate-200 hover:bg-slate-100 text-xs font-bold text-slate-700 rounded-lg transition-colors cursor-pointer"
+            className="flex items-center gap-1.5 px-3 py-1.5 bg-[#121721] border border-[#1E293B] hover:bg-[#161C28] text-xs font-mono font-bold text-slate-200 rounded-sm transition-colors cursor-pointer"
           >
-            <Globe size={13} className="text-[var(--emerald)]" />
+            <Globe size={13} className="text-terminal-emerald" />
             <span>{isAr ? "English" : "العربية"}</span>
           </button>
         </div>

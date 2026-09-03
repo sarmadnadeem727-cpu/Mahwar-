@@ -9,7 +9,6 @@ import { useTerminalStore } from "@/store/useTerminalStore";
 
 // Lazy loading feature modules with zero SSR for performance optimization
 const IntelligenceHub = dynamic(() => import("@/components/features/IntelligenceHub"), { ssr: false });
-const NewsFeed = dynamic(() => import("@/components/features/NewsFeed"), { ssr: false });
 const AIResearch = dynamic(() => import("@/components/features/AIResearch"), { ssr: false });
 const ShariahScreening = dynamic(() => import("@/components/features/ShariahScreening"), { ssr: false });
 const CompanyComparator = dynamic(() => import("@/components/features/CompanyComparator"), { ssr: false });
@@ -24,7 +23,6 @@ export default function DashboardPage() {
 
   const renderPanel = () => {
     switch (activePanel) {
-      case "news":         return <NewsFeed />;
       case "research":     return <AIResearch />;
       case "shariah":      return <ShariahScreening />;
       case "screener":     return <CompanyComparator />;
@@ -33,27 +31,26 @@ export default function DashboardPage() {
       case "LBO":          return <LBOModel />;
       case "FS":           return <ThreeStatementModel />;
       case "hub":
-      default:             return <IntelligenceHub />;
+      default:
+        return <IntelligenceHub />;
     }
   };
 
   return (
     <div 
-      className={`flex min-h-screen bg-white text-[#171717] selection:bg-[var(--emerald)] selection:text-white ${
+      className={`flex h-screen bg-[#0B0E14] text-slate-100 overflow-hidden font-mono selection:bg-terminal-emerald selection:text-black ${
         isAr ? 'font-cairo' : ''
       }`}
       dir={isAr ? "rtl" : "ltr"}
     >
-      {/* FIXED 220px SIDEBAR */}
+      {/* SIDEBAR NAVIGATION */}
       <Sidebar />
 
-      {/* MAIN TERMINAL CONTAINER */}
-      <div className="flex-1 flex flex-col min-w-0 bg-white">
-        {/* STICKY 64px TOPBAR */}
+      {/* MAIN ENGINE CONTENT AREA */}
+      <div className="flex-1 flex flex-col min-w-0 overflow-hidden">
         <TopBar />
 
-        {/* MAIN PANEL CONTENT AREA */}
-        <main className="flex-1 p-6 lg:p-8 overflow-y-auto relative z-10 no-print">
+        <main className="flex-1 overflow-y-auto p-6 md:p-8">
           <AnimatePresence mode="wait">
             <motion.div
               key={activePanel}

@@ -2,7 +2,7 @@
 
 import React from "react";
 import { 
-  Columns, Sparkles, ShieldCheck, Grid3X3, BarChart3, Layers, FileSpreadsheet, FileText, Newspaper
+  Columns, Sparkles, ShieldCheck, Grid3X3, BarChart3, Layers, FileSpreadsheet, FileText
 } from "lucide-react";
 import { useTerminalStore, PanelType } from "@/store/useTerminalStore";
 import { t } from "@/lib/i18n";
@@ -22,7 +22,6 @@ const NAV_GROUPS: NavGroup[] = [
     labelKey: "nav_platform",
     items: [
       { id: "hub", icon: <Columns size={15} />, labelKey: "panel_hub" },
-      { id: "news", icon: <Newspaper size={15} />, labelKey: "panel_news" },
       { id: "screener", icon: <Grid3X3 size={15} />, labelKey: "panel_screener" },
     ],
   },
@@ -49,19 +48,19 @@ export default function Sidebar() {
   const isAr = language === 'ar';
 
   return (
-    <aside className="w-[220px] min-w-[220px] bg-slate-50 border-r border-slate-200 flex flex-col h-screen sticky top-0 z-30 select-none no-print" dir={isAr ? "rtl" : "ltr"}>
+    <aside className="w-[220px] min-w-[220px] bg-[#0B0E14] border-r border-[#1E293B] flex flex-col h-screen sticky top-0 z-30 select-none no-print font-mono" dir={isAr ? "rtl" : "ltr"}>
       {/* BRAND LOGO HEADER */}
       <div 
         onClick={() => setPanel("hub")}
-        className="p-4 border-b border-slate-200 flex items-center gap-3 bg-slate-100/55 cursor-pointer hover:bg-slate-150 transition-colors"
+        className="p-4 border-b border-[#1E293B] flex items-center gap-3 bg-[#121721] cursor-pointer hover:bg-[#161C28] transition-colors"
       >
         <MahwarLogo size={32} animate={true} />
         <div className="flex flex-col">
-          <span className="font-mono text-sm font-extrabold tracking-[0.2em] text-[#171717]">
+          <span className="font-mono text-sm font-extrabold tracking-[0.2em] text-white">
             MAHWAR
           </span>
-          <span className="text-[9px] font-bold text-[var(--emerald)] tracking-widest uppercase">
-            محور · GCC v2.5
+          <span className="text-[9px] font-bold text-terminal-emerald tracking-widest uppercase">
+            محور · CAD ENGINE
           </span>
         </div>
       </div>
@@ -70,7 +69,7 @@ export default function Sidebar() {
       <nav className="flex-1 overflow-y-auto px-2 py-4 space-y-6">
         {NAV_GROUPS.map((group) => (
           <div key={group.labelKey}>
-            <div className="px-3 mb-2 text-[9px] font-mono font-bold text-slate-500 uppercase tracking-[0.15em]">
+            <div className="px-3 mb-2 text-[9px] font-mono font-bold text-slate-500 uppercase tracking-[0.18em]">
               {t(group.labelKey as any, language)}
             </div>
             <div className="space-y-1">
@@ -80,16 +79,16 @@ export default function Sidebar() {
                   <button
                     key={item.id}
                     onClick={() => setPanel(item.id)}
-                    className={`w-full flex items-center gap-2.5 px-3 py-2 text-xs font-semibold rounded-md transition-all cursor-pointer ${
+                    className={`w-full flex items-center gap-2.5 px-3 py-2 text-xs font-mono font-bold rounded-sm transition-all cursor-pointer ${
                       active
-                        ? "bg-[var(--emerald)]/10 text-[var(--emerald)] border-l-2 border-[var(--emerald)] font-bold shadow-sm"
-                        : "text-slate-650 hover:text-slate-900 hover:bg-slate-100"
+                        ? "bg-terminal-emerald-dim text-terminal-emerald border-l-2 border-terminal-emerald shadow-md"
+                        : "text-slate-400 hover:text-white hover:bg-[#121721]"
                     }`}
                   >
-                    <span className={active ? "text-[var(--emerald)]" : "text-slate-400"}>
+                    <span className={active ? "text-terminal-emerald" : "text-slate-500"}>
                       {item.icon}
                     </span>
-                    <span className="truncate">
+                    <span className="truncate uppercase tracking-wider">
                       {t(item.labelKey as any, language)}
                     </span>
                   </button>
@@ -101,19 +100,20 @@ export default function Sidebar() {
       </nav>
 
       {/* WORKSPACE STATUS BAR */}
-      <div className="p-3 border-t border-slate-200 bg-slate-100/55 space-y-2">
-        <div className="flex items-center gap-2 text-[10px] font-mono text-slate-750">
+      <div className="p-3 border-t border-[#1E293B] bg-[#121721] space-y-2">
+        <div className="flex items-center gap-2 text-[10px] font-mono text-slate-300">
           <span className="relative flex h-2 w-2">
-            <span className="relative inline-flex rounded-full h-2 w-2 bg-[var(--emerald)]"></span>
+            <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-terminal-emerald opacity-75"></span>
+            <span className="relative inline-flex rounded-full h-2 w-2 bg-terminal-emerald"></span>
           </span>
-          <span className="font-bold text-[var(--emerald)] uppercase tracking-wider">
-            {isAr ? "المنصة مفعلة" : "Mahwar Active"}
+          <span className="font-bold text-terminal-emerald uppercase tracking-wider">
+            {isAr ? "المحرك تكتيكي" : "Engine Active"}
           </span>
         </div>
 
-        <div className="text-[9px] font-mono text-slate-500 border-t border-slate-200/60 pt-1.5 flex justify-between">
-          <span>{isAr ? "وصول غير محدود" : "Sovereign Access"}</span>
-          <span className="text-[#171717] font-bold">GCC Live</span>
+        <div className="text-[9px] font-mono text-slate-500 border-t border-[#1E293B] pt-1.5 flex justify-between">
+          <span>{isAr ? "نمذجة تكتيكية" : "CAD Workbench"}</span>
+          <span className="text-white font-bold">v2.5</span>
         </div>
       </div>
     </aside>

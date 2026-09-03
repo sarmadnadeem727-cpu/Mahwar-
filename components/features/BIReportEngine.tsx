@@ -49,7 +49,7 @@ export default function BIReportEngine() {
 
     try {
       const canvas = await html2canvas(element, {
-        backgroundColor: "#FFFFFF",
+        backgroundColor: "#0B0E14",
         scale: 1.8,
         useCORS: true,
         logging: false
@@ -107,15 +107,15 @@ export default function BIReportEngine() {
       initial="initial"
       animate="animate"
       exit="exit"
-      className="space-y-6 text-[#171717]"
+      className="space-y-6 text-slate-100 font-mono"
       dir={isAr ? "rtl" : "ltr"}
     >
       {/* Self-contained CSS for printing cleanly */}
       <style>{`
         @media print {
           body {
-            background: white !important;
-            color: black !important;
+            background: #0B0E14 !important;
+            color: #F8FAFC !important;
           }
           aside, header, nav, .no-print {
             display: none !important;
@@ -125,8 +125,8 @@ export default function BIReportEngine() {
             margin: 0 !important;
           }
           #bi-report-print-area {
-            background: white !important;
-            color: black !important;
+            background: #0B0E14 !important;
+            color: #F8FAFC !important;
             border: none !important;
             box-shadow: none !important;
             width: 100% !important;
@@ -134,34 +134,18 @@ export default function BIReportEngine() {
             padding: 20px !important;
             margin: 0 !important;
           }
-          #bi-report-print-area * {
-            color: black !important;
-            border-color: #bbb !important;
-          }
-          #bi-report-print-area h2, 
-          #bi-report-print-area h3, 
-          #bi-report-print-area h4 {
-            color: #0E7C69 !important;
-          }
-          .recharts-text {
-            fill: #333 !important;
-          }
-          .glass-panel {
-            background: white !important;
-            border: 1px solid #ccc !important;
-          }
         }
       `}</style>
 
       {/* HEADER CONTROL BAR */}
-      <div className="glass-panel p-6 rounded-xl border border-slate-200 flex flex-col md:flex-row items-center justify-between gap-4 no-print shadow-sm">
+      <div className="bg-[#121721] p-6 rounded-sm border border-[#1E293B] flex flex-col md:flex-row items-center justify-between gap-4 no-print shadow-xl">
         <div className="flex items-center gap-3">
-          <FileText className="text-[var(--emerald)]" size={24} />
+          <FileText className="text-terminal-emerald" size={24} />
           <div>
-            <h2 className="font-serif text-2xl font-bold text-[#171717]">
+            <h2 className="font-mono text-2xl font-extrabold text-white uppercase">
               {t("panel_bi_report", language)}
             </h2>
-            <span className="text-xs font-mono text-slate-500">
+            <span className="text-xs font-mono text-slate-400 uppercase">
               {isAr ? "محرك تقارير الاستخبارات المالية المتكاملة" : "Consolidated Session Report Builder"}
             </span>
           </div>
@@ -171,7 +155,7 @@ export default function BIReportEngine() {
           <button
             onClick={triggerPrint}
             disabled={!hasAnySelection}
-            className="flex items-center gap-1.5 px-4 py-2 bg-slate-50 border border-slate-200 hover:bg-slate-100 text-slate-700 font-mono text-xs font-bold rounded-lg disabled:opacity-40 cursor-pointer transition-colors"
+            className="flex items-center gap-1.5 px-4 py-2 bg-[#0B0E14] border border-[#1E293B] hover:border-terminal-emerald text-slate-200 font-mono text-xs font-bold rounded-sm disabled:opacity-40 cursor-pointer transition-colors uppercase"
           >
             <Printer size={13} />
             <span>{isAr ? "طباعة التقرير" : "Print Report"}</span>
@@ -180,7 +164,7 @@ export default function BIReportEngine() {
           <button
             onClick={exportPDF}
             disabled={!hasAnySelection || generating}
-            className="px-5 py-2 bg-[var(--emerald)] hover:bg-[#12A189] text-white font-mono text-xs font-bold rounded-lg flex items-center gap-2 shadow-sm cursor-pointer disabled:opacity-50 transition-colors"
+            className="px-5 py-2 bg-terminal-emerald hover:bg-terminal-emerald-light text-black font-mono text-xs font-black rounded-sm flex items-center gap-2 shadow-lg cursor-pointer disabled:opacity-50 transition-colors uppercase tracking-wider"
           >
             {generating ? <RefreshCw size={13} className="animate-spin" /> : <Download size={13} />}
             <span>{isAr ? "تحميل التقرير PDF" : "Download PDF"}</span>
@@ -190,8 +174,8 @@ export default function BIReportEngine() {
 
       <div className="grid grid-cols-12 gap-6 no-print">
         {/* MODULES CHECKLIST SELECTOR (4 COLS) */}
-        <div className="col-span-12 lg:col-span-4 glass-panel p-6 rounded-xl border border-slate-200 space-y-4 shadow-sm">
-          <h3 className="font-mono text-xs font-bold text-[#171717] uppercase tracking-wider border-b border-slate-200 pb-3">
+        <div className="col-span-12 lg:col-span-4 bg-[#121721] p-6 rounded-sm border border-[#1E293B] space-y-4 shadow-xl">
+          <h3 className="font-mono text-xs font-bold text-white uppercase tracking-wider border-b border-[#1E293B] pb-3">
             {isAr ? "اختر الأقسام المطلوبة للتقرير" : "Select Report Content Modules"}
           </h3>
 
@@ -202,24 +186,24 @@ export default function BIReportEngine() {
                 <div
                   key={m.id}
                   onClick={() => m.hasData && toggleModule(m.id)}
-                  className={`p-3.5 rounded-lg border flex items-center justify-between transition-all ${
+                  className={`p-3.5 rounded-sm border flex items-center justify-between transition-all ${
                     !m.hasData 
-                      ? "bg-slate-50 border-slate-150 opacity-40 cursor-not-allowed text-slate-400" 
+                      ? "bg-[#0B0E14] border-[#1E293B] opacity-40 cursor-not-allowed text-slate-500" 
                       : active 
-                      ? "bg-[var(--emerald)]/10 border-[var(--emerald)] text-[var(--emerald)] font-bold cursor-pointer" 
-                      : "bg-white border-slate-200 text-slate-700 hover:bg-slate-50 cursor-pointer"
+                      ? "bg-terminal-emerald-dim border-terminal-border-emerald text-terminal-emerald font-bold cursor-pointer" 
+                      : "bg-[#0B0E14] border-[#1E293B] text-slate-300 hover:border-terminal-emerald cursor-pointer"
                   }`}
                 >
                   <div className="flex flex-col">
-                    <span className="font-mono text-xs">{m.label}</span>
+                    <span className="font-mono text-xs uppercase">{m.label}</span>
                     {!m.hasData && (
-                      <span className="text-[9px] text-amber-600 flex items-center gap-1 mt-1 font-mono">
+                      <span className="text-[9px] text-amber-400 flex items-center gap-1 mt-1 font-mono">
                         <AlertCircle size={10} />
                         {isAr ? "لا توجد بيانات — شغل الأداة أولاً" : "No data — run tool first"}
                       </span>
                     )}
                   </div>
-                  <CheckSquare size={16} className={active ? "text-[var(--emerald)]" : "opacity-20"} />
+                  <CheckSquare size={16} className={active ? "text-terminal-emerald" : "opacity-20"} />
                 </div>
               );
             })}
@@ -227,8 +211,8 @@ export default function BIReportEngine() {
         </div>
 
         {/* INSTRUCTIONAL CALLOUT */}
-        <div className="col-span-12 lg:col-span-8 p-4 rounded-xl border border-slate-200 bg-slate-50 text-xs font-mono text-slate-650 flex items-center gap-2">
-          <AlertCircle size={15} className="text-[var(--emerald)]" />
+        <div className="col-span-12 lg:col-span-8 p-4 rounded-sm border border-[#1E293B] bg-[#121721] text-xs font-mono text-slate-300 flex items-center gap-2 shadow-xl">
+          <AlertCircle size={15} className="text-terminal-emerald shrink-0" />
           <span>{isAr ? "تلميح: يتم ملء التقرير تلقائيًا بالبيانات التي قمت بحسابها في أدوات النموذج والاستعلامات أعلاه." : "Tip: The report compiles calculations, tables, and graphs from active sessions populated by each tool."}</span>
         </div>
       </div>
@@ -236,19 +220,19 @@ export default function BIReportEngine() {
       {/* REPORT EXECUTIVE PREVIEW (PRINT AREA) */}
       <div 
         id="bi-report-print-area" 
-        className="bg-white p-10 rounded-xl border border-slate-200 space-y-10 text-slate-800 max-w-4xl mx-auto shadow-md"
+        className="bg-[#121721] p-10 rounded-sm border border-[#1E293B] space-y-10 text-slate-100 max-w-4xl mx-auto shadow-2xl font-mono"
       >
         {/* REPORT HEADER */}
-        <div className="border-b border-slate-250 pb-6 flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
+        <div className="border-b border-[#1E293B] pb-6 flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
           <div>
-            <h1 className="font-serif text-3xl font-bold tracking-wider text-[#171717]">
+            <h1 className="font-mono text-2xl font-extrabold tracking-wider text-white uppercase">
               MAHWAR FINANCIAL INTELLIGENCE REPORT
             </h1>
-            <p className="text-[10px] font-mono text-[var(--emerald)] uppercase tracking-widest mt-1 font-bold">
+            <p className="text-[10px] font-mono text-terminal-emerald uppercase tracking-widest mt-1 font-bold">
               Consolidated Corporate Valuation & GCC Synthesis
             </p>
           </div>
-          <div className="text-right font-mono text-xs text-slate-500">
+          <div className="text-right font-mono text-xs text-slate-400">
             <p>{isAr ? "تاريخ الإصدار" : "Report Date"}: {new Date().toLocaleDateString()}</p>
             <p>{isAr ? "الجهة المعدّة" : "Prepared by"}: Antigravity Engine</p>
           </div>
@@ -256,7 +240,7 @@ export default function BIReportEngine() {
 
         {/* CONDITIONAL SECTIONS */}
         {selectedModules.length === 0 ? (
-          <div className="py-20 text-center font-mono text-sm text-slate-400">
+          <div className="py-20 text-center font-mono text-sm text-slate-500">
             {isAr ? "الرجاء اختيار وحدة واحدة على الأقل من القائمة لبناء التقرير." : "Please select active data modules to render the report preview."}
           </div>
         ) : (
@@ -264,54 +248,54 @@ export default function BIReportEngine() {
             
             {/* 1. DCF MODEL SECTION */}
             {isDcfActive && dcfData && (
-              <div className="space-y-4 border-b border-slate-200 pb-8">
-                <h3 className="font-serif text-xl font-bold text-[#171717] flex items-center gap-2">
-                  <span className="text-[var(--emerald)]">◎</span>
+              <div className="space-y-4 border-b border-[#1E293B] pb-8">
+                <h3 className="font-mono text-lg font-bold text-white uppercase flex items-center gap-2">
+                  <span className="text-terminal-emerald">◎</span>
                   <span>1. {isAr ? "تحليل تقييم التدفقات النقدية المخصومة" : "Discounted Cash Flow (DCF) Valuation"}</span>
                 </h3>
-                <p className="text-xs text-slate-500 leading-relaxed font-mono">
+                <p className="text-xs text-slate-400 leading-relaxed font-mono">
                   {isAr ? "خلاصة نموذج التقييم وبناء القيمة الجوهرية بناءً على المدخلات المحددة:" : "Valuation highlights detailing intrinsic valuation based on customized model parameters:"}
                 </p>
 
                 <div className="grid grid-cols-3 gap-4 font-mono text-xs text-center py-2">
-                  <div className="p-3 bg-slate-50 border border-slate-200 rounded-lg">
-                    <span className="text-slate-500 block text-[9px]">WACC</span>
-                    <span className="text-[#171717] font-bold text-sm">{dcfData.outputs.wacc}%</span>
+                  <div className="p-3 bg-[#0B0E14] border border-[#1E293B] rounded-sm">
+                    <span className="text-slate-400 block text-[9px]">WACC</span>
+                    <span className="text-white font-bold text-sm">{dcfData.outputs.wacc}%</span>
                   </div>
-                  <div className="p-3 bg-emerald-50 border border-emerald-200 rounded-lg">
-                    <span className="text-[var(--emerald)] block text-[9px] font-bold">Intrinsic Value</span>
-                    <span className="text-[var(--emerald)] font-bold text-sm">SAR {dcfData.outputs.intrinsicValuePerShare}</span>
+                  <div className="p-3 bg-terminal-emerald-dim border border-terminal-border-emerald rounded-sm">
+                    <span className="text-terminal-emerald block text-[9px] font-bold">Intrinsic Value</span>
+                    <span className="text-terminal-emerald font-bold text-sm">SAR {dcfData.outputs.intrinsicValuePerShare}</span>
                   </div>
-                  <div className="p-3 bg-slate-50 border border-slate-200 rounded-lg">
-                    <span className="text-slate-500 block text-[9px]">Upside / Downside</span>
-                    <span className="text-[#171717] font-bold text-sm">{dcfData.outputs.upsidePct}%</span>
+                  <div className="p-3 bg-[#0B0E14] border border-[#1E293B] rounded-sm">
+                    <span className="text-slate-400 block text-[9px]">Upside / Downside</span>
+                    <span className="text-white font-bold text-sm">{dcfData.outputs.upsidePct}%</span>
                   </div>
                 </div>
 
                 <div className="overflow-x-auto pt-2">
                   <table className="w-full text-left font-mono text-[10px] border-collapse">
                     <thead>
-                      <tr className="border-b border-slate-250 text-slate-500 bg-slate-50">
+                      <tr className="border-b border-[#1E293B] text-slate-400 bg-[#0B0E14]">
                         <th className="p-2">Metric</th>
                         {dcfData.outputs.fcfProjections?.map((p: any) => (
                           <th key={p.year} className="text-right p-2">{p.year}</th>
                         ))}
                       </tr>
                     </thead>
-                    <tbody>
-                      <tr className="border-b border-slate-200">
-                        <td className="p-2 font-bold">Revenue (M)</td>
+                    <tbody className="divide-y divide-[#1E293B]">
+                      <tr>
+                        <td className="p-2 font-bold text-white">Revenue (M)</td>
                         {dcfData.outputs.fcfProjections?.map((p: any) => (
-                          <td key={p.year} className="text-right p-2 text-slate-800">{p.revenue.toLocaleString()}</td>
+                          <td key={p.year} className="text-right p-2 text-slate-200">{p.revenue.toLocaleString()}</td>
                         ))}
                       </tr>
-                      <tr className="border-b border-slate-200">
-                        <td className="p-2">EBITDA (M)</td>
+                      <tr>
+                        <td className="p-2 text-slate-300">EBITDA (M)</td>
                         {dcfData.outputs.fcfProjections?.map((p: any) => (
-                          <td key={p.year} className="text-right p-2 text-slate-700">{p.ebitda.toLocaleString()}</td>
+                          <td key={p.year} className="text-right p-2 text-slate-300">{p.ebitda.toLocaleString()}</td>
                         ))}
                       </tr>
-                      <tr className="border-b border-slate-250 bg-emerald-50/50 font-bold text-[var(--emerald)]">
+                      <tr className="bg-terminal-emerald-dim font-bold text-terminal-emerald">
                         <td className="p-2">Free Cash Flow (FCF)</td>
                         {dcfData.outputs.fcfProjections?.map((p: any) => (
                           <td key={p.year} className="text-right p-2 font-bold">{p.fcf.toLocaleString()}</td>
@@ -325,36 +309,36 @@ export default function BIReportEngine() {
 
             {/* 2. LBO MODEL SECTION */}
             {isLboActive && lboData && (
-              <div className="space-y-4 border-b border-slate-200 pb-8">
-                <h3 className="font-serif text-xl font-bold text-[#171717] flex items-center gap-2">
-                  <span className="text-[var(--emerald)]">◎</span>
+              <div className="space-y-4 border-b border-[#1E293B] pb-8">
+                <h3 className="font-mono text-lg font-bold text-white uppercase flex items-center gap-2">
+                  <span className="text-terminal-emerald">◎</span>
                   <span>2. {isAr ? "تحليل صفقات الاستحواذ المدعوم بالديون" : "Leveraged Buyout (LBO) Transaction Model"}</span>
                 </h3>
-                <p className="text-xs text-slate-500 leading-relaxed font-mono">
+                <p className="text-xs text-slate-400 leading-relaxed font-mono">
                   {isAr ? "تحليلات عائد الاستثمار، وحصص الديون، ومعدل العائد الداخلي المخطط:" : "Equity waterfall analysis, debt returns repayment, and exit returns mapping:"}
                 </p>
 
                 <div className="grid grid-cols-3 gap-4 font-mono text-xs text-center py-2">
-                  <div className="p-3 bg-slate-50 border border-slate-200 rounded-lg">
-                    <span className="text-slate-500 block text-[9px]">Sponsor Equity Required</span>
-                    <span className="text-[#171717] font-bold text-sm">SAR {lboData.outputs.sponsorEquity.toLocaleString()}M</span>
+                  <div className="p-3 bg-[#0B0E14] border border-[#1E293B] rounded-sm">
+                    <span className="text-slate-400 block text-[9px]">Sponsor Equity Required</span>
+                    <span className="text-white font-bold text-sm">SAR {lboData.outputs.sponsorEquity.toLocaleString()}M</span>
                   </div>
-                  <div className="p-3 bg-slate-50 border border-slate-200 rounded-lg">
-                    <span className="text-slate-500 block text-[9px]">MOIC Multiple</span>
-                    <span className="text-[#171717] font-bold text-sm">{lboData.outputs.moic}x</span>
+                  <div className="p-3 bg-[#0B0E14] border border-[#1E293B] rounded-sm">
+                    <span className="text-slate-400 block text-[9px]">MOIC Multiple</span>
+                    <span className="text-white font-bold text-sm">{lboData.outputs.moic}x</span>
                   </div>
-                  <div className="p-3 bg-emerald-50 border border-emerald-200 rounded-lg animate-pulse">
-                    <span className="text-[var(--emerald)] block text-[9px] font-bold">Projected IRR</span>
-                    <span className="text-[var(--emerald)] font-bold text-sm">{lboData.outputs.irr}%</span>
+                  <div className="p-3 bg-terminal-emerald-dim border border-terminal-border-emerald rounded-sm">
+                    <span className="text-terminal-emerald block text-[9px] font-bold">Projected IRR</span>
+                    <span className="text-terminal-emerald font-bold text-sm">{lboData.outputs.irr}%</span>
                   </div>
                 </div>
 
                 <div className="h-[200px] w-full pt-2">
                   <ResponsiveContainer width="100%" height="100%">
                     <BarChart data={lboData.outputs.irrData}>
-                      <XAxis dataKey="year" stroke="#888888" fontSize={10} tickLine={false} />
-                      <YAxis stroke="#888888" fontSize={10} tickLine={false} />
-                      <Bar dataKey="irr" fill="#0E7C69" radius={[3, 3, 0, 0]} />
+                      <XAxis dataKey="year" stroke="#64748B" fontSize={10} tickLine={false} />
+                      <YAxis stroke="#64748B" fontSize={10} tickLine={false} />
+                      <Bar dataKey="irr" fill="#00FF9D" radius={[2, 2, 0, 0]} />
                     </BarChart>
                   </ResponsiveContainer>
                 </div>
@@ -363,48 +347,48 @@ export default function BIReportEngine() {
 
             {/* 3. THREE STATEMENT PROJECTIONS */}
             {isThreeStatementActive && threeStatementData && (
-              <div className="space-y-4 border-b border-slate-200 pb-8">
-                <h3 className="font-serif text-xl font-bold text-[#171717] flex items-center gap-2">
-                  <span className="text-[var(--emerald)]">◎</span>
+              <div className="space-y-4 border-b border-[#1E293B] pb-8">
+                <h3 className="font-mono text-lg font-bold text-white uppercase flex items-center gap-2">
+                  <span className="text-terminal-emerald">◎</span>
                   <span>3. {isAr ? "التوقعات المالية المتكاملة للقوائم الثلاث" : "3-Statement Projections Summary"}</span>
                 </h3>
-                <p className="text-xs text-slate-500 leading-relaxed font-mono">
+                <p className="text-xs text-slate-400 leading-relaxed font-mono">
                   {isAr ? "توقعات القوائم الثلاث (الأرباح والخسائر، الميزانية، التدفقات) لـ 5 سنوات قادمة:" : "5-year linked model outputs for income statement and corporate items:"}
                 </p>
 
                 <div className="overflow-x-auto">
                   <table className="w-full text-left font-mono text-[10px] border-collapse">
                     <thead>
-                      <tr className="border-b border-slate-250 text-slate-500 bg-slate-50">
+                      <tr className="border-b border-[#1E293B] text-slate-400 bg-[#0B0E14]">
                         <th className="p-2">Line Item (M)</th>
                         {threeStatementData.outputs.projections?.map((p: any) => (
                           <th key={p.year} className="text-right p-2">{p.year}</th>
                         ))}
                       </tr>
                     </thead>
-                    <tbody>
-                      <tr className="border-b border-slate-200">
-                        <td className="p-2 font-bold text-[var(--emerald)]">Revenue</td>
+                    <tbody className="divide-y divide-[#1E293B]">
+                      <tr className="bg-terminal-emerald-dim font-bold text-terminal-emerald">
+                        <td className="p-2">Revenue</td>
                         {threeStatementData.outputs.projections?.map((p: any) => (
-                          <td key={p.year} className="text-right p-2 font-bold text-[var(--emerald)]">{p.rev.toLocaleString()}</td>
+                          <td key={p.year} className="text-right p-2 font-bold text-terminal-emerald">{p.rev.toLocaleString()}</td>
                         ))}
                       </tr>
-                      <tr className="border-b border-slate-200">
-                        <td className="p-2">EBITDA</td>
+                      <tr>
+                        <td className="p-2 text-slate-300">EBITDA</td>
                         {threeStatementData.outputs.projections?.map((p: any) => (
-                          <td key={p.year} className="text-right p-2 text-slate-700">{p.ebitda.toLocaleString()}</td>
+                          <td key={p.year} className="text-right p-2 text-slate-300">{p.ebitda.toLocaleString()}</td>
                         ))}
                       </tr>
-                      <tr className="border-b border-slate-200">
-                        <td className="p-2">Zakat or Tax</td>
+                      <tr>
+                        <td className="p-2 text-slate-400">Zakat or Tax</td>
                         {threeStatementData.outputs.projections?.map((p: any) => (
-                          <td key={p.year} className="text-right p-2 text-red-650">-{p.zakatOrTax.toLocaleString()}</td>
+                          <td key={p.year} className="text-right p-2 text-rose-400">-{p.zakatOrTax.toLocaleString()}</td>
                         ))}
                       </tr>
-                      <tr className="border-b border-slate-250 font-bold bg-slate-50">
-                        <td className="p-2 text-[#171717]">Net Income</td>
+                      <tr className="font-bold bg-[#0B0E14] text-white">
+                        <td className="p-2">Net Income</td>
                         {threeStatementData.outputs.projections?.map((p: any) => (
-                          <td key={p.year} className="text-right p-2 font-bold text-[#171717]">{p.netIncome.toLocaleString()}</td>
+                          <td key={p.year} className="text-right p-2 font-bold text-white">{p.netIncome.toLocaleString()}</td>
                         ))}
                       </tr>
                     </tbody>
@@ -415,35 +399,35 @@ export default function BIReportEngine() {
 
             {/* 4. SHARIAH SCREENING */}
             {isShariahActive && shariahData && (
-              <div className="space-y-4 border-b border-slate-200 pb-8">
-                <h3 className="font-serif text-xl font-bold text-[#171717] flex items-center gap-2">
-                  <span className="text-[var(--emerald)]">◎</span>
+              <div className="space-y-4 border-b border-[#1E293B] pb-8">
+                <h3 className="font-mono text-lg font-bold text-white uppercase flex items-center gap-2">
+                  <span className="text-terminal-emerald">◎</span>
                   <span>4. {isAr ? "فحص التوافق مع الشريعة الإسلامية" : "AAOIFI Shariah Compliance Audit"}</span>
                 </h3>
                 
-                <div className="flex items-center justify-between p-4 bg-emerald-50/50 border border-emerald-250 rounded-lg">
+                <div className="flex items-center justify-between p-4 bg-terminal-emerald-dim border border-terminal-border-emerald rounded-sm">
                   <div>
-                    <span className="text-[10px] font-mono text-slate-500 block">Compliance Verdict</span>
-                    <span className="font-mono text-sm font-bold text-[var(--emerald)]">{shariahData.outputs.verdict}</span>
+                    <span className="text-[10px] font-mono text-slate-400 block uppercase">Compliance Verdict</span>
+                    <span className="font-mono text-sm font-bold text-terminal-emerald">{shariahData.outputs.verdict}</span>
                   </div>
                   <div className="text-right">
-                    <span className="text-[10px] font-mono text-slate-500 block">Purification Fee / Share</span>
-                    <span className="font-mono text-sm font-bold text-slate-800">SAR {shariahData.outputs.purificationPerShare}</span>
+                    <span className="text-[10px] font-mono text-slate-400 block uppercase">Purification Fee / Share</span>
+                    <span className="font-mono text-sm font-bold text-white">SAR {shariahData.outputs.purificationPerShare}</span>
                   </div>
                 </div>
 
                 <div className="grid grid-cols-3 gap-4 text-center font-mono text-[10px] pt-2">
-                  <div className="p-2 border border-slate-200 rounded">
-                    <span className="text-slate-500 block">Debt Ratio</span>
-                    <span className="text-[#171717] font-bold">{shariahData.outputs.debtRatio}% / 33%</span>
+                  <div className="p-2 bg-[#0B0E14] border border-[#1E293B] rounded-sm">
+                    <span className="text-slate-400 block">Debt Ratio</span>
+                    <span className="text-white font-bold">{shariahData.outputs.debtRatio}% / 33%</span>
                   </div>
-                  <div className="p-2 border border-slate-200 rounded">
-                    <span className="text-slate-500 block">Interest Ratio</span>
-                    <span className="text-[#171717] font-bold">{shariahData.outputs.interestRatio}% / 5%</span>
+                  <div className="p-2 bg-[#0B0E14] border border-[#1E293B] rounded-sm">
+                    <span className="text-slate-400 block">Interest Ratio</span>
+                    <span className="text-white font-bold">{shariahData.outputs.interestRatio}% / 5%</span>
                   </div>
-                  <div className="p-2 border border-slate-200 rounded">
-                    <span className="text-slate-500 block">Receivables Ratio</span>
-                    <span className="text-[#171717] font-bold">{shariahData.outputs.receivablesRatio}% / 49%</span>
+                  <div className="p-2 bg-[#0B0E14] border border-[#1E293B] rounded-sm">
+                    <span className="text-slate-400 block">Receivables Ratio</span>
+                    <span className="text-white font-bold">{shariahData.outputs.receivablesRatio}% / 49%</span>
                   </div>
                 </div>
               </div>
@@ -451,19 +435,19 @@ export default function BIReportEngine() {
 
             {/* 5. COMPANY COMPARATOR */}
             {isComparatorActive && comparatorData && (
-              <div className="space-y-4 border-b border-slate-200 pb-8">
-                <h3 className="font-serif text-xl font-bold text-[#171717] flex items-center gap-2">
-                  <span className="text-[var(--emerald)]">◎</span>
+              <div className="space-y-4 border-b border-[#1E293B] pb-8">
+                <h3 className="font-mono text-lg font-bold text-white uppercase flex items-center gap-2">
+                  <span className="text-terminal-emerald">◎</span>
                   <span>5. {isAr ? "مقارنة الشركات المحددة ومصفوفة الأداء" : "Company Peer Comparator Matrix"}</span>
                 </h3>
-                <p className="text-xs text-slate-500 leading-relaxed font-mono">
+                <p className="text-xs text-slate-400 leading-relaxed font-mono">
                   {isAr ? "جدول مقارنة الشركات والصفقات المدخلة يدوياً:" : "Comparison breakdown of custom companies entered during the session:"}
                 </p>
 
                 <div className="overflow-x-auto pt-2">
                   <table className="w-full text-left font-mono text-[10px] border-collapse">
                     <thead>
-                      <tr className="border-b border-slate-250 text-slate-500 bg-slate-50">
+                      <tr className="border-b border-[#1E293B] text-slate-400 bg-[#0B0E14]">
                         <th className="p-2">Ticker</th>
                         <th className="p-2">Company</th>
                         <th className="p-2">Sector</th>
@@ -472,15 +456,15 @@ export default function BIReportEngine() {
                         <th className="p-2 text-right">Yield</th>
                       </tr>
                     </thead>
-                    <tbody>
+                    <tbody className="divide-y divide-[#1E293B]">
                       {comparatorData.rows.map((row: any, idx: number) => (
-                        <tr key={idx} className="border-b border-slate-200">
-                          <td className="p-2 font-bold text-[var(--emerald)]">{row.ticker}</td>
-                          <td className="p-2 text-slate-800">{isAr ? row.nameAr : row.name}</td>
-                          <td className="p-2 text-slate-550">{row.sector}</td>
-                          <td className="p-2 text-right text-[#171717] font-bold">SAR {row.price}</td>
-                          <td className="p-2 text-right text-slate-700">{row.pe}x</td>
-                          <td className="p-2 text-right text-green-700 font-bold">{row.divYield}%</td>
+                        <tr key={idx}>
+                          <td className="p-2 font-bold text-terminal-emerald">{row.ticker}</td>
+                          <td className="p-2 text-slate-200">{isAr ? row.nameAr : row.name}</td>
+                          <td className="p-2 text-slate-400">{row.sector}</td>
+                          <td className="p-2 text-right text-white font-bold">SAR {row.price}</td>
+                          <td className="p-2 text-right text-slate-300">{row.pe}x</td>
+                          <td className="p-2 text-right text-terminal-emerald font-bold">{row.divYield}%</td>
                         </tr>
                       ))}
                     </tbody>
@@ -492,12 +476,12 @@ export default function BIReportEngine() {
             {/* 6. AI RESEARCH MEMO */}
             {isResearchMemoActive && researchMemoData && (
               <div className="space-y-4 pb-4">
-                <h3 className="font-serif text-xl font-bold text-[#171717] flex items-center gap-2">
-                  <span className="text-[var(--emerald)]">◎</span>
+                <h3 className="font-mono text-lg font-bold text-white uppercase flex items-center gap-2">
+                  <span className="text-terminal-emerald">◎</span>
                   <span>6. {isAr ? "مذكرة أبحاث الملكية الفكرية بالذكاء الاصطناعي" : "AI Equity Research Memo"}</span>
                 </h3>
-                <div className="p-6 rounded-lg bg-slate-50 border border-slate-200 font-sans text-slate-800 leading-relaxed text-xs">
-                  <div className="prose prose-slate max-w-none prose-headings:font-serif prose-headings:text-[#171717] prose-headings:font-bold prose-h1:text-sm prose-h2:text-xs prose-p:text-[11px] prose-li:text-[11px] prose-strong:text-[#171717]">
+                <div className="p-6 rounded-sm bg-[#0B0E14] border border-[#1E293B] font-mono text-slate-200 leading-relaxed text-xs">
+                  <div className="prose prose-invert max-w-none prose-headings:font-mono prose-headings:text-white prose-headings:font-bold prose-h1:text-sm prose-h2:text-xs prose-p:text-[11px] prose-li:text-[11px] prose-strong:text-terminal-emerald">
                     <ReactMarkdown>{researchMemoData.content}</ReactMarkdown>
                   </div>
                 </div>
@@ -508,9 +492,9 @@ export default function BIReportEngine() {
         )}
 
         {/* REPORT FOOTER */}
-        <div className="border-t border-slate-250 pt-6 text-center font-mono text-[9px] text-slate-400">
+        <div className="border-t border-[#1E293B] pt-6 text-center font-mono text-[9px] text-slate-500">
           <p>© {new Date().getFullYear()} Mahwar Investment Suite. Developed by Muhammad Sarmad Nadeem.</p>
-          <p className="mt-1 font-bold text-slate-500">CONFIDENTIAL | FOR GCC CAPITAL MARKETS COMPLIANCE REVIEW</p>
+          <p className="mt-1 font-bold text-slate-400 uppercase tracking-widest">CONFIDENTIAL | FOR GCC CAPITAL MARKETS COMPLIANCE REVIEW</p>
         </div>
       </div>
     </motion.div>
