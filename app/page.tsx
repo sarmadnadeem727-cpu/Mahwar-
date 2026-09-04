@@ -5,7 +5,7 @@ import Navbar from "@/components/layout/Navbar";
 import HeroSection from "@/components/sections/HeroSection";
 import ToolShowcase from "@/components/sections/ToolShowcase";
 import GCCMapSection from "@/components/sections/GCCMapSection";
-import ComparisonSection from "@/components/sections/ComparisonSection";
+import CapabilitiesBento from "@/components/sections/CapabilitiesBento";
 import NewsPreviewWidget from "@/components/sections/NewsPreviewWidget";
 import CTASection from "@/components/sections/CTASection";
 import Footer from "@/components/layout/Footer";
@@ -18,7 +18,7 @@ export default function LandingPage() {
         <HeroSection />
         <GCCMapSection />
         <ToolShowcase />
-        <ComparisonSection />
+        <CapabilitiesBento />
         <NewsPreviewWidget />
         <CTASection />
       </main>
