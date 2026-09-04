@@ -54,6 +54,7 @@ interface TerminalState {
   language: Language;
   currency: Currency;
   searchQuery: string;
+  isMobileMenuOpen: boolean;
 
   // Session analyses store
   sessionAnalyses: SessionAnalyses;
@@ -66,6 +67,7 @@ interface TerminalState {
   setLanguage: (lang: Language) => void;
   setCurrency: (currency: Currency) => void;
   setSearchQuery: (query: string) => void;
+  setMobileMenuOpen: (isOpen: boolean) => void;
 }
 
 export const useTerminalStore = create<TerminalState>((set) => ({
@@ -76,6 +78,7 @@ export const useTerminalStore = create<TerminalState>((set) => ({
   language: "en",
   currency: "SAR",
   searchQuery: "",
+  isMobileMenuOpen: false,
 
   sessionAnalyses: {},
   updateSessionAnalysis: (key, data) => 
@@ -93,5 +96,6 @@ export const useTerminalStore = create<TerminalState>((set) => ({
   setLanguage: (language) => set({ language }),
   setCurrency: (currency) => set({ currency }),
   setSearchQuery: (searchQuery) => set({ searchQuery }),
+  setMobileMenuOpen: (isMobileMenuOpen) => set({ isMobileMenuOpen }),
 }));
 

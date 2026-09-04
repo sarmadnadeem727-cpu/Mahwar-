@@ -57,7 +57,7 @@ const NAV_GROUPS: NavGroup[] = [
 ];
 
 export default function Sidebar() {
-  const { activePanel, setPanel, language } = useTerminalStore();
+  const { activePanel, setPanel, language, isMobileMenuOpen, setMobileMenuOpen } = useTerminalStore();
   const isAr = language === "ar";
   
   // Hover & Pin State
@@ -68,8 +68,22 @@ export default function Sidebar() {
   const isExpanded = isHovered || isPinned;
 
   return (
-    <motion.aside
-      onMouseEnter={() => setIsHovered(true)}
+    <>
+      {/* Mobile Backdrop */}
+      <AnimatePresence>
+        {isMobileMenuOpen && (
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            onClick={() => setMobileMenuOpen(false)}
+            className="fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-40 lg:hidden"
+          />
+        )}
+      </AnimatePresence>
+
+      <motion.aside
+        onMouseEnter={() => setIsHovered(true)}
       onMouseLeave={() => setIsHovered(false)}
       initial={false}
       animate={{ 
@@ -81,8 +95,10 @@ export default function Sidebar() {
         damping: 32,
         mass: 0.8
       }}
-      className={`relative bg-white border-r border-[#E2E8F0] flex flex-col h-screen sticky top-0 z-30 select-none no-print font-sans shadow-[2px_0_12px_rgba(0,0,0,0.03)] transition-colors duration-200 ${
+      className={`fixed lg:relative bg-white border-r border-[#E2E8F0] flex flex-col h-screen top-0 z-50 lg:z-30 select-none no-print font-sans shadow-[2px_0_12px_rgba(0,0,0,0.03)] transition-[width,transform] duration-200 ${
         isExpanded ? "ring-1 ring-slate-200/50" : ""
+      } ${
+        isMobileMenuOpen ? "translate-x-0" : (isAr ? "translate-x-full lg:translate-x-0" : "-translate-x-full lg:translate-x-0")
       }`}
       dir={isAr ? "rtl" : "ltr"}
       aria-label="Sidebar Navigation"
@@ -171,7 +187,10 @@ export default function Sidebar() {
                 return (
                   <button
                     key={item.id}
-                    onClick={() => setPanel(item.id)}
+                    onClick={() => {
+                      setPanel(item.id);
+                      setMobileMenuOpen(false);
+                    }}
                     title={!isExpanded ? label : undefined}
                     className={`relative w-full flex items-center rounded-xl transition-all duration-150 cursor-pointer group ${
                       isExpanded 
@@ -280,5 +299,6 @@ export default function Sidebar() {
         )}
       </div>
     </motion.aside>
+    </>
   );
 }

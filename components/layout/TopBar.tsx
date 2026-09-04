@@ -1,13 +1,13 @@
 "use client";
 
 import React, { useState, useEffect } from "react";
-import { Globe, Search, Command, Sparkles, Activity } from "lucide-react";
+import { Globe, Search, Command, Sparkles, Activity, Menu } from "lucide-react";
 import { useTerminalStore, Currency } from "@/store/useTerminalStore";
 import { t } from "@/lib/i18n";
 import CommandPalette from "@/components/ui/CommandPalette";
 
 export default function TopBar() {
-  const { activePanel, language, setLanguage, currency, setCurrency } = useTerminalStore();
+  const { activePanel, language, setLanguage, currency, setCurrency, isMobileMenuOpen, setMobileMenuOpen } = useTerminalStore();
   const isAr = language === 'ar';
   const [isPaletteOpen, setIsPaletteOpen] = useState(false);
 
@@ -43,8 +43,15 @@ export default function TopBar() {
   return (
     <>
       <header className="h-[64px] min-h-[64px] border-b border-[#E2E8F0] bg-white flex items-center justify-between px-6 sticky top-0 z-20 no-print font-sans" dir={isAr ? "rtl" : "ltr"}>
-        {/* LEFT: ACTIVE PANEL STATUS */}
-        <div className="flex items-center gap-4">
+        {/* LEFT: ACTIVE PANEL STATUS & HAMBURGER */}
+        <div className="flex items-center gap-3 lg:gap-4">
+          <button 
+            className="lg:hidden p-2 text-slate-500 hover:text-slate-900 bg-slate-50 hover:bg-slate-100 rounded-md border border-[#E2E8F0] transition-colors"
+            onClick={() => setMobileMenuOpen(!isMobileMenuOpen)}
+          >
+            <Menu size={18} />
+          </button>
+          
           <div className="flex items-center gap-2">
             <span className="relative flex h-2 w-2">
               <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald opacity-75"></span>
@@ -60,7 +67,7 @@ export default function TopBar() {
         {/* CENTER: PERSISTENT SEARCH COMMAND PILL */}
         <button
           onClick={() => setIsPaletteOpen(true)}
-          className="flex items-center gap-3 px-3.5 py-1.5 bg-slate-50 hover:bg-slate-100 border border-[#E2E8F0] rounded-lg text-xs text-slate-500 transition-all cursor-pointer shadow-2xs max-w-sm w-full mx-4"
+          className="hidden md:flex items-center gap-3 px-3.5 py-1.5 bg-slate-50 hover:bg-slate-100 border border-[#E2E8F0] rounded-lg text-xs text-slate-500 transition-all cursor-pointer shadow-2xs max-w-sm w-full mx-4"
         >
           <Search size={13} className="text-slate-400 shrink-0" />
           <span className="truncate flex-1 text-left rtl:text-right font-mono text-xs text-slate-600">
@@ -92,8 +99,8 @@ export default function TopBar() {
             onClick={() => setLanguage(isAr ? 'en' : 'ar')}
             className="flex items-center gap-1.5 px-3 py-1.5 bg-slate-50 border border-[#E2E8F0] hover:bg-slate-100 text-xs font-mono font-bold text-slate-700 rounded-lg transition-colors cursor-pointer"
           >
-            <Globe size={13} className="text-emerald" />
-            <span>{isAr ? "English" : "العربية"}</span>
+            <Globe size={13} className="text-emerald shrink-0" />
+            <span className="hidden sm:inline">{isAr ? "English" : "العربية"}</span>
           </button>
         </div>
       </header>

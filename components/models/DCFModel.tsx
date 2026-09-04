@@ -164,7 +164,7 @@ export default function DCFModel() {
       initial="initial"
       animate="animate"
       exit="exit"
-      className="grid grid-cols-12 gap-8 text-slate-100 font-mono"
+      className="grid grid-cols-1 lg:grid-cols-12 gap-8 text-slate-100 font-mono"
       dir={isAr ? "rtl" : "ltr"}
     >
       {/* LEFT COLUMN: ASSUMPTIONS & SCENARIOS (4 COLS) */}
