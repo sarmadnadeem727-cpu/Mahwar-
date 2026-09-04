@@ -11,13 +11,9 @@ import { useTerminalStore } from "@/store/useTerminalStore";
 import NumberCounter from "@/components/ui/NumberCounter";
 import { MahwarBackgroundLogo } from "@/components/ui/MahwarSplash";
 
-import BootSequence from "@/components/sections/BootSequence";
-
 export default function HeroSection() {
   const { language } = useTerminalStore();
   const isAr = language === 'ar';
-
-  const [bootComplete, setBootComplete] = useState(false);
 
   // Animated ticking model state for the primary visual anchor
   const [dcfValue, setDcfValue] = useState(38.45);
@@ -34,10 +30,7 @@ export default function HeroSection() {
   }, []);
 
   return (
-    <>
-      {!bootComplete && <BootSequence onComplete={() => setBootComplete(true)} />}
-
-      <section className="relative min-h-[88vh] flex flex-col justify-center bg-white text-slate-heading pt-24 pb-16 overflow-hidden border-b border-surface-border select-none font-sans">
+    <section className="relative min-h-[88vh] flex flex-col justify-center bg-white text-slate-heading pt-24 pb-16 overflow-hidden border-b border-surface-border select-none font-sans">
         {/* CONTINUOUS LIVE BACKGROUND VIDEO */}
         <video
           autoPlay
@@ -308,6 +301,5 @@ export default function HeroSection() {
 
       </div>
     </section>
-  </>
-);
+  );
 }
