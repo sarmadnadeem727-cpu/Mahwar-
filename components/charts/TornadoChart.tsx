@@ -143,26 +143,26 @@ export default function TornadoChart({
           return (
             <div key={i} className="space-y-1.5">
               <div className="flex justify-between items-center text-xs">
-                <span className="font-bold text-white">{d.name}</span>
-                <span className="text-[11px] text-slate-400">
+                <span className="font-bold text-slate-900">{d.name}</span>
+                <span className="text-[11px] text-slate-500">
                   Swing: <span className="text-emerald font-bold">SAR {d.range.toFixed(2)}</span> (SAR {d.lowPx.toFixed(2)} — SAR {d.highPx.toFixed(2)})
                 </span>
               </div>
 
               {/* Centered Tornado Bar Container */}
-              <div className="h-7 bg-[#0B0E14] border border-[#1E293B] rounded-sm relative flex items-center">
+              <div className="h-7 bg-slate-100 border border-[#E2E8F0] rounded-lg relative flex items-center">
                 {/* Center Baseline Indicator */}
-                <div className="absolute left-1/2 top-0 bottom-0 w-0.5 bg-slate-500 z-10" />
+                <div className="absolute left-1/2 top-0 bottom-0 w-0.5 bg-slate-400 z-10" />
 
                 {/* Left Negative Bar */}
                 <div
-                  className="absolute right-1/2 h-4 bg-rose-500/80 rounded-l-sm transition-all"
+                  className="absolute right-1/2 h-4 bg-rose-500 rounded-l transition-all"
                   style={{ width: `${negPct}%` }}
                 />
 
                 {/* Right Positive Bar */}
                 <div
-                  className="absolute left-1/2 h-4 bg-emerald-500/80 rounded-r-sm transition-all"
+                  className="absolute left-1/2 h-4 bg-emerald rounded-r transition-all"
                   style={{ width: `${posPct}%` }}
                 />
               </div>

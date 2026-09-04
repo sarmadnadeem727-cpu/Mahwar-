@@ -221,7 +221,7 @@ const FooterModal = ({ isOpen, onClose, type }: FooterModalProps) => {
             {[
               { id: "hub" as PanelType, title: isAr ? "مركز الاستخبارات" : "Intelligence Hub", tag: "HUB" },
               { id: "news" as PanelType, title: isAr ? "الأخبار المباشرة" : "Financial News Wire", tag: "NEWS" },
-              { id: "screener" as PanelType, title: isAr ? "مقارنة الشركات" : "Company Comparator", tag: "COMPARE" },
+              { id: "monte_carlo" as PanelType, title: isAr ? "محاكاة مونت كارلو" : "Monte Carlo Risk Engine", tag: "RISK" },
               { id: "bi_report" as PanelType, title: isAr ? "تقارير ذكاء الأعمال" : "BI Report Engine", tag: "REPORTS" },
               { id: "DCF" as PanelType, title: isAr ? "نموذج DCF 5 سنوات" : "DCF Valuation Engine", tag: "VALUATION" },
               { id: "LBO" as PanelType, title: isAr ? "باني صفقات LBO" : "LBO Deal Builder", tag: "PRIVATE EQ" },

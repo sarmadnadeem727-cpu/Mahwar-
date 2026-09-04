@@ -6,7 +6,6 @@ export type PanelType =
   | "hub" 
   | "news"
   | "shariah" 
-  | "screener" // Company Comparator Matrix
   | "custom_model" // Excel-Style Custom Model Builder
   | "monte_carlo" // Monte Carlo Valuation Simulation Engine
   | "acquisition_cost" // M&A Acquisition Cost Calculator
@@ -37,7 +36,6 @@ export interface SessionAnalyses {
   lbo?: { inputs: any; outputs: any; computedAt: string };
   threeStatement?: { inputs: any; outputs: any; computedAt: string };
   shariah?: { inputs: any; outputs: any; computedAt: string };
-  comparator?: { rows: any[]; computedAt: string };
   customModel?: { models: CustomModelSaved[]; activeModelId: string; computedAt: string };
   monteCarlo?: { inputs: any; outputs: any; computedAt: string };
   acquisitionCost?: { inputs: any; outputs: any; computedAt: string };

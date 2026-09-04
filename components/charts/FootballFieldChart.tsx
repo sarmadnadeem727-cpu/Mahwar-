@@ -86,7 +86,7 @@ export default function FootballFieldChart({
 
       {/* Axis Scale Bar */}
       <div className="relative pt-2 pb-1">
-        <div className="flex justify-between text-[10px] text-slate-400 font-bold uppercase border-b border-[#1E293B] pb-2">
+        <div className="flex justify-between text-[10px] text-slate-500 font-bold uppercase border-b border-[#E2E8F0] pb-2 font-mono">
           <span>SAR {minScale.toFixed(2)}</span>
           <span>SAR {((minScale + maxScale) / 2).toFixed(2)}</span>
           <span>SAR {maxScale.toFixed(2)}</span>
@@ -112,14 +112,14 @@ export default function FootballFieldChart({
 
           return (
             <div key={i} className="space-y-2 group">
-              <div className="flex justify-between items-center text-xs">
+              <div className="flex justify-between items-center text-xs font-mono">
                 <div className="flex items-center gap-2">
-                  <span className="font-bold text-white">{r.name}</span>
-                  <span className="text-[9px] px-1.5 py-0.5 rounded bg-[#0B0E14] border border-[#1E293B] text-slate-400 font-bold">
+                  <span className="font-bold text-slate-900">{r.name}</span>
+                  <span className="text-[9px] px-2 py-0.5 rounded bg-slate-100 border border-[#E2E8F0] text-slate-600 font-bold">
                     {r.tag}
                   </span>
                 </div>
-                <div className="text-[11px] text-slate-300">
+                <div className="text-[11px] text-slate-600">
                   <span className="text-slate-400">Low:</span> SAR {r.min.toFixed(2)} |{" "}
                   <span className="text-emerald font-bold">Mid: SAR {r.mid.toFixed(2)}</span> |{" "}
                   <span className="text-slate-400">High:</span> SAR {r.max.toFixed(2)}
@@ -127,17 +127,17 @@ export default function FootballFieldChart({
               </div>
 
               {/* Bar Container */}
-              <div className="h-8 bg-[#0B0E14] border border-[#1E293B] rounded-sm relative overflow-hidden flex items-center">
+              <div className="h-8 bg-slate-100 border border-[#E2E8F0] rounded-lg relative overflow-hidden flex items-center">
                 {/* Implied Range Bar */}
                 <div
-                  className={`h-5 rounded-sm ${r.color} opacity-85 group-hover:opacity-100 transition-all absolute top-1.5`}
+                  className={`h-5 rounded-md ${r.color} opacity-90 group-hover:opacity-100 transition-all absolute top-1.5`}
                   style={{ left: `${leftPct}%`, width: `${widthPct}%` }}
                 />
 
                 {/* Midpoint Dot Marker */}
                 <div
-                  className="absolute w-2.5 h-2.5 bg-white border-2 border-slate-900 rounded-full z-10 shadow-sm"
-                  style={{ left: `calc(${midPct}% - 5px)` }}
+                  className="absolute w-3 h-3 bg-white border-2 border-emerald rounded-full z-10 shadow-xs"
+                  style={{ left: `calc(${midPct}% - 6px)` }}
                 />
               </div>
             </div>

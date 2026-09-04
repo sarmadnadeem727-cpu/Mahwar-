@@ -79,17 +79,6 @@ export default function IntelligenceHub() {
       tag: "COMPLIANCE"
     },
     {
-      id: "screener" as const,
-      title: isAr ? "مقارنة الشركات" : "Company Comparator",
-      desc: isAr ? "مقارنة نسب ومؤشرات الشركات والصفقات" : "Peer multiples, yields, and performance matrix",
-      icon: <Filter className="text-terminal-emerald" size={20} />,
-      hasData: !!sessionAnalyses.comparator,
-      statusLabel: !!sessionAnalyses.comparator 
-        ? `${sessionAnalyses.comparator.rows.length} ${isAr ? "شركات مدخلة" : "Companies Added"}`
-        : (isAr ? "جاهز للمقارنة" : "Ready for Comparison"),
-      tag: "COMPARISON"
-    },
-    {
       id: "custom_model" as const,
       title: t("panel_custom_model", language),
       desc: isAr ? "جدول نماذج مالية حرة بصيغ مخصصة" : "Excel-style spreadsheet builder with custom arithmetic formulas",

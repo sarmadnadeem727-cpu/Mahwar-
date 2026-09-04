@@ -26,12 +26,12 @@ export const FEATURES = [
     viz: "Shariah",
   },
   {
-    title: "Company Comparator Matrix",
-    arabic: "مقارنة الشركات ومصفوفة الأقران",
-    description: "Multi-company valuation multiples, dividend yields, market cap matrix, and interactive scatter plot analytics.",
+    title: "Monte Carlo Risk Engine",
+    arabic: "محرك محاكاة مونت كارلو للمخاطر",
+    description: "Probabilistic valuation and risk distributions with customizable iterations, standard deviation modeling, and confidence bands.",
     icon: "⊞",
-    tag: "COMPARISON",
-    viz: "Matrix",
+    tag: "SIMULATION",
+    viz: "MonteCarlo",
   },
   {
     title: "Linked 3-Statement Model",

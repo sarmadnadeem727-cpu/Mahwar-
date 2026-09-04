@@ -26,7 +26,6 @@ const Footer = () => {
       links: [
         { label: "Intelligence Hub", panel: "hub" },
         { label: "Financial News Wire", panel: "news" },
-        { label: "Company Comparator", panel: "screener" },
         { label: "BI Report Engine", panel: "bi_report" },
       ],
     },
@@ -65,7 +64,6 @@ const Footer = () => {
       links: [
         { label: "مركز الاستخبارات", panel: "hub" },
         { label: "الأخبار المالية المباشرة", panel: "news" },
-        { label: "مقارنة الشركات", panel: "screener" },
         { label: "محرك تقارير ذكاء الأعمال", panel: "bi_report" },
       ],
     },

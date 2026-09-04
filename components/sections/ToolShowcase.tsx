@@ -97,30 +97,7 @@ export default function ToolShowcase() {
             </div>
             <div className="p-1.5 bg-white border border-surface-border rounded text-center">
               <span className="text-slate-muted block text-[9px]">Purification</span>
-              <span className="font-bold text-slate-heading">SAR 0.00</span>
             </div>
-          </div>
-        </div>
-      )
-    },
-    {
-      id: "screener",
-      title: isAr ? "مقارنة الشركات ومصفوفة الأقران" : "Company Comparator Matrix",
-      tag: "COMPARISON",
-      desc: isAr 
-        ? "مصفوفة مقارنة تفاعلية وخريطة حرارية للشركات والنسب المالية والصفقات المدخلة يدوياً."
-        : "Multi-company valuation multiples, dividend yields, market cap matrix, and scatter plot analytics.",
-      icon: <Filter className="text-emerald" size={20} />,
-      visual: (
-        <div className="bg-surface-subtle p-3 rounded-lg border border-surface-border font-mono text-[11px] space-y-1.5">
-          <div className="flex justify-between items-center text-slate-muted mb-1">
-            <span>Peer Heatmap Swatch</span>
-            <span className="text-emerald font-bold">6 Peers</span>
-          </div>
-          <div className="grid grid-cols-3 gap-1 text-[10px] text-center font-bold">
-            <div className="p-1 bg-emerald-dim text-emerald rounded border border-emerald-border">ARAMCO 15.2x</div>
-            <div className="p-1 bg-white text-slate-heading rounded border border-surface-border">RAJHI 18.5x</div>
-            <div className="p-1 bg-emerald-dim text-emerald rounded border border-emerald-border">STC 14.8x</div>
           </div>
         </div>
       )

@@ -38,9 +38,9 @@ export default function SolutionSection() {
     },
     {
       icon: <Activity className="text-terminal-emerald" size={20} />,
-      title: isAr ? "مقارنة الشركات والصفقات" : "Company Comparator Matrix",
-      desc: isAr ? "مصفوفة مقارنة تفاعلية وخريطة حرارية للشركات والنسب المالية والصفقات المدخلة يدوياً." : "Interactive peer comparison matrix and heatmap for custom corporate profiles and deal terms.",
-      badge: isAr ? "تحليل الأقران" : "Peer Analysis",
+      title: isAr ? "محرك محاكاة مونت كارلو" : "Monte Carlo Risk Engine",
+      desc: isAr ? "محاكاة احتمالية لتقييم التدفقات وتوزيعات المخاطر مع فترات الثقة ونطاقات الحساسية." : "Probabilistic cash flow valuation and risk distribution engine with confidence intervals.",
+      badge: isAr ? "محاكاة المخاطر" : "Risk Simulation",
     },
     {
       icon: <LineChart className="text-terminal-emerald" size={20} />,

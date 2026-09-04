@@ -193,11 +193,11 @@ export default function MonteCarloSimulation({
             </span>
           </div>
 
-          <div className="p-4 bg-[#0B0E14] border border-[#1E293B] rounded-sm text-center">
-            <span className="text-[10px] text-slate-400 font-bold uppercase block mb-1">
+          <div className="p-4 bg-slate-50 border border-[#E2E8F0] rounded-lg text-center">
+            <span className="text-[10px] text-slate-500 font-bold uppercase block mb-1">
               {isAr ? "النسبة المئوية P90 (تفاؤلية)" : "P90 Percentile (Bull)"}
             </span>
-            <span className="text-xl font-extrabold text-sky-400">
+            <span className="text-xl font-extrabold text-slate-900">
               SAR {simResults.p90.toFixed(2)}
             </span>
           </div>
@@ -209,14 +209,14 @@ export default function MonteCarloSimulation({
         {simResults ? (
           <ResponsiveContainer width="100%" height="100%">
             <BarChart data={simResults.histogramData} margin={{ top: 10, right: 10, left: -20, bottom: 0 }}>
-              <CartesianGrid strokeDasharray="3 3" stroke="#1E293B" />
-              <XAxis dataKey="rangeLabel" stroke="#64748B" tickLine={false} />
-              <YAxis stroke="#64748B" tickLine={false} />
+              <CartesianGrid strokeDasharray="3 3" stroke="#E2E8F0" vertical={false} />
+              <XAxis dataKey="rangeLabel" stroke="#64748B" tickLine={false} fontSize={10} />
+              <YAxis stroke="#64748B" tickLine={false} fontSize={10} />
               <Tooltip
-                contentStyle={{ backgroundColor: "#0B0E14", borderColor: "#1E293B", color: "#F8FAFC", fontSize: "11px" }}
+                contentStyle={{ backgroundColor: "#FFFFFF", borderColor: "#E2E8F0", borderRadius: "8px", color: "#0F172A", fontSize: "11px", boxShadow: "0 4px 12px rgba(0,0,0,0.05)" }}
                 formatter={(val: any) => [`${val} runs`, "Frequency"]}
               />
-              <Bar dataKey="count" fill="#10B981" radius={[3, 3, 0, 0]} />
+              <Bar dataKey="count" fill="#0E7C69" radius={[3, 3, 0, 0]} />
             </BarChart>
           </ResponsiveContainer>
         ) : (

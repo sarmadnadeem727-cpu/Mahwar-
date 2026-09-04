@@ -33,7 +33,7 @@ const sourceSerif = Source_Serif_4({
 
 export const metadata: Metadata = {
   title: "Mahwar (محور) — Sovereign Financial Intelligence Terminal | GCC Capital Markets",
-  description: "The Axis of financial intelligence for GCC capital markets. Institutional 5-year DCF valuation, LBO deal builder, AAOIFI Shariah screening, Company Comparator Matrix, and 3-Statement Model.",
+  description: "The Axis of financial intelligence for GCC capital markets. Institutional 5-year DCF valuation, LBO deal builder, AAOIFI Shariah screening, Monte Carlo Risk Engine, and 3-Statement Model.",
   openGraph: {
     title: "Mahwar (محور) — Sovereign Intelligence Terminal",
     description: "GCC Capital Markets Financial Intelligence, Institutional Valuation, AAOIFI Compliance & BI Reporting.",

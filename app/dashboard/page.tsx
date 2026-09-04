@@ -12,7 +12,6 @@ import { useTerminalStore, PanelType } from "@/store/useTerminalStore";
 const IntelligenceHub = dynamic(() => import("@/components/features/IntelligenceHub"), { ssr: false });
 const NewsFeed = dynamic(() => import("@/components/features/NewsFeed"), { ssr: false });
 const ShariahScreening = dynamic(() => import("@/components/features/ShariahScreening"), { ssr: false });
-const CompanyComparator = dynamic(() => import("@/components/features/CompanyComparator"), { ssr: false });
 const CustomModelBuilder = dynamic(() => import("@/components/features/CustomModelBuilder"), { ssr: false });
 const MonteCarloPanel = dynamic(() => import("@/components/features/MonteCarloPanel"), { ssr: false });
 const AcquisitionCostCalculator = dynamic(() => import("@/components/features/AcquisitionCostCalculator"), { ssr: false });
@@ -28,7 +27,7 @@ function PanelContent() {
 
   useEffect(() => {
     const panelParam = searchParams.get("panel") as PanelType | null;
-    if (panelParam && ["hub", "news", "shariah", "screener", "custom_model", "monte_carlo", "acquisition_cost", "auto_statements", "bi_report", "DCF", "LBO", "FS"].includes(panelParam)) {
+    if (panelParam && ["hub", "news", "shariah", "custom_model", "monte_carlo", "acquisition_cost", "auto_statements", "bi_report", "DCF", "LBO", "FS"].includes(panelParam)) {
       setPanel(panelParam);
     }
   }, [searchParams, setPanel]);
@@ -37,7 +36,6 @@ function PanelContent() {
     switch (activePanel) {
       case "news":             return <NewsFeed />;
       case "shariah":          return <ShariahScreening />;
-      case "screener":         return <CompanyComparator />;
       case "custom_model":     return <CustomModelBuilder />;
       case "monte_carlo":      return <MonteCarloPanel />;
       case "acquisition_cost": return <AcquisitionCostCalculator />;

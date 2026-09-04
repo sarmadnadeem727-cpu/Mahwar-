@@ -66,16 +66,16 @@ export default function LboWaterfallChart({
         <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
           {/* SOURCES SIDE */}
           <div className="space-y-3">
-            <h4 className="text-xs font-bold text-emerald uppercase tracking-wider border-b border-[#1E293B] pb-2">
+            <h4 className="text-xs font-bold text-emerald uppercase tracking-wider border-b border-[#E2E8F0] pb-2">
               {isAr ? "مصادر التمويل (Sources of Funds)" : "Sources of Capital"}
             </h4>
             {sources.map((s, idx) => (
               <div key={idx} className="space-y-1">
                 <div className="flex justify-between text-xs">
-                  <span className="text-white font-bold">{s.name}</span>
+                  <span className="text-slate-900 font-bold">{s.name}</span>
                   <span className="text-emerald font-bold">SAR {s.val}M ({s.pct}%)</span>
                 </div>
-                <div className="h-3 bg-[#0B0E14] rounded-sm overflow-hidden border border-[#1E293B]">
+                <div className="h-3 bg-slate-100 rounded-full overflow-hidden border border-[#E2E8F0]">
                   <div className={`h-full ${s.color}`} style={{ width: `${s.pct}%` }} />
                 </div>
               </div>
@@ -84,7 +84,7 @@ export default function LboWaterfallChart({
 
           {/* USES SIDE */}
           <div className="space-y-3">
-            <h4 className="text-xs font-bold text-slate-400 uppercase tracking-wider border-b border-[#1E293B] pb-2">
+            <h4 className="text-xs font-bold text-slate-500 uppercase tracking-wider border-b border-[#E2E8F0] pb-2">
               {isAr ? "استخدامات الأموال (Uses of Funds)" : "Uses of Capital"}
             </h4>
             {uses.map((u, idx) => {
@@ -92,11 +92,11 @@ export default function LboWaterfallChart({
               return (
                 <div key={idx} className="space-y-1">
                   <div className="flex justify-between text-xs">
-                    <span className="text-white font-bold">{u.name}</span>
-                    <span className="text-slate-300 font-bold">SAR {u.val}M ({pct}%)</span>
+                    <span className="text-slate-900 font-bold">{u.name}</span>
+                    <span className="text-slate-700 font-bold">SAR {u.val}M ({pct}%)</span>
                   </div>
-                  <div className="h-3 bg-[#0B0E14] rounded-sm overflow-hidden border border-[#1E293B]">
-                    <div className="h-full bg-slate-600" style={{ width: `${pct}%` }} />
+                  <div className="h-3 bg-slate-100 rounded-full overflow-hidden border border-[#E2E8F0]">
+                    <div className="h-full bg-slate-500" style={{ width: `${pct}%` }} />
                   </div>
                 </div>
               );
@@ -106,13 +106,13 @@ export default function LboWaterfallChart({
       </div>
 
       {/* IRR & MOIC HOLD PERIOD TRAJECTORY LINE CHART */}
-      <div className="bg-[#121721] p-6 rounded-sm border border-[#1E293B] shadow-xl font-mono text-xs space-y-4">
-        <div className="flex justify-between items-center pb-2 border-b border-[#1E293B]">
+      <div className="bg-white p-6 rounded-lg border border-[#E2E8F0] shadow-sm font-mono text-xs space-y-4">
+        <div className="flex justify-between items-center pb-2 border-b border-[#E2E8F0]">
           <div>
             <span className="text-emerald font-bold uppercase tracking-wider text-[11px] block mb-1">
               {isAr ? "مسار معدل العائد حسب فترة الاستثمار" : "IRR & MOIC Hold Period Trajectory"}
             </span>
-            <h3 className="text-sm font-extrabold text-white font-serif">
+            <h3 className="text-sm font-extrabold text-slate-900 font-serif">
               {isAr ? "توقعات العائد المستهدف عبر السنوات (1 - 7 سنوات)" : "Annualized Returns by Hold Year"}
             </h3>
           </div>
@@ -121,14 +121,14 @@ export default function LboWaterfallChart({
         <div className="h-[220px] w-full pt-4">
           <ResponsiveContainer width="100%" height="100%">
             <LineChart data={holdYearsData} margin={{ top: 10, right: 10, left: -20, bottom: 0 }}>
-              <CartesianGrid strokeDasharray="3 3" stroke="#1E293B" />
-              <XAxis dataKey="year" stroke="#64748B" tickLine={false} tickFormatter={(y) => `Yr ${y}`} />
-              <YAxis stroke="#64748B" tickLine={false} unit="%" />
+              <CartesianGrid strokeDasharray="3 3" stroke="#E2E8F0" vertical={false} />
+              <XAxis dataKey="year" stroke="#64748B" tickLine={false} tickFormatter={(y) => `Yr ${y}`} fontSize={10} />
+              <YAxis stroke="#64748B" tickLine={false} unit="%" fontSize={10} />
               <Tooltip
-                contentStyle={{ backgroundColor: "#0B0E14", borderColor: "#1E293B", color: "#F8FAFC", fontSize: "11px" }}
+                contentStyle={{ backgroundColor: "#FFFFFF", borderColor: "#E2E8F0", borderRadius: "8px", color: "#0F172A", fontSize: "11px", boxShadow: "0 4px 12px rgba(0,0,0,0.05)" }}
                 formatter={(val: any, name: any) => [name === "irr" ? `${val}%` : `${val}x`, name === "irr" ? "IRR (%)" : "MOIC (x)"]}
               />
-              <Line type="monotone" dataKey="irr" stroke="#10B981" strokeWidth={3} dot={{ fill: "#10B981", r: 4 }} activeDot={{ r: 6 }} />
+              <Line type="monotone" dataKey="irr" stroke="#0E7C69" strokeWidth={3} dot={{ fill: "#0E7C69", r: 4 }} activeDot={{ r: 6 }} />
             </LineChart>
           </ResponsiveContainer>
         </div>

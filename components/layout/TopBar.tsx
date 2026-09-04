@@ -28,8 +28,10 @@ export default function TopBar() {
       case "hub": return isAr ? "مركز الاستخبارات" : "Intelligence Hub";
       case "news": return isAr ? "موجز الأخبار المالية" : "Market Wire";
       case "shariah": return isAr ? "الفحص الشرعي AAOIFI" : "AAOIFI Screening";
-      case "screener": return isAr ? "مقارنة الشركات" : "Company Comparator";
       case "custom_model": return isAr ? "باني النماذج المخصصة" : "Custom Model Builder";
+      case "monte_carlo": return isAr ? "محاكاة مونتي كارلو" : "Monte Carlo Simulation";
+      case "acquisition_cost": return isAr ? "تكاليف الاستحواذ M&A" : "M&A Acquisition Cost";
+      case "auto_statements": return isAr ? "القوائم المالية التلقائية" : "Auto Financial Statements";
       case "bi_report": return isAr ? "تقرير الأعمال الموحد" : "BI Synthesis";
       case "DCF": return isAr ? "نموذج التقييم DCF" : "DCF Valuation";
       case "LBO": return isAr ? "صفقات الاستحواذ LBO" : "LBO Deal Builder";

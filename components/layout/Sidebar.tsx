@@ -24,7 +24,6 @@ const NAV_GROUPS: NavGroup[] = [
     items: [
       { id: "hub", icon: <Columns size={15} />, labelKey: "panel_hub" },
       { id: "news", icon: <Newspaper size={15} />, labelKey: "panel_news" },
-      { id: "screener", icon: <Grid3X3 size={15} />, labelKey: "panel_screener" },
     ],
   },
   {
