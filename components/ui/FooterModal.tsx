@@ -21,6 +21,88 @@ const FooterModal = ({ isOpen, onClose, type }: FooterModalProps) => {
   const renderContent = () => {
     const key = type.toLowerCase();
 
+    if (key.includes("about") || key.includes("من نحن")) {
+      return (
+        <div className="space-y-6 text-slate-700">
+          <div className="flex items-center gap-3 pb-4 border-b border-[#E2E8F0]">
+            <div className="p-2.5 rounded-xl bg-emerald-dim text-emerald border border-emerald-border">
+              <Globe className="w-6 h-6" />
+            </div>
+            <div>
+              <h3 className="text-xl font-serif font-bold text-slate-900">
+                {isAr ? "عن محور" : "About Mahwar"}
+              </h3>
+              <p className="text-xs text-slate-500 font-mono">
+                {isAr ? "محطة النمذجة السيادية" : "Sovereign Terminal"}
+              </p>
+            </div>
+          </div>
+          <div className="space-y-4 text-xs leading-relaxed font-sans">
+            <p className="text-sm font-medium text-slate-800">
+              {isAr
+                ? "محور هي منصة متقدمة للنمذجة المالية والتحليل الكمي، صممت خصيصاً لتلبية متطلبات أسواق المال الخليجية."
+                : "Mahwar is a state-of-the-art quantitative financial modeling terminal built exclusively for GCC capital markets."}
+            </p>
+            <div className="p-4 bg-slate-50 border border-[#E2E8F0] rounded-xl space-y-2 mt-4">
+              <h4 className="font-bold text-emerald font-mono uppercase tracking-widest text-xs mb-2">
+                {isAr ? "هوية المنصة" : "Platform Identity"}
+              </h4>
+              <p className="text-slate-700 text-sm">
+                {isAr ? "محور هو أحد منتجات شركة زينر المرموقة." : "Mahwar is a proud product of Zener Inc."}
+              </p>
+              <div className="flex items-center gap-2 mt-3 pt-3 border-t border-[#E2E8F0]">
+                <div className="w-8 h-8 rounded-full bg-slate-200 border border-slate-300 flex items-center justify-center text-slate-500 font-bold font-serif">
+                  M
+                </div>
+                <div>
+                  <p className="text-slate-500 font-mono text-[10px] uppercase">
+                    {isAr ? "تم التصميم والتطوير بواسطة" : "Architected & Developed By"}
+                  </p>
+                  <p className="text-slate-900 font-bold">Muhammad Sarmad Nadeem</p>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      );
+    }
+
+    if (key.includes("contact") || key.includes("اتصل بنا")) {
+      return (
+        <div className="space-y-6 text-slate-700">
+          <div className="flex items-center gap-3 pb-4 border-b border-[#E2E8F0]">
+            <div className="p-2.5 rounded-xl bg-emerald-dim text-emerald border border-emerald-border">
+              <ScrollText className="w-6 h-6" />
+            </div>
+            <div>
+              <h3 className="text-xl font-serif font-bold text-slate-900">
+                {isAr ? "تواصل معنا" : "Contact Us"}
+              </h3>
+              <p className="text-xs text-slate-500 font-mono">
+                {isAr ? "فريق الدعم الفني والمبيعات" : "Support & Inquiries"}
+              </p>
+            </div>
+          </div>
+          <div className="space-y-4 text-xs leading-relaxed font-sans">
+            <div className="p-5 bg-slate-50 border border-[#E2E8F0] rounded-xl space-y-5">
+              <div>
+                <h4 className="font-bold text-slate-900 mb-1">{isAr ? "الشركة المطورة" : "Developer & Publisher"}</h4>
+                <p className="text-slate-700 font-mono text-sm font-bold text-emerald">{isAr ? "زينر انك (Zener Inc.)" : "Zener Inc."}</p>
+              </div>
+              <div className="pt-4 border-t border-[#E2E8F0]">
+                <h4 className="font-bold text-slate-900 mb-2">{isAr ? "فريق الهندسة والتطوير" : "Lead Engineering & Support"}</h4>
+                <p className="text-slate-700 font-bold">Muhammad Sarmad Nadeem</p>
+                <div className="flex flex-col gap-1 mt-2">
+                  <p className="text-slate-500 font-mono text-[11px]">Email: sarmadnadeem727@gmail.com</p>
+                  <p className="text-slate-500 font-mono text-[11px]">GitHub: @sarmadnadeem727-cpu</p>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      );
+    }
+
     if (key.includes("privacy") || key.includes("خصوصية")) {
       return (
         <div className="space-y-6 text-slate-700">

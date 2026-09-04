@@ -49,8 +49,8 @@ const Footer = () => {
     {
       title: "Company",
       links: [
-        { label: "About Us", href: "/#problem" },
-        { label: "Contact", href: "/#problem" },
+        { label: "About Us", modal: "about" },
+        { label: "Contact", modal: "contact" },
         { label: "Privacy Policy", modal: "privacy policy" },
         { label: "Terms of Service", modal: "terms of service" },
         { label: "Licensing", modal: "licensing" },
@@ -87,8 +87,8 @@ const Footer = () => {
     {
       title: "الشركة",
       links: [
-        { label: "من نحن", href: "/#problem" },
-        { label: "اتصل بنا", href: "/#problem" },
+        { label: "من نحن", modal: "about" },
+        { label: "اتصل بنا", modal: "contact" },
         { label: "سياسة الخصوصية", modal: "سياسة الخصوصية" },
         { label: "شروط الخدمة", modal: "شروط الخدمة" },
         { label: "التراخيص", modal: "التراخيص" },
@@ -169,7 +169,7 @@ const Footer = () => {
             {isAr ? "محور · نبض أسواق المال السعودية" : "محور · The Axis of Saudi & GCC Capital Markets"}
           </div>
           <div className={`font-mono text-xs text-slate-600 ${isAr ? 'font-arabic' : ''}`}>
-            {isAr ? "تطوير" : "Developed by"} <span className="text-emerald font-bold">Muhammad Sarmad Nadeem</span>
+            {isAr ? "أحد منتجات Zener Inc. | تطوير" : "A product of Zener Inc. | Developed by"} <span className="text-emerald font-bold">Muhammad Sarmad Nadeem</span>
           </div>
         </div>
       </div>
