@@ -81,15 +81,6 @@ const STATIC_TOOLS: LocalTool[] = [
     icon: <Filter className="text-terminal-emerald" size={16} />
   },
   {
-    id: "research",
-    name: "AI Equity Research Memos (Gemini 2.5)",
-    nameAr: "مذكرات أبحاث الأسهم بالذكاء الاصطناعي",
-    category: "Research",
-    categoryAr: "الأبحاث",
-    keywords: ["research", "memo", "gemini", "ai", "report", "analyst", "بحث", "تقرير", "مذكرة"],
-    icon: <Sparkles className="text-terminal-emerald" size={16} />
-  },
-  {
     id: "bi_report",
     name: "Consolidated BI Report & PDF Export",
     nameAr: "محرك تقارير الأعمال وتصدير PDF",

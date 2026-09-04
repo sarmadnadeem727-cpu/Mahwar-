@@ -11,7 +11,6 @@ import { useTerminalStore, PanelType } from "@/store/useTerminalStore";
 // Lazy loading feature modules with zero SSR for performance optimization
 const IntelligenceHub = dynamic(() => import("@/components/features/IntelligenceHub"), { ssr: false });
 const NewsFeed = dynamic(() => import("@/components/features/NewsFeed"), { ssr: false });
-const AIResearch = dynamic(() => import("@/components/features/AIResearch"), { ssr: false });
 const ShariahScreening = dynamic(() => import("@/components/features/ShariahScreening"), { ssr: false });
 const CompanyComparator = dynamic(() => import("@/components/features/CompanyComparator"), { ssr: false });
 const BIReportEngine = dynamic(() => import("@/components/features/BIReportEngine"), { ssr: false });
@@ -25,7 +24,7 @@ function PanelContent() {
 
   useEffect(() => {
     const panelParam = searchParams.get("panel") as PanelType | null;
-    if (panelParam && ["hub", "news", "research", "shariah", "screener", "bi_report", "DCF", "LBO", "FS"].includes(panelParam)) {
+    if (panelParam && ["hub", "news", "shariah", "screener", "bi_report", "DCF", "LBO", "FS"].includes(panelParam)) {
       setPanel(panelParam);
     }
   }, [searchParams, setPanel]);
@@ -33,7 +32,6 @@ function PanelContent() {
   const renderPanel = () => {
     switch (activePanel) {
       case "news":         return <NewsFeed />;
-      case "research":     return <AIResearch />;
       case "shariah":      return <ShariahScreening />;
       case "screener":     return <CompanyComparator />;
       case "bi_report":    return <BIReportEngine />;

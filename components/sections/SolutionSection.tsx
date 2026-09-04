@@ -14,9 +14,9 @@ export default function SolutionSection() {
   const features = [
     {
       icon: <Sparkles className="text-terminal-emerald" size={20} />,
-      title: isAr ? "مذكرات الاستثمار الذكية" : "AI Research Memos",
-      desc: isAr ? "توليد مذكرات استثمارية وتقارير بحثية بلمح البصر بدعم من Gemini 2.5 Flash للشركات والصفقات." : "Instant investment memo and research synthesis driven by Gemini 2.5 Flash from custom financials.",
-      badge: isAr ? "ذكاء اصطناعي" : "Gemini 2.5",
+      title: isAr ? "محرك تقارير ذكاء الأعمال" : "BI Report Engine (PDF/Excel)",
+      desc: isAr ? "تجميع نتائج النمذجة والحسابات وتصدير تقارير رفيعة المستوى ببيانات Excel وبملفات PDF موجهة للطباعة." : "Consolidates session modeling outputs, custom calculations, tables, and graphs into client-ready PDF and Excel reports.",
+      badge: isAr ? "تقارير وتصدير" : "PDF/Excel Export",
     },
     {
       icon: <BarChart3 className="text-terminal-emerald" size={20} />,

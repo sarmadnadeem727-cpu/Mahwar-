@@ -1,6 +1,7 @@
 "use client";
 
 import React from "react";
+import Link from "next/link";
 import { 
   Columns, Newspaper, Sparkles, ShieldCheck, Grid3X3, BarChart3, Layers, FileSpreadsheet, FileText
 } from "lucide-react";
@@ -37,7 +38,6 @@ const NAV_GROUPS: NavGroup[] = [
   {
     labelKey: "nav_research",
     items: [
-      { id: "research", icon: <Sparkles size={15} />, labelKey: "panel_ai_research" },
       { id: "shariah", icon: <ShieldCheck size={15} />, labelKey: "panel_shariah" },
       { id: "bi_report", icon: <FileText size={15} />, labelKey: "panel_bi_report" },
     ],
@@ -50,21 +50,21 @@ export default function Sidebar() {
 
   return (
     <aside className="w-[220px] min-w-[220px] bg-white border-r border-[#E2E8F0] flex flex-col h-screen sticky top-0 z-30 select-none no-print font-sans" dir={isAr ? "rtl" : "ltr"}>
-      {/* BRAND LOGO HEADER */}
-      <div 
-        onClick={() => setPanel("hub")}
-        className="p-4 border-b border-[#E2E8F0] flex items-center gap-3 bg-white cursor-pointer hover:bg-slate-50 transition-colors"
+      {/* BRAND LOGO HEADER - LINK TO LANDING PAGE */}
+      <Link 
+        href="/"
+        className="p-4 border-b border-[#E2E8F0] flex items-center gap-3 bg-white cursor-pointer hover:bg-slate-50 transition-colors group"
       >
         <MahwarLogo size={32} animate={true} />
         <div className="flex flex-col">
-          <span className="font-serif text-sm font-extrabold tracking-wider text-slate-900">
+          <span className="font-serif text-sm font-extrabold tracking-wider text-slate-900 group-hover:text-emerald transition-colors">
             MAHWAR
           </span>
           <span className="text-[9px] font-mono font-bold text-emerald tracking-widest uppercase">
             محور · SOVEREIGN
           </span>
         </div>
-      </div>
+      </Link>
 
       {/* NAVIGATION ITEMS */}
       <nav className="flex-1 overflow-y-auto px-2 py-4 space-y-6">

@@ -212,7 +212,7 @@ const FooterModal = ({ isOpen, onClose, type }: FooterModalProps) => {
                 {isAr ? "دليل أدوات المنصة والنمذجة" : "Terminal Documentation & Module Guide"}
               </h3>
               <p className="text-xs text-slate-500 font-mono">
-                {isAr ? "شرح كامل لـ 9 وحدات تكتيكية متكاملة" : "Complete reference for all 9 sovereign analytical engines"}
+                {isAr ? "شرح كامل لأدوات النمذجة والتحليل الكمي" : "Complete reference for sovereign analytical engines"}
               </p>
             </div>
           </div>
@@ -226,7 +226,6 @@ const FooterModal = ({ isOpen, onClose, type }: FooterModalProps) => {
               { id: "DCF" as PanelType, title: isAr ? "نموذج DCF 5 سنوات" : "DCF Valuation Engine", tag: "VALUATION" },
               { id: "LBO" as PanelType, title: isAr ? "باني صفقات LBO" : "LBO Deal Builder", tag: "PRIVATE EQ" },
               { id: "FS" as PanelType, title: isAr ? "القوائم المالية الثلاث" : "3-Statement Model", tag: "ACCOUNTING" },
-              { id: "research" as PanelType, title: isAr ? "أبحاث الذكاء الاصطناعي" : "AI Research Memos", tag: "GEMINI 2.5" },
               { id: "shariah" as PanelType, title: isAr ? "الفحص الشرعي AAOIFI" : "Shariah Screening", tag: "COMPLIANCE" },
             ].map((mod) => (
               <div

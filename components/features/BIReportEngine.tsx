@@ -9,7 +9,6 @@ import { ResponsiveContainer, BarChart, Bar, XAxis, YAxis, Tooltip } from "recha
 import { useTerminalStore } from "@/store/useTerminalStore";
 import { t } from "@/lib/i18n";
 import { panelReveal } from "@/lib/motion";
-import ReactMarkdown from "react-markdown";
 
 export default function BIReportEngine() {
   const { sessionAnalyses, language } = useTerminalStore();
@@ -24,8 +23,7 @@ export default function BIReportEngine() {
     { id: "lbo", label: isAr ? "باني صفقات الاستحواذ (LBO)" : "LBO Deal Builder", hasData: !!sessionAnalyses.lbo },
     { id: "threeStatement", label: isAr ? "نموذج القوائم الثلاث" : "3-Statement Projections", hasData: !!sessionAnalyses.threeStatement },
     { id: "shariah", label: isAr ? "الفحص الشرعي (AAOIFI)" : "AAOIFI Shariah Screening", hasData: !!sessionAnalyses.shariah },
-    { id: "comparator", label: isAr ? "مقارنة الشركات" : "Company Comparator", hasData: !!sessionAnalyses.comparator },
-    { id: "researchMemo", label: isAr ? "تقرير الأبحاث بالذكاء الاصطناعي" : "AI Research Memo", hasData: !!sessionAnalyses.researchMemo }
+    { id: "comparator", label: isAr ? "مقارنة الشركات" : "Company Comparator", hasData: !!sessionAnalyses.comparator }
   ];
 
   // Auto-select modules with data initially
@@ -90,14 +88,12 @@ export default function BIReportEngine() {
   const threeStatementData = sessionAnalyses.threeStatement;
   const shariahData = sessionAnalyses.shariah;
   const comparatorData = sessionAnalyses.comparator;
-  const researchMemoData = sessionAnalyses.researchMemo;
 
   const isDcfActive = selectedModules.includes("dcf") && !!dcfData;
   const isLboActive = selectedModules.includes("lbo") && !!lboData;
   const isThreeStatementActive = selectedModules.includes("threeStatement") && !!threeStatementData;
   const isShariahActive = selectedModules.includes("shariah") && !!shariahData;
   const isComparatorActive = selectedModules.includes("comparator") && !!comparatorData;
-  const isResearchMemoActive = selectedModules.includes("researchMemo") && !!researchMemoData;
 
   const hasAnySelection = selectedModules.length > 0;
 
@@ -469,21 +465,6 @@ export default function BIReportEngine() {
                       ))}
                     </tbody>
                   </table>
-                </div>
-              </div>
-            )}
-
-            {/* 6. AI RESEARCH MEMO */}
-            {isResearchMemoActive && researchMemoData && (
-              <div className="space-y-4 pb-4">
-                <h3 className="font-mono text-lg font-bold text-white uppercase flex items-center gap-2">
-                  <span className="text-terminal-emerald">◎</span>
-                  <span>6. {isAr ? "مذكرة أبحاث الملكية الفكرية بالذكاء الاصطناعي" : "AI Equity Research Memo"}</span>
-                </h3>
-                <div className="p-6 rounded-sm bg-[#0B0E14] border border-[#1E293B] font-mono text-slate-200 leading-relaxed text-xs">
-                  <div className="prose prose-invert max-w-none prose-headings:font-mono prose-headings:text-white prose-headings:font-bold prose-h1:text-sm prose-h2:text-xs prose-p:text-[11px] prose-li:text-[11px] prose-strong:text-terminal-emerald">
-                    <ReactMarkdown>{researchMemoData.content}</ReactMarkdown>
-                  </div>
                 </div>
               </div>
             )}

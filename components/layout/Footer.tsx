@@ -41,7 +41,6 @@ const Footer = () => {
     {
       title: "Research & Analytics",
       links: [
-        { label: "AI Research Memos", panel: "research" },
         { label: "Shariah Screening (AAOIFI)", panel: "shariah" },
         { label: "Security & Compliance", href: "/#solution" },
         { label: "Documentation", modal: "documentation" },
@@ -80,7 +79,6 @@ const Footer = () => {
     {
       title: "الأبحاث والتحليلات",
       links: [
-        { label: "مذكرات أبحاث الذكاء الاصطناعي", panel: "research" },
         { label: "الفحص الشرعي (AAOIFI)", panel: "shariah" },
         { label: "الأمان والامتثال", href: "/#solution" },
         { label: "الوثائق", modal: "الوثائق" },

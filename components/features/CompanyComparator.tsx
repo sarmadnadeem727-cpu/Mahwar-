@@ -19,7 +19,14 @@ interface CompanyRow {
   marketCap: number;
 }
 
-const INITIAL_ROWS: CompanyRow[] = [];
+const INITIAL_ROWS: CompanyRow[] = [
+  { ticker: "2222.SR", name: "Saudi Aramco", nameAr: "أرامكو السعودية", sector: "Energy", price: 27.85, pe: 15.2, divYield: 4.8, marketCap: 6750000 },
+  { ticker: "1120.SR", name: "Al Rajhi Bank", nameAr: "مصرف الراجحي", sector: "Financials", price: 88.40, pe: 18.5, divYield: 3.2, marketCap: 353600 },
+  { ticker: "2010.SR", name: "SABIC", nameAr: "سابك", sector: "Materials", price: 74.20, pe: 22.1, divYield: 3.8, marketCap: 222600 },
+  { ticker: "7010.SR", name: "STC Group", nameAr: "إس تي سي", sector: "Telecommunication", price: 41.50, pe: 14.8, divYield: 4.1, marketCap: 207500 },
+  { ticker: "1180.SR", name: "Saudi National Bank", nameAr: "البنك الأهلي السعودي", sector: "Financials", price: 38.60, pe: 11.9, divYield: 4.5, marketCap: 231600 },
+  { ticker: "EMAAR.AE", name: "Emaar Properties", nameAr: "إعمار العقارية", sector: "Real Estate", price: 8.65, pe: 9.4, divYield: 5.2, marketCap: 76400 }
+];
 
 export default function CompanyComparator() {
   const { language, updateSessionAnalysis } = useTerminalStore();

@@ -5,9 +5,8 @@ export type Language = 'en' | 'ar';
 export type PanelType = 
   | "hub" 
   | "news"
-  | "research" 
   | "shariah" 
-  | "screener" // renamed/repurposed as Company Comparator
+  | "screener" // Company Comparator Matrix
   | "bi_report"
   | "DCF" 
   | "LBO" 
@@ -19,7 +18,6 @@ export interface SessionAnalyses {
   threeStatement?: { inputs: any; outputs: any; computedAt: string };
   shariah?: { inputs: any; outputs: any; computedAt: string };
   comparator?: { rows: any[]; computedAt: string };
-  researchMemo?: { content: string; companyName: string; computedAt: string };
 }
 
 interface TerminalState {

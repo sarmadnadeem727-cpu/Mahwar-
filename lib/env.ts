@@ -4,7 +4,6 @@
  */
 
 export interface ServerEnv {
-  GEMINI_API_KEY?: string;
   MARKETAUX_API_KEY?: string;
   FINLIGHT_API_KEY?: string;
   NEXT_PUBLIC_APP_URL?: string;
@@ -19,7 +18,6 @@ export function getServerEnv(): ServerEnv {
   }
 
   return {
-    GEMINI_API_KEY: process.env.GEMINI_API_KEY || "",
     MARKETAUX_API_KEY: process.env.MARKETAUX_API_KEY || "",
     FINLIGHT_API_KEY: process.env.FINLIGHT_API_KEY || "",
     NEXT_PUBLIC_APP_URL: process.env.NEXT_PUBLIC_APP_URL || "https://mahwar.vercel.app",

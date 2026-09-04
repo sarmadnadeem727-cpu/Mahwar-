@@ -90,15 +90,15 @@ export default function IntelligenceHub() {
       tag: "COMPARISON"
     },
     {
-      id: "research" as const,
-      title: t("panel_ai_research", language),
-      desc: isAr ? "مذكرات أبحاث مالية استثمارية متخصصة" : "Institutional equity research memos and financial syntheses",
-      icon: <Sparkles className="text-emerald" size={20} />,
-      hasData: !!sessionAnalyses.researchMemo,
-      statusLabel: !!sessionAnalyses.researchMemo 
-        ? (isAr ? "المذكرة نشطة" : "Active Memo")
-        : (isAr ? "جاهز للتوليد" : "Ready for Synthesis"),
-      tag: "RESEARCH"
+      id: "bi_report" as const,
+      title: t("panel_bi_report", language),
+      desc: isAr ? "محرك تقارير التجميع وتصدير PDF/Excel" : "Consolidated session reporting engine and PDF export",
+      icon: <FileText className="text-terminal-emerald" size={20} />,
+      hasData: Object.keys(sessionAnalyses).length > 0,
+      statusLabel: Object.keys(sessionAnalyses).length > 0 
+        ? (isAr ? "جاهز للتصدير" : "Ready to Export")
+        : (isAr ? "في انتظار البيانات" : "Awaiting Data"),
+      tag: "REPORTING"
     }
   ];
 
