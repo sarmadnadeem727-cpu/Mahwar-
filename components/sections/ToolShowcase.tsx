@@ -174,83 +174,6 @@ export default function ToolShowcase() {
       )
     },
     {
-      id: "monte_carlo",
-      title: isAr ? "محاكاة مونتي كارلو للتقييم" : "Monte Carlo Valuation Simulation",
-      tag: "SIMULATION",
-      desc: isAr
-        ? "محاكاة 5,000–10,000 مسار عشوائي لقياس المخاطر وتوزيع الاحتمالات للتقييم."
-        : "Run 5,000–10,000 probability iterations over uncertain DCF inputs for P10/P50/P90 percentile ranges.",
-      icon: <Sliders className="text-emerald" size={20} />,
-      visual: (
-        <div className="bg-surface-subtle p-3 rounded-lg border border-surface-border font-mono text-[11px] space-y-1.5">
-          <div className="flex justify-between items-center text-slate-muted mb-1">
-            <span>Histogram Probability</span>
-            <span className="text-emerald font-bold">5,000 Runs</span>
-          </div>
-          <div className="flex items-end gap-1 h-8 w-full pt-1">
-            <div className="flex-1 bg-emerald/30 h-[30%] rounded-t" />
-            <div className="flex-1 bg-emerald/50 h-[60%] rounded-t" />
-            <div className="flex-1 bg-emerald h-[100%] rounded-t" />
-            <div className="flex-1 bg-emerald/70 h-[75%] rounded-t" />
-            <div className="flex-1 bg-emerald/40 h-[40%] rounded-t" />
-          </div>
-          <div className="flex justify-between text-[10px] text-slate-heading font-bold border-t border-surface-border pt-1">
-            <span>P10: SAR 32.1</span>
-            <span className="text-emerald">P50: SAR 38.5</span>
-            <span>P90: SAR 46.2</span>
-          </div>
-        </div>
-      )
-    },
-    {
-      id: "acquisition_cost",
-      title: isAr ? "حاسبة تكاليف الاستحواذ (M&A)" : "M&A Acquisition Cost Calculator",
-      tag: "DEAL COSTS",
-      desc: isAr
-        ? "حساب التكلفة الفعلية للاستحواذ متضمنة الديون والأتعاب والاستشارات والدمج والمستحقات."
-        : "Total acquisition burden breakdown including headline price, debt, advisory fees, integration, and earn-outs.",
-      icon: <Download className="text-emerald" size={20} />,
-      visual: (
-        <div className="bg-surface-subtle p-3 rounded-lg border border-surface-border font-mono text-[11px] space-y-1.5">
-          <div className="flex justify-between items-center text-slate-muted mb-1">
-            <span>Enterprise Cost Stack</span>
-            <span className="text-emerald font-bold">9.8x EV/EBITDA</span>
-          </div>
-          <div className="space-y-1 text-[10px]">
-            <div className="p-1 bg-white border border-surface-border rounded flex justify-between">
-              <span>Headline Price</span>
-              <span className="font-bold">SAR 1,500M</span>
-            </div>
-            <div className="p-1 bg-emerald-dim border border-emerald-border rounded flex justify-between text-emerald font-bold">
-              <span>Total M&A Burden</span>
-              <span>SAR 2,045M</span>
-            </div>
-          </div>
-        </div>
-      )
-    },
-    {
-      id: "auto_statements",
-      title: isAr ? "القوائم المالية التلقائية" : "Auto-Generated Financial Statements",
-      tag: "GUIDED FORM",
-      desc: isAr
-        ? "توليد سريع للقوائم الثلاث المترابطة بإدخال البيانات الأساسية فقط بدون الحاجة لصيغ معقدة."
-        : "Fastest zero-formula way to build linked Income, Balance Sheet, and Cash Flow statements from core inputs.",
-      icon: <CheckCircle2 className="text-emerald" size={20} />,
-      visual: (
-        <div className="bg-surface-subtle p-3 rounded-lg border border-surface-border font-mono text-[11px] space-y-1.5">
-          <div className="flex justify-between items-center text-slate-muted mb-1">
-            <span>Auto-Link Status</span>
-            <span className="px-1.5 py-0.5 bg-emerald-dim border border-emerald-border text-emerald font-bold rounded text-[9px]">3-Statements Tied</span>
-          </div>
-          <div className="p-1 bg-white border border-surface-border rounded text-[10px] text-slate-heading flex justify-between font-bold">
-            <span>Net Income -&gt; Retained Earnings</span>
-            <span className="text-emerald">VERIFIED</span>
-          </div>
-        </div>
-      )
-    },
-    {
       id: "bi_report",
       title: isAr ? "محرك تقارير ذكاء الأعمال" : "BI Report Engine (PDF/Excel)",
       tag: "REPORTING",
@@ -283,7 +206,7 @@ export default function ToolShowcase() {
         {/* SECTION HEADER */}
         <div className="text-center max-w-3xl mx-auto mb-16">
           <div className="inline-flex items-center gap-2 px-3.5 py-1 bg-emerald-dim border border-emerald-border text-emerald text-mono-caption font-mono font-bold uppercase tracking-wider mb-4 rounded-full shadow-2xs">
-            <span>{isAr ? "قدرات المحرك الكمي (10 نماذج)" : "THE SOVEREIGN FINANCIAL ENGINE SUITE"}</span>
+            <span>{isAr ? "قدرات المحرك الكمي (7 نماذج)" : "THE 7-ENGINE WORKBENCH SUITE"}</span>
           </div>
 
           <h2 className="font-serif text-3xl sm:text-4xl md:text-5xl font-bold text-slate-heading mb-4">
