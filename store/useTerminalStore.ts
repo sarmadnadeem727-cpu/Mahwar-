@@ -8,6 +8,9 @@ export type PanelType =
   | "shariah" 
   | "screener" // Company Comparator Matrix
   | "custom_model" // Excel-Style Custom Model Builder
+  | "monte_carlo" // Monte Carlo Valuation Simulation Engine
+  | "acquisition_cost" // M&A Acquisition Cost Calculator
+  | "auto_statements" // Guided Auto-Generated Financial Statements
   | "bi_report"
   | "DCF" 
   | "LBO" 
@@ -36,6 +39,9 @@ export interface SessionAnalyses {
   shariah?: { inputs: any; outputs: any; computedAt: string };
   comparator?: { rows: any[]; computedAt: string };
   customModel?: { models: CustomModelSaved[]; activeModelId: string; computedAt: string };
+  monteCarlo?: { inputs: any; outputs: any; computedAt: string };
+  acquisitionCost?: { inputs: any; outputs: any; computedAt: string };
+  autoStatements?: { inputs: any; outputs: any; computedAt: string };
 }
 
 interface TerminalState {

@@ -39,6 +39,9 @@ export const translations = {
     panel_lbo: "LBO Deal Builder",
     panel_three_statement: "3-Statement Model",
     panel_custom_model: "Custom Model Builder",
+    panel_monte_carlo: "Monte Carlo Valuation Simulation",
+    panel_acquisition_cost: "M&A Acquisition Cost Calculator",
+    panel_auto_statements: "Auto-Generated Financial Statements",
     panel_gcc_map: "GCC Regional Map",
 
     // Intelligence Hub
@@ -220,6 +223,9 @@ export const translations = {
     panel_lbo: "باني صفقات الاستحواذ (LBO)",
     panel_three_statement: "نموذج القوائم المالية الثلاث",
     panel_custom_model: "باني النماذج المخصصة",
+    panel_monte_carlo: "محاكاة مونتي كارلو للتقييم",
+    panel_acquisition_cost: "حاسبة تكاليف الاستحواذ والاندماج",
+    panel_auto_statements: "القوائم المالية المولدة تلقائياً",
     panel_gcc_map: "خريطة أسواق الخليج",
 
     // Intelligence Hub

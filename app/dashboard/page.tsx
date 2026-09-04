@@ -14,6 +14,9 @@ const NewsFeed = dynamic(() => import("@/components/features/NewsFeed"), { ssr: 
 const ShariahScreening = dynamic(() => import("@/components/features/ShariahScreening"), { ssr: false });
 const CompanyComparator = dynamic(() => import("@/components/features/CompanyComparator"), { ssr: false });
 const CustomModelBuilder = dynamic(() => import("@/components/features/CustomModelBuilder"), { ssr: false });
+const MonteCarloPanel = dynamic(() => import("@/components/features/MonteCarloPanel"), { ssr: false });
+const AcquisitionCostCalculator = dynamic(() => import("@/components/features/AcquisitionCostCalculator"), { ssr: false });
+const AutoFinancialStatements = dynamic(() => import("@/components/features/AutoFinancialStatements"), { ssr: false });
 const BIReportEngine = dynamic(() => import("@/components/features/BIReportEngine"), { ssr: false });
 const DCFModel = dynamic(() => import("@/components/models/DCFModel"), { ssr: false });
 const LBOModel = dynamic(() => import("@/components/models/LBOModel"), { ssr: false });
@@ -25,21 +28,24 @@ function PanelContent() {
 
   useEffect(() => {
     const panelParam = searchParams.get("panel") as PanelType | null;
-    if (panelParam && ["hub", "news", "shariah", "screener", "custom_model", "bi_report", "DCF", "LBO", "FS"].includes(panelParam)) {
+    if (panelParam && ["hub", "news", "shariah", "screener", "custom_model", "monte_carlo", "acquisition_cost", "auto_statements", "bi_report", "DCF", "LBO", "FS"].includes(panelParam)) {
       setPanel(panelParam);
     }
   }, [searchParams, setPanel]);
 
   const renderPanel = () => {
     switch (activePanel) {
-      case "news":         return <NewsFeed />;
-      case "shariah":      return <ShariahScreening />;
-      case "screener":     return <CompanyComparator />;
-      case "custom_model": return <CustomModelBuilder />;
-      case "bi_report":    return <BIReportEngine />;
-      case "DCF":          return <DCFModel />;
-      case "LBO":          return <LBOModel />;
-      case "FS":           return <ThreeStatementModel />;
+      case "news":             return <NewsFeed />;
+      case "shariah":          return <ShariahScreening />;
+      case "screener":         return <CompanyComparator />;
+      case "custom_model":     return <CustomModelBuilder />;
+      case "monte_carlo":      return <MonteCarloPanel />;
+      case "acquisition_cost": return <AcquisitionCostCalculator />;
+      case "auto_statements":  return <AutoFinancialStatements />;
+      case "bi_report":        return <BIReportEngine />;
+      case "DCF":              return <DCFModel />;
+      case "LBO":              return <LBOModel />;
+      case "FS":               return <ThreeStatementModel />;
       case "hub":
       default:
         return <IntelligenceHub />;
