@@ -2,7 +2,6 @@
 
 import React from "react";
 import Navbar from "@/components/layout/Navbar";
-import LiveTickerStrip from "@/components/sections/LiveTickerStrip";
 import HeroSection from "@/components/sections/HeroSection";
 import ToolShowcase from "@/components/sections/ToolShowcase";
 import ComparisonSection from "@/components/sections/ComparisonSection";
@@ -14,9 +13,6 @@ export default function LandingPage() {
   return (
     <div className="min-h-screen bg-white text-slate-heading flex flex-col font-sans selection:bg-emerald selection:text-white">
       <Navbar />
-      <div className="pt-16">
-        <LiveTickerStrip />
-      </div>
       <main className="flex-1">
         <HeroSection />
         <ToolShowcase />
