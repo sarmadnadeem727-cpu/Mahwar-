@@ -28,7 +28,6 @@ export const translations = {
     panel_market_intel: "Market Intelligence",
     panel_live_market: "Live KSA Market",
     panel_technical: "Technical Charts",
-    panel_ai_research: "Equity Research Memos",
     panel_shariah: "Shariah Screening",
     panel_dividends: "Dividend Intelligence",
     panel_ownership: "Ownership Structure",
@@ -42,6 +41,10 @@ export const translations = {
     panel_acquisition_cost: "M&A Acquisition Cost Calculator",
     panel_auto_statements: "Auto-Generated Financial Statements",
     panel_gcc_map: "GCC Regional Map",
+    panel_ddm: "Dividend Discount Model",
+    panel_npv_irr: "NPV & IRR Calculator",
+    panel_merger_analysis: "Merger Accretion / Dilution",
+    panel_wacc: "WACC & CAPM Builder",
 
     // Intelligence Hub
     market_summary: "Market Overview",
@@ -53,18 +56,7 @@ export const translations = {
     status_executed: "EXECUTED",
     status_pending: "PENDING",
 
-    // Equity Research
-    ai_research_title: "Institutional Equity Research Engine",
-    ai_ticker_label: "Target Ticker",
-    ai_query_placeholder: "Ask specific research question (e.g., Zakat impact on Q3 net margin)...",
-    generate_memo: "Generate Equity Memo",
-    model_badge: "Institutional Financial Engine + Real-Time Search Grounding",
-    copy_report: "Copy Report",
-    download_pdf: "Download PDF",
-    recent_searches: "Recent Research History",
-    verdict_buy: "BUY",
-    verdict_hold: "HOLD",
-    verdict_sell: "SELL",
+
 
     // DCF Engine
     dcf_assumptions: "Valuation Assumptions",
@@ -211,7 +203,6 @@ export const translations = {
     panel_market_intel: "استخبارات السوق الخليجي",
     panel_live_market: "السوق السعودي المباشر",
     panel_technical: "الرسوم البيانية الفنية",
-    panel_ai_research: "مذكرات أبحاث الأسهم",
     panel_shariah: "الفحص الشرعي (AAOIFI)",
     panel_dividends: "تحليل توزيعات الأرباح",
     panel_ownership: "هيكل الملكية المؤسسية",
@@ -225,6 +216,10 @@ export const translations = {
     panel_acquisition_cost: "حاسبة تكاليف الاستحواذ والاندماج",
     panel_auto_statements: "القوائم المالية المولدة تلقائياً",
     panel_gcc_map: "خريطة أسواق الخليج",
+    panel_ddm: "نموذج خصم التوزيعات (DDM)",
+    panel_npv_irr: "حاسبة القيمة الحالية (NPV)",
+    panel_merger_analysis: "تحليل الاندماج (EPS)",
+    panel_wacc: "باني تكلفة رأس المال (WACC)",
 
     // Intelligence Hub
     market_summary: "نظرة عامة على السوق",
@@ -236,18 +231,7 @@ export const translations = {
     status_executed: "منفذ",
     status_pending: "قيد التنفيذ",
 
-    // Equity Research
-    ai_research_title: "محرك تقارير ومذكرات أبحاث الأسهم",
-    ai_ticker_label: "الرمز المستهدف",
-    ai_query_placeholder: "طرح سؤال بحثي محدد (مثلاً: أثر الزكاة على هامش صافي الربح)...",
-    generate_memo: "توليد مذكرة التقييم",
-    model_badge: "محرك التحليل المالي المؤسسي المباشر",
-    copy_report: "نسخ التقرير",
-    download_pdf: "تحميل PDF",
-    recent_searches: "سجل الأبحاث الأخيرة",
-    verdict_buy: "شراء",
-    verdict_hold: "احتفاظ",
-    verdict_sell: "بيع",
+
 
     // DCF Engine
     dcf_assumptions: "افتراضات التقييم",

@@ -4,6 +4,7 @@ import React from "react";
 import Navbar from "@/components/layout/Navbar";
 import HeroSection from "@/components/sections/HeroSection";
 import ToolShowcase from "@/components/sections/ToolShowcase";
+import GCCMapSection from "@/components/sections/GCCMapSection";
 import ComparisonSection from "@/components/sections/ComparisonSection";
 import NewsPreviewWidget from "@/components/sections/NewsPreviewWidget";
 import CTASection from "@/components/sections/CTASection";
@@ -15,6 +16,7 @@ export default function LandingPage() {
       <Navbar />
       <main className="flex-1">
         <HeroSection />
+        <GCCMapSection />
         <ToolShowcase />
         <ComparisonSection />
         <NewsPreviewWidget />

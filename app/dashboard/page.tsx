@@ -20,6 +20,10 @@ const BIReportEngine = dynamic(() => import("@/components/features/BIReportEngin
 const DCFModel = dynamic(() => import("@/components/models/DCFModel"), { ssr: false });
 const LBOModel = dynamic(() => import("@/components/models/LBOModel"), { ssr: false });
 const ThreeStatementModel = dynamic(() => import("@/components/models/ThreeStatementModel"), { ssr: false });
+const DDMModel = dynamic(() => import("@/components/models/DDMModel"), { ssr: false });
+const QuickNPV = dynamic(() => import("@/components/features/QuickNPV"), { ssr: false });
+const MergerAnalysis = dynamic(() => import("@/components/models/MergerAnalysis"), { ssr: false });
+const WACCBuilder = dynamic(() => import("@/components/features/WACCBuilder"), { ssr: false });
 
 function PanelContent() {
   const { activePanel, setPanel } = useTerminalStore();
@@ -27,7 +31,7 @@ function PanelContent() {
 
   useEffect(() => {
     const panelParam = searchParams.get("panel") as PanelType | null;
-    if (panelParam && ["hub", "news", "shariah", "custom_model", "monte_carlo", "acquisition_cost", "auto_statements", "bi_report", "DCF", "LBO", "FS"].includes(panelParam)) {
+    if (panelParam && ["hub", "news", "shariah", "custom_model", "monte_carlo", "acquisition_cost", "auto_statements", "bi_report", "DCF", "LBO", "FS", "ddm", "npv_irr", "merger_analysis", "wacc"].includes(panelParam)) {
       setPanel(panelParam);
     }
   }, [searchParams, setPanel]);
@@ -44,6 +48,10 @@ function PanelContent() {
       case "DCF":              return <DCFModel />;
       case "LBO":              return <LBOModel />;
       case "FS":               return <ThreeStatementModel />;
+      case "ddm":              return <DDMModel />;
+      case "npv_irr":          return <QuickNPV />;
+      case "merger_analysis":  return <MergerAnalysis />;
+      case "wacc":             return <WACCBuilder />;
       case "hub":
       default:
         return <IntelligenceHub />;

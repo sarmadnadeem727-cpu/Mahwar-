@@ -142,7 +142,7 @@ const FooterModal = ({ isOpen, onClose, type }: FooterModalProps) => {
                 <p className="text-slate-600 text-[11px]">
                   {isAr
                     ? "نماذج التدفقات (DCF) والاستحواذ (LBO) والقوائم المالية هي أدوات مساعدة لصناع القرار والمحللين. لا تعتبر النماذج توصية استثمارية مباشرة."
-                    : "DCF valuations, LBO return matrices, and AI research memos serve as quantitative analytical tools. Users remain responsible for ultimate deal decisions."}
+                    : "DCF valuations and LBO return matrices serve as quantitative analytical tools. Users remain responsible for ultimate deal decisions."}
                 </p>
               </div>
 

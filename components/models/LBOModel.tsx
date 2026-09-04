@@ -7,8 +7,15 @@ import { useTerminalStore } from "@/store/useTerminalStore";
 import { t } from "@/lib/i18n";
 import { panelReveal } from "@/lib/motion";
 import NumberCounter from "@/components/ui/NumberCounter";
-import ScenarioToggle, { ScenarioCase, ScenarioValues } from "@/components/features/ScenarioToggle";
+import ScenarioToggle, { ScenarioCase, ScenarioDefinition } from "@/components/features/ScenarioToggle";
 import LboWaterfallChart from "@/components/charts/LboWaterfallChart";
+
+export interface LboScenarioValues {
+  revGrowthDelta: number;
+  ebitdaMarginDelta: number;
+  waccDelta: number;
+  terminalGrowthDelta: number;
+}
 
 export default function LBOModel() {
   const { language, updateSessionAnalysis } = useTerminalStore();
@@ -28,12 +35,51 @@ export default function LBOModel() {
 
   // Active scenario overrides
   const [activeScenario, setActiveScenario] = useState<ScenarioCase>("BASE");
-  const [scenarioDeltas, setScenarioDeltas] = useState<ScenarioValues>({
+  const [scenarioDeltas, setScenarioDeltas] = useState<LboScenarioValues>({
     revGrowthDelta: 0,
     ebitdaMarginDelta: 0,
     waccDelta: 0,
     terminalGrowthDelta: 0,
   });
+
+  const lboScenarios: ScenarioDefinition<LboScenarioValues>[] = [
+    {
+      id: "BASE",
+      label: "Base Case",
+      labelAr: "الحالة الأساسية",
+      desc: "Consensus Base Model",
+      descAr: "افتراضات الإدارة والإجماع",
+      iconType: "base",
+      values: { revGrowthDelta: 0, ebitdaMarginDelta: 0, waccDelta: 0, terminalGrowthDelta: 0 },
+    },
+    {
+      id: "BULL",
+      label: "Bull Case",
+      labelAr: "الحالة التفاؤلية",
+      desc: "+3% Rev, +3% Margin, -0.5% WACC",
+      descAr: "نمو أعلى + خصم أقل",
+      iconType: "bull",
+      values: { revGrowthDelta: 3.0, ebitdaMarginDelta: 3.0, waccDelta: -0.5, terminalGrowthDelta: 0.5 },
+    },
+    {
+      id: "BEAR",
+      label: "Bear Case",
+      labelAr: "الحالة التحفظية",
+      desc: "-3% Rev, -3% Margin, +1.0% WACC",
+      descAr: "نمو أقل + خصم أعلى",
+      iconType: "bear",
+      values: { revGrowthDelta: -3.0, ebitdaMarginDelta: -3.0, waccDelta: 1.0, terminalGrowthDelta: -0.5 },
+    },
+    {
+      id: "CUSTOM",
+      label: "Custom Case",
+      labelAr: "سيناريو مخصص",
+      desc: "User Assumption Overrides",
+      descAr: "تعديل المدخلات يدوياً",
+      iconType: "custom",
+      values: { revGrowthDelta: 0, ebitdaMarginDelta: 0, waccDelta: 0, terminalGrowthDelta: 0 },
+    },
+  ];
 
   const exitMultiple = Math.max(4.0, baseExitMultiple + (scenarioDeltas.revGrowthDelta * 0.5));
   const purchasePrice = basePurchasePrice;
@@ -107,7 +153,7 @@ export default function LBOModel() {
     });
   }, [purchasePrice, ebitdaMultiple, seniorDebt, mezzDebt, pikNotes, holdPeriod, exitMultiple, activeScenario]);
 
-  const handleScenarioChange = (c: ScenarioCase, values?: ScenarioValues) => {
+  const handleScenarioChange = (c: ScenarioCase, values?: LboScenarioValues) => {
     setActiveScenario(c);
     if (values) {
       setScenarioDeltas(values);
@@ -125,8 +171,9 @@ export default function LBOModel() {
     >
       {/* LEFT COLUMN: ASSUMPTIONS & SCENARIOS (4 COLS) */}
       <div className="col-span-12 lg:col-span-4 space-y-6">
-        <ScenarioToggle
+        <ScenarioToggle<LboScenarioValues>
           activeCase={activeScenario}
+          scenarios={lboScenarios}
           onSelectCase={handleScenarioChange}
         />
 

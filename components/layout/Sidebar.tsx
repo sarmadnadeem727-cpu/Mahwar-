@@ -6,7 +6,8 @@ import { motion, AnimatePresence } from "framer-motion";
 import { 
   Columns, Newspaper, ShieldCheck, BarChart3, Layers, 
   FileSpreadsheet, FileText, Table, Dices, Calculator, 
-  FileCheck, Pin, PinOff, ChevronRight, ChevronLeft, Sparkles
+  FileCheck, Pin, PinOff, ChevronRight, ChevronLeft, Sparkles,
+  Coins, Handshake, Activity
 } from "lucide-react";
 import { useTerminalStore, PanelType } from "@/store/useTerminalStore";
 import { t } from "@/lib/i18n";
@@ -34,7 +35,11 @@ const NAV_GROUPS: NavGroup[] = [
     labelKey: "nav_models",
     items: [
       { id: "DCF", icon: BarChart3, labelKey: "panel_dcf", tag: "VALUATION" },
+      { id: "ddm", icon: Coins, labelKey: "panel_ddm", tag: "DIVIDEND" },
+      { id: "npv_irr", icon: Calculator, labelKey: "panel_npv_irr", tag: "QUICK" },
+      { id: "wacc", icon: Activity, labelKey: "panel_wacc", tag: "CAPM" },
       { id: "LBO", icon: Layers, labelKey: "panel_lbo", tag: "PE DEAL" },
+      { id: "merger_analysis", icon: Handshake, labelKey: "panel_merger_analysis", tag: "M&A" },
       { id: "FS", icon: FileSpreadsheet, labelKey: "panel_three_statement", tag: "3S IFRS" },
       { id: "custom_model", icon: Table, labelKey: "panel_custom_model", tag: "BUILDER" },
       { id: "monte_carlo", icon: Dices, labelKey: "panel_monte_carlo", tag: "RISK" },

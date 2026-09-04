@@ -13,7 +13,11 @@ export type PanelType =
   | "bi_report"
   | "DCF" 
   | "LBO" 
-  | "FS";
+  | "FS"
+  | "ddm"
+  | "npv_irr"
+  | "merger_analysis"
+  | "wacc";
 
 export interface CustomModelRow {
   id: string;
