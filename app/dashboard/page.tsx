@@ -13,6 +13,7 @@ const IntelligenceHub = dynamic(() => import("@/components/features/Intelligence
 const NewsFeed = dynamic(() => import("@/components/features/NewsFeed"), { ssr: false });
 const ShariahScreening = dynamic(() => import("@/components/features/ShariahScreening"), { ssr: false });
 const CompanyComparator = dynamic(() => import("@/components/features/CompanyComparator"), { ssr: false });
+const CustomModelBuilder = dynamic(() => import("@/components/features/CustomModelBuilder"), { ssr: false });
 const BIReportEngine = dynamic(() => import("@/components/features/BIReportEngine"), { ssr: false });
 const DCFModel = dynamic(() => import("@/components/models/DCFModel"), { ssr: false });
 const LBOModel = dynamic(() => import("@/components/models/LBOModel"), { ssr: false });
@@ -24,7 +25,7 @@ function PanelContent() {
 
   useEffect(() => {
     const panelParam = searchParams.get("panel") as PanelType | null;
-    if (panelParam && ["hub", "news", "shariah", "screener", "bi_report", "DCF", "LBO", "FS"].includes(panelParam)) {
+    if (panelParam && ["hub", "news", "shariah", "screener", "custom_model", "bi_report", "DCF", "LBO", "FS"].includes(panelParam)) {
       setPanel(panelParam);
     }
   }, [searchParams, setPanel]);
@@ -34,6 +35,7 @@ function PanelContent() {
       case "news":         return <NewsFeed />;
       case "shariah":      return <ShariahScreening />;
       case "screener":     return <CompanyComparator />;
+      case "custom_model": return <CustomModelBuilder />;
       case "bi_report":    return <BIReportEngine />;
       case "DCF":          return <DCFModel />;
       case "LBO":          return <LBOModel />;

@@ -147,6 +147,33 @@ export default function ToolShowcase() {
       )
     },
     {
+      id: "custom_model",
+      title: isAr ? "باني النماذج المخصصة (أسلوب إكسل)" : "Custom Model Builder (Excel-Style)",
+      tag: "SPREADSHEET",
+      desc: isAr
+        ? "جدول مالي مرن يدعم الصيغ الحسابية المباشرة (=Revenue - COGS)، المخططات البيانية التفاعلية، والتصدير."
+        : "Spreadsheet grid with live cascading arithmetic formulas (=Revenue - COGS), Recharts projections, and model persistence.",
+      icon: <FileSpreadsheet className="text-emerald" size={20} />,
+      visual: (
+        <div className="bg-surface-subtle p-3 rounded-lg border border-surface-border font-mono text-[11px] space-y-1.5">
+          <div className="flex justify-between items-center text-slate-muted mb-1">
+            <span>Live Formula Grid</span>
+            <span className="text-emerald font-bold font-mono">=Revenue - COGS</span>
+          </div>
+          <div className="space-y-1 text-[10px]">
+            <div className="p-1 bg-white border border-surface-border rounded flex justify-between">
+              <span>Gross Profit</span>
+              <span className="font-bold text-emerald">SAR 4,500M</span>
+            </div>
+            <div className="p-1 bg-emerald-dim border border-emerald-border rounded flex justify-between text-emerald">
+              <span>Net Income</span>
+              <span className="font-bold">SAR 2,150M</span>
+            </div>
+          </div>
+        </div>
+      )
+    },
+    {
       id: "bi_report",
       title: isAr ? "محرك تقارير ذكاء الأعمال" : "BI Report Engine (PDF/Excel)",
       tag: "REPORTING",
@@ -179,7 +206,7 @@ export default function ToolShowcase() {
         {/* SECTION HEADER */}
         <div className="text-center max-w-3xl mx-auto mb-16">
           <div className="inline-flex items-center gap-2 px-3.5 py-1 bg-emerald-dim border border-emerald-border text-emerald text-mono-caption font-mono font-bold uppercase tracking-wider mb-4 rounded-full shadow-2xs">
-            <span>{isAr ? "قدرات المحرك الكمي" : "THE 6-ENGINE WORKBENCH SUITE"}</span>
+            <span>{isAr ? "قدرات المحرك الكمي (7 نماذج)" : "THE 7-ENGINE WORKBENCH SUITE"}</span>
           </div>
 
           <h2 className="font-serif text-3xl sm:text-4xl md:text-5xl font-bold text-slate-heading mb-4">

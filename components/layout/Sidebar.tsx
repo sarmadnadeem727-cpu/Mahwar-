@@ -3,7 +3,7 @@
 import React from "react";
 import Link from "next/link";
 import { 
-  Columns, Newspaper, Sparkles, ShieldCheck, Grid3X3, BarChart3, Layers, FileSpreadsheet, FileText
+  Columns, Newspaper, Sparkles, ShieldCheck, Grid3X3, BarChart3, Layers, FileSpreadsheet, FileText, Table
 } from "lucide-react";
 import { useTerminalStore, PanelType } from "@/store/useTerminalStore";
 import { t } from "@/lib/i18n";
@@ -33,6 +33,7 @@ const NAV_GROUPS: NavGroup[] = [
       { id: "DCF", icon: <BarChart3 size={15} />, labelKey: "panel_dcf" },
       { id: "LBO", icon: <Layers size={15} />, labelKey: "panel_lbo" },
       { id: "FS", icon: <FileSpreadsheet size={15} />, labelKey: "panel_three_statement" },
+      { id: "custom_model", icon: <Table size={15} />, labelKey: "panel_custom_model" },
     ],
   },
   {

@@ -36,6 +36,7 @@ const Footer = () => {
         { label: "DCF Valuation Engine", panel: "DCF" },
         { label: "LBO Deal Builder", panel: "LBO" },
         { label: "3-Statement Model", panel: "FS" },
+        { label: "Custom Model Builder", panel: "custom_model" },
       ],
     },
     {
@@ -74,6 +75,7 @@ const Footer = () => {
         { label: "محرك تقييم التدفقات (DCF)", panel: "DCF" },
         { label: "باني صفقات الاستحواذ (LBO)", panel: "LBO" },
         { label: "القوائم المالية الثلاث", panel: "FS" },
+        { label: "باني النماذج المخصصة", panel: "custom_model" },
       ],
     },
     {

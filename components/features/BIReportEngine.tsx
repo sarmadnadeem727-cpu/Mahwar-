@@ -22,6 +22,7 @@ export default function BIReportEngine() {
     { id: "dcf", label: isAr ? "تقييم التدفقات النقدية (DCF)" : "DCF Valuation Engine", hasData: !!sessionAnalyses.dcf },
     { id: "lbo", label: isAr ? "باني صفقات الاستحواذ (LBO)" : "LBO Deal Builder", hasData: !!sessionAnalyses.lbo },
     { id: "threeStatement", label: isAr ? "نموذج القوائم الثلاث" : "3-Statement Projections", hasData: !!sessionAnalyses.threeStatement },
+    { id: "customModel", label: isAr ? "باني النماذج المخصصة" : "Custom Model Builder", hasData: !!sessionAnalyses.customModel },
     { id: "shariah", label: isAr ? "الفحص الشرعي (AAOIFI)" : "AAOIFI Shariah Screening", hasData: !!sessionAnalyses.shariah },
     { id: "comparator", label: isAr ? "مقارنة الشركات" : "Company Comparator", hasData: !!sessionAnalyses.comparator }
   ];

@@ -90,6 +90,17 @@ export default function IntelligenceHub() {
       tag: "COMPARISON"
     },
     {
+      id: "custom_model" as const,
+      title: t("panel_custom_model", language),
+      desc: isAr ? "جدول نماذج مالية حرة بصيغ مخصصة" : "Excel-style spreadsheet builder with custom arithmetic formulas",
+      icon: <FileSpreadsheet className="text-terminal-emerald" size={20} />,
+      hasData: !!sessionAnalyses.customModel,
+      statusLabel: !!sessionAnalyses.customModel
+        ? `${sessionAnalyses.customModel.models.length} ${isAr ? "نماذج مدخلة" : "Models Saved"}`
+        : (isAr ? "جاهز للنمذجة" : "Ready for Inputs"),
+      tag: "CUSTOM MODEL"
+    },
+    {
       id: "bi_report" as const,
       title: t("panel_bi_report", language),
       desc: isAr ? "محرك تقارير التجميع وتصدير PDF/Excel" : "Consolidated session reporting engine and PDF export",

@@ -81,6 +81,15 @@ const STATIC_TOOLS: LocalTool[] = [
     icon: <Filter className="text-terminal-emerald" size={16} />
   },
   {
+    id: "custom_model",
+    name: "Custom Model Builder (Excel-Style)",
+    nameAr: "باني النماذج المخصصة (أسلوب إكسل)",
+    category: "Financial Modeling",
+    categoryAr: "النمذجة المالية",
+    keywords: ["custom model", "excel", "spreadsheet", "builder", "formula", "grid", "نموذج", "إكسل", "جدول"],
+    icon: <FileSpreadsheet className="text-terminal-emerald" size={16} />
+  },
+  {
     id: "bi_report",
     name: "Consolidated BI Report & PDF Export",
     nameAr: "محرك تقارير الأعمال وتصدير PDF",

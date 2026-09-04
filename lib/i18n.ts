@@ -38,6 +38,7 @@ export const translations = {
     panel_dcf: "DCF Valuation Engine",
     panel_lbo: "LBO Deal Builder",
     panel_three_statement: "3-Statement Model",
+    panel_custom_model: "Custom Model Builder",
     panel_gcc_map: "GCC Regional Map",
 
     // Intelligence Hub
@@ -218,6 +219,7 @@ export const translations = {
     panel_dcf: "محرك تقييم التدفقات (DCF)",
     panel_lbo: "باني صفقات الاستحواذ (LBO)",
     panel_three_statement: "نموذج القوائم المالية الثلاث",
+    panel_custom_model: "باني النماذج المخصصة",
     panel_gcc_map: "خريطة أسواق الخليج",
 
     // Intelligence Hub

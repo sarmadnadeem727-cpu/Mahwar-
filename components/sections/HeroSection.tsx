@@ -11,9 +11,13 @@ import { useTerminalStore } from "@/store/useTerminalStore";
 import NumberCounter from "@/components/ui/NumberCounter";
 import { MahwarBackgroundLogo } from "@/components/ui/MahwarSplash";
 
+import BootSequence from "@/components/sections/BootSequence";
+
 export default function HeroSection() {
   const { language } = useTerminalStore();
   const isAr = language === 'ar';
+
+  const [bootComplete, setBootComplete] = useState(false);
 
   // Animated ticking model state for the primary visual anchor
   const [dcfValue, setDcfValue] = useState(38.45);
@@ -30,14 +34,27 @@ export default function HeroSection() {
   }, []);
 
   return (
-    <section className="relative min-h-[88vh] flex flex-col justify-center bg-white text-slate-heading pt-24 pb-16 overflow-hidden border-b border-surface-border select-none font-sans">
-      {/* Background Grid */}
-      <div className="absolute inset-0 bg-[linear-gradient(to_right,rgba(226,232,240,0.5)_1px,transparent_1px),linear-gradient(to_bottom,rgba(226,232,240,0.5)_1px,transparent_1px)] bg-[size:2.5rem_2.5rem] [mask-image:radial-gradient(ellipse_80%_65%_at_50%_40%,#000_70%,transparent_100%)] pointer-events-none" />
+    <>
+      {!bootComplete && <BootSequence onComplete={() => setBootComplete(true)} />}
 
-      {/* Glowing Radar Background Watermark */}
-      <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-[55%] w-[500px] h-[500px] sm:w-[680px] sm:h-[680px] opacity-10 pointer-events-none z-0">
-        <MahwarBackgroundLogo className="w-full h-full text-emerald" />
-      </div>
+      <section className="relative min-h-[88vh] flex flex-col justify-center bg-white text-slate-heading pt-24 pb-16 overflow-hidden border-b border-surface-border select-none font-sans">
+        {/* CONTINUOUS LIVE BACKGROUND VIDEO */}
+        <video
+          autoPlay
+          loop
+          muted
+          playsInline
+          className="absolute inset-0 w-full h-full object-cover opacity-15 pointer-events-none z-0"
+          src="/bg-video.mp4"
+        />
+
+        {/* Background Grid */}
+        <div className="absolute inset-0 bg-[linear-gradient(to_right,rgba(226,232,240,0.5)_1px,transparent_1px),linear-gradient(to_bottom,rgba(226,232,240,0.5)_1px,transparent_1px)] bg-[size:2.5rem_2.5rem] [mask-image:radial-gradient(ellipse_80%_65%_at_50%_40%,#000_70%,transparent_100%)] pointer-events-none z-0" />
+
+        {/* Glowing Radar Background Watermark */}
+        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-[55%] w-[500px] h-[500px] sm:w-[680px] sm:h-[680px] opacity-10 pointer-events-none z-0">
+          <MahwarBackgroundLogo className="w-full h-full text-emerald" />
+        </div>
 
       <div className="max-w-7xl mx-auto px-6 relative z-10 w-full flex flex-col items-center">
         
@@ -291,5 +308,6 @@ export default function HeroSection() {
 
       </div>
     </section>
-  );
+  </>
+);
 }

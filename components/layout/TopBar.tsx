@@ -27,9 +27,9 @@ export default function TopBar() {
     switch (activePanel) {
       case "hub": return isAr ? "مركز الاستخبارات" : "Intelligence Hub";
       case "news": return isAr ? "موجز الأخبار المالية" : "Market Wire";
-      case "research": return isAr ? "أبحاث الذكاء الاصطناعي" : "AI Research Memos";
       case "shariah": return isAr ? "الفحص الشرعي AAOIFI" : "AAOIFI Screening";
       case "screener": return isAr ? "مقارنة الشركات" : "Company Comparator";
+      case "custom_model": return isAr ? "باني النماذج المخصصة" : "Custom Model Builder";
       case "bi_report": return isAr ? "تقرير الأعمال الموحد" : "BI Synthesis";
       case "DCF": return isAr ? "نموذج التقييم DCF" : "DCF Valuation";
       case "LBO": return isAr ? "صفقات الاستحواذ LBO" : "LBO Deal Builder";

@@ -11,6 +11,15 @@ export default function CTASection() {
 
   return (
     <section className="py-20 bg-white relative overflow-hidden font-sans" dir={isAr ? "rtl" : "ltr"}>
+      {/* CONTINUOUS LIVE BACKGROUND VIDEO */}
+      <video
+        autoPlay
+        loop
+        muted
+        playsInline
+        className="absolute inset-0 w-full h-full object-cover opacity-15 pointer-events-none z-0"
+        src="/bg-video.mp4"
+      />
       <div className="max-w-7xl mx-auto px-6 relative z-10">
         <div className="rounded-xl bg-surface-subtle p-10 md:p-14 text-center relative overflow-hidden shadow-terminal-card border border-surface-border">
 

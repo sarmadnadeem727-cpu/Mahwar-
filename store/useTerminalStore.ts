@@ -7,10 +7,27 @@ export type PanelType =
   | "news"
   | "shariah" 
   | "screener" // Company Comparator Matrix
+  | "custom_model" // Excel-Style Custom Model Builder
   | "bi_report"
   | "DCF" 
   | "LBO" 
   | "FS";
+
+export interface CustomModelRow {
+  id: string;
+  name: string;
+  nameAr?: string;
+  isFormula: boolean;
+  formulaOrValue: string; // e.g. "1200" or "=Revenue - COGS"
+  values: number[]; // 5-year values [yr1, yr2, yr3, yr4, yr5]
+}
+
+export interface CustomModelSaved {
+  id: string;
+  name: string;
+  rows: CustomModelRow[];
+  computedAt: string;
+}
 
 export interface SessionAnalyses {
   dcf?: { inputs: any; outputs: any; computedAt: string };
@@ -18,6 +35,7 @@ export interface SessionAnalyses {
   threeStatement?: { inputs: any; outputs: any; computedAt: string };
   shariah?: { inputs: any; outputs: any; computedAt: string };
   comparator?: { rows: any[]; computedAt: string };
+  customModel?: { models: CustomModelSaved[]; activeModelId: string; computedAt: string };
 }
 
 interface TerminalState {
