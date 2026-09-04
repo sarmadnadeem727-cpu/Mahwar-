@@ -61,8 +61,8 @@ export default function SolutionSection() {
           viewport={{ once: true, margin: "-100px" }}
           className="text-center max-w-3xl mx-auto mb-16"
         >
-          <motion.div variants={staggerItem} className="inline-flex items-center gap-2 px-3.5 py-1 bg-emerald-dim border border-emerald-border text-emerald text-xs font-mono font-bold uppercase tracking-wider mb-4 rounded-full shadow-2xs">
-            <Sparkles size={12} />
+          <motion.div variants={staggerItem} className="label-pill label-pill-emerald">
+            <Sparkles size={10} />
             <span>{isAr ? "قدرات المحرك التكتيكي" : "MODELING ENGINE SUITE"}</span>
           </motion.div>
 
@@ -88,15 +88,14 @@ export default function SolutionSection() {
               viewport={{ once: true }}
               transition={{ duration: 0.4, delay: idx * 0.08 }}
               whileHover={{ y: -4 }}
-              className="bg-white p-6 border border-[#E2E8F0] hover:border-emerald transition-all flex flex-col justify-between h-[230px] rounded-lg shadow-sm hover:shadow-md group"
+              className="card-nav p-5 flex flex-col justify-between h-[230px] group"
             >
               <div>
                 <div className="flex justify-between items-start mb-4">
-                  <div className="p-2.5 rounded-lg bg-slate-50 border border-[#E2E8F0] text-emerald group-hover:border-emerald transition-colors">
-                    {feature.icon}
+                  <div className="p-2 rounded bg-[#F8FAFC] border border-[rgba(0,0,0,0.08)]">
+                    <span className="text-slate-500">{feature.icon}</span>
                   </div>
-                  <span className="flex items-center gap-1.5 px-2 py-0.5 border border-[#E2E8F0] bg-slate-50 text-slate-700 text-[10px] font-mono font-bold tracking-wider uppercase rounded-md">
-                    <span className="w-1.5 h-1.5 bg-emerald rounded-full animate-pulse"></span>
+                  <span className="label-pill">
                     {feature.badge}
                   </span>
                 </div>

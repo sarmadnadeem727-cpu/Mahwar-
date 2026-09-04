@@ -182,7 +182,7 @@ export default function MonteCarloPanel() {
       dir={isAr ? "rtl" : "ltr"}
     >
       {/* TOP TITLE HEADER */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 bg-white p-5 rounded-xl border border-surface-border shadow-xs">
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 panel-input p-5">
         <div className="flex items-center gap-3">
           <div className="p-3 rounded-lg bg-emerald-dim border border-emerald-border text-emerald">
             <Dices size={24} />
@@ -211,7 +211,7 @@ export default function MonteCarloPanel() {
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
         
         {/* INPUT PARAMETERS COLUMN */}
-        <div className="bg-white p-5 rounded-xl border border-surface-border space-y-5 shadow-xs">
+        <div className="panel-input p-5 space-y-5">
           <div className="flex items-center justify-between border-b border-surface-border pb-3">
             <h3 className="font-mono text-xs font-bold text-slate-heading uppercase tracking-wider flex items-center gap-2">
               <Sliders size={14} className="text-emerald" />
@@ -386,7 +386,7 @@ export default function MonteCarloPanel() {
           )}
 
           {/* RECHARTS HISTOGRAM */}
-          <div className="bg-white p-5 rounded-xl border border-surface-border shadow-xs space-y-4">
+          <div className="panel-input p-5 space-y-4">
             <div className="flex items-center justify-between border-b border-surface-border pb-3">
               <div>
                 <h3 className="font-serif text-sm font-bold text-slate-heading">

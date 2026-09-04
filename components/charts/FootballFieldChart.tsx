@@ -64,7 +64,7 @@ export default function FootballFieldChart({
   const getWidthPct = (min: number, max: number) => Math.max(2, Math.min(100, ((max - min) / totalSpan) * 100));
 
   return (
-    <div className="bg-white p-6 rounded-lg border border-[#E2E8F0] shadow-sm font-mono text-xs space-y-6">
+    <div className="panel-input p-6 font-mono text-xs space-y-6">
       {/* Header */}
       <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 pb-4 border-b border-[#E2E8F0]">
         <div>

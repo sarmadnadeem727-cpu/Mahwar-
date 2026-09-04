@@ -106,7 +106,7 @@ export default function MergerAnalysis() {
         <div className="lg:col-span-5 space-y-6">
           <div className="grid grid-cols-2 gap-4">
             {/* Acquirer */}
-            <div className="bg-white p-4 rounded-lg border border-[#E2E8F0] shadow-sm space-y-3">
+            <div className="panel-input p-4 space-y-3">
               <h3 className="font-bold text-slate-900 font-mono text-xs uppercase border-b pb-2">
                 {isAr ? "الشركة المستحوذة" : "Acquirer (Base)"}
               </h3>
@@ -116,7 +116,7 @@ export default function MergerAnalysis() {
             </div>
             
             {/* Target */}
-            <div className="bg-white p-4 rounded-lg border border-[#E2E8F0] shadow-sm space-y-3">
+            <div className="panel-input p-4 space-y-3">
               <h3 className="font-bold text-slate-900 font-mono text-xs uppercase border-b pb-2">
                 {isAr ? "الشركة المستهدفة" : "Target"}
               </h3>
@@ -127,7 +127,7 @@ export default function MergerAnalysis() {
           </div>
 
           {/* Deal Structure */}
-          <div className="bg-white p-5 rounded-lg border border-[#E2E8F0] shadow-sm space-y-4">
+          <div className="panel-input p-5 space-y-4">
             <h3 className="font-bold text-slate-900 font-mono text-xs uppercase border-b pb-2">
               {isAr ? "هيكل الصفقة" : "Deal Structure & Financing"}
             </h3>
@@ -142,7 +142,7 @@ export default function MergerAnalysis() {
         {/* OUTPUTS - 7 COLS */}
         <div className="lg:col-span-7 space-y-6">
           <div className="grid grid-cols-2 gap-4">
-            <div className={`p-6 rounded-lg shadow-lg flex flex-col items-center justify-center text-center text-white ${isAccretive ? 'bg-emerald' : 'bg-rose-500'}`}>
+            <div className={`p-6 rounded-[10px] flex flex-col items-center justify-center text-center text-white ${isAccretive ? 'bg-emerald' : 'bg-rose-600'}`} style={{ boxShadow: 'var(--shadow-card)' }}>
               <span className="block text-xs font-mono uppercase mb-1 opacity-80">
                 {isAr ? "الأثر على ربحية السهم" : "EPS Impact"}
               </span>
@@ -154,7 +154,7 @@ export default function MergerAnalysis() {
               </span>
             </div>
             
-            <div className="bg-slate-900 text-white p-6 rounded-lg shadow-lg flex flex-col justify-center space-y-3">
+            <div className="panel-result text-white p-6 flex flex-col justify-center space-y-3">
               <div className="flex justify-between border-b border-white/10 pb-2">
                 <span className="text-xs font-mono opacity-70">{isAr ? "سعر العرض للمستهدف" : "Target Offer Price"}</span>
                 <span className="font-mono font-bold">{currency} {results.offerPrice.toFixed(2)}</span>
@@ -168,8 +168,9 @@ export default function MergerAnalysis() {
                 <span className="font-mono font-bold">{currency} {results.acqEPS.toFixed(2)}</span>
               </div>
               <div className="flex justify-between">
-                <span className="text-xs font-mono text-emerald">{isAr ? "ربحية السهم بعد الاندماج" : "Pro Forma EPS"}</span>
-                <span className="font-mono font-bold text-emerald">{currency} {results.pfEPS.toFixed(2)}</span>
+                <span className="text-xs font-mono opacity-70">{isAr ? "ربحية السهم بعد الاندماج" : "Pro Forma EPS"}</span>
+                {/* Color is functional: green = accretive, rose = dilutive */}
+                <span className={`font-mono font-bold ${isAccretive ? 'text-emerald' : 'text-rose-400'}`}>{currency} {results.pfEPS.toFixed(2)}</span>
               </div>
             </div>
           </div>

@@ -80,7 +80,7 @@ export default function AcquisitionCostCalculator() {
       id="acquisition-cost-pdf-area"
     >
       {/* HEADER BAR */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 bg-white p-5 rounded-xl border border-surface-border shadow-xs">
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 panel-input p-5">
         <div className="flex items-center gap-3">
           <div className="p-3 rounded-lg bg-emerald-dim border border-emerald-border text-emerald">
             <Calculator size={24} />
@@ -136,7 +136,7 @@ export default function AcquisitionCostCalculator() {
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
         
         {/* INPUTS COLUMN */}
-        <div className="bg-white p-5 rounded-xl border border-surface-border space-y-4 shadow-xs">
+        <div className="panel-input p-5 space-y-4">
           <h3 className="font-mono text-xs font-bold text-slate-heading uppercase tracking-wider border-b border-surface-border pb-3 flex items-center gap-2">
             <DollarSign size={14} className="text-emerald" />
             <span>{isAr ? "مدخلات الصفحة والصفقة" : "Transaction Inputs"}</span>
@@ -219,7 +219,7 @@ export default function AcquisitionCostCalculator() {
         {/* WATERFALL CHART & BREAKDOWN TABLE */}
         <div className="lg:col-span-2 space-y-6">
           
-          <div className="bg-white p-5 rounded-xl border border-surface-border shadow-xs space-y-4">
+          <div className="panel-input p-5 space-y-4">
             <h3 className="font-serif text-sm font-bold text-slate-heading border-b border-surface-border pb-3">
               {isAr ? "مخطط التكلفة المتراكمة للاستحواذ (Acquisition Cost Stack)" : "Acquisition Cost Component Breakdown Stack"}
             </h3>
@@ -245,7 +245,7 @@ export default function AcquisitionCostCalculator() {
           </div>
 
           {/* ITEM SUMMARY TABLE */}
-          <div className="bg-white p-5 rounded-xl border border-surface-border shadow-xs">
+          <div className="panel-input p-5">
             <h3 className="font-mono text-xs font-bold text-slate-heading uppercase tracking-wider mb-3">
               {isAr ? "مصفوفة ملخص مكونات الصفقة" : "M&A Deal Component Waterfall Summary"}
             </h3>

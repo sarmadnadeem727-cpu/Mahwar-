@@ -62,7 +62,7 @@ export default function WACCBuilder() {
         {/* INPUTS - 8 COLS */}
         <div className="md:col-span-8 grid grid-cols-1 md:grid-cols-2 gap-6">
           {/* Equity Panel */}
-          <div className="bg-white p-5 rounded-lg border border-[#E2E8F0] shadow-sm space-y-4">
+          <div className="panel-input p-5 space-y-4">
             <h3 className="font-bold text-slate-900 font-mono text-xs uppercase border-b pb-2">
               {isAr ? "تكلفة الملكية (CAPM)" : "Cost of Equity (CAPM)"}
             </h3>
@@ -78,7 +78,7 @@ export default function WACCBuilder() {
 
           {/* Debt & Weights Panel */}
           <div className="space-y-6">
-            <div className="bg-white p-5 rounded-lg border border-[#E2E8F0] shadow-sm space-y-4">
+            <div className="panel-input p-5 space-y-4">
               <h3 className="font-bold text-slate-900 font-mono text-xs uppercase border-b pb-2">
                 {isAr ? "تكلفة الدين" : "Cost of Debt"}
               </h3>
@@ -91,7 +91,7 @@ export default function WACCBuilder() {
               </div>
             </div>
 
-            <div className="bg-white p-5 rounded-lg border border-[#E2E8F0] shadow-sm space-y-4">
+            <div className="panel-input p-5 space-y-4">
               <h3 className="font-bold text-slate-900 font-mono text-xs uppercase border-b pb-2">
                 {isAr ? "الهيكل الرأسمالي المستهدف" : "Target Capital Structure"}
               </h3>
@@ -106,7 +106,7 @@ export default function WACCBuilder() {
 
         {/* OUTPUTS & CHART - 4 COLS */}
         <div className="md:col-span-4 space-y-6">
-          <div className="bg-slate-900 text-white p-6 rounded-lg shadow-lg flex flex-col items-center justify-center min-h-[160px] text-center">
+          <div className="panel-result text-white p-6 flex flex-col items-center justify-center min-h-[160px] text-center">
             <span className="block text-xs text-slate-400 font-mono uppercase mb-2">
               {isAr ? "المتوسط المرجح لتكلفة رأس المال" : "Weighted Average Cost of Capital"}
             </span>

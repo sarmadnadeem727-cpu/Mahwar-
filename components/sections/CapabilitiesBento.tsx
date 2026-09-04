@@ -18,7 +18,7 @@ export default function CapabilitiesBento() {
             initial={{ opacity: 0, y: 10 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
-            className="inline-flex items-center gap-2 px-3 py-1 rounded-full border border-emerald/20 bg-emerald/5 text-emerald font-mono text-[10px] font-bold uppercase tracking-widest mb-6"
+            className="label-pill label-pill-emerald mb-6"
           >
             <Database size={12} />
             <span>{isAr ? "قدرات النظام الأساسية" : "Core Capabilities"}</span>
@@ -54,9 +54,9 @@ export default function CapabilitiesBento() {
             whileInView={{ opacity: 1, scale: 1 }}
             viewport={{ once: true }}
             transition={{ delay: 0.1 }}
-            className="md:col-span-2 md:row-span-2 bg-white rounded-2xl p-8 border border-[#E2E8F0] shadow-sm relative overflow-hidden group hover:shadow-md transition-shadow"
+            className="md:col-span-2 md:row-span-2 bg-white rounded-[10px] p-8 border border-[rgba(0,0,0,0.08)] relative overflow-hidden group" style={{ boxShadow: 'var(--shadow-card)' }}
           >
-            <div className="absolute top-0 right-0 w-64 h-64 bg-emerald/5 rounded-full blur-3xl -translate-y-1/2 translate-x-1/4 group-hover:bg-emerald/10 transition-colors duration-500" />
+            {/* No decorative blob — removed filler gradient */}
             
             <ShieldCheck size={32} className="text-emerald mb-6" />
             <h3 className="text-2xl font-bold text-slate-900 mb-3 font-serif">
@@ -82,7 +82,7 @@ export default function CapabilitiesBento() {
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
             transition={{ delay: 0.2 }}
-            className="md:col-span-2 lg:col-span-2 bg-slate-900 rounded-2xl p-8 relative overflow-hidden group shadow-lg"
+            className="md:col-span-2 lg:col-span-2 bg-slate-900 rounded-[10px] p-8 relative overflow-hidden group" style={{ boxShadow: 'var(--shadow-card)' }}
           >
             <div className="absolute inset-0 bg-[linear-gradient(to_right,rgba(255,255,255,0.05)_1px,transparent_1px),linear-gradient(to_bottom,rgba(255,255,255,0.05)_1px,transparent_1px)] bg-[size:1.5rem_1.5rem] [mask-image:radial-gradient(ellipse_60%_60%_at_50%_50%,#000_70%,transparent_100%)] pointer-events-none" />
             
@@ -111,7 +111,7 @@ export default function CapabilitiesBento() {
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
             transition={{ delay: 0.3 }}
-            className="bg-white rounded-2xl p-6 border border-[#E2E8F0] shadow-sm flex flex-col group hover:border-emerald/30 transition-colors"
+            className="bg-white rounded-[10px] p-6 border border-[rgba(0,0,0,0.08)] flex flex-col group hover:border-emerald/30 transition-colors" style={{ boxShadow: 'var(--shadow-card)' }}
           >
             <FileSpreadsheet size={24} className="text-slate-700 mb-4 group-hover:text-emerald transition-colors" />
             <h3 className="text-lg font-bold text-slate-900 mb-2 font-serif">
@@ -130,7 +130,7 @@ export default function CapabilitiesBento() {
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
             transition={{ delay: 0.4 }}
-            className="bg-white rounded-2xl p-6 border border-[#E2E8F0] shadow-sm flex flex-col group hover:border-emerald/30 transition-colors overflow-hidden relative"
+            className="bg-white rounded-[10px] p-6 border border-[rgba(0,0,0,0.08)] flex flex-col group hover:border-emerald/30 transition-colors overflow-hidden relative" style={{ boxShadow: 'var(--shadow-card)' }}
           >
             {/* Sparkline decorative background */}
             <svg className="absolute bottom-0 left-0 w-full h-24 opacity-[0.03] group-hover:opacity-10 transition-opacity" viewBox="0 0 100 30" preserveAspectRatio="none">

@@ -117,7 +117,7 @@ export default function TornadoChart({
   const maxDev = Math.max(...drivers.map(d => Math.max(Math.abs(d.highPx - baseSharePrice), Math.abs(d.lowPx - baseSharePrice)))) * 1.25;
 
   return (
-    <div className="bg-white p-6 rounded-lg border border-[#E2E8F0] shadow-sm font-mono text-xs space-y-6">
+    <div className="panel-input p-6 font-mono text-xs space-y-6">
       <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 pb-4 border-b border-[#E2E8F0]">
         <div>
           <div className="flex items-center gap-2 text-emerald font-bold uppercase tracking-wider text-[11px] mb-1">

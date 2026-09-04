@@ -23,7 +23,7 @@ export default function ChartWrapper({
   className = "",
 }: ChartWrapperProps) {
   return (
-    <div className={`bg-white border border-[#E2E8F0] rounded-lg shadow-sm overflow-hidden flex flex-col ${className}`} dir={isAr ? "rtl" : "ltr"}>
+    <div className={`panel-data overflow-hidden flex flex-col ${className}`} dir={isAr ? "rtl" : "ltr"}>
       {/* Header */}
       <div className="flex items-center justify-between p-4 border-b border-[#E2E8F0] bg-slate-50/50">
         <div>

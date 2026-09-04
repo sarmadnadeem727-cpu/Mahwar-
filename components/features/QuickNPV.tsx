@@ -96,7 +96,7 @@ export default function QuickNPV() {
 
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
         <div className="md:col-span-1 space-y-4">
-          <div className="bg-white p-5 rounded-lg border border-[#E2E8F0] shadow-sm space-y-4">
+          <div className="panel-input p-5 space-y-4">
             <h3 className="font-bold text-slate-900 font-mono text-xs uppercase border-b pb-2">
               {isAr ? "معلمات الاستثمار" : "Investment Parameters"}
             </h3>
@@ -115,7 +115,7 @@ export default function QuickNPV() {
             />
           </div>
 
-          <div className="bg-slate-900 text-white p-5 rounded-lg shadow-lg space-y-4">
+          <div className="panel-result text-white p-5 space-y-4">
             <h3 className="font-bold font-mono text-xs uppercase text-slate-400">
               {isAr ? "النتائج المباشرة" : "Live Results"}
             </h3>
@@ -150,7 +150,7 @@ export default function QuickNPV() {
         </div>
 
         <div className="md:col-span-2">
-          <div className="bg-white p-5 rounded-lg border border-[#E2E8F0] shadow-sm">
+          <div className="panel-input p-5">
             <div className="flex justify-between items-center border-b pb-2 mb-4">
               <h3 className="font-bold text-slate-900 font-mono text-xs uppercase">
                 {isAr ? "التدفقات النقدية الدورية" : "Periodic Cash Flows"}

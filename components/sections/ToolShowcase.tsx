@@ -259,7 +259,7 @@ export default function ToolShowcase() {
         
         {/* SECTION HEADER */}
         <div className="text-center max-w-3xl mx-auto mb-16">
-          <div className="inline-flex items-center gap-2 px-3.5 py-1 bg-emerald-dim border border-emerald-border text-emerald text-mono-caption font-mono font-bold uppercase tracking-wider mb-4 rounded-full shadow-2xs">
+          <div className="label-pill label-pill-emerald">
             <span>{isAr ? "قدرات المحرك الكمي (10 نماذج)" : "THE SOVEREIGN FINANCIAL ENGINE SUITE"}</span>
           </div>
 
@@ -284,14 +284,16 @@ export default function ToolShowcase() {
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
               transition={{ duration: 0.3, delay: idx * 0.06 }}
-              className="bg-white p-6 rounded-xl border border-surface-border hover:border-emerald transition-all shadow-terminal-card hover:shadow-terminal-hover flex flex-col justify-between group"
+              className="card-nav p-5 flex flex-col justify-between group"
             >
               <div className="space-y-4">
                 <div className="flex justify-between items-start">
-                  <div className="p-2.5 rounded-lg bg-surface-subtle border border-surface-border text-emerald group-hover:border-emerald transition-colors">
-                    {tool.icon}
+                  {/* Icon: neutral gray container, no emerald unless active */}
+                  <div className="p-2 rounded bg-[#F8FAFC] border border-[rgba(0,0,0,0.08)]">
+                    <span className="text-slate-500 block">{tool.icon}</span>
                   </div>
-                  <span className="px-2 py-0.5 rounded border border-surface-border bg-surface-subtle text-slate-muted font-mono font-bold text-[10px] tracking-wider uppercase">
+                  {/* Tag: plain label, no colored background */}
+                  <span className="label-pill text-slate-muted">
                     {tool.tag}
                   </span>
                 </div>
@@ -311,16 +313,15 @@ export default function ToolShowcase() {
                 </div>
               </div>
 
-              {/* Card Footer Link */}
-              <div className="border-t border-surface-border pt-4 mt-6 flex justify-between items-center text-mono-caption font-mono">
+              <div className="border-t border-[rgba(0,0,0,0.07)] pt-4 mt-5 flex justify-between items-center">
                 <Link
                   href={`/dashboard?panel=${tool.id}`}
-                  className="flex items-center gap-1.5 text-emerald font-bold hover:underline group-hover:translate-x-1 rtl:group-hover:-translate-x-1 transition-transform"
+                  className="btn-ghost"
                 >
                   <span>{isAr ? "تشغيل النموذج" : "Launch Engine"}</span>
-                  <ArrowRight size={13} />
+                  <ArrowRight size={12} />
                 </Link>
-                <CheckCircle2 size={14} className="text-emerald" />
+                {/* No decorative checkmark — removed emerald decoration */}
               </div>
             </motion.div>
           ))}

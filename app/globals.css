@@ -27,6 +27,22 @@
     --border: rgba(0, 0, 0, 0.08);
     --border-strong: rgba(0, 0, 0, 0.16);
     --border-emerald: rgba(14, 124, 105, 0.35);
+
+    /* === SHADOW SYSTEM (3 tiers, used purposefully)
+       0 = resting data surfaces (panels, tables, input areas) — no shadow
+       1 = interactive nav cards, tool cards — barely perceptible
+       2 = elevated outputs, modals, highlighted results only */
+    --shadow-panel:   0 1px 2px rgba(0, 0, 0, 0.04);
+    --shadow-card:    0 1px 3px rgba(0, 0, 0, 0.05), 0 4px 12px rgba(0, 0, 0, 0.04);
+    --shadow-elevated:0 4px 20px -2px rgba(14, 124, 105, 0.14), 0 2px 6px -1px rgba(0, 0, 0, 0.06);
+    --shadow-modal:   0 20px 60px -10px rgba(0, 0, 0, 0.18);
+
+    /* === BORDER RADIUS (2 values only)
+       --radius-panel:   data panels, inputs, tables — sharp, institutional
+       --radius-element: interactive cards, buttons — slightly rounded  */
+    --radius-panel:   6px;
+    --radius-element: 10px;
+    --radius-modal:   14px;
   }
 
   body {
@@ -37,7 +53,6 @@
     overflow-x: hidden;
   }
 
-  /* Typography Fonts */
   .font-serif {
     font-family: var(--font-serif), Georgia, serif;
   }
@@ -57,24 +72,149 @@
 }
 
 @layer components {
-  /* Institutional Surface Panels */
-  .glass-panel {
-    background: var(--bg1);
-    border: 1px solid var(--border);
-  }
 
-  .glass-card {
+  /* ===================================================================
+     PANEL TYPES — three distinct surfaces, never interchangeable
+     =================================================================== */
+
+  /* Data Panel: chart containers, model output tables, result areas
+     Sharp radius. No shadow. Left-border accent for data panels. */
+  .panel-data {
     background: #FFFFFF;
-    border: 1px solid var(--border);
-    transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+    border: 1px solid rgba(0, 0, 0, 0.08);
+    border-radius: var(--radius-panel);
+    box-shadow: none;
   }
 
-  .glass-card:hover {
-    border-color: var(--border-emerald);
-    box-shadow: 0 4px 20px -2px rgba(14, 124, 105, 0.12);
+  /* Input Panel: assumption inputs, form config blocks
+     Sharp radius. Faintest lift. */
+  .panel-input {
+    background: #FFFFFF;
+    border: 1px solid rgba(0, 0, 0, 0.10);
+    border-radius: var(--radius-panel);
+    box-shadow: var(--shadow-panel);
   }
 
-  /* Institutional Bloomberg-grade Table Architecture */
+  /* Nav Card: hub launchers, homepage feature cards, tool grid cards
+     Rounded. Subtle shadow. Hover = emerald border + elevated shadow. */
+  .card-nav {
+    background: #FFFFFF;
+    border: 1px solid rgba(0, 0, 0, 0.08);
+    border-radius: var(--radius-element);
+    box-shadow: var(--shadow-card);
+    transition: border-color 0.15s ease, box-shadow 0.15s ease;
+  }
+  .card-nav:hover {
+    border-color: rgba(14, 124, 105, 0.40);
+    box-shadow: var(--shadow-elevated);
+  }
+
+  /* Result Panel: key output KPI blocks on dark background */
+  .panel-result {
+    background: #0F172A;
+    border-radius: var(--radius-element);
+    box-shadow: var(--shadow-card);
+  }
+
+  /* ===================================================================
+     SECTION LABELS — replaces rounded-full badge pills
+     Sharp 4px radius; pill shape was decorative, not functional
+     =================================================================== */
+  .label-pill {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 3px 10px;
+    border-radius: 4px;
+    border: 1px solid rgba(0, 0, 0, 0.10);
+    background: #F8FAFC;
+    font-family: var(--font-mono), monospace;
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--text2);
+  }
+  .label-pill-emerald {
+    border-color: rgba(14, 124, 105, 0.25);
+    background: rgba(14, 124, 105, 0.06);
+    color: var(--emerald);
+  }
+
+  /* ===================================================================
+     BUTTON HIERARCHY — three distinct tiers
+     =================================================================== */
+
+  /* Primary: main actions (Enter Terminal, Calculate, Generate Report) */
+  .btn-primary {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    padding: 10px 20px;
+    border-radius: var(--radius-panel);
+    background: var(--emerald);
+    color: #FFFFFF;
+    font-family: var(--font-mono), monospace;
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    border: 1px solid transparent;
+    cursor: pointer;
+    transition: background 0.15s ease, transform 0.1s ease;
+  }
+  .btn-primary:hover { background: #12A189; }
+  .btn-primary:active { transform: scale(0.988); }
+
+  /* Secondary: export, cancel, auxiliary — outline only, no fill */
+  .btn-secondary {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+    padding: 9px 16px;
+    border-radius: var(--radius-panel);
+    background: transparent;
+    color: #334155;
+    font-family: var(--font-mono), monospace;
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    border: 1px solid #CBD5E1;
+    cursor: pointer;
+    transition: border-color 0.15s ease, color 0.15s ease, background 0.15s ease;
+  }
+  .btn-secondary:hover {
+    border-color: #94A3B8;
+    color: #0F172A;
+    background: #F8FAFC;
+  }
+
+  /* Ghost: inline text-link actions (Launch Engine, View Details) */
+  .btn-ghost {
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    padding: 2px 0;
+    background: transparent;
+    border: none;
+    color: var(--emerald);
+    font-family: var(--font-mono), monospace;
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    cursor: pointer;
+    text-underline-offset: 3px;
+    transition: opacity 0.15s ease;
+  }
+  .btn-ghost:hover { opacity: 0.7; text-decoration: underline; }
+
+  /* ===================================================================
+     TABLES
+     =================================================================== */
   .terminal-table {
     width: 100%;
     border-collapse: separate;
@@ -117,13 +257,15 @@
     background: rgba(14, 124, 105, 0.04);
   }
 
-  /* Distinct input styling with active emerald focus */
+  /* ===================================================================
+     INPUTS
+     =================================================================== */
   .terminal-input {
     background: #FFFFFF;
     border: 1px solid var(--border-strong);
     color: var(--text1);
     padding: 8px 12px;
-    border-radius: 6px;
+    border-radius: var(--radius-panel);
     font-family: var(--font-mono), monospace;
     font-size: 12px;
     transition: all 0.18s cubic-bezier(0.16, 1, 0.3, 1);
@@ -134,20 +276,30 @@
     border-color: var(--emerald);
     box-shadow: 0 0 0 2px rgba(14, 124, 105, 0.2);
   }
+
+  /* ===================================================================
+     LEGACY — retained for compatibility
+     =================================================================== */
+  .glass-panel {
+    background: var(--bg1);
+    border: 1px solid var(--border);
+  }
+
+  .glass-card {
+    background: #FFFFFF;
+    border: 1px solid var(--border);
+    transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+  }
+
+  .glass-card:hover {
+    border-color: var(--border-emerald);
+    box-shadow: 0 4px 20px -2px rgba(14, 124, 105, 0.12);
+  }
 }
 
-/* Custom Scrollbar for Light Mode */
-::-webkit-scrollbar {
-  width: 6px;
-  height: 6px;
-}
-::-webkit-scrollbar-track {
-  background: var(--bg1);
-}
-::-webkit-scrollbar-thumb {
-  background: #CBD5E1;
-  border-radius: 3px;
-}
-::-webkit-scrollbar-thumb:hover {
-  background: var(--emerald);
-}
+/* Custom Scrollbar */
+::-webkit-scrollbar { width: 6px; height: 6px; }
+::-webkit-scrollbar-track { background: var(--bg1); }
+::-webkit-scrollbar-thumb { background: #CBD5E1; border-radius: 3px; }
+::-webkit-scrollbar-thumb:hover { background: var(--emerald); }
+

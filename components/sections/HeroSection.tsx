@@ -52,7 +52,7 @@ export default function HeroSection() {
           initial={{ opacity: 0, y: -10 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.3 }}
-          className="inline-flex items-center gap-2 px-3.5 py-1 rounded-full border border-surface-border bg-surface-subtle text-emerald font-mono font-bold text-mono-caption uppercase tracking-wider mb-6 shadow-2xs"
+          className="label-pill label-pill-emerald mb-6"
         >
           <span className="w-2 h-2 rounded-full bg-emerald animate-pulse" />
           <span>{isAr ? "محرك النمذجة السيادية v2.5" : "Institutional Sovereign Engine v2.5"}</span>
@@ -94,7 +94,7 @@ export default function HeroSection() {
         >
           <Link
             href="/dashboard"
-            className="w-full sm:w-auto flex items-center justify-center gap-2.5 px-8 py-3.5 rounded-lg bg-emerald hover:bg-emerald-light text-white font-mono font-bold text-mono-caption uppercase tracking-wider shadow-sm transition-all cursor-pointer group"
+            className="btn-primary w-full sm:w-auto"
           >
             <span>{isAr ? "تشغيل المنصة التكتيكية" : "ENTER TERMINAL"}</span>
             <ArrowRight size={15} className="group-hover:translate-x-1 rtl:group-hover:-translate-x-1 transition-transform" />
@@ -102,7 +102,7 @@ export default function HeroSection() {
 
           <Link
             href="/dashboard?panel=news"
-            className="w-full sm:w-auto flex items-center justify-center gap-2 px-6 py-3.5 rounded-lg bg-surface-subtle border border-surface-border hover:bg-surface-hover text-slate-heading font-mono font-bold text-mono-caption transition-all cursor-pointer"
+            className="btn-secondary w-full sm:w-auto"
           >
             <Activity size={14} className="text-emerald" />
             <span>{isAr ? "موجز الأخبار المباشر" : "Explore GCC Wire"}</span>

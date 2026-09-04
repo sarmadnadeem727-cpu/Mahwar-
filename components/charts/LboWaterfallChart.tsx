@@ -48,7 +48,7 @@ export default function LboWaterfallChart({
   return (
     <div className="space-y-6">
       {/* SOURCES & USES WATERFALL PANEL */}
-      <div className="bg-white p-6 rounded-lg border border-[#E2E8F0] shadow-sm font-mono text-xs space-y-6">
+      <div className="panel-input p-6 font-mono text-xs space-y-6">
         <div className="flex justify-between items-center pb-4 border-b border-[#E2E8F0]">
           <div>
             <span className="text-emerald font-bold uppercase tracking-wider text-[11px] block mb-1">
@@ -106,7 +106,7 @@ export default function LboWaterfallChart({
       </div>
 
       {/* IRR & MOIC HOLD PERIOD TRAJECTORY LINE CHART */}
-      <div className="bg-white p-6 rounded-lg border border-[#E2E8F0] shadow-sm font-mono text-xs space-y-4">
+      <div className="panel-input p-6 font-mono text-xs space-y-4">
         <div className="flex justify-between items-center pb-2 border-b border-[#E2E8F0]">
           <div>
             <span className="text-emerald font-bold uppercase tracking-wider text-[11px] block mb-1">

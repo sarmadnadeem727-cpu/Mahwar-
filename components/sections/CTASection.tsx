@@ -24,8 +24,8 @@ export default function CTASection() {
         <div className="rounded-xl bg-surface-subtle p-10 md:p-14 text-center relative overflow-hidden shadow-terminal-card border border-surface-border">
 
           <div className="max-w-3xl mx-auto relative z-10 space-y-6">
-            <div className="inline-flex items-center gap-2 px-4 py-1.5 bg-emerald-dim border border-emerald-border text-emerald font-mono text-mono-caption font-bold uppercase tracking-wider rounded-full shadow-2xs">
-              <Zap size={13} className="text-emerald" />
+            <div className="label-pill label-pill-emerald">
+              <Zap size={11} className="text-emerald" />
               <span>{isAr ? "جاهز للاستخدام الفوري" : "INSTANT INSTITUTIONAL ACCESS"}</span>
             </div>
 
@@ -43,10 +43,10 @@ export default function CTASection() {
             <div className="pt-2 flex flex-col sm:flex-row items-center justify-center gap-4">
               <Link
                 href="/dashboard"
-                className="w-full sm:w-auto inline-flex items-center justify-center gap-3 px-8 py-4 rounded-lg bg-emerald text-white font-mono font-bold text-mono-caption uppercase tracking-wider hover:bg-emerald-light transition-all cursor-pointer group shadow-sm"
+                className="btn-primary"
               >
                 <span>{isAr ? "تشغيل محطة المحور" : "ENTER TERMINAL"}</span>
-                <ArrowRight size={14} className="group-hover:translate-x-1 rtl:group-hover:-translate-x-1 transition-transform" />
+                <ArrowRight size={13} />
               </Link>
             </div>
 

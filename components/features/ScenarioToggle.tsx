@@ -46,7 +46,7 @@ export default function ScenarioToggle<T>({
   };
 
   return (
-    <div className="bg-white p-4 rounded-lg border border-[#E2E8F0] shadow-sm font-mono text-xs space-y-3" dir={isAr ? "rtl" : "ltr"}>
+    <div className="panel-input p-4 font-mono text-xs space-y-3" dir={isAr ? "rtl" : "ltr"}>
       <div className="flex justify-between items-center pb-2 border-b border-[#E2E8F0]">
         <span className="text-slate-500 font-bold uppercase tracking-wider text-[10px]">
           {isAr ? titleAr : title}

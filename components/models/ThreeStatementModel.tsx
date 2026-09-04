@@ -119,7 +119,7 @@ export default function ThreeStatementModel() {
     >
       {/* LEFT COLUMN: DRIVERS (4 COLS) */}
       <div className="col-span-12 lg:col-span-4 space-y-6">
-        <div className="bg-white p-6 rounded-lg border border-[#E2E8F0] space-y-4 shadow-sm">
+        <div className="panel-input p-6 space-y-4">
           <div className="flex items-center justify-between pb-3 border-b border-[#E2E8F0]">
             <div className="flex items-center gap-3">
               <FileSpreadsheet className="text-emerald" size={22} />

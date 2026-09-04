@@ -141,16 +141,16 @@ export default function IntelligenceHub() {
     >
 
 
-      {/* HUB HEADER BANNER */}
-      <div className="bg-white p-8 rounded-lg border border-[#E2E8F0] flex flex-col md:flex-row justify-between items-start md:items-center gap-6 shadow-sm">
+      {/* HUB HEADER BANNER — uses panel-data (data/content surface, not nav) */}
+      <div className="panel-data p-6 md:p-8 flex flex-col md:flex-row justify-between items-start md:items-center gap-6">
         <div className="space-y-2">
-          <span className="px-3 py-1 text-xs font-mono text-emerald bg-emerald-dim border border-emerald-border rounded-full font-bold uppercase tracking-wider shadow-2xs">
+          <span className="label-pill label-pill-emerald">
             {isAr ? "محطة عمل النمذجة التكتيكية v2.5" : "Institutional Sovereign Engine v2.5"}
           </span>
-          <h2 className="font-serif text-3xl font-bold text-slate-900">
+          <h2 className="font-serif text-2xl md:text-3xl font-bold text-slate-heading mt-2">
             {isAr ? "لوحة التحكم ومركز النمذجة الكمية" : "Quantitative Financial Workbench"}
           </h2>
-          <p className="text-slate-600 text-xs leading-relaxed max-w-xl font-sans">
+          <p className="text-slate-muted text-xs leading-relaxed max-w-xl font-sans">
             {isAr 
               ? "استكشف أدوات النمذجة التكتيكية (DCF & LBO)، الفحص الشرعي AAOIFI، مقارنة الأقران، وتصنيع التقارير الموحدة." 
               : "Build institutional financial models (DCF & LBO), verify AAOIFI Shariah compliance, run peer heatmaps, and synthesize outputs into executive PDF reports."
@@ -160,7 +160,7 @@ export default function IntelligenceHub() {
 
         <button
           onClick={() => setPanel("bi_report")}
-          className="px-6 py-3 bg-emerald hover:bg-emerald-light text-white font-mono text-xs font-bold rounded-lg flex items-center gap-2 shadow-sm cursor-pointer transition-colors uppercase tracking-wider"
+          className="btn-primary shrink-0"
         >
           <FileText size={14} />
           <span>{isAr ? "تصدير التقرير الموحد" : "Generate BI Report"}</span>
@@ -169,7 +169,7 @@ export default function IntelligenceHub() {
 
       {/* TOOLS & STATUS GRID */}
       <div className="space-y-4">
-        <h3 className="font-mono text-xs font-bold text-slate-500 uppercase tracking-wider pl-1">
+        <h3 className="font-mono text-[10px] font-bold text-slate-muted uppercase tracking-widest pl-1">
           {isAr ? "أدوات النمذجة والتحليل الكمي" : "Sovereign Modeling Tools & Workbench Status"}
         </h3>
 
@@ -183,7 +183,7 @@ export default function IntelligenceHub() {
               transition: { staggerChildren: 0.05 }
             }
           }}
-          className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6"
+          className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5"
         >
           {overviewCards.map((card) => (
             <motion.div
@@ -193,42 +193,43 @@ export default function IntelligenceHub() {
               }}
               key={card.id}
               onClick={() => setPanel(card.id)}
-              className="bg-white p-6 rounded-lg border border-[#E2E8F0] hover:border-emerald transition-all cursor-pointer flex flex-col justify-between h-[180px] group relative shadow-sm hover:shadow-md"
+              className="card-nav p-5 cursor-pointer flex flex-col justify-between h-[175px] group relative"
             >
               <div>
                 <div className="flex justify-between items-start mb-3">
-                  <span className="text-[10px] font-mono font-bold text-slate-500 tracking-wider">
+                  <span className="text-[10px] font-mono font-bold text-slate-muted tracking-widest uppercase">
                     {card.tag}
                   </span>
-                  <div className="p-2 rounded-lg bg-slate-50 border border-[#E2E8F0] group-hover:border-emerald transition-colors">
-                    {card.icon}
+                  {/* Icon: slate-500 neutral when inactive, no emerald decoration */}
+                  <div className="p-1.5 rounded bg-[#F8FAFC] border border-[rgba(0,0,0,0.08)]">
+                    <span className="text-slate-muted block [&>svg]:text-slate-500">{card.icon}</span>
                   </div>
                 </div>
 
-                <h4 className="font-serif text-base font-bold text-slate-900 group-hover:text-emerald transition-colors">
+                <h4 className="font-serif text-base font-bold text-slate-heading group-hover:text-emerald transition-colors">
                   {card.title}
                 </h4>
-                <p className="text-xs text-slate-600 mt-1 leading-normal font-sans">
+                <p className="text-[11px] text-slate-muted mt-1 leading-normal font-sans">
                   {card.desc}
                 </p>
               </div>
 
-              {/* Status footer inside card */}
-              <div className="border-t border-[#E2E8F0] pt-3 mt-4 flex justify-between items-center text-xs font-mono">
-                <span className="flex items-center gap-1">
+              {/* Status footer: emerald ONLY when has data (functional signal) */}
+              <div className="border-t border-[rgba(0,0,0,0.07)] pt-3 mt-4 flex justify-between items-center text-[10px] font-mono">
+                <span className="flex items-center gap-1.5">
                   {card.hasData ? (
                     <>
-                      <CheckCircle2 size={13} className="text-emerald" />
+                      <CheckCircle2 size={12} className="text-emerald" />
                       <span className="text-emerald font-bold">{card.statusLabel}</span>
                     </>
                   ) : (
                     <>
-                      <Clock size={13} className="text-slate-400" />
-                      <span className="text-slate-500">{card.statusLabel}</span>
+                      <Clock size={12} className="text-slate-400" />
+                      <span className="text-slate-400">{card.statusLabel}</span>
                     </>
                   )}
                 </span>
-                <ChevronRight size={14} className="text-slate-400 group-hover:text-emerald transition-colors" />
+                <ChevronRight size={13} className="text-slate-300 group-hover:text-emerald transition-colors" />
               </div>
             </motion.div>
           ))}
@@ -237,3 +238,4 @@ export default function IntelligenceHub() {
     </motion.div>
   );
 }
+

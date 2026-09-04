@@ -373,7 +373,7 @@ export default function CustomModelBuilder() {
       <div className="col-span-12 lg:col-span-8 space-y-6">
         
         {/* SPREADSHEET TABLE GRID */}
-        <div className="bg-white p-6 rounded-xl border border-surface-border shadow-terminal-card overflow-x-auto">
+        <div className="panel-input p-6 overflow-x-auto">
           <div className="flex justify-between items-center mb-4 pb-3 border-b border-surface-border">
             <div>
               <h3 className="font-serif text-lg font-bold text-slate-heading">
@@ -460,7 +460,7 @@ export default function CustomModelBuilder() {
         </div>
 
         {/* VISUAL RECHARTS PROJECTION GRAPH FOR SELECTED ROW */}
-        <div className="bg-white p-6 rounded-xl border border-surface-border shadow-terminal-card space-y-4">
+        <div className="panel-input p-6 space-y-4">
           <div className="flex justify-between items-center pb-3 border-b border-surface-border">
             <div className="flex items-center gap-2">
               <LineChart size={18} className="text-emerald" />

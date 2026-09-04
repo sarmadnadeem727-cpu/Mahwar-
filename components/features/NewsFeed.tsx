@@ -50,7 +50,7 @@ export default function NewsFeed() {
       dir={isAr ? "rtl" : "ltr"}
     >
       {/* NEWS WIRE HEADER */}
-      <div className="bg-white p-6 rounded-lg border border-[#E2E8F0] shadow-sm flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
+      <div className="panel-input p-6 flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
         <div className="flex items-center gap-3">
           <div className="p-2.5 rounded-lg bg-emerald-dim border border-emerald-border text-emerald">
             <Newspaper size={22} />
@@ -121,7 +121,7 @@ export default function NewsFeed() {
           {filteredArticles.map((article) => (
             <div
               key={article.id}
-              className="bg-white p-6 rounded-lg border border-[#E2E8F0] hover:border-emerald transition-all shadow-sm hover:shadow-md flex flex-col justify-between group"
+              className="card-nav p-6 flex flex-col justify-between group"
             >
               <div>
                 <div className="flex justify-between items-center mb-3">

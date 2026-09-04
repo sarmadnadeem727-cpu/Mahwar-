@@ -176,7 +176,7 @@ export default function DCFModel() {
           onSelectCase={handleScenarioChange}
         />
 
-        <div className="bg-white p-6 rounded-lg border border-[#E2E8F0] space-y-4 shadow-sm">
+        <div className="panel-input p-6 space-y-4">
           <div className="flex items-center justify-between pb-3 border-b border-[#E2E8F0]">
             <div className="flex items-center gap-3">
               <BarChart3 className="text-emerald" size={22} />
@@ -299,7 +299,7 @@ export default function DCFModel() {
           <button
             onClick={calculateDCF}
             disabled={isCalculating}
-            className="w-full py-3 rounded-md bg-emerald hover:bg-emerald-light text-white font-mono font-bold text-xs uppercase tracking-wider shadow-sm flex items-center justify-center gap-2 transition-all cursor-pointer"
+            className="btn-primary w-full"
           >
             {isCalculating ? <RefreshCw size={14} className="animate-spin" /> : <Calculator size={14} />}
             <span>{t("run_dcf", language)}</span>

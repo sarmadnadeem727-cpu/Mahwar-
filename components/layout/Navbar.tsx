@@ -61,18 +61,18 @@ export default function Navbar() {
         <div className="hidden md:flex items-center gap-4">
           <button
             onClick={() => setLanguage(isAr ? 'en' : 'ar')}
-            className="flex items-center gap-2 px-3.5 py-1.5 rounded-lg border border-[#E2E8F0] bg-slate-50 hover:bg-slate-100 text-xs font-mono font-bold text-slate-700 transition-all cursor-pointer"
+            className="btn-secondary"
           >
-            <Globe size={13} className="text-emerald" />
+            <Globe size={12} />
             <span>{isAr ? "English" : "العربية"}</span>
           </button>
 
           <Link
             href="/dashboard"
-            className="flex items-center gap-2 px-5 py-2 rounded-lg bg-emerald hover:bg-emerald-light text-white text-xs font-mono font-bold uppercase tracking-wider shadow-sm transition-all cursor-pointer group"
+            className="btn-primary"
           >
             <span>{isAr ? "تشغيل المنصة" : "ENTER TERMINAL"}</span>
-            <ArrowRight size={14} className="group-hover:translate-x-1 transition-transform" />
+            <ArrowRight size={13} />
           </Link>
         </div>
 

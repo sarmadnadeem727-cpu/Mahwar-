@@ -92,7 +92,7 @@ export default function DDMModel() {
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
         {/* INPUTS - 4 COLS */}
         <div className="lg:col-span-4 space-y-6">
-          <div className="bg-white p-5 rounded-lg border border-[#E2E8F0] shadow-sm space-y-4">
+          <div className="panel-input p-5 space-y-4">
             <h3 className="font-bold text-slate-900 font-mono text-xs uppercase border-b pb-2">
               {isAr ? "المدخلات الأساسية" : "Model Assumptions"}
             </h3>
@@ -100,7 +100,7 @@ export default function DDMModel() {
             <InputGroup label={isAr ? "تكلفة الملكية (Ke)" : "Cost of Equity (Ke)"} value={costOfEquity} onChange={setCostOfEquity} suffix="%" step={0.1} />
           </div>
 
-          <div className="bg-white p-5 rounded-lg border border-[#E2E8F0] shadow-sm space-y-4">
+          <div className="panel-input p-5 space-y-4">
             <h3 className="font-bold text-slate-900 font-mono text-xs uppercase border-b pb-2">
               {isAr ? "مراحل النمو" : "Growth Stages"}
             </h3>
@@ -109,7 +109,7 @@ export default function DDMModel() {
             <InputGroup label={isAr ? "النمو النهائي (Terminal)" : "Terminal Growth Rate"} value={terminalGrowthRate} onChange={setTerminalGrowthRate} suffix="%" step={0.1} />
           </div>
           
-          <div className="bg-slate-900 text-white p-6 rounded-lg shadow-lg flex flex-col items-center justify-center text-center">
+          <div className="panel-result text-white p-6 flex flex-col items-center justify-center text-center">
             <span className="block text-xs text-slate-400 font-mono uppercase mb-2">
               {isAr ? "القيمة الضمنية للسهم" : "Implied Share Price"}
             </span>
@@ -142,7 +142,7 @@ export default function DDMModel() {
           </ChartWrapper>
 
           {/* Sensitivity Table */}
-          <div className="bg-white p-5 rounded-lg border border-[#E2E8F0] shadow-sm overflow-x-auto">
+          <div className="panel-input p-5 overflow-x-auto">
             <h3 className="font-bold text-slate-900 font-mono text-xs uppercase mb-4">
               {isAr ? "جدول الحساسية (تكلفة الملكية مقابل النمو النهائي)" : "Sensitivity Analysis (Ke vs Terminal Growth)"}
             </h3>
