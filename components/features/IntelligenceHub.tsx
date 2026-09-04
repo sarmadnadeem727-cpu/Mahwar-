@@ -11,23 +11,7 @@ import { useTerminalStore } from "@/store/useTerminalStore";
 import { t } from "@/lib/i18n";
 import { panelReveal } from "@/lib/motion";
 
-interface MarketMover {
-  ticker: string;
-  name: string;
-  nameAr: string;
-  price: string;
-  change: string;
-  isPositive: boolean;
-  market: string;
-}
 
-const GCC_MOVERS: MarketMover[] = [
-  { ticker: "2222.SR", name: "Saudi Aramco", nameAr: "أرامكو السعودية", price: "27.85 SAR", change: "+1.2%", isPositive: true, market: "TASI" },
-  { ticker: "1120.SR", name: "Al Rajhi Bank", nameAr: "مصرف الراجحي", price: "88.40 SAR", change: "+0.8%", isPositive: true, market: "TASI" },
-  { ticker: "EMAAR.AE", name: "Emaar Properties", nameAr: "إعمار العقارية", price: "8.65 AED", change: "+2.1%", isPositive: true, market: "DFM" },
-  { ticker: "QNBK.QA", name: "QNB Group", nameAr: "مجموعة QNB", price: "16.20 QAR", change: "-0.4%", isPositive: false, market: "QSE" },
-  { ticker: "NBK.KW", name: "National Bank of Kuwait", nameAr: "بنك الكويت الوطني", price: "890 KWF", change: "+0.3%", isPositive: true, market: "BK" },
-];
 
 export default function IntelligenceHub() {
   const { sessionAnalyses, setPanel, language } = useTerminalStore();
@@ -111,31 +95,33 @@ export default function IntelligenceHub() {
       className="space-y-8 text-slate-800 font-sans"
       dir={isAr ? "rtl" : "ltr"}
     >
-      {/* GCC LIVE MOVERS TAPE */}
-      <div className="bg-white border border-[#E2E8F0] rounded-lg p-3 shadow-xs">
-        <div className="flex items-center justify-between gap-4 overflow-x-auto text-xs font-mono">
-          <div className="flex items-center gap-2 text-emerald font-bold shrink-0">
-            <Activity size={14} className="animate-pulse" />
-            <span className="uppercase">{isAr ? "مؤشرات الخليج" : "GCC Bourses"}</span>
+      {/* QUICK LAUNCH BAR FOR NEW TOOLS */}
+      <div className="bg-white border border-[#E2E8F0] rounded-lg p-4 shadow-sm flex flex-col md:flex-row items-start md:items-center justify-between gap-4">
+        <div className="flex items-center gap-3">
+          <Sparkles className="text-emerald" size={20} />
+          <div>
+            <h3 className="font-mono text-sm font-bold text-slate-900 uppercase">
+              {isAr ? "أدوات التقييم الجديدة" : "New Valuation Engines"}
+            </h3>
+            <p className="text-xs text-slate-500 font-sans">
+              {isAr ? "الوصول السريع إلى نماذج التقييم الكمية المضافة حديثاً" : "Quick access to newly deployed quantitative valuation models"}
+            </p>
           </div>
+        </div>
 
-          <div className="flex items-center gap-4 shrink-0">
-            {GCC_MOVERS.map((mover) => (
-              <div 
-                key={mover.ticker}
-                onClick={() => setPanel("DCF")}
-                className="flex items-center gap-2 px-2.5 py-1 rounded-md bg-slate-50 border border-[#E2E8F0] hover:border-emerald transition-colors cursor-pointer"
-              >
-                <span className="font-bold text-slate-900">{mover.ticker}</span>
-                <span className="text-slate-500 font-mono text-[11px]">{isAr ? mover.nameAr : mover.name}</span>
-                <span className="font-semibold text-slate-800">{mover.price}</span>
-                <span className={`flex items-center gap-0.5 font-bold ${mover.isPositive ? "text-emerald" : "text-rose-600"}`}>
-                  {mover.isPositive ? <ArrowUpRight size={12} /> : <ArrowDownRight size={12} />}
-                  <span>{mover.change}</span>
-                </span>
-              </div>
-            ))}
-          </div>
+        <div className="flex flex-wrap items-center gap-2">
+          <button onClick={() => setPanel("wacc")} className="px-3 py-1.5 text-xs font-mono font-bold text-slate-700 bg-slate-50 border border-[#E2E8F0] rounded hover:border-emerald hover:text-emerald transition-colors">
+            {isAr ? "باني WACC" : "WACC Builder"}
+          </button>
+          <button onClick={() => setPanel("ddm")} className="px-3 py-1.5 text-xs font-mono font-bold text-slate-700 bg-slate-50 border border-[#E2E8F0] rounded hover:border-emerald hover:text-emerald transition-colors">
+            {isAr ? "نموذج DDM" : "DDM Model"}
+          </button>
+          <button onClick={() => setPanel("merger_analysis")} className="px-3 py-1.5 text-xs font-mono font-bold text-slate-700 bg-slate-50 border border-[#E2E8F0] rounded hover:border-emerald hover:text-emerald transition-colors">
+            {isAr ? "تحليل الاندماج" : "M&A Accretion"}
+          </button>
+          <button onClick={() => setPanel("npv_irr")} className="px-3 py-1.5 text-xs font-mono font-bold text-slate-700 bg-slate-50 border border-[#E2E8F0] rounded hover:border-emerald hover:text-emerald transition-colors">
+            {isAr ? "حاسبة NPV" : "Quick NPV"}
+          </button>
         </div>
       </div>
 

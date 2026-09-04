@@ -55,10 +55,6 @@ export default function TopBar() {
             </span>
           </div>
 
-          <div className="hidden lg:flex items-center gap-1.5 px-2.5 py-1 rounded-md bg-slate-50 border border-[#E2E8F0] text-xs font-mono text-slate-600">
-            <Activity size={12} className="text-emerald" />
-            <span>TASI: 12,410.50 (+0.42%)</span>
-          </div>
         </div>
 
         {/* CENTER: PERSISTENT SEARCH COMMAND PILL */}
