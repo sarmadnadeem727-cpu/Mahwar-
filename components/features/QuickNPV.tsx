@@ -52,7 +52,7 @@ function computePayback(initialInvestment: number, cashFlows: number[]) {
 }
 
 export default function QuickNPV() {
-  const { language } = useTerminalStore();
+  const { language, currency } = useTerminalStore();
   const isAr = language === "ar";
 
   const [initialInvestment, setInitialInvestment] = useState(100000);
@@ -104,7 +104,7 @@ export default function QuickNPV() {
               label={isAr ? "الاستثمار الأولي" : "Initial Investment (Yr 0)"}
               value={initialInvestment}
               onChange={setInitialInvestment}
-              prefix="$"
+              prefix={currency}
             />
             <InputGroup
               label={isAr ? "معدل الخصم" : "Discount Rate"}
@@ -125,7 +125,7 @@ export default function QuickNPV() {
                 {isAr ? "القيمة الحالية الصافية (NPV)" : "Net Present Value (NPV)"}
               </span>
               <span className={`font-mono text-2xl font-bold ${results.npv >= 0 ? "text-emerald" : "text-rose-400"}`}>
-                ${results.npv.toLocaleString(undefined, { maximumFractionDigits: 0 })}
+                {currency} {results.npv.toLocaleString(undefined, { maximumFractionDigits: 0 })}
               </span>
             </div>
 
@@ -174,7 +174,7 @@ export default function QuickNPV() {
                       label=""
                       value={cf}
                       onChange={(val) => updateCF(idx, val)}
-                      prefix="$"
+                      prefix={currency}
                     />
                   </div>
                   <button 

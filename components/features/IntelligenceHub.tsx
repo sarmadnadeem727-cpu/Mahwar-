@@ -14,7 +14,7 @@ import { panelReveal } from "@/lib/motion";
 
 
 export default function IntelligenceHub() {
-  const { sessionAnalyses, setPanel, language } = useTerminalStore();
+  const { sessionAnalyses, setPanel, language, currency } = useTerminalStore();
   const isAr = language === 'ar';
 
   const overviewCards: {
@@ -33,7 +33,7 @@ export default function IntelligenceHub() {
       icon: <BarChart3 className="text-terminal-emerald" size={20} />,
       hasData: !!sessionAnalyses.dcf,
       statusLabel: !!sessionAnalyses.dcf 
-        ? `${isAr ? "تم الحساب: " : "Computed: "} SAR ${sessionAnalyses.dcf.outputs.intrinsicValuePerShare}`
+        ? `${isAr ? "تم الحساب: " : "Computed: "} ${currency} ${sessionAnalyses.dcf.outputs.intrinsicValuePerShare}`
         : (isAr ? "جاهز للنمذجة" : "Ready for Inputs"),
       tag: "VALUATION"
     },

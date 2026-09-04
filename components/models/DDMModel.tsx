@@ -10,7 +10,7 @@ import { panelReveal } from "@/lib/motion";
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip as ReTooltip, ResponsiveContainer, Cell } from "recharts";
 
 export default function DDMModel() {
-  const { language } = useTerminalStore();
+  const { language, currency } = useTerminalStore();
   const isAr = language === "ar";
 
   // Inputs
@@ -96,7 +96,7 @@ export default function DDMModel() {
             <h3 className="font-bold text-slate-900 font-mono text-xs uppercase border-b pb-2">
               {isAr ? "المدخلات الأساسية" : "Model Assumptions"}
             </h3>
-            <InputGroup label={isAr ? "توزيعات السهم الحالية (DPS)" : "Current DPS"} value={currentDPS} onChange={setCurrentDPS} prefix="$" step={0.1} />
+            <InputGroup label={isAr ? "توزيعات السهم الحالية (DPS)" : "Current DPS"} value={currentDPS} onChange={setCurrentDPS} prefix={currency} step={0.1} />
             <InputGroup label={isAr ? "تكلفة الملكية (Ke)" : "Cost of Equity (Ke)"} value={costOfEquity} onChange={setCostOfEquity} suffix="%" step={0.1} />
           </div>
 
@@ -114,7 +114,7 @@ export default function DDMModel() {
               {isAr ? "القيمة الضمنية للسهم" : "Implied Share Price"}
             </span>
             <span className="font-mono text-4xl font-extrabold text-emerald tracking-tight">
-              ${results.impliedSharePrice.toFixed(2)}
+              {currency} {results.impliedSharePrice.toFixed(2)}
             </span>
           </div>
         </div>
@@ -126,11 +126,11 @@ export default function DDMModel() {
               <BarChart data={results.bridgeData} margin={{ top: 20, right: 30, left: 20, bottom: 5 }}>
                 <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#E2E8F0" />
                 <XAxis dataKey="name" axisLine={false} tickLine={false} tick={{ fontSize: 10, fill: '#64748b', fontFamily: 'monospace' }} />
-                <YAxis axisLine={false} tickLine={false} tick={{ fontSize: 10, fill: '#64748b', fontFamily: 'monospace' }} tickFormatter={(val) => `$${val}`} />
+                <YAxis axisLine={false} tickLine={false} tick={{ fontSize: 10, fill: '#64748b', fontFamily: 'monospace' }} tickFormatter={(val) => `${currency} ${val}`} />
                 <ReTooltip
                   cursor={{ fill: '#F8FAFC' }}
                   contentStyle={{ fontFamily: 'monospace', fontSize: '12px', borderRadius: '8px', border: '1px solid #E2E8F0', boxShadow: '0 4px 6px -1px rgb(0 0 0 / 0.1)' }}
-                  formatter={(val: number) => [`$${val.toFixed(2)}`, "PV Contribution"]}
+                  formatter={(val: number) => [`${currency} ${val.toFixed(2)}`, "PV Contribution"]}
                 />
                 <Bar dataKey="value" radius={[4, 4, 0, 0]} maxBarSize={60}>
                   {results.bridgeData.map((entry, index) => (
@@ -165,7 +165,7 @@ export default function DDMModel() {
                       const isCenter = idx === 2 && tg === terminalGrowthRate;
                       return (
                         <td key={tg} className={`p-2 ${isCenter ? 'bg-emerald/10 text-emerald font-bold' : 'text-slate-600'}`}>
-                          ${val.toFixed(2)}
+                          {currency} {val.toFixed(2)}
                         </td>
                       );
                     })}

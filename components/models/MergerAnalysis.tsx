@@ -10,7 +10,7 @@ import { panelReveal } from "@/lib/motion";
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip as ReTooltip, ResponsiveContainer, Cell } from "recharts";
 
 export default function MergerAnalysis() {
-  const { language } = useTerminalStore();
+  const { language, currency } = useTerminalStore();
   const isAr = language === "ar";
 
   // Acquirer Inputs
@@ -110,9 +110,9 @@ export default function MergerAnalysis() {
               <h3 className="font-bold text-slate-900 font-mono text-xs uppercase border-b pb-2">
                 {isAr ? "الشركة المستحوذة" : "Acquirer (Base)"}
               </h3>
-              <InputGroup label={isAr ? "صافي الدخل" : "Net Income"} value={acqNetIncome} onChange={setAcqNetIncome} prefix="$M" />
+              <InputGroup label={isAr ? "صافي الدخل" : "Net Income"} value={acqNetIncome} onChange={setAcqNetIncome} prefix={`${currency}M`} />
               <InputGroup label={isAr ? "الأسهم القائمة" : "Shares Out"} value={acqShares} onChange={setAcqShares} suffix="M" />
-              <InputGroup label={isAr ? "سعر السهم" : "Share Price"} value={acqPrice} onChange={setAcqPrice} prefix="$" step={0.5} />
+              <InputGroup label={isAr ? "سعر السهم" : "Share Price"} value={acqPrice} onChange={setAcqPrice} prefix={currency} step={0.5} />
             </div>
             
             {/* Target */}
@@ -120,9 +120,9 @@ export default function MergerAnalysis() {
               <h3 className="font-bold text-slate-900 font-mono text-xs uppercase border-b pb-2">
                 {isAr ? "الشركة المستهدفة" : "Target"}
               </h3>
-              <InputGroup label={isAr ? "صافي الدخل" : "Net Income"} value={tgtNetIncome} onChange={setTgtNetIncome} prefix="$M" />
+              <InputGroup label={isAr ? "صافي الدخل" : "Net Income"} value={tgtNetIncome} onChange={setTgtNetIncome} prefix={`${currency}M`} />
               <InputGroup label={isAr ? "الأسهم القائمة" : "Shares Out"} value={tgtShares} onChange={setTgtShares} suffix="M" />
-              <InputGroup label={isAr ? "سعر السهم" : "Share Price"} value={tgtPrice} onChange={setTgtPrice} prefix="$" step={0.5} />
+              <InputGroup label={isAr ? "سعر السهم" : "Share Price"} value={tgtPrice} onChange={setTgtPrice} prefix={currency} step={0.5} />
             </div>
           </div>
 
@@ -135,7 +135,7 @@ export default function MergerAnalysis() {
             <InputGroup label={isAr ? "نسبة النقد/الدين" : "% Funded by Cash/Debt"} value={cashPercent} onChange={(v) => setCashPercent(Math.min(100, Math.max(0, v)))} suffix="%" />
             <InputGroup label={isAr ? "تكلفة الدين (للاستحواذ)" : "Cost of New Debt"} value={costOfDebt} onChange={setCostOfDebt} suffix="%" step={0.1} />
             <InputGroup label={isAr ? "معدل الضريبة" : "Tax Rate"} value={taxRate} onChange={setTaxRate} suffix="%" step={0.5} />
-            <InputGroup label={isAr ? "تآزر التكاليف (بعد الضريبة)" : "Post-Tax Synergies"} value={synergies} onChange={setSynergies} prefix="$M" />
+            <InputGroup label={isAr ? "تآزر التكاليف (بعد الضريبة)" : "Post-Tax Synergies"} value={synergies} onChange={setSynergies} prefix={`${currency}M`} />
           </div>
         </div>
 
@@ -157,19 +157,19 @@ export default function MergerAnalysis() {
             <div className="bg-slate-900 text-white p-6 rounded-lg shadow-lg flex flex-col justify-center space-y-3">
               <div className="flex justify-between border-b border-white/10 pb-2">
                 <span className="text-xs font-mono opacity-70">{isAr ? "سعر العرض للمستهدف" : "Target Offer Price"}</span>
-                <span className="font-mono font-bold">${results.offerPrice.toFixed(2)}</span>
+                <span className="font-mono font-bold">{currency} {results.offerPrice.toFixed(2)}</span>
               </div>
               <div className="flex justify-between border-b border-white/10 pb-2">
                 <span className="text-xs font-mono opacity-70">{isAr ? "حجم الصفقة الإجمالي" : "Total Deal Value"}</span>
-                <span className="font-mono font-bold">${results.totalDealValue.toLocaleString(undefined, { maximumFractionDigits: 0 })}M</span>
+                <span className="font-mono font-bold">{currency} {results.totalDealValue.toLocaleString(undefined, { maximumFractionDigits: 0 })}M</span>
               </div>
               <div className="flex justify-between border-b border-white/10 pb-2">
-                <span className="text-xs font-mono opacity-70">{isAr ? "ربحية السهم (الأساسية)" : "Standalone EPS"}</span>
-                <span className="font-mono font-bold">${results.acqEPS.toFixed(2)}</span>
+                <span className="text-xs font-mono opacity-70">{isAr ? "ربحية سهم المستحوذ (الحالي)" : "Acquirer Standalone EPS"}</span>
+                <span className="font-mono font-bold">{currency} {results.acqEPS.toFixed(2)}</span>
               </div>
               <div className="flex justify-between">
-                <span className="text-xs font-mono opacity-70">{isAr ? "ربحية السهم (الاندماج)" : "Pro Forma EPS"}</span>
-                <span className="font-mono font-bold">${results.pfEPS.toFixed(2)}</span>
+                <span className="text-xs font-mono text-emerald">{isAr ? "ربحية السهم بعد الاندماج" : "Pro Forma EPS"}</span>
+                <span className="font-mono font-bold text-emerald">{currency} {results.pfEPS.toFixed(2)}</span>
               </div>
             </div>
           </div>
@@ -179,11 +179,11 @@ export default function MergerAnalysis() {
               <BarChart data={results.bridgeData} margin={{ top: 20, right: 30, left: 20, bottom: 5 }}>
                 <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#E2E8F0" />
                 <XAxis dataKey="name" axisLine={false} tickLine={false} tick={{ fontSize: 10, fill: '#64748b', fontFamily: 'monospace' }} />
-                <YAxis axisLine={false} tickLine={false} tick={{ fontSize: 10, fill: '#64748b', fontFamily: 'monospace' }} tickFormatter={(val) => `$${val.toFixed(2)}`} domain={['auto', 'auto']} />
+                <YAxis axisLine={false} tickLine={false} tick={{ fontSize: 10, fill: '#64748b', fontFamily: 'monospace' }} tickFormatter={(val) => `${currency} ${val.toFixed(2)}`} domain={['auto', 'auto']} />
                 <ReTooltip
                   cursor={{ fill: '#F8FAFC' }}
                   contentStyle={{ fontFamily: 'monospace', fontSize: '12px', borderRadius: '8px', border: '1px solid #E2E8F0', boxShadow: '0 4px 6px -1px rgb(0 0 0 / 0.1)' }}
-                  formatter={(val: number) => [`$${val.toFixed(2)}`, "Impact/EPS"]}
+                  formatter={(val: number) => [`${currency} ${val.toFixed(2)}`, "Impact/EPS"]}
                 />
                 <Bar dataKey="value" radius={[4, 4, 0, 0]} maxBarSize={50}>
                   {results.bridgeData.map((entry, index) => {
