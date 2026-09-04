@@ -7,7 +7,7 @@ import {
   Filter, FileText, ChevronRight, CheckCircle2, Clock, Newspaper,
   TrendingUp, Activity, ArrowUpRight, ArrowDownRight, Globe
 } from "lucide-react";
-import { useTerminalStore } from "@/store/useTerminalStore";
+import { useTerminalStore, PanelType } from "@/store/useTerminalStore";
 import { t } from "@/lib/i18n";
 import { panelReveal } from "@/lib/motion";
 
@@ -17,7 +17,15 @@ export default function IntelligenceHub() {
   const { sessionAnalyses, setPanel, language } = useTerminalStore();
   const isAr = language === 'ar';
 
-  const overviewCards = [
+  const overviewCards: {
+    id: PanelType;
+    title: string;
+    desc: string;
+    icon: React.ReactNode;
+    hasData: boolean;
+    statusLabel: string;
+    tag: string;
+  }[] = [
     {
       id: "DCF" as const,
       title: t("panel_dcf", language),
@@ -83,6 +91,42 @@ export default function IntelligenceHub() {
         ? (isAr ? "جاهز للتصدير" : "Ready to Export")
         : (isAr ? "في انتظار البيانات" : "Awaiting Data"),
       tag: "REPORTING"
+    },
+    {
+      id: "ddm" as const,
+      title: isAr ? "نموذج DDM (توزيعات الأرباح)" : "Dividend Discount Model",
+      desc: isAr ? "نموذج تقييم توزيعات الأرباح متعدد المراحل" : "Multi-stage dividend valuation engine",
+      icon: <TrendingUp className="text-terminal-emerald" size={20} />,
+      hasData: false,
+      statusLabel: isAr ? "جاهز للنمذجة" : "Ready for Inputs",
+      tag: "VALUATION"
+    },
+    {
+      id: "wacc" as const,
+      title: isAr ? "باني تكلفة رأس المال (WACC)" : "WACC & CAPM Builder",
+      desc: isAr ? "حاسبة تكلفة رأس المال والمخاطر باستخدام نموذج CAPM" : "Cost of capital calculator using risk premiums and CAPM",
+      icon: <Activity className="text-terminal-emerald" size={20} />,
+      hasData: false,
+      statusLabel: isAr ? "جاهز للنمذجة" : "Ready for Inputs",
+      tag: "VALUATION"
+    },
+    {
+      id: "merger_analysis" as const,
+      title: isAr ? "تحليل الاندماج والاستحواذ" : "M&A Accretion/Dilution",
+      desc: isAr ? "تحليل أثر الاستحواذ والتآزر على ربحية السهم" : "EPS impact and synergy valuation for strategic M&A",
+      icon: <Layers className="text-terminal-emerald" size={20} />,
+      hasData: false,
+      statusLabel: isAr ? "جاهز للنمذجة" : "Ready for Inputs",
+      tag: "M&A"
+    },
+    {
+      id: "npv_irr" as const,
+      title: isAr ? "حاسبة NPV و IRR السريعة" : "Quick NPV / IRR",
+      desc: isAr ? "تحليل سريع للتدفقات النقدية ومعدل العائد الداخلي" : "Rapid cash flow analysis and internal rate of return",
+      icon: <Sparkles className="text-terminal-emerald" size={20} />,
+      hasData: false,
+      statusLabel: isAr ? "جاهز للنمذجة" : "Ready for Inputs",
+      tag: "VALUATION"
     }
   ];
 
@@ -95,35 +139,7 @@ export default function IntelligenceHub() {
       className="space-y-8 text-slate-800 font-sans"
       dir={isAr ? "rtl" : "ltr"}
     >
-      {/* QUICK LAUNCH BAR FOR NEW TOOLS */}
-      <div className="bg-white border border-[#E2E8F0] rounded-lg p-4 shadow-sm flex flex-col md:flex-row items-start md:items-center justify-between gap-4">
-        <div className="flex items-center gap-3">
-          <Sparkles className="text-emerald" size={20} />
-          <div>
-            <h3 className="font-mono text-sm font-bold text-slate-900 uppercase">
-              {isAr ? "أدوات التقييم الجديدة" : "New Valuation Engines"}
-            </h3>
-            <p className="text-xs text-slate-500 font-sans">
-              {isAr ? "الوصول السريع إلى نماذج التقييم الكمية المضافة حديثاً" : "Quick access to newly deployed quantitative valuation models"}
-            </p>
-          </div>
-        </div>
 
-        <div className="flex flex-wrap items-center gap-2">
-          <button onClick={() => setPanel("wacc")} className="px-3 py-1.5 text-xs font-mono font-bold text-slate-700 bg-slate-50 border border-[#E2E8F0] rounded hover:border-emerald hover:text-emerald transition-colors">
-            {isAr ? "باني WACC" : "WACC Builder"}
-          </button>
-          <button onClick={() => setPanel("ddm")} className="px-3 py-1.5 text-xs font-mono font-bold text-slate-700 bg-slate-50 border border-[#E2E8F0] rounded hover:border-emerald hover:text-emerald transition-colors">
-            {isAr ? "نموذج DDM" : "DDM Model"}
-          </button>
-          <button onClick={() => setPanel("merger_analysis")} className="px-3 py-1.5 text-xs font-mono font-bold text-slate-700 bg-slate-50 border border-[#E2E8F0] rounded hover:border-emerald hover:text-emerald transition-colors">
-            {isAr ? "تحليل الاندماج" : "M&A Accretion"}
-          </button>
-          <button onClick={() => setPanel("npv_irr")} className="px-3 py-1.5 text-xs font-mono font-bold text-slate-700 bg-slate-50 border border-[#E2E8F0] rounded hover:border-emerald hover:text-emerald transition-colors">
-            {isAr ? "حاسبة NPV" : "Quick NPV"}
-          </button>
-        </div>
-      </div>
 
       {/* HUB HEADER BANNER */}
       <div className="bg-white p-8 rounded-lg border border-[#E2E8F0] flex flex-col md:flex-row justify-between items-start md:items-center gap-6 shadow-sm">
@@ -157,9 +173,24 @@ export default function IntelligenceHub() {
           {isAr ? "أدوات النمذجة والتحليل الكمي" : "Sovereign Modeling Tools & Workbench Status"}
         </h3>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+        <motion.div 
+          initial="hidden"
+          animate="visible"
+          variants={{
+            hidden: { opacity: 0 },
+            visible: {
+              opacity: 1,
+              transition: { staggerChildren: 0.05 }
+            }
+          }}
+          className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6"
+        >
           {overviewCards.map((card) => (
-            <div
+            <motion.div
+              variants={{
+                hidden: { opacity: 0, y: 15 },
+                visible: { opacity: 1, y: 0, transition: { type: "spring", stiffness: 300, damping: 24 } }
+              }}
               key={card.id}
               onClick={() => setPanel(card.id)}
               className="bg-white p-6 rounded-lg border border-[#E2E8F0] hover:border-emerald transition-all cursor-pointer flex flex-col justify-between h-[180px] group relative shadow-sm hover:shadow-md"
@@ -199,9 +230,9 @@ export default function IntelligenceHub() {
                 </span>
                 <ChevronRight size={14} className="text-slate-400 group-hover:text-emerald transition-colors" />
               </div>
-            </div>
+            </motion.div>
           ))}
-        </div>
+        </motion.div>
       </div>
     </motion.div>
   );
