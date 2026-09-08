@@ -46,6 +46,21 @@ export const translations = {
     panel_merger_analysis: "Merger Accretion / Dilution",
     panel_wacc: "WACC & CAPM Builder",
 
+    // Supply Chain & Operations Suite
+    nav_supply_chain: "SUPPLY CHAIN & OPERATIONS",
+    panel_operations_hub: "Operations Suite Hub",
+    panel_ccc: "Cash Conversion Cycle",
+    panel_wc_financing: "WC Financing Cost",
+    panel_eoq: "Economic Order Qty (EOQ)",
+    panel_safety_stock: "Safety Stock & ROP",
+    panel_abc_xyz: "ABC / XYZ Classification",
+    panel_demand_forecast: "Demand Forecasting",
+    panel_sop_worksheet: "S&OP Balancing Worksheet",
+    panel_landed_cost: "Delivered Landed Cost",
+    panel_tco: "Total Cost of Ownership",
+    panel_supplier_scorecard: "Supplier Scorecard",
+    panel_facility_location: "Facility Location (Gravity)",
+
     // Intelligence Hub
     market_summary: "Market Overview",
     performance_alpha: "Performance Alpha vs TASI Benchmark",
@@ -220,6 +235,21 @@ export const translations = {
     panel_npv_irr: "حاسبة القيمة الحالية (NPV)",
     panel_merger_analysis: "تحليل الاندماج (EPS)",
     panel_wacc: "باني تكلفة رأس المال (WACC)",
+
+    // Supply Chain & Operations Suite
+    nav_supply_chain: "سلاسل الإمداد والعمليات",
+    panel_operations_hub: "مركز العمليات وسلاسل الإمداد",
+    panel_ccc: "دورة التحويل النقدي (CCC)",
+    panel_wc_financing: "تكلفة تمويل رأس المال العامل",
+    panel_eoq: "حجم الطلب الاقتصادي (EOQ)",
+    panel_safety_stock: "مخزون الأمان ونقطة الطلب",
+    panel_abc_xyz: "تصنيف المخزون (ABC / XYZ)",
+    panel_demand_forecast: "التنبؤ بالطلب والمبيعات",
+    panel_sop_worksheet: "جدول موازنة العرض والطلب (S&OP)",
+    panel_landed_cost: "التكلفة الإجمالية الواصلة",
+    panel_tco: "التكلفة الإجمالية للملكية (TCO)",
+    panel_supplier_scorecard: "بطاقة تقييم الموردين",
+    panel_facility_location: "تحديد موقع المنشأة (مركز الثقل)",
 
     // Intelligence Hub
     market_summary: "نظرة عامة على السوق",

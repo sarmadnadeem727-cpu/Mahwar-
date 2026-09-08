@@ -25,33 +25,62 @@ const QuickNPV = dynamic(() => import("@/components/features/QuickNPV"), { ssr: 
 const MergerAnalysis = dynamic(() => import("@/components/models/MergerAnalysis"), { ssr: false });
 const WACCBuilder = dynamic(() => import("@/components/features/WACCBuilder"), { ssr: false });
 
+// Supply Chain & Operations Suite
+const OperationsHub = dynamic(() => import("@/components/operations/OperationsHub"), { ssr: false });
+const CashConversionCycle = dynamic(() => import("@/components/operations/CashConversionCycle"), { ssr: false });
+const WorkingCapitalFinancing = dynamic(() => import("@/components/operations/WorkingCapitalFinancing"), { ssr: false });
+const EconomicOrderQuantity = dynamic(() => import("@/components/operations/EconomicOrderQuantity"), { ssr: false });
+const SafetyStockCalculator = dynamic(() => import("@/components/operations/SafetyStockCalculator"), { ssr: false });
+const AbcXyzClassification = dynamic(() => import("@/components/operations/AbcXyzClassification"), { ssr: false });
+const DemandForecasting = dynamic(() => import("@/components/operations/DemandForecasting"), { ssr: false });
+const SopWorksheet = dynamic(() => import("@/components/operations/SopWorksheet"), { ssr: false });
+const LandedCostCalculator = dynamic(() => import("@/components/operations/LandedCostCalculator"), { ssr: false });
+const TcoCalculator = dynamic(() => import("@/components/operations/TcoCalculator"), { ssr: false });
+const SupplierScorecard = dynamic(() => import("@/components/operations/SupplierScorecard"), { ssr: false });
+const FacilityLocation = dynamic(() => import("@/components/operations/FacilityLocation"), { ssr: false });
+
 function PanelContent() {
   const { activePanel, setPanel } = useTerminalStore();
   const searchParams = useSearchParams();
 
   useEffect(() => {
     const panelParam = searchParams.get("panel") as PanelType | null;
-    if (panelParam && ["hub", "news", "shariah", "custom_model", "monte_carlo", "acquisition_cost", "auto_statements", "bi_report", "DCF", "LBO", "FS", "ddm", "npv_irr", "merger_analysis", "wacc"].includes(panelParam)) {
+    if (panelParam) {
       setPanel(panelParam);
     }
   }, [searchParams, setPanel]);
 
   const renderPanel = () => {
     switch (activePanel) {
-      case "news":             return <NewsFeed />;
-      case "shariah":          return <ShariahScreening />;
-      case "custom_model":     return <CustomModelBuilder />;
-      case "monte_carlo":      return <MonteCarloPanel />;
-      case "acquisition_cost": return <AcquisitionCostCalculator />;
-      case "auto_statements":  return <AutoFinancialStatements />;
-      case "bi_report":        return <BIReportEngine />;
-      case "DCF":              return <DCFModel />;
-      case "LBO":              return <LBOModel />;
-      case "FS":               return <ThreeStatementModel />;
-      case "ddm":              return <DDMModel />;
-      case "npv_irr":          return <QuickNPV />;
-      case "merger_analysis":  return <MergerAnalysis />;
-      case "wacc":             return <WACCBuilder />;
+      case "news":               return <NewsFeed />;
+      case "shariah":            return <ShariahScreening />;
+      case "custom_model":       return <CustomModelBuilder />;
+      case "monte_carlo":        return <MonteCarloPanel />;
+      case "acquisition_cost":   return <AcquisitionCostCalculator />;
+      case "auto_statements":    return <AutoFinancialStatements />;
+      case "bi_report":          return <BIReportEngine />;
+      case "DCF":                return <DCFModel />;
+      case "LBO":                return <LBOModel />;
+      case "FS":                 return <ThreeStatementModel />;
+      case "ddm":                return <DDMModel />;
+      case "npv_irr":            return <QuickNPV />;
+      case "merger_analysis":    return <MergerAnalysis />;
+      case "wacc":               return <WACCBuilder />;
+
+      // Operations Suite
+      case "operations_hub":     return <OperationsHub />;
+      case "ccc":                return <CashConversionCycle />;
+      case "wc_financing":       return <WorkingCapitalFinancing />;
+      case "eoq":                return <EconomicOrderQuantity />;
+      case "safety_stock":       return <SafetyStockCalculator />;
+      case "abc_xyz":            return <AbcXyzClassification />;
+      case "demand_forecast":    return <DemandForecasting />;
+      case "sop_worksheet":      return <SopWorksheet />;
+      case "landed_cost":        return <LandedCostCalculator />;
+      case "tco":                return <TcoCalculator />;
+      case "supplier_scorecard": return <SupplierScorecard />;
+      case "facility_location":  return <FacilityLocation />;
+
       case "hub":
       default:
         return <IntelligenceHub />;

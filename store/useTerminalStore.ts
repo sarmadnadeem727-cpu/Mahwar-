@@ -17,7 +17,20 @@ export type PanelType =
   | "ddm"
   | "npv_irr"
   | "merger_analysis"
-  | "wacc";
+  | "wacc"
+  // Operations & Supply Chain Tools Suite
+  | "operations_hub"
+  | "ccc"
+  | "wc_financing"
+  | "eoq"
+  | "safety_stock"
+  | "abc_xyz"
+  | "demand_forecast"
+  | "sop_worksheet"
+  | "landed_cost"
+  | "tco"
+  | "supplier_scorecard"
+  | "facility_location";
 
 export interface CustomModelRow {
   id: string;
@@ -44,6 +57,18 @@ export interface SessionAnalyses {
   monteCarlo?: { inputs: any; outputs: any; computedAt: string };
   acquisitionCost?: { inputs: any; outputs: any; computedAt: string };
   autoStatements?: { inputs: any; outputs: any; computedAt: string };
+  // Operations Suite session analyses
+  ccc?: { inputs: any; outputs: any; computedAt: string };
+  wcFinancing?: { inputs: any; outputs: any; computedAt: string };
+  eoq?: { inputs: any; outputs: any; computedAt: string };
+  safetyStock?: { inputs: any; outputs: any; computedAt: string };
+  abcXyz?: { inputs: any; outputs: any; computedAt: string };
+  demandForecast?: { inputs: any; outputs: any; computedAt: string };
+  sopWorksheet?: { inputs: any; outputs: any; computedAt: string };
+  landedCost?: { inputs: any; outputs: any; computedAt: string };
+  tco?: { inputs: any; outputs: any; computedAt: string };
+  supplierScorecard?: { inputs: any; outputs: any; computedAt: string };
+  facilityLocation?: { inputs: any; outputs: any; computedAt: string };
 }
 
 interface TerminalState {

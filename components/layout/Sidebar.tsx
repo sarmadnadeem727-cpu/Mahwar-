@@ -7,7 +7,9 @@ import {
   Columns, Newspaper, ShieldCheck, BarChart3, Layers, 
   FileSpreadsheet, FileText, Table, Dices, Calculator, 
   FileCheck, Pin, PinOff, ChevronRight, ChevronLeft, Sparkles,
-  Coins, Handshake, Activity
+  Coins, Handshake, Activity,
+  RefreshCw, DollarSign, PackageCheck, ShieldAlert, Grid3X3,
+  TrendingUp, Ship, Award, MapPin, LayoutDashboard
 } from "lucide-react";
 import { useTerminalStore, PanelType } from "@/store/useTerminalStore";
 import { t } from "@/lib/i18n";
@@ -45,6 +47,23 @@ const NAV_GROUPS: NavGroup[] = [
       { id: "monte_carlo", icon: Dices, labelKey: "panel_monte_carlo", tag: "RISK" },
       { id: "acquisition_cost", icon: Calculator, labelKey: "panel_acquisition_cost", tag: "M&A" },
       { id: "auto_statements", icon: FileCheck, labelKey: "panel_auto_statements", tag: "AUTO" },
+    ],
+  },
+  {
+    labelKey: "nav_supply_chain",
+    items: [
+      { id: "operations_hub", icon: LayoutDashboard, labelKey: "panel_operations_hub", tag: "SUITE" },
+      { id: "ccc", icon: RefreshCw, labelKey: "panel_ccc", tag: "WORKING CAP" },
+      { id: "wc_financing", icon: DollarSign, labelKey: "panel_wc_financing", tag: "CASH COST" },
+      { id: "eoq", icon: PackageCheck, labelKey: "panel_eoq", tag: "INVENTORY" },
+      { id: "safety_stock", icon: ShieldAlert, labelKey: "panel_safety_stock", tag: "SERVICE LVL" },
+      { id: "abc_xyz", icon: Grid3X3, labelKey: "panel_abc_xyz", tag: "PARETO" },
+      { id: "demand_forecast", icon: TrendingUp, labelKey: "panel_demand_forecast", tag: "FORECAST" },
+      { id: "sop_worksheet", icon: FileSpreadsheet, labelKey: "panel_sop_worksheet", tag: "S&OP" },
+      { id: "landed_cost", icon: Ship, labelKey: "panel_landed_cost", tag: "IMPORT" },
+      { id: "tco", icon: Coins, labelKey: "panel_tco", tag: "LIFECYCLE" },
+      { id: "supplier_scorecard", icon: Award, labelKey: "panel_supplier_scorecard", tag: "RADAR" },
+      { id: "facility_location", icon: MapPin, labelKey: "panel_facility_location", tag: "GRAVITY" },
     ],
   },
   {
