@@ -15,14 +15,17 @@ import { useTerminalStore, PanelType } from "@/store/useTerminalStore";
 import { t } from "@/lib/i18n";
 import MahwarLogo from "@/components/ui/MahwarLogo";
 
+interface NavItem {
+  id: PanelType;
+  icon: React.ComponentType<{ size?: number; className?: string }>;
+  labelKey: string;
+  tag?: string;
+  subHeaderKey?: string;
+}
+
 interface NavGroup {
   labelKey: string;
-  items: {
-    id: PanelType;
-    icon: React.ComponentType<{ size?: number; className?: string }>;
-    labelKey: string;
-    tag?: string;
-  }[];
+  items: NavItem[];
 }
 
 const NAV_GROUPS: NavGroup[] = [
@@ -53,17 +56,22 @@ const NAV_GROUPS: NavGroup[] = [
     labelKey: "nav_supply_chain",
     items: [
       { id: "operations_hub", icon: LayoutDashboard, labelKey: "panel_operations_hub", tag: "SUITE" },
-      { id: "ccc", icon: RefreshCw, labelKey: "panel_ccc", tag: "WORKING CAP" },
+      // Working Capital Cluster
+      { id: "ccc", icon: RefreshCw, labelKey: "panel_ccc", tag: "WORKING CAP", subHeaderKey: "nav_sub_working_capital" },
       { id: "wc_financing", icon: DollarSign, labelKey: "panel_wc_financing", tag: "CASH COST" },
-      { id: "eoq", icon: PackageCheck, labelKey: "panel_eoq", tag: "INVENTORY" },
+      // Inventory & Ordering Cluster
+      { id: "eoq", icon: PackageCheck, labelKey: "panel_eoq", tag: "INVENTORY", subHeaderKey: "nav_sub_inventory" },
       { id: "safety_stock", icon: ShieldAlert, labelKey: "panel_safety_stock", tag: "SERVICE LVL" },
       { id: "abc_xyz", icon: Grid3X3, labelKey: "panel_abc_xyz", tag: "PARETO" },
-      { id: "demand_forecast", icon: TrendingUp, labelKey: "panel_demand_forecast", tag: "FORECAST" },
+      // Planning & Forecasting Cluster
+      { id: "demand_forecast", icon: TrendingUp, labelKey: "panel_demand_forecast", tag: "FORECAST", subHeaderKey: "nav_sub_planning" },
       { id: "sop_worksheet", icon: FileSpreadsheet, labelKey: "panel_sop_worksheet", tag: "S&OP" },
-      { id: "landed_cost", icon: Ship, labelKey: "panel_landed_cost", tag: "IMPORT" },
+      // Cost & Sourcing Cluster
+      { id: "landed_cost", icon: Ship, labelKey: "panel_landed_cost", tag: "IMPORT", subHeaderKey: "nav_sub_cost" },
       { id: "tco", icon: Coins, labelKey: "panel_tco", tag: "LIFECYCLE" },
       { id: "supplier_scorecard", icon: Award, labelKey: "panel_supplier_scorecard", tag: "RADAR" },
-      { id: "facility_location", icon: MapPin, labelKey: "panel_facility_location", tag: "GRAVITY" },
+      // Network Logistics Cluster
+      { id: "facility_location", icon: MapPin, labelKey: "panel_facility_location", tag: "GRAVITY", subHeaderKey: "nav_sub_network" },
     ],
   },
   {
@@ -204,13 +212,18 @@ export default function Sidebar() {
                 const label = t(item.labelKey as any, language);
 
                 return (
-                  <button
-                    key={item.id}
-                    onClick={() => {
-                      setPanel(item.id);
-                      setMobileMenuOpen(false);
-                    }}
-                    title={!isExpanded ? label : undefined}
+                  <React.Fragment key={item.id}>
+                    {item.subHeaderKey && isExpanded && (
+                      <div className="pt-2.5 pb-1 px-3 text-[9px] font-mono font-bold text-slate-400 uppercase tracking-widest border-t border-slate-100 mt-1.5">
+                        {t(item.subHeaderKey as any, language)}
+                      </div>
+                    )}
+                    <button
+                      onClick={() => {
+                        setPanel(item.id);
+                        setMobileMenuOpen(false);
+                      }}
+                      title={!isExpanded ? label : undefined}
                     className={`relative w-full flex items-center rounded-xl transition-all duration-150 cursor-pointer group ${
                       isExpanded 
                         ? "gap-3.5 px-3 py-2.5" 
@@ -268,7 +281,8 @@ export default function Sidebar() {
                       )}
                     </AnimatePresence>
                   </button>
-                );
+                </React.Fragment>
+              );
               })}
             </div>
           </div>

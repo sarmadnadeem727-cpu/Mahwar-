@@ -48,6 +48,11 @@ export const translations = {
 
     // Supply Chain & Operations Suite
     nav_supply_chain: "SUPPLY CHAIN & OPERATIONS",
+    nav_sub_working_capital: "Working Capital",
+    nav_sub_inventory: "Inventory & Ordering",
+    nav_sub_planning: "Planning & Forecasting",
+    nav_sub_cost: "Cost & Sourcing",
+    nav_sub_network: "Network Logistics",
     panel_operations_hub: "Operations Suite Hub",
     panel_ccc: "Cash Conversion Cycle",
     panel_wc_financing: "WC Financing Cost",
@@ -238,6 +243,11 @@ export const translations = {
 
     // Supply Chain & Operations Suite
     nav_supply_chain: "سلاسل الإمداد والعمليات",
+    nav_sub_working_capital: "رأس المال العامل",
+    nav_sub_inventory: "المخزون وأوامر التوريد",
+    nav_sub_planning: "التخطيط والتنبؤ",
+    nav_sub_cost: "التكاليف والتوريد",
+    nav_sub_network: "الشبكة اللوجستية",
     panel_operations_hub: "مركز العمليات وسلاسل الإمداد",
     panel_ccc: "دورة التحويل النقدي (CCC)",
     panel_wc_financing: "تكلفة تمويل رأس المال العامل",
