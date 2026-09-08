@@ -10,6 +10,7 @@ interface LboWaterfallChartProps {
   sponsorEquity?: number;
   seniorDebt?: number;
   mezzDebt?: number;
+  pikNotes?: number;
   holdYearsData?: { year: number; irr: number; moic: number }[];
 }
 
@@ -19,6 +20,7 @@ export default function LboWaterfallChart({
   sponsorEquity = 650,
   seniorDebt = 700,
   mezzDebt = 195,
+  pikNotes = 0,
   holdYearsData = [
     { year: 1, irr: 12.4, moic: 1.12 },
     { year: 2, irr: 18.2, moic: 1.40 },
@@ -38,6 +40,7 @@ export default function LboWaterfallChart({
     { name: isAr ? "رأس مال المستثمر (Sponsor Equity)" : "Sponsor Equity", val: sponsorEquity, color: "bg-emerald-500", pct: ((sponsorEquity / totalUses) * 100).toFixed(1) },
     { name: isAr ? "الدين الممتاز (Senior Debt)" : "Senior Bank Debt", val: seniorDebt, color: "bg-sky-500", pct: ((seniorDebt / totalUses) * 100).toFixed(1) },
     { name: isAr ? "الدين الثانوي (Mezzanine Debt)" : "Mezzanine Debt", val: mezzDebt, color: "bg-indigo-500", pct: ((mezzDebt / totalUses) * 100).toFixed(1) },
+    ...(pikNotes > 0 ? [{ name: isAr ? "سندات عينية (PIK Notes)" : "PIK Notes", val: pikNotes, color: "bg-purple-500", pct: ((pikNotes / totalUses) * 100).toFixed(1) }] : []),
   ];
 
   const uses = [

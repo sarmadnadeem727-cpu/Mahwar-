@@ -83,11 +83,11 @@ export default function AutoFinancialStatements() {
 
   useEffect(() => {
     updateSessionAnalysis("autoStatements", {
-      inputs: { baseRevenue, growthRate, cogsMargin, opexMargin, taxZakatRate, capexPct },
+      inputs: { baseRevenue, growthRate, cogsMargin, opexMargin, taxZakatRate, capexPct, dnaPct, startingCash, startingDebt },
       outputs: { projectionData },
       computedAt: new Date().toISOString()
     });
-  }, [baseRevenue, growthRate, cogsMargin, opexMargin, taxZakatRate, capexPct]);
+  }, [baseRevenue, growthRate, cogsMargin, opexMargin, taxZakatRate, capexPct, dnaPct, startingCash, startingDebt]);
 
   const sendToDcf = () => {
     setPanel("DCF");
@@ -199,6 +199,37 @@ export default function AutoFinancialStatements() {
                 step="0.5"
                 value={capexPct}
                 onChange={(e) => setCapexPct(Number(e.target.value))}
+                className="w-full px-3 py-2 rounded bg-surface-subtle border border-surface-border font-mono text-xs"
+              />
+            </div>
+
+            <div>
+              <label className="text-slate-body font-medium block mb-1">D&A / Revenue (%)</label>
+              <input
+                type="number"
+                step="0.5"
+                value={dnaPct}
+                onChange={(e) => setDnaPct(Number(e.target.value))}
+                className="w-full px-3 py-2 rounded bg-surface-subtle border border-surface-border font-mono text-xs"
+              />
+            </div>
+
+            <div>
+              <label className="text-slate-body font-medium block mb-1">Starting Cash (SAR M)</label>
+              <input
+                type="number"
+                value={startingCash}
+                onChange={(e) => setStartingCash(Number(e.target.value))}
+                className="w-full px-3 py-2 rounded bg-surface-subtle border border-surface-border font-mono text-xs"
+              />
+            </div>
+
+            <div>
+              <label className="text-slate-body font-medium block mb-1">Starting Debt (SAR M)</label>
+              <input
+                type="number"
+                value={startingDebt}
+                onChange={(e) => setStartingDebt(Number(e.target.value))}
                 className="w-full px-3 py-2 rounded bg-surface-subtle border border-surface-border font-mono text-xs"
               />
             </div>

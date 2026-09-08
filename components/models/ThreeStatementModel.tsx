@@ -22,8 +22,14 @@ export default function ThreeStatementModel() {
   const [growthRate, setGrowthRate] = useState<number>(12);
   const [cogsPct, setCogsPct] = useState<number>(55);
   const [opexPct, setOpexPct] = useState<number>(20);
+  const [capexPct, setCapexPct] = useState<number>(8);
+  const [startingCash, setStartingCash] = useState<number>(400);
+  const [initialDebt, setInitialDebt] = useState<number>(500);
 
-  // Projections 5Y
+  // Projections 5Y - Purely derived dynamically from inputs
+  let runningCash = startingCash;
+  let runningPpe = 800;
+
   const projections = [1, 2, 3, 4, 5].map((yr) => {
     const rev = baseRev * Math.pow(1 + growthRate / 100, yr);
     const cogs = rev * (cogsPct / 100);
@@ -33,20 +39,25 @@ export default function ThreeStatementModel() {
     const da = ebitda * 0.18;
     const ebit = ebitda - da;
     
-    // Zakat Treatment: 2.5% of Zakat Base (Net Assets) vs Corporate Tax 20% for IFRS
-    const zakatBase = ebitda * 2.2;
-    const zakatOrTax = gaapMode === "SAUDI_GAAP" ? zakatBase * 0.025 : ebit * 0.20;
+    // Zakat Treatment: 2.5% of Zakat Base (Equity + Debt - Net Fixed Assets) vs Corporate Tax 20% for IFRS
+    const zakatBase = Math.max(0, runningCash + rev * 0.15 + ebit);
+    const zakatOrTax = gaapMode === "SAUDI_GAAP" ? zakatBase * 0.025 : Math.max(0, ebit * 0.20);
     const netIncome = ebit - zakatOrTax;
 
-    const cash = 12000 + yr * 2500;
+    const capex = rev * (capexPct / 100);
     const receivables = rev * 0.15;
-    const totalAssets = cash + receivables + 60000;
-    const debt = 25000;
-    const equity = totalAssets - debt;
-
-    const operatingCF = ebitda - zakatOrTax;
-    const capex = rev * 0.08;
+    const payables = cogs * 0.10;
+    const deltaNwc = (receivables - payables) * 0.1;
+    const operatingCF = netIncome + da - deltaNwc;
     const fcf = operatingCF - capex;
+
+    runningCash += fcf;
+    runningPpe += (capex - da);
+
+    const totalAssets = runningCash + receivables + runningPpe;
+    const debt = initialDebt;
+    const totalLiab = debt + payables;
+    const equity = totalAssets - totalLiab;
 
     return {
       year: `Year ${yr}`,
@@ -59,9 +70,13 @@ export default function ThreeStatementModel() {
       ebit: Math.round(ebit),
       zakatOrTax: Math.round(zakatOrTax),
       netIncome: Math.round(netIncome),
-      cash: Math.round(cash),
+      cash: Math.round(runningCash),
+      receivables: Math.round(receivables),
+      netPpe: Math.round(runningPpe),
       totalAssets: Math.round(totalAssets),
+      payables: Math.round(payables),
       debt: Math.round(debt),
+      totalLiab: Math.round(totalLiab),
       equity: Math.round(equity),
       operatingCF: Math.round(operatingCF),
       capex: Math.round(capex),
@@ -77,6 +92,9 @@ export default function ThreeStatementModel() {
         growthRate,
         cogsPct,
         opexPct,
+        capexPct,
+        startingCash,
+        initialDebt,
         gaapMode
       },
       outputs: {
@@ -84,7 +102,7 @@ export default function ThreeStatementModel() {
       },
       computedAt: new Date().toISOString()
     });
-  }, [baseRev, growthRate, cogsPct, opexPct, gaapMode]);
+  }, [baseRev, growthRate, cogsPct, opexPct, capexPct, startingCash, initialDebt, gaapMode]);
 
   const exportExcel = () => {
     const ws = XLSX.utils.json_to_sheet(projections);
@@ -175,6 +193,39 @@ export default function ThreeStatementModel() {
                 type="number"
                 value={opexPct}
                 onChange={(e) => setOpexPct(Number(e.target.value))}
+                className="w-24 px-2 py-1 bg-slate-50 border border-[#E2E8F0] focus:border-emerald rounded-md text-right text-slate-900 font-mono text-xs focus:outline-none"
+              />
+            </div>
+
+            {/* CapEx % */}
+            <div className="flex justify-between items-center">
+              <label className="text-slate-700">{isAr ? "الإنفاق الرأسمالي (% من الإيرادات)" : "CapEx (% of Rev)"}</label>
+              <input
+                type="number"
+                value={capexPct}
+                onChange={(e) => setCapexPct(Number(e.target.value))}
+                className="w-24 px-2 py-1 bg-slate-50 border border-[#E2E8F0] focus:border-emerald rounded-md text-right text-slate-900 font-mono text-xs focus:outline-none"
+              />
+            </div>
+
+            {/* Starting Cash */}
+            <div className="flex justify-between items-center">
+              <label className="text-slate-700">{isAr ? "النقد الابتدائي (مليون)" : "Starting Cash (M)"}</label>
+              <input
+                type="number"
+                value={startingCash}
+                onChange={(e) => setStartingCash(Number(e.target.value))}
+                className="w-24 px-2 py-1 bg-slate-50 border border-[#E2E8F0] focus:border-emerald rounded-md text-right text-slate-900 font-mono text-xs focus:outline-none"
+              />
+            </div>
+
+            {/* Initial Debt */}
+            <div className="flex justify-between items-center">
+              <label className="text-slate-700">{isAr ? "الدين القائم (مليون)" : "Existing Debt (M)"}</label>
+              <input
+                type="number"
+                value={initialDebt}
+                onChange={(e) => setInitialDebt(Number(e.target.value))}
                 className="w-24 px-2 py-1 bg-slate-50 border border-[#E2E8F0] focus:border-emerald rounded-md text-right text-slate-900 font-mono text-xs focus:outline-none"
               />
             </div>
@@ -323,6 +374,18 @@ export default function ThreeStatementModel() {
                       <td key={p.year} className="p-2.5 text-right text-emerald font-bold">{p.cash.toLocaleString()}</td>
                     ))}
                   </tr>
+                  <tr>
+                    <td className="p-2.5 text-slate-700">Accounts Receivable</td>
+                    {projections.map((p) => (
+                      <td key={p.year} className="p-2.5 text-right text-slate-700">{p.receivables.toLocaleString()}</td>
+                    ))}
+                  </tr>
+                  <tr>
+                    <td className="p-2.5 text-slate-700">Net Property, Plant & Equipment (PP&E)</td>
+                    {projections.map((p) => (
+                      <td key={p.year} className="p-2.5 text-right text-slate-700">{p.netPpe.toLocaleString()}</td>
+                    ))}
+                  </tr>
                   <tr className="font-bold border-t border-[#E2E8F0] bg-slate-50 text-slate-900">
                     <td className="p-2.5">Total Assets</td>
                     {projections.map((p) => (
@@ -330,15 +393,33 @@ export default function ThreeStatementModel() {
                     ))}
                   </tr>
                   <tr>
-                    <td className="p-2.5 text-slate-700">Total Liabilities & Debt</td>
+                    <td className="p-2.5 text-slate-700">Accounts Payable & Accruals</td>
+                    {projections.map((p) => (
+                      <td key={p.year} className="p-2.5 text-right text-rose-600">{p.payables.toLocaleString()}</td>
+                    ))}
+                  </tr>
+                  <tr>
+                    <td className="p-2.5 text-slate-700">Long-Term Debt & Sukuk</td>
                     {projections.map((p) => (
                       <td key={p.year} className="p-2.5 text-right text-rose-600">{p.debt.toLocaleString()}</td>
                     ))}
                   </tr>
-                  <tr>
-                    <td className="p-2.5 text-slate-700">Total Shareholders' Equity</td>
+                  <tr className="font-bold text-slate-900">
+                    <td className="p-2.5">Total Liabilities</td>
                     {projections.map((p) => (
-                      <td key={p.year} className="p-2.5 text-right text-slate-700">{p.equity.toLocaleString()}</td>
+                      <td key={p.year} className="p-2.5 text-right text-slate-900">{p.totalLiab.toLocaleString()}</td>
+                    ))}
+                  </tr>
+                  <tr className="bg-emerald-dim font-bold text-emerald">
+                    <td className="p-2.5">Total Shareholders' Equity</td>
+                    {projections.map((p) => (
+                      <td key={p.year} className="p-2.5 text-right text-emerald font-bold">{p.equity.toLocaleString()}</td>
+                    ))}
+                  </tr>
+                  <tr className="font-bold border-t-2 border-slate-900 bg-slate-100 text-slate-900">
+                    <td className="p-2.5">Total Liabilities & Equity</td>
+                    {projections.map((p) => (
+                      <td key={p.year} className="p-2.5 text-right font-extrabold text-slate-900">{(p.totalLiab + p.equity).toLocaleString()}</td>
                     ))}
                   </tr>
                 </>

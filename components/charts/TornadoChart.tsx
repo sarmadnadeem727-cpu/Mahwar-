@@ -56,32 +56,39 @@ export default function TornadoChart({
     currentPrice: 32.50,
   };
 
+  const effectiveYears = baseYears && baseYears.length > 0 ? baseYears : defaultYears;
+  const effectiveParams = baseParams || defaultParams;
+  const effectiveBridge = baseBridge || defaultBridge;
+
   // Safe runner helper
   const calcPx = (customParams: DcfParams, customYears: DcfYear[]) => {
     try {
-      const res = runDcf(customYears, customParams, defaultBridge);
+      const res = runDcf(customYears, customParams, effectiveBridge);
       return res.bridge.impliedSharePrice;
     } catch {
       return baseSharePrice;
     }
   };
 
-  // Drivers calculations
-  const waccHighPx = calcPx({ ...defaultParams, waccOverride: 0.105 }, defaultYears);
-  const waccLowPx = calcPx({ ...defaultParams, waccOverride: 0.075 }, defaultYears);
+  // Drivers calculations relative to actual active parameters
+  const currentWacc = effectiveParams.waccOverride || 0.089;
+  const currentGrowth = effectiveParams.terminalGrowth || 0.025;
 
-  const gHighPx = calcPx({ ...defaultParams, terminalGrowth: 0.035 }, defaultYears);
-  const gLowPx = calcPx({ ...defaultParams, terminalGrowth: 0.015 }, defaultYears);
+  const waccHighPx = calcPx({ ...effectiveParams, waccOverride: currentWacc + 0.015 }, effectiveYears);
+  const waccLowPx = calcPx({ ...effectiveParams, waccOverride: Math.max(0.04, currentWacc - 0.015) }, effectiveYears);
 
-  const marginHighYears = defaultYears.map(y => ({ ...y, ebitMargin: 0.38 }));
-  const marginLowYears = defaultYears.map(y => ({ ...y, ebitMargin: 0.32 }));
-  const marginHighPx = calcPx(defaultParams, marginHighYears);
-  const marginLowPx = calcPx(defaultParams, marginLowYears);
+  const gHighPx = calcPx({ ...effectiveParams, terminalGrowth: currentGrowth + 0.01 }, effectiveYears);
+  const gLowPx = calcPx({ ...effectiveParams, terminalGrowth: Math.max(0.005, currentGrowth - 0.01) }, effectiveYears);
 
-  const revHighYears = defaultYears.map(y => ({ ...y, revenue: y.revenue * 1.05 }));
-  const revLowYears = defaultYears.map(y => ({ ...y, revenue: y.revenue * 0.95 }));
-  const revHighPx = calcPx(defaultParams, revHighYears);
-  const revLowPx = calcPx(defaultParams, revLowYears);
+  const marginHighYears = effectiveYears.map(y => ({ ...y, ebitMargin: (y.ebitMargin || 0.35) + 0.03 }));
+  const marginLowYears = effectiveYears.map(y => ({ ...y, ebitMargin: Math.max(0.05, (y.ebitMargin || 0.35) - 0.03) }));
+  const marginHighPx = calcPx(effectiveParams, marginHighYears);
+  const marginLowPx = calcPx(effectiveParams, marginLowYears);
+
+  const revHighYears = effectiveYears.map(y => ({ ...y, revenue: y.revenue * 1.05 }));
+  const revLowYears = effectiveYears.map(y => ({ ...y, revenue: y.revenue * 0.95 }));
+  const revHighPx = calcPx(effectiveParams, revHighYears);
+  const revLowPx = calcPx(effectiveParams, revLowYears);
 
   const drivers = [
     {

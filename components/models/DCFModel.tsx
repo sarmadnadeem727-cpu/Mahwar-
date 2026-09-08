@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useMemo } from "react";
 import { motion } from "framer-motion";
 import { BarChart3, Calculator, TrendingUp, TrendingDown, RefreshCw, Activity, PieChart, Sliders } from "lucide-react";
 import { useTerminalStore } from "@/store/useTerminalStore";
@@ -11,12 +11,124 @@ import ScenarioToggle, { ScenarioCase, ScenarioDefinition } from "@/components/f
 import FootballFieldChart from "@/components/charts/FootballFieldChart";
 import TornadoChart from "@/components/charts/TornadoChart";
 import MonteCarloSimulation from "@/components/features/MonteCarloSimulation";
+import { DcfYear, DcfParams, EvBridge } from "@/lib/finance/dcf";
 
 export interface DcfScenarioValues {
   revGrowthDelta: number;
   ebitdaMarginDelta: number;
   waccDelta: number;
   terminalGrowthDelta: number;
+}
+
+export function computeDCFLocal(params: {
+  revGrowth: number;
+  ebitdaMargin: number;
+  capexRev: number;
+  taxZakat: number;
+  costEquity: number;
+  costDebt: number;
+  debtWeight: number;
+  terminalGrowth: number;
+  currentPrice: number;
+  baseRevenue: number;
+  sharesOutstanding: number;
+  netDebt: number;
+}) {
+  const {
+    revGrowth,
+    ebitdaMargin,
+    capexRev,
+    taxZakat,
+    costEquity,
+    costDebt,
+    debtWeight,
+    terminalGrowth,
+    currentPrice,
+    baseRevenue,
+    sharesOutstanding,
+    netDebt,
+  } = params;
+
+  if (!baseRevenue || baseRevenue <= 0 || !sharesOutstanding || sharesOutstanding <= 0) {
+    return null;
+  }
+
+  const equityWeight = 100 - debtWeight;
+  const afterTaxCostDebt = costDebt * (1 - taxZakat / 100);
+  const wacc = (costEquity / 100) * (equityWeight / 100) + (afterTaxCostDebt / 100) * (debtWeight / 100);
+
+  const fcfProjections = [];
+  let prevRev = baseRevenue;
+  let totalPVFCF = 0;
+
+  for (let year = 1; year <= 5; year++) {
+    const revenue = prevRev * (1 + revGrowth / 100);
+    const ebitda = revenue * (ebitdaMargin / 100);
+    const ebit = ebitda * 0.82;
+    const nopat = ebit * (1 - taxZakat / 100);
+    const capex = revenue * (capexRev / 100);
+    const fcf = nopat - capex + (ebitda - ebit);
+
+    const discountFactor = Math.pow(1 + wacc, year);
+    const pvFCF = fcf / discountFactor;
+    totalPVFCF += pvFCF;
+
+    fcfProjections.push({
+      year: `Year ${year}`,
+      revenue: Math.round(revenue),
+      ebitda: Math.round(ebitda),
+      ebit: Math.round(ebit),
+      nopat: Math.round(nopat),
+      capex: Math.round(capex),
+      fcf: Math.round(fcf),
+      pvFCF: Math.round(pvFCF),
+    });
+    prevRev = revenue;
+  }
+
+  const lastFCF = fcfProjections[4].fcf;
+  const terminalGrowthDec = terminalGrowth / 100;
+  const denominator = Math.max(0.005, wacc - terminalGrowthDec);
+  const terminalValue = (lastFCF * (1 + terminalGrowthDec)) / denominator;
+  const pvTerminalValue = terminalValue / Math.pow(1 + wacc, 5);
+
+  const enterpriseValue = totalPVFCF + pvTerminalValue;
+  const equityValue = enterpriseValue - netDebt;
+  const intrinsicValuePerShare = equityValue / sharesOutstanding;
+  const upsidePct = currentPrice > 0 ? ((intrinsicValuePerShare - currentPrice) / currentPrice) * 100 : 0;
+
+  const waccSteps = [wacc - 0.01, wacc - 0.005, wacc, wacc + 0.005, wacc + 0.01];
+  const growthSteps = [terminalGrowth - 1, terminalGrowth - 0.5, terminalGrowth, terminalGrowth + 0.5, terminalGrowth + 1];
+
+  const sensitivityMatrix = waccSteps.map((w) => {
+    return growthSteps.map((g) => {
+      const gDec = g / 100;
+      const denom = Math.max(0.005, w - gDec);
+      const tv = (lastFCF * (1 + gDec)) / denom;
+      const pvTv = tv / Math.pow(1 + w, 5);
+      const ev = totalPVFCF + pvTv;
+      const eqVal = ev - netDebt;
+      const valPerShare = eqVal / sharesOutstanding;
+      return {
+        wacc: Number((w * 100).toFixed(2)),
+        growth: g,
+        intrinsicValue: Number(valPerShare.toFixed(2)),
+      };
+    });
+  });
+
+  return {
+    wacc: Number((wacc * 100).toFixed(2)),
+    fcfProjections,
+    terminalValue: Math.round(terminalValue),
+    pvTerminalValue: Math.round(pvTerminalValue),
+    enterpriseValue: Math.round(enterpriseValue),
+    equityValue: Math.round(equityValue),
+    intrinsicValuePerShare: Number(intrinsicValuePerShare.toFixed(2)),
+    upsidePct: Number(upsidePct.toFixed(1)),
+    currentPrice,
+    sensitivityMatrix,
+  };
 }
 
 export default function DCFModel() {
@@ -91,36 +203,44 @@ export default function DCFModel() {
   const [sharesOutstanding, setSharesOutstanding] = useState<number>(100);
   const [currentPrice, setCurrentPrice] = useState<number>(32.50);
 
-  const [dcfResult, setDcfResult] = useState<any>(null);
   const [isCalculating, setIsCalculating] = useState<boolean>(false);
   const [activeTab, setActiveTab] = useState<"PROJECTIONS" | "FOOTBALL" | "TORNADO" | "MONTE_CARLO">("PROJECTIONS");
 
-  const calculateDCF = async () => {
-    if (baseRevenue <= 0 || sharesOutstanding <= 0) return;
+  // Pure live client-side derivation
+  const dcfResult = useMemo(() => {
+    return computeDCFLocal({
+      revGrowth,
+      ebitdaMargin,
+      capexRev: baseCapexRev,
+      taxZakat,
+      costEquity: costEquity + scenarioDeltas.waccDelta,
+      costDebt,
+      debtWeight,
+      terminalGrowth,
+      currentPrice,
+      baseRevenue,
+      sharesOutstanding,
+      netDebt,
+    });
+  }, [
+    revGrowth,
+    ebitdaMargin,
+    baseCapexRev,
+    taxZakat,
+    costEquity,
+    scenarioDeltas.waccDelta,
+    costDebt,
+    debtWeight,
+    terminalGrowth,
+    currentPrice,
+    baseRevenue,
+    sharesOutstanding,
+    netDebt,
+  ]);
 
-    setIsCalculating(true);
-    try {
-      const res = await fetch("/api/dcf", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          revGrowth,
-          ebitdaMargin,
-          capexRev: baseCapexRev,
-          taxZakat,
-          costEquity: costEquity + scenarioDeltas.waccDelta,
-          costDebt,
-          debtWeight,
-          terminalGrowth,
-          currentPrice,
-          baseRevenue,
-          sharesOutstanding,
-          netDebt
-        }),
-      });
-      const data = await res.json();
-      setDcfResult(data);
-
+  // Sync to session analysis
+  useEffect(() => {
+    if (dcfResult) {
       updateSessionAnalysis("dcf", {
         inputs: {
           revGrowth,
@@ -135,21 +255,20 @@ export default function DCFModel() {
           baseRevenue,
           sharesOutstanding,
           netDebt,
-          activeScenario
+          activeScenario,
         },
-        outputs: data,
-        computedAt: new Date().toISOString()
+        outputs: dcfResult,
+        computedAt: new Date().toISOString(),
       });
-    } catch (err) {
-      console.error("DCF Error:", err);
-    } finally {
-      setIsCalculating(false);
     }
-  };
+  }, [dcfResult, activeScenario]);
 
-  useEffect(() => {
-    calculateDCF();
-  }, [activeScenario, scenarioDeltas]);
+  const calculateDCF = () => {
+    setIsCalculating(true);
+    setTimeout(() => {
+      setIsCalculating(false);
+    }, 150);
+  };
 
   const handleScenarioChange = (c: ScenarioCase, values?: DcfScenarioValues) => {
     setActiveScenario(c);
@@ -496,17 +615,109 @@ export default function DCFModel() {
           />
         )}
 
-        {activeTab === "TORNADO" && (
-          <TornadoChart
-            baseSharePrice={dcfResult?.intrinsicValuePerShare ? Number(dcfResult.intrinsicValuePerShare) : 38.45}
-          />
-        )}
+        {activeTab === "TORNADO" && (() => {
+          const dynamicYears: DcfYear[] = (dcfResult?.fcfProjections || []).map((p: any, idx: number) => ({
+            yearIndex: idx + 1,
+            year: 2025 + idx,
+            revenue: p.revenue,
+            ebitMargin: ebitdaMargin / 100,
+            taxRateEffective: taxZakat / 100,
+            dAndA: Math.round(p.ebitda - p.ebit),
+            capex: p.capex,
+            deltaNwc: 0,
+            ebit: p.ebit,
+            nopat: p.nopat,
+            fcff: p.fcf,
+            pvFcff: p.pvFCF,
+          }));
 
-        {activeTab === "MONTE_CARLO" && (
-          <MonteCarloSimulation
-            baseSharePrice={dcfResult?.intrinsicValuePerShare ? Number(dcfResult.intrinsicValuePerShare) : 38.45}
-          />
-        )}
+          const dynamicBridge: EvBridge = {
+            enterpriseValue: dcfResult?.enterpriseValue || 0,
+            cash: 100,
+            shortTermDebt: 50,
+            longTermDebt: Math.max(0, netDebt - 50),
+            sukuk: 0,
+            leaseFinancingLiabilities: 0,
+            eosbLiability: 0,
+            minorityInterest: 0,
+            otherDebtLike: 0,
+            nonOperatingAssets: 0,
+            sharesOutstanding: sharesOutstanding > 0 ? sharesOutstanding : 100,
+            currentPrice: currentPrice,
+          };
+
+          const dynamicParams: DcfParams = {
+            rfRate: 0.045,
+            erp: 0.055,
+            betaUnlevered: 0.85,
+            targetDtoE: debtWeight / (100 - debtWeight || 1),
+            taxShieldRate: 0.0,
+            kdPreTax: costDebt / 100,
+            zakatRate: taxZakat / 100,
+            waccOverride: dcfResult?.wacc ? dcfResult.wacc / 100 : 0.089,
+            terminalMethod: "GORDON",
+            terminalGrowth: terminalGrowth / 100,
+            includeLeasesInDebt: true,
+            includeEosbInDebt: true,
+            includeSukukInDebt: true,
+          };
+
+          return (
+            <TornadoChart
+              baseSharePrice={dcfResult?.intrinsicValuePerShare ? Number(dcfResult.intrinsicValuePerShare) : 38.45}
+              baseYears={dynamicYears}
+              baseBridge={dynamicBridge}
+              baseParams={dynamicParams}
+            />
+          );
+        })()}
+
+        {activeTab === "MONTE_CARLO" && (() => {
+          const dynamicYears: DcfYear[] = (dcfResult?.fcfProjections || []).map((p: any, idx: number) => ({
+            yearIndex: idx + 1,
+            year: 2025 + idx,
+            revenue: p.revenue,
+            ebitMargin: ebitdaMargin / 100,
+            taxRateEffective: taxZakat / 100,
+            dAndA: Math.round(p.ebitda - p.ebit),
+            capex: p.capex,
+            deltaNwc: 0,
+            ebit: p.ebit,
+            nopat: p.nopat,
+            fcff: p.fcf,
+            pvFcff: p.pvFCF,
+          }));
+
+          const dynamicBridge: EvBridge = {
+            enterpriseValue: dcfResult?.enterpriseValue || 0,
+            cash: 100,
+            shortTermDebt: 50,
+            longTermDebt: Math.max(0, netDebt - 50),
+            sukuk: 0,
+            leaseFinancingLiabilities: 0,
+            eosbLiability: 0,
+            minorityInterest: 0,
+            otherDebtLike: 0,
+            nonOperatingAssets: 0,
+            sharesOutstanding: sharesOutstanding > 0 ? sharesOutstanding : 100,
+            currentPrice: currentPrice,
+          };
+
+          return (
+            <MonteCarloSimulation
+              baseSharePrice={dcfResult?.intrinsicValuePerShare ? Number(dcfResult.intrinsicValuePerShare) : 38.45}
+              baseWacc={dcfResult?.wacc ? dcfResult.wacc / 100 : 0.089}
+              baseGrowth={terminalGrowth / 100}
+              baseRevenue={baseRevenue}
+              ebitdaMargin={ebitdaMargin}
+              sharesOutstanding={sharesOutstanding}
+              netDebt={netDebt}
+              currentPrice={currentPrice}
+              baseYears={dynamicYears}
+              baseBridge={dynamicBridge}
+            />
+          );
+        })()}
       </div>
     </motion.div>
   );

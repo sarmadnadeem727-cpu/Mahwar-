@@ -73,14 +73,13 @@ export default function LandedCostCalculator() {
     calc: computeLandedCost(s),
   }));
 
-  // Sync to sessionAnalyses
   useEffect(() => {
     updateSessionAnalysis("landedCost", {
       inputs: { scenarios },
       outputs: { activeLandedCostPerUnit: currentCalc.landedCostPerUnit },
       computedAt: new Date().toISOString(),
     });
-  }, [scenarios, currentCalc]);
+  }, [scenarios, currentCalc.landedCostPerUnit]);
 
   const updateActiveField = (field: keyof SourcingScenario, val: any) => {
     setScenarios((prev) =>

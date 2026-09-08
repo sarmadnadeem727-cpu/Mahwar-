@@ -87,9 +87,9 @@ export default function Sidebar() {
   const { activePanel, setPanel, language, isMobileMenuOpen, setMobileMenuOpen } = useTerminalStore();
   const isAr = language === "ar";
   
-  // Hover & Pin State
+  // Hover & Pin State - default to pinned so text is always readable on arrival
   const [isHovered, setIsHovered] = useState(false);
-  const [isPinned, setIsPinned] = useState(false);
+  const [isPinned, setIsPinned] = useState(true);
 
   // Sidebar is expanded if hovered OR pinned open
   const isExpanded = isHovered || isPinned;
@@ -111,25 +111,25 @@ export default function Sidebar() {
 
       <motion.aside
         onMouseEnter={() => setIsHovered(true)}
-      onMouseLeave={() => setIsHovered(false)}
-      initial={false}
-      animate={{ 
-        width: isExpanded ? 340 : 76,
-      }}
-      transition={{ 
-        type: "spring", 
-        stiffness: 320, 
-        damping: 32,
-        mass: 0.8
-      }}
-      className={`fixed lg:relative bg-white border-r border-[#E2E8F0] flex flex-col h-screen top-0 z-50 lg:z-30 select-none no-print font-sans shadow-[2px_0_12px_rgba(0,0,0,0.03)] transition-[width,transform] duration-200 ${
-        isExpanded ? "ring-1 ring-slate-200/50" : ""
-      } ${
-        isMobileMenuOpen ? "translate-x-0" : (isAr ? "translate-x-full lg:translate-x-0" : "-translate-x-full lg:translate-x-0")
-      }`}
-      dir={isAr ? "rtl" : "ltr"}
-      aria-label="Sidebar Navigation"
-    >
+        onMouseLeave={() => setIsHovered(false)}
+        initial={false}
+        animate={{ 
+          width: isExpanded ? 350 : 76,
+        }}
+        transition={{ 
+          type: "spring", 
+          stiffness: 320, 
+          damping: 32,
+          mass: 0.8
+        }}
+        className={`fixed lg:relative bg-white border-r border-[#E2E8F0] flex flex-col h-screen top-0 z-50 lg:z-30 select-none no-print font-sans shadow-[2px_0_12px_rgba(0,0,0,0.03)] transition-[width,transform] duration-200 ${
+          isExpanded ? "ring-1 ring-slate-200/50" : ""
+        } ${
+          isMobileMenuOpen ? "translate-x-0 w-[320px]" : (isAr ? "translate-x-full lg:translate-x-0" : "-translate-x-full lg:translate-x-0")
+        }`}
+        dir={isAr ? "rtl" : "ltr"}
+        aria-label="Sidebar Navigation"
+      >
       {/* BRAND LOGO HEADER */}
       <div className="h-[68px] min-h-[68px] border-b border-[#E2E8F0] px-4 flex items-center justify-between overflow-hidden bg-white/80 backdrop-blur-xs">
         <Link 
@@ -262,9 +262,9 @@ export default function Sidebar() {
                           animate={{ opacity: 1, x: 0 }}
                           exit={{ opacity: 0, x: isAr ? 10 : -10 }}
                           transition={{ duration: 0.18 }}
-                          className="flex-1 flex items-center justify-between min-w-0 text-start"
+                          className="flex-1 flex items-center justify-between min-w-0 text-start gap-2.5"
                         >
-                          <span className="text-[13px] font-semibold tracking-normal text-slate-800 group-hover:text-slate-950 leading-snug break-words">
+                          <span className="text-[13px] font-semibold tracking-normal text-slate-800 group-hover:text-slate-950 leading-snug whitespace-normal break-words">
                             {label}
                           </span>
                           

@@ -39,6 +39,11 @@ export default function MonteCarloPanel() {
   const [terminalGrowthMean, setTerminalGrowthMean] = useState<number>(2.5);
   const [terminalGrowthStd, setTerminalGrowthStd] = useState<number>(0.5);
 
+  // Company Scale Inputs
+  const [baseRev, setBaseRev] = useState<number>(1200); // SAR M
+  const [baseShares, setBaseShares] = useState<number>(100); // M shares
+  const [netDebt, setNetDebt] = useState<number>(200); // SAR M
+
   const [iterations, setIterations] = useState<number>(5000);
   const [distributionType, setDistributionType] = useState<"normal" | "triangular">("normal");
 
@@ -71,8 +76,6 @@ export default function MonteCarloPanel() {
     // Use async timeout to allow UI loading spinner render
     setTimeout(() => {
       const prices: number[] = [];
-      const baseShares = 100; // M shares
-      const baseRev = 1200; // SAR M
 
       for (let i = 0; i < iterations; i++) {
         let revGrowth = 0;
@@ -109,8 +112,8 @@ export default function MonteCarloPanel() {
         const pvTerminal = terminalValue / Math.pow(1 + wacc, 5);
 
         const enterpriseValue = fcfSum + pvTerminal;
-        const equityValue = enterpriseValue + 100 - 300; // Net debt adjustment
-        const perShare = Math.max(1.0, equityValue / baseShares);
+        const equityValue = enterpriseValue - netDebt;
+        const perShare = Math.max(1.0, equityValue / (baseShares > 0 ? baseShares : 100));
 
         prices.push(perShare);
       }
@@ -139,7 +142,7 @@ export default function MonteCarloPanel() {
         const maxVal = minVal + binWidth;
         const count = prices.filter(p => p >= minVal && (idx === binCount - 1 ? p <= maxVal : p < maxVal)).length;
         return {
-          rangeLabel: `SAR ${minVal.toFixed(1)}`,
+          rangeLabel: `${minVal.toFixed(1)}-${maxVal.toFixed(1)}`,
           count,
           minVal,
           maxVal
@@ -161,7 +164,7 @@ export default function MonteCarloPanel() {
       setIsRunning(false);
 
       updateSessionAnalysis("monteCarlo", {
-        inputs: { currentMarketPrice, revenueGrowthMean, ebitdaMarginMean, waccMean, iterations },
+        inputs: { currentMarketPrice, revenueGrowthMean, ebitdaMarginMean, waccMean, iterations, baseRev, baseShares, netDebt },
         outputs: resultsData,
         computedAt: new Date().toISOString()
       });
@@ -170,7 +173,22 @@ export default function MonteCarloPanel() {
 
   useEffect(() => {
     runSimulation();
-  }, []);
+  }, [
+    currentMarketPrice,
+    revenueGrowthMean,
+    revenueGrowthStd,
+    ebitdaMarginMean,
+    ebitdaMarginStd,
+    waccMean,
+    waccStd,
+    terminalGrowthMean,
+    terminalGrowthStd,
+    iterations,
+    distributionType,
+    baseRev,
+    baseShares,
+    netDebt
+  ]);
 
   return (
     <motion.div
@@ -223,16 +241,54 @@ export default function MonteCarloPanel() {
           </div>
 
           <div className="space-y-4 text-xs">
-            <div>
-              <label className="text-slate-body font-medium block mb-1">
-                {isAr ? "سعر السهم الحالي بالسوق (SAR)" : "Current Market Price (SAR)"}
-              </label>
-              <input
-                type="number"
-                value={currentMarketPrice}
-                onChange={(e) => setCurrentMarketPrice(Number(e.target.value))}
-                className="w-full px-3 py-2 rounded-md bg-surface-subtle border border-surface-border font-mono text-slate-heading text-xs focus:outline-none focus:border-emerald"
-              />
+            <div className="grid grid-cols-2 gap-2">
+              <div>
+                <label className="text-slate-body font-medium block mb-1">
+                  {isAr ? "سعر السوق (SAR)" : "Market Price (SAR)"}
+                </label>
+                <input
+                  type="number"
+                  value={currentMarketPrice}
+                  onChange={(e) => setCurrentMarketPrice(Number(e.target.value))}
+                  className="w-full px-3 py-1.5 rounded-md bg-surface-subtle border border-surface-border font-mono text-slate-heading text-xs focus:outline-none focus:border-emerald"
+                />
+              </div>
+              <div>
+                <label className="text-slate-body font-medium block mb-1">
+                  {isAr ? "الإيرادات الأساسية (M)" : "Base Revenue (SAR M)"}
+                </label>
+                <input
+                  type="number"
+                  value={baseRev}
+                  onChange={(e) => setBaseRev(Number(e.target.value))}
+                  className="w-full px-3 py-1.5 rounded-md bg-surface-subtle border border-surface-border font-mono text-slate-heading text-xs focus:outline-none focus:border-emerald"
+                />
+              </div>
+            </div>
+
+            <div className="grid grid-cols-2 gap-2">
+              <div>
+                <label className="text-slate-body font-medium block mb-1">
+                  {isAr ? "الأسهم القائمة (M)" : "Shares Out (M)"}
+                </label>
+                <input
+                  type="number"
+                  value={baseShares}
+                  onChange={(e) => setBaseShares(Number(e.target.value))}
+                  className="w-full px-3 py-1.5 rounded-md bg-surface-subtle border border-surface-border font-mono text-slate-heading text-xs focus:outline-none focus:border-emerald"
+                />
+              </div>
+              <div>
+                <label className="text-slate-body font-medium block mb-1">
+                  {isAr ? "صافي الدين (SAR M)" : "Net Debt (SAR M)"}
+                </label>
+                <input
+                  type="number"
+                  value={netDebt}
+                  onChange={(e) => setNetDebt(Number(e.target.value))}
+                  className="w-full px-3 py-1.5 rounded-md bg-surface-subtle border border-surface-border font-mono text-slate-heading text-xs focus:outline-none focus:border-emerald"
+                />
+              </div>
             </div>
 
             <div>

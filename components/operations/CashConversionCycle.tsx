@@ -90,7 +90,7 @@ export default function CashConversionCycle() {
       outputs: { activeOutput: currentOutput, allOutputs: computedOutputs },
       computedAt: new Date().toISOString(),
     });
-  }, [periods, currentOutput]);
+  }, [periods, currentOutput?.ccc]);
 
   // Validation
   let validationError = "";

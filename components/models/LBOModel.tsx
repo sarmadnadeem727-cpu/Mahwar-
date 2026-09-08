@@ -308,6 +308,7 @@ export default function LBOModel() {
           sponsorEquity={sponsorEquity}
           seniorDebt={seniorDebt}
           mezzDebt={mezzDebt}
+          pikNotes={pikNotes}
           holdYearsData={holdYearsData}
         />
       </div>

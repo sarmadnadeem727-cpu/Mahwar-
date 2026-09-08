@@ -56,9 +56,17 @@ export default function FootballFieldChart({
     },
   ];
 
-  const minScale = 20.0;
-  const maxScale = 50.0;
-  const totalSpan = maxScale - minScale;
+  const allPrices = [
+    dcfBearPx, dcfBasePx, dcfBullPx,
+    compsMinPx, compsAvgPx, compsMaxPx,
+    currentPrice * 0.82, currentPrice * 1.22
+  ].filter(p => typeof p === 'number' && !isNaN(p) && p > 0);
+
+  const rawMin = allPrices.length > 0 ? Math.min(...allPrices) : 20.0;
+  const rawMax = allPrices.length > 0 ? Math.max(...allPrices) : 50.0;
+  const minScale = Math.max(0, Number((rawMin * 0.85).toFixed(1)));
+  const maxScale = Number((rawMax * 1.15).toFixed(1));
+  const totalSpan = Math.max(1, maxScale - minScale);
 
   const getLeftPct = (val: number) => Math.max(0, Math.min(100, ((val - minScale) / totalSpan) * 100));
   const getWidthPct = (min: number, max: number) => Math.max(2, Math.min(100, ((max - min) / totalSpan) * 100));

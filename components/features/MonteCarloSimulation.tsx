@@ -10,12 +10,26 @@ interface MonteCarloSimulationProps {
   baseWacc?: number;
   baseGrowth?: number;
   baseSharePrice?: number;
+  baseYears?: DcfYear[];
+  baseBridge?: EvBridge;
+  baseRevenue?: number;
+  ebitdaMargin?: number;
+  sharesOutstanding?: number;
+  netDebt?: number;
+  currentPrice?: number;
 }
 
 export default function MonteCarloSimulation({
   baseWacc = 0.089,
   baseGrowth = 0.025,
   baseSharePrice = 38.45,
+  baseYears: inputYears,
+  baseBridge: inputBridge,
+  baseRevenue = 1200,
+  ebitdaMargin = 35,
+  sharesOutstanding = 100,
+  netDebt = 250,
+  currentPrice = 32.50,
 }: MonteCarloSimulationProps) {
   const { language } = useTerminalStore();
   const isAr = language === "ar";
@@ -38,27 +52,27 @@ export default function MonteCarloSimulation({
       const iterations = 1000;
       const prices: number[] = [];
 
-      const baseYears: DcfYear[] = [
-        { yearIndex: 1, year: 2025, revenue: 1296, ebitMargin: 0.35, taxRateEffective: 0.025, dAndA: 65, capex: 130, deltaNwc: 15 },
-        { yearIndex: 2, year: 2026, revenue: 1399, ebitMargin: 0.35, taxRateEffective: 0.025, dAndA: 70, capex: 140, deltaNwc: 15 },
-        { yearIndex: 3, year: 2027, revenue: 1511, ebitMargin: 0.35, taxRateEffective: 0.025, dAndA: 75, capex: 151, deltaNwc: 16 },
-        { yearIndex: 4, year: 2028, revenue: 1632, ebitMargin: 0.35, taxRateEffective: 0.025, dAndA: 81, capex: 163, deltaNwc: 17 },
-        { yearIndex: 5, year: 2029, revenue: 1763, ebitMargin: 0.35, taxRateEffective: 0.025, dAndA: 88, capex: 176, deltaNwc: 18 },
+      const baseYears: DcfYear[] = inputYears && inputYears.length > 0 ? inputYears : [
+        { yearIndex: 1, year: 2025, revenue: baseRevenue * 1.08, ebitMargin: ebitdaMargin / 100, taxRateEffective: 0.025, dAndA: baseRevenue * 0.05, capex: baseRevenue * 0.1, deltaNwc: baseRevenue * 0.01 },
+        { yearIndex: 2, year: 2026, revenue: baseRevenue * 1.16, ebitMargin: ebitdaMargin / 100, taxRateEffective: 0.025, dAndA: baseRevenue * 0.05, capex: baseRevenue * 0.1, deltaNwc: baseRevenue * 0.01 },
+        { yearIndex: 3, year: 2027, revenue: baseRevenue * 1.25, ebitMargin: ebitdaMargin / 100, taxRateEffective: 0.025, dAndA: baseRevenue * 0.05, capex: baseRevenue * 0.1, deltaNwc: baseRevenue * 0.01 },
+        { yearIndex: 4, year: 2028, revenue: baseRevenue * 1.35, ebitMargin: ebitdaMargin / 100, taxRateEffective: 0.025, dAndA: baseRevenue * 0.05, capex: baseRevenue * 0.1, deltaNwc: baseRevenue * 0.01 },
+        { yearIndex: 5, year: 2029, revenue: baseRevenue * 1.46, ebitMargin: ebitdaMargin / 100, taxRateEffective: 0.025, dAndA: baseRevenue * 0.05, capex: baseRevenue * 0.1, deltaNwc: baseRevenue * 0.01 },
       ];
 
-      const bridge: EvBridge = {
+      const bridge: EvBridge = inputBridge || {
         enterpriseValue: 0,
         cash: 100,
         shortTermDebt: 50,
-        longTermDebt: 300,
+        longTermDebt: Math.max(0, netDebt + 50),
         sukuk: 0,
         leaseFinancingLiabilities: 0,
         eosbLiability: 0,
         minorityInterest: 0,
         otherDebtLike: 0,
         nonOperatingAssets: 0,
-        sharesOutstanding: 100,
-        currentPrice: 32.50,
+        sharesOutstanding: sharesOutstanding > 0 ? sharesOutstanding : 100,
+        currentPrice: currentPrice,
       };
 
       // Box-Muller normal random sampling
