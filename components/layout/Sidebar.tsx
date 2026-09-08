@@ -114,7 +114,7 @@ export default function Sidebar() {
       onMouseLeave={() => setIsHovered(false)}
       initial={false}
       animate={{ 
-        width: isExpanded ? 290 : 76,
+        width: isExpanded ? 340 : 76,
       }}
       transition={{ 
         type: "spring", 
@@ -193,7 +193,7 @@ export default function Sidebar() {
                   animate={{ opacity: 1, height: "auto" }}
                   exit={{ opacity: 0, height: 0 }}
                   transition={{ duration: 0.18 }}
-                  className="px-3 pb-1.5 text-[11px] font-mono font-bold text-slate-400 uppercase tracking-wider overflow-hidden whitespace-nowrap"
+                  className="px-3 pb-1.5 text-[11px] font-mono font-bold text-slate-400 uppercase tracking-wider whitespace-normal leading-tight"
                 >
                   {t(group.labelKey as any, language)}
                 </motion.div>
@@ -214,7 +214,7 @@ export default function Sidebar() {
                 return (
                   <React.Fragment key={item.id}>
                     {item.subHeaderKey && isExpanded && (
-                      <div className="pt-2.5 pb-1 px-3 text-[9px] font-mono font-bold text-slate-400 uppercase tracking-widest border-t border-slate-100 mt-1.5">
+                      <div className="pt-2.5 pb-1 px-3 text-[10px] font-mono font-bold text-slate-400 uppercase tracking-wider border-t border-slate-100 mt-1.5 whitespace-normal leading-tight">
                         {t(item.subHeaderKey as any, language)}
                       </div>
                     )}
@@ -226,7 +226,7 @@ export default function Sidebar() {
                       title={!isExpanded ? label : undefined}
                     className={`relative w-full flex items-center rounded-xl transition-all duration-150 cursor-pointer group ${
                       isExpanded 
-                        ? "gap-3.5 px-3 py-2.5" 
+                        ? "gap-3 px-3 py-2 text-start min-h-[44px]" 
                         : "justify-center h-12 w-full px-0"
                     } ${
                       active
@@ -262,14 +262,14 @@ export default function Sidebar() {
                           animate={{ opacity: 1, x: 0 }}
                           exit={{ opacity: 0, x: isAr ? 10 : -10 }}
                           transition={{ duration: 0.18 }}
-                          className="flex-1 flex items-center justify-between min-w-0 overflow-hidden text-start"
+                          className="flex-1 flex items-center justify-between min-w-0 text-start"
                         >
-                          <span className="text-sm font-semibold tracking-normal truncate text-slate-800 group-hover:text-slate-950">
+                          <span className="text-[13px] font-semibold tracking-normal text-slate-800 group-hover:text-slate-950 leading-snug break-words">
                             {label}
                           </span>
                           
                           {item.tag && (
-                            <span className={`text-[9px] font-mono font-bold px-1.5 py-0.5 rounded tracking-wider shrink-0 uppercase ml-2 ${
+                            <span className={`text-[9px] font-mono font-bold px-1.5 py-0.5 rounded tracking-wider shrink-0 uppercase ms-2 ${
                               active 
                                 ? "bg-emerald text-white" 
                                 : "bg-slate-100 text-slate-500 group-hover:bg-slate-200"
