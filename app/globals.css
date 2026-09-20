@@ -4,7 +4,6 @@
 
 @layer base {
   :root {
-    --font-inter: var(--font-sans);
     /* Sovereign Institutional Palette */
     --void: #FFFFFF;
     --bg1: #F7F7F5;
