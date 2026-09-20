@@ -12,6 +12,9 @@ interface TornadoChartProps {
 }
 
 export default function TornadoChart({
+  baseParams,
+  baseYears,
+  baseBridge,
   baseSharePrice = 38.45,
 }: TornadoChartProps) {
   const { language } = useTerminalStore();
@@ -80,13 +83,13 @@ export default function TornadoChart({
   const gHighPx = calcPx({ ...effectiveParams, terminalGrowth: currentGrowth + 0.01 }, effectiveYears);
   const gLowPx = calcPx({ ...effectiveParams, terminalGrowth: Math.max(0.005, currentGrowth - 0.01) }, effectiveYears);
 
-  const marginHighYears = effectiveYears.map(y => ({ ...y, ebitMargin: (y.ebitMargin || 0.35) + 0.03 }));
-  const marginLowYears = effectiveYears.map(y => ({ ...y, ebitMargin: Math.max(0.05, (y.ebitMargin || 0.35) - 0.03) }));
+  const marginHighYears = effectiveYears.map((y: DcfYear) => ({ ...y, ebitMargin: (y.ebitMargin || 0.35) + 0.03 }));
+  const marginLowYears = effectiveYears.map((y: DcfYear) => ({ ...y, ebitMargin: Math.max(0.05, (y.ebitMargin || 0.35) - 0.03) }));
   const marginHighPx = calcPx(effectiveParams, marginHighYears);
   const marginLowPx = calcPx(effectiveParams, marginLowYears);
 
-  const revHighYears = effectiveYears.map(y => ({ ...y, revenue: y.revenue * 1.05 }));
-  const revLowYears = effectiveYears.map(y => ({ ...y, revenue: y.revenue * 0.95 }));
+  const revHighYears = effectiveYears.map((y: DcfYear) => ({ ...y, revenue: y.revenue * 1.05 }));
+  const revLowYears = effectiveYears.map((y: DcfYear) => ({ ...y, revenue: y.revenue * 0.95 }));
   const revHighPx = calcPx(effectiveParams, revHighYears);
   const revLowPx = calcPx(effectiveParams, revLowYears);
 

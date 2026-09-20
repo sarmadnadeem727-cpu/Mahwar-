@@ -51,8 +51,15 @@ dist/
 *token*
 !*.config.js
 !*.config.mjs
+!*.config.ts
 !tailwind.config.js
+!tailwind.config.ts
 !components.json
 !tsconfig.json
 !package.json
 !package-lock.json
+!/styles/**
+!/lib/tokens.ts
+!*token*.ts
+!*token*.css
+!*token*.md
