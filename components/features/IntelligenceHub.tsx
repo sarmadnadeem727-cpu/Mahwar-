@@ -1,241 +1,184 @@
 "use client";
 
-import React, { useEffect, useState } from "react";
+import React, { useMemo } from "react";
 import { motion } from "framer-motion";
-import { 
-  BarChart3, Layers, FileSpreadsheet, Sparkles, ShieldCheck, 
-  Filter, FileText, ChevronRight, CheckCircle2, Clock, Newspaper,
-  TrendingUp, Activity, ArrowUpRight, ArrowDownRight, Globe
-} from "lucide-react";
-import { useTerminalStore, PanelType } from "@/store/useTerminalStore";
-import { t } from "@/lib/i18n";
-import { panelReveal } from "@/lib/motion";
+import { FileText, Trash2, ArrowRight, Clock } from "lucide-react";
+import { useTerminalStore } from "@/store/useTerminalStore";
+import { panelReveal, staggerContainer, staggerItem } from "@/lib/motion";
+import { APP, SUITES, TOOLS, getTool, toolsBySuite, type ToolDef } from "@/lib/registry";
 
+/** Pick up to three numeric headline outputs from a saved analysis, generically. */
+function headline(outputs: unknown): { k: string; v: string }[] {
+  if (!outputs || typeof outputs !== "object") return [];
+  const entries = Object.entries(outputs as Record<string, unknown>);
+  return entries
+    .filter(([, v]) => typeof v === "number" && Number.isFinite(v))
+    .slice(0, 3)
+    .map(([k, v]) => ({
+      k: k.replace(/([A-Z])/g, " $1").replace(/_/g, " ").toLowerCase(),
+      v: (v as number).toLocaleString("en-US", { maximumFractionDigits: 2 }),
+    }));
+}
 
+function since(iso: string, isAr: boolean) {
+  const mins = Math.max(1, Math.round((Date.now() - new Date(iso).getTime()) / 60000));
+  if (mins < 60) return isAr ? `قبل ${mins} د` : `${mins}m ago`;
+  const hrs = Math.round(mins / 60);
+  return hrs < 24 ? (isAr ? `قبل ${hrs} س` : `${hrs}h ago`) : isAr ? `قبل ${Math.round(hrs / 24)} ي` : `${Math.round(hrs / 24)}d ago`;
+}
 
 export default function IntelligenceHub() {
-  const { sessionAnalyses, setPanel, language, currency } = useTerminalStore();
-  const isAr = language === 'ar';
+  const { sessionAnalyses, setPanel, language, currency, clearSessionAnalyses, recentPanels } = useTerminalStore();
+  const isAr = language === "ar";
 
-  const overviewCards: {
-    id: PanelType;
-    title: string;
-    desc: string;
-    icon: React.ReactNode;
-    hasData: boolean;
-    statusLabel: string;
-    tag: string;
-  }[] = [
-    {
-      id: "DCF" as const,
-      title: t("panel_dcf", language),
-      desc: isAr ? "نموذج تقييم التدفقات النقدية المخصومة 5 سنوات" : "5-Year Discounted Cash Flow valuation engine",
-      icon: <BarChart3 className="text-terminal-emerald" size={20} />,
-      hasData: !!sessionAnalyses.dcf,
-      statusLabel: !!sessionAnalyses.dcf 
-        ? `${isAr ? "تم الحساب: " : "Computed: "} ${currency} ${sessionAnalyses.dcf.outputs.intrinsicValuePerShare}`
-        : (isAr ? "جاهز للنمذجة" : "Ready for Inputs"),
-      tag: "VALUATION"
-    },
-    {
-      id: "LBO" as const,
-      title: t("panel_lbo", language),
-      desc: isAr ? "تحليل باني صفقات الاستحواذ المدعوم بالديون" : "Private equity leveraged buyout returns builder",
-      icon: <Layers className="text-terminal-emerald" size={20} />,
-      hasData: !!sessionAnalyses.lbo,
-      statusLabel: !!sessionAnalyses.lbo 
-        ? `${isAr ? "العائد الداخلي: " : "IRR: "} ${sessionAnalyses.lbo.outputs.irr}%`
-        : (isAr ? "جاهز للنمذجة" : "Ready for Inputs"),
-      tag: "PRIVATE EQUITY"
-    },
-    {
-      id: "FS" as const,
-      title: t("panel_three_statement", language),
-      desc: isAr ? "توقعات القوائم الثلاث المتكاملة GAAP / IFRS" : "5-year integrated financial statement forecasts",
-      icon: <FileSpreadsheet className="text-terminal-emerald" size={20} />,
-      hasData: !!sessionAnalyses.threeStatement,
-      statusLabel: !!sessionAnalyses.threeStatement 
-        ? (isAr ? "القوائم نشطة" : "Active Statement")
-        : (isAr ? "جاهز للنمذجة" : "Ready for Inputs"),
-      tag: "ACCOUNTING"
-    },
-    {
-      id: "shariah" as const,
-      title: t("panel_shariah", language),
-      desc: isAr ? "فحص الامتثال الشرعي وفق المعيار 21 (AAOIFI)" : "AAOIFI Standard No. 21 compliance screening",
-      icon: <ShieldCheck className="text-terminal-emerald" size={20} />,
-      hasData: !!sessionAnalyses.shariah,
-      statusLabel: !!sessionAnalyses.shariah 
-        ? `${isAr ? "الحكم: " : "Verdict: "} ${sessionAnalyses.shariah.outputs.verdict}`
-        : (isAr ? "جاهز للتدقيق" : "Ready for Audit"),
-      tag: "COMPLIANCE"
-    },
-    {
-      id: "custom_model" as const,
-      title: t("panel_custom_model", language),
-      desc: isAr ? "جدول نماذج مالية حرة بصيغ مخصصة" : "Excel-style spreadsheet builder with custom arithmetic formulas",
-      icon: <FileSpreadsheet className="text-terminal-emerald" size={20} />,
-      hasData: !!sessionAnalyses.customModel,
-      statusLabel: !!sessionAnalyses.customModel
-        ? `${sessionAnalyses.customModel.models.length} ${isAr ? "نماذج مدخلة" : "Models Saved"}`
-        : (isAr ? "جاهز للنمذجة" : "Ready for Inputs"),
-      tag: "CUSTOM MODEL"
-    },
-    {
-      id: "bi_report" as const,
-      title: t("panel_bi_report", language),
-      desc: isAr ? "محرك تقارير التجميع وتصدير PDF/Excel" : "Consolidated session reporting engine and PDF export",
-      icon: <FileText className="text-terminal-emerald" size={20} />,
-      hasData: Object.keys(sessionAnalyses).length > 0,
-      statusLabel: Object.keys(sessionAnalyses).length > 0 
-        ? (isAr ? "جاهز للتصدير" : "Ready to Export")
-        : (isAr ? "في انتظار البيانات" : "Awaiting Data"),
-      tag: "REPORTING"
-    },
-    {
-      id: "ddm" as const,
-      title: isAr ? "نموذج DDM (توزيعات الأرباح)" : "Dividend Discount Model",
-      desc: isAr ? "نموذج تقييم توزيعات الأرباح متعدد المراحل" : "Multi-stage dividend valuation engine",
-      icon: <TrendingUp className="text-terminal-emerald" size={20} />,
-      hasData: false,
-      statusLabel: isAr ? "جاهز للنمذجة" : "Ready for Inputs",
-      tag: "VALUATION"
-    },
-    {
-      id: "wacc" as const,
-      title: isAr ? "باني تكلفة رأس المال (WACC)" : "WACC & CAPM Builder",
-      desc: isAr ? "حاسبة تكلفة رأس المال والمخاطر باستخدام نموذج CAPM" : "Cost of capital calculator using risk premiums and CAPM",
-      icon: <Activity className="text-terminal-emerald" size={20} />,
-      hasData: false,
-      statusLabel: isAr ? "جاهز للنمذجة" : "Ready for Inputs",
-      tag: "VALUATION"
-    },
-    {
-      id: "merger_analysis" as const,
-      title: isAr ? "تحليل الاندماج والاستحواذ" : "M&A Accretion/Dilution",
-      desc: isAr ? "تحليل أثر الاستحواذ والتآزر على ربحية السهم" : "EPS impact and synergy valuation for strategic M&A",
-      icon: <Layers className="text-terminal-emerald" size={20} />,
-      hasData: false,
-      statusLabel: isAr ? "جاهز للنمذجة" : "Ready for Inputs",
-      tag: "M&A"
-    },
-    {
-      id: "npv_irr" as const,
-      title: isAr ? "حاسبة NPV و IRR السريعة" : "Quick NPV / IRR",
-      desc: isAr ? "تحليل سريع للتدفقات النقدية ومعدل العائد الداخلي" : "Rapid cash flow analysis and internal rate of return",
-      icon: <Sparkles className="text-terminal-emerald" size={20} />,
-      hasData: false,
-      statusLabel: isAr ? "جاهز للنمذجة" : "Ready for Inputs",
-      tag: "VALUATION"
-    }
-  ];
+  const saved = useMemo(
+    () =>
+      TOOLS.filter((t) => t.sessionKey && sessionAnalyses[t.sessionKey]).map((t) => {
+        const entry = sessionAnalyses[t.sessionKey!] as { outputs?: unknown; computedAt: string; models?: unknown[] };
+        return { tool: t, entry };
+      }),
+    [sessionAnalyses]
+  );
+
+  const recent = recentPanels.map(getTool).filter(Boolean).slice(0, 6) as ToolDef[];
 
   return (
-    <motion.div
-      variants={panelReveal}
-      initial="initial"
-      animate="animate"
-      exit="exit"
-      className="space-y-8 text-slate-800 font-sans"
-      dir={isAr ? "rtl" : "ltr"}
-    >
-
-
-      {/* HUB HEADER BANNER — uses panel-data (data/content surface, not nav) */}
-      <div className="panel-data p-6 md:p-8 flex flex-col md:flex-row justify-between items-start md:items-center gap-6">
-        <div className="space-y-2">
-          <span className="label-pill label-pill-emerald">
-            {isAr ? "محطة عمل النمذجة التكتيكية v2.5" : "Institutional Sovereign Engine v2.5"}
-          </span>
-          <h2 className="font-serif text-2xl md:text-3xl font-bold text-slate-heading mt-2">
-            {isAr ? "لوحة التحكم ومركز النمذجة الكمية" : "Quantitative Financial Workbench"}
-          </h2>
-          <p className="text-slate-muted text-xs leading-relaxed max-w-xl font-sans">
-            {isAr 
-              ? "استكشف أدوات النمذجة التكتيكية (DCF & LBO)، الفحص الشرعي AAOIFI، مقارنة الأقران، وتصنيع التقارير الموحدة." 
-              : "Build institutional financial models (DCF & LBO), verify AAOIFI Shariah compliance, run peer heatmaps, and synthesize outputs into executive PDF reports."
-            }
+    <motion.div variants={panelReveal} initial="initial" animate="animate" exit="exit" className="space-y-8" dir={isAr ? "rtl" : "ltr"}>
+      {/* Header strip */}
+      <div className="flex flex-col md:flex-row md:items-end justify-between gap-5">
+        <div>
+          <p className="font-mono text-[11px] tracking-[0.2em] text-emerald-light">
+            {APP.name.toUpperCase()} · {isAr ? "الجلسة" : "SESSION"}
+          </p>
+          <h1 className={`mt-2 font-serif text-3xl md:text-4xl text-fg ${isAr ? "font-cairo font-bold" : ""}`}>
+            {isAr ? "لوحة الجلسة" : "Session board"}
+          </h1>
+          <p className="mt-2 text-[13px] text-fg-3 max-w-xl">
+            {isAr
+              ? `${saved.length} تحليل محفوظ بعملة ${currency}. كل ما تحفظه هنا يدخل في تقرير واحد.`
+              : `${saved.length} saved ${saved.length === 1 ? "analysis" : "analyses"} in ${currency}. Everything saved here lands in one report.`}
           </p>
         </div>
-
-        <button
-          onClick={() => setPanel("bi_report")}
-          className="btn-primary shrink-0"
-        >
-          <FileText size={14} />
-          <span>{isAr ? "تصدير التقرير الموحد" : "Generate BI Report"}</span>
-        </button>
-      </div>
-
-      {/* TOOLS & STATUS GRID */}
-      <div className="space-y-4">
-        <h3 className="font-mono text-[10px] font-bold text-slate-muted uppercase tracking-widest pl-1">
-          {isAr ? "أدوات النمذجة والتحليل الكمي" : "Sovereign Modeling Tools & Workbench Status"}
-        </h3>
-
-        <motion.div 
-          initial="hidden"
-          animate="visible"
-          variants={{
-            hidden: { opacity: 0 },
-            visible: {
-              opacity: 1,
-              transition: { staggerChildren: 0.05 }
-            }
-          }}
-          className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5"
-        >
-          {overviewCards.map((card) => (
-            <motion.div
-              variants={{
-                hidden: { opacity: 0, y: 15 },
-                visible: { opacity: 1, y: 0, transition: { type: "spring", stiffness: 300, damping: 24 } }
+        <div className="flex items-center gap-2">
+          {saved.length > 0 && (
+            <button
+              onClick={() => {
+                if (window.confirm(isAr ? "مسح كل التحليلات المحفوظة؟" : "Clear every saved analysis?")) clearSessionAnalyses();
               }}
-              key={card.id}
-              onClick={() => setPanel(card.id)}
-              className="card-nav p-5 cursor-pointer flex flex-col justify-between h-[175px] group relative"
+              className="btn-secondary"
             >
-              <div>
-                <div className="flex justify-between items-start mb-3">
-                  <span className="text-[10px] font-mono font-bold text-slate-muted tracking-widest uppercase">
-                    {card.tag}
-                  </span>
-                  {/* Icon: slate-500 neutral when inactive, no emerald decoration */}
-                  <div className="p-1.5 rounded bg-[#F8FAFC] border border-[rgba(0,0,0,0.08)]">
-                    <span className="text-slate-muted block [&>svg]:text-slate-500">{card.icon}</span>
-                  </div>
-                </div>
-
-                <h4 className="font-serif text-base font-bold text-slate-heading group-hover:text-emerald transition-colors">
-                  {card.title}
-                </h4>
-                <p className="text-[11px] text-slate-muted mt-1 leading-normal font-sans">
-                  {card.desc}
-                </p>
-              </div>
-
-              {/* Status footer: emerald ONLY when has data (functional signal) */}
-              <div className="border-t border-[rgba(0,0,0,0.07)] pt-3 mt-4 flex justify-between items-center text-[10px] font-mono">
-                <span className="flex items-center gap-1.5">
-                  {card.hasData ? (
-                    <>
-                      <CheckCircle2 size={12} className="text-emerald" />
-                      <span className="text-emerald font-bold">{card.statusLabel}</span>
-                    </>
-                  ) : (
-                    <>
-                      <Clock size={12} className="text-slate-400" />
-                      <span className="text-slate-400">{card.statusLabel}</span>
-                    </>
-                  )}
-                </span>
-                <ChevronRight size={13} className="text-slate-300 group-hover:text-emerald transition-colors" />
-              </div>
-            </motion.div>
-          ))}
-        </motion.div>
+              <Trash2 size={13} /> {isAr ? "مسح الجلسة" : "Clear session"}
+            </button>
+          )}
+          <button onClick={() => setPanel("bi_report")} className="btn-primary" disabled={saved.length === 0}>
+            <FileText size={13} /> {isAr ? "إنشاء التقرير" : "Build the report"}
+          </button>
+        </div>
       </div>
+
+      {/* Saved analyses */}
+      <section className="panel-data">
+        <div className="px-5 py-3 border-b border-line flex items-center justify-between font-mono text-[10.5px] text-fg-3">
+          <span>{isAr ? "التحليلات المحفوظة" : "Saved analyses"}</span>
+          <span>{saved.length}</span>
+        </div>
+        {saved.length === 0 ? (
+          <div className="p-8 text-center">
+            <p className="text-fg-2">{isAr ? "لم يُحفظ أي تحليل بعد." : "Nothing saved yet."}</p>
+            <p className="mt-1 text-[12px] text-fg-3">
+              {isAr ? "افتح أي محرك أدناه، أدخل أرقامك، وسيظهر هنا تلقائياً." : "Open any engine below, enter your numbers, and it appears here automatically."}
+            </p>
+            <button onClick={() => setPanel("ccc")} className="btn-ghost mt-4 text-[11px]">
+              {isAr ? "ابدأ بدورة التحويل النقدي" : "Start with the cash conversion cycle"} <ArrowRight size={12} className={isAr ? "rotate-180" : ""} />
+            </button>
+          </div>
+        ) : (
+          <table className="terminal-table">
+            <thead>
+              <tr>
+                <th>{isAr ? "الكود" : "Code"}</th>
+                <th>{isAr ? "المحرك" : "Engine"}</th>
+                <th>{isAr ? "أبرز النتائج" : "Headline outputs"}</th>
+                <th className="text-end">{isAr ? "آخر حساب" : "Computed"}</th>
+              </tr>
+            </thead>
+            <tbody>
+              {saved.map(({ tool, entry }) => {
+                const outs = "models" in entry && Array.isArray(entry.models)
+                  ? [{ k: isAr ? "نماذج" : "models", v: String(entry.models.length) }]
+                  : headline(entry.outputs);
+                return (
+                  <tr key={tool.id} onClick={() => setPanel(tool.id)} className="cursor-pointer">
+                    <td className="text-emerald-light">{tool.code}</td>
+                    <td className="font-sans text-[13px]">{isAr ? tool.ar : tool.en}</td>
+                    <td>
+                      <span className="flex flex-wrap gap-x-4 gap-y-1">
+                        {outs.length === 0 && <span className="text-fg-3">—</span>}
+                        {outs.map((o) => (
+                          <span key={o.k}><span className="text-fg-3">{o.k} </span><span className="text-fg">{o.v}</span></span>
+                        ))}
+                      </span>
+                    </td>
+                    <td className="text-end text-fg-3">
+                      <span className="inline-flex items-center gap-1"><Clock size={11} />{since(entry.computedAt, isAr)}</span>
+                    </td>
+                  </tr>
+                );
+              })}
+            </tbody>
+          </table>
+        )}
+      </section>
+
+      {/* Recent */}
+      {recent.length > 0 && (
+        <div className="flex flex-wrap items-center gap-2 font-mono text-[11px]">
+          <span className="text-fg-4">{isAr ? "الأخيرة" : "Recent"}</span>
+          {recent.map((t) => (
+            <button key={t.id} onClick={() => setPanel(t.id)} className="px-2.5 py-1 rounded border border-line text-fg-2 hover:border-emerald/40 hover:text-fg transition-colors">
+              {t.code} <span className="text-fg-4 font-sans">{isAr ? t.ar : t.en}</span>
+            </button>
+          ))}
+        </div>
+      )}
+
+      {/* Launcher */}
+      {SUITES.filter((s) => s.id !== "platform").map((suite) => {
+        const list = toolsBySuite(suite.id);
+        return (
+          <section key={suite.id}>
+            <div className="flex items-baseline justify-between mb-3">
+              <h2 className="font-serif text-2xl text-fg">{isAr ? suite.ar : suite.en}</h2>
+              <span className="font-mono text-[11px] text-fg-3">{list.length} {isAr ? "محرك" : "engines"}</span>
+            </div>
+            <motion.div variants={staggerContainer} initial="initial" animate="animate" className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-3">
+              {list.map((tool) => {
+                const Icon = tool.icon;
+                const has = tool.sessionKey && sessionAnalyses[tool.sessionKey];
+                return (
+                  <motion.button
+                    key={tool.id}
+                    variants={staggerItem}
+                    onClick={() => setPanel(tool.id)}
+                    className="card-nav p-4 text-start flex flex-col gap-3 min-h-[140px] group"
+                  >
+                    <div className="flex items-center justify-between">
+                      <span className="font-mono text-[11px] tracking-wider text-emerald-light">{tool.code}</span>
+                      <Icon size={15} className="text-fg-3 group-hover:text-emerald-light transition-colors" />
+                    </div>
+                    <div className="text-[14px] text-fg leading-snug">{isAr ? tool.ar : tool.en}</div>
+                    <p className="text-[12px] text-fg-3 leading-relaxed flex-1 line-clamp-2">{isAr ? tool.descAr : tool.descEn}</p>
+                    <div className="font-mono text-[10px] flex items-center justify-between">
+                      <span className="text-fg-4">{tool.tag}</span>
+                      <span className={has ? "text-emerald-light" : "text-fg-4"}>{has ? (isAr ? "محفوظ" : "saved") : (isAr ? "جاهز" : "ready")}</span>
+                    </div>
+                  </motion.button>
+                );
+              })}
+            </motion.div>
+          </section>
+        );
+      })}
     </motion.div>
   );
 }
-

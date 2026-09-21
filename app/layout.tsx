@@ -1,15 +1,25 @@
-import type { Metadata } from "next";
-import { Inter, IBM_Plex_Mono, Cairo, Source_Serif_4 } from "next/font/google";
+import type { Metadata, Viewport } from "next";
+import { Cormorant_Garamond, DM_Sans, IBM_Plex_Mono, Cairo } from "next/font/google";
 import "./globals.css";
 import LoadingScreen from "@/components/ui/LoadingScreen";
+import { APP } from "@/lib/registry";
 
-const inter = Inter({
+const cormorant = Cormorant_Garamond({
   subsets: ["latin"],
-  variable: "--font-inter",
+  variable: "--font-serif",
+  weight: ["400", "500", "600", "700"],
+  style: ["normal", "italic"],
   display: "swap",
 });
 
-const ibmPlexMono = IBM_Plex_Mono({
+const dmSans = DM_Sans({
+  subsets: ["latin"],
+  variable: "--font-sans",
+  weight: ["400", "500", "600", "700"],
+  display: "swap",
+});
+
+const plexMono = IBM_Plex_Mono({
   subsets: ["latin"],
   variable: "--font-mono",
   weight: ["400", "500", "600", "700"],
@@ -23,37 +33,38 @@ const cairo = Cairo({
   display: "swap",
 });
 
-const sourceSerif = Source_Serif_4({
-  subsets: ["latin"],
-  variable: "--font-serif",
-  weight: ["400", "500", "600", "700"],
-  style: ["normal", "italic"],
-  display: "swap",
-});
-
 export const metadata: Metadata = {
-  title: "Mahwar (محور) — Sovereign Financial Intelligence Terminal | GCC Capital Markets",
-  description: "The Axis of financial intelligence for GCC capital markets. Institutional 5-year DCF valuation, LBO deal builder, AAOIFI Shariah screening, Monte Carlo Risk Engine, and 3-Statement Model.",
+  metadataBase: new URL(APP.url),
+  title: `${APP.name} (${APP.nameAr}) — Finance & Supply Chain Intelligence Terminal`,
+  description:
+    "The axis where capital meets logistics. Institutional DCF, LBO and 3-statement modelling, AAOIFI screening, and a full supply-chain analytics suite for GCC markets.",
   openGraph: {
-    title: "Mahwar (محور) — Sovereign Intelligence Terminal",
-    description: "GCC Capital Markets Financial Intelligence, Institutional Valuation, AAOIFI Compliance & BI Reporting.",
-    url: "https://mahwar.vercel.app",
-    siteName: "Mahwar",
+    title: `${APP.name} (${APP.nameAr}) — Finance & Supply Chain Terminal`,
+    description: "Bloomberg-grade modelling for GCC capital markets and operations, in one terminal.",
+    url: APP.url,
+    siteName: APP.name,
     locale: "en_US",
     type: "website",
   },
 };
 
-export default function RootLayout({
-  children,
-}: Readonly<{
-  children: React.ReactNode;
-}>) {
+export const viewport: Viewport = {
+  themeColor: "#090f12",
+  width: "device-width",
+  initialScale: 1,
+  viewportFit: "cover",
+};
+
+export default function RootLayout({ children }: Readonly<{ children: React.ReactNode }>) {
   return (
-    <html lang="en" className={`${inter.variable} ${ibmPlexMono.variable} ${cairo.variable} ${sourceSerif.variable}`}>
-      <body className="bg-[#FFFFFF] text-[#171717] min-h-screen">
-          <LoadingScreen />
-          {children}
+    <html
+      lang="en"
+      className={`${cormorant.variable} ${dmSans.variable} ${plexMono.variable} ${cairo.variable}`}
+      suppressHydrationWarning
+    >
+      <body className="bg-ink-1 text-fg min-h-screen antialiased">
+        <LoadingScreen />
+        {children}
       </body>
     </html>
   );

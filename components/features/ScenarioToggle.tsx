@@ -37,18 +37,18 @@ export default function ScenarioToggle<T>({
   const getIcon = (type: "base" | "bull" | "bear" | "custom") => {
     switch (type) {
       case "bull": return <TrendingUp size={14} className="text-emerald" />;
-      case "bear": return <TrendingDown size={14} className="text-rose-400" />;
+      case "bear": return <TrendingDown size={14} className="text-neg" />;
       case "custom": return <Sliders size={14} className="text-sky-400" />;
       case "base": 
       default:
-        return <Layers size={14} className="text-slate-400" />;
+        return <Layers size={14} className="text-fg-3" />;
     }
   };
 
   return (
     <div className="panel-input p-4 font-mono text-xs space-y-3" dir={isAr ? "rtl" : "ltr"}>
-      <div className="flex justify-between items-center pb-2 border-b border-[#E2E8F0]">
-        <span className="text-slate-500 font-bold uppercase tracking-wider text-[10px]">
+      <div className="flex justify-between items-center pb-2 border-b border-line">
+        <span className="text-fg-3 font-bold uppercase tracking-wider text-[10px]">
           {isAr ? titleAr : title}
         </span>
         <span className="text-emerald font-bold text-[10px] uppercase">
@@ -65,15 +65,15 @@ export default function ScenarioToggle<T>({
               onClick={() => onSelectCase(c.id, c.values)}
               className={`p-3 rounded-lg border transition-all text-left rtl:text-right cursor-pointer flex flex-col justify-between h-[75px] ${
                 isActive
-                  ? "bg-emerald-dim border-emerald-border text-slate-900 font-bold shadow-2xs"
-                  : "bg-slate-50 border-[#E2E8F0] hover:border-slate-300 text-slate-700"
+                  ? "bg-emerald/10 border-emerald/30 text-fg font-bold shadow-2xs"
+                  : "bg-ink-3 border-line hover:border-line-strong text-fg-2"
               }`}
             >
               <div className="flex justify-between items-center w-full">
                 <span className="font-bold text-xs">{isAr ? c.labelAr : c.label}</span>
                 {getIcon(c.iconType)}
               </div>
-              <span className="text-[10px] text-slate-500 truncate">{isAr ? c.descAr : c.desc}</span>
+              <span className="text-[10px] text-fg-3 truncate">{isAr ? c.descAr : c.desc}</span>
             </button>
           );
         })}

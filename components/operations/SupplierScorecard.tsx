@@ -126,7 +126,7 @@ export default function SupplierScorecard() {
   const auditData: AuditData = generateScorecardAudit(criteria, rankings, scaleMax);
 
   // Radar chart colors
-  const RADAR_COLORS = ["#0E7C69", "#3B82F6", "#F59E0B", "#8B5CF6", "#EC4899"];
+  const RADAR_COLORS = ["#17a88a", "#3B82F6", "#F59E0B", "#8B5CF6", "#EC4899"];
 
   return (
     <motion.div
@@ -134,7 +134,7 @@ export default function SupplierScorecard() {
       initial="initial"
       animate="animate"
       exit="exit"
-      className="space-y-6 font-sans text-slate-800"
+      className="space-y-6 font-sans text-fg"
       dir={isAr ? "rtl" : "ltr"}
       id="supplier-scorecard-container"
     >
@@ -162,9 +162,9 @@ export default function SupplierScorecard() {
 
       {/* TOP SUPPLIER BANNER */}
       {winner && (
-        <div className="p-4 bg-emerald-dim border border-emerald-border rounded-xl flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+        <div className="p-4 bg-emerald/10 border border-emerald/30 rounded-xl flex flex-col sm:flex-row sm:items-center justify-between gap-3">
           <div className="flex items-center gap-3">
-            <div className="p-2.5 rounded-lg bg-emerald text-white">
+            <div className="p-2.5 rounded-lg bg-emerald text-ink-0">
               <Trophy size={20} />
             </div>
             <div>
@@ -176,16 +176,16 @@ export default function SupplierScorecard() {
                   {winner.normalizedScorePct}% COMPOSITE RATING
                 </span>
               </div>
-              <h3 className="font-serif text-lg font-bold text-slate-900 mt-0.5">
+              <h3 className="font-serif text-lg font-bold text-fg mt-0.5">
                 {winner.supplierName}
               </h3>
             </div>
           </div>
 
           <div className="text-right font-mono">
-            <span className="text-xs text-slate-500 block">Weighted Score:</span>
+            <span className="text-xs text-fg-3 block">Weighted Score:</span>
             <span className="text-2xl font-extrabold text-emerald">
-              {winner.weightedScore} <span className="text-xs text-slate-400">/ {scaleMax}</span>
+              {winner.weightedScore} <span className="text-xs text-fg-3">/ {scaleMax}</span>
             </span>
           </div>
         </div>
@@ -198,29 +198,29 @@ export default function SupplierScorecard() {
         {/* CRITERIA & SCORES INPUT (6 COLS) */}
         <div className="lg:col-span-6 space-y-4">
           <div className="panel-input p-5 space-y-4">
-            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 border-b border-surface-border pb-3">
+            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 border-b border-line pb-3">
               <div>
-                <h3 className="font-mono text-xs font-bold text-slate-heading uppercase tracking-wider">
+                <h3 className="font-mono text-xs font-bold text-fg uppercase tracking-wider">
                   {isAr ? "معايير التقييم والأوزان النسبية" : "Evaluation Criteria & Weights"}
                 </h3>
-                <span className={`text-[11px] font-mono font-bold ${isWeightValid ? "text-emerald" : "text-rose-500"}`}>
+                <span className={`text-[11px] font-mono font-bold ${isWeightValid ? "text-emerald" : "text-neg"}`}>
                   Total Weight: {totalWeight}% / 100%
                 </span>
               </div>
 
               {/* SCALE TOGGLE */}
               <div className="flex items-center gap-2 text-xs font-mono">
-                <span className="text-slate-500">Scale:</span>
-                <div className="flex rounded border border-surface-border overflow-hidden">
+                <span className="text-fg-3">Scale:</span>
+                <div className="flex rounded border border-line overflow-hidden">
                   <button
                     onClick={() => setScaleMax(5)}
-                    className={`px-2 py-0.5 ${scaleMax === 5 ? "bg-emerald text-white font-bold" : "bg-white text-slate-600"}`}
+                    className={`px-2 py-0.5 ${scaleMax === 5 ? "bg-emerald text-ink-0 font-bold" : "bg-ink-2 text-fg-2"}`}
                   >
                     1–5
                   </button>
                   <button
                     onClick={() => setScaleMax(10)}
-                    className={`px-2 py-0.5 ${scaleMax === 10 ? "bg-emerald text-white font-bold" : "bg-white text-slate-600"}`}
+                    className={`px-2 py-0.5 ${scaleMax === 10 ? "bg-emerald text-ink-0 font-bold" : "bg-ink-2 text-fg-2"}`}
                   >
                     1–10
                   </button>
@@ -231,37 +231,37 @@ export default function SupplierScorecard() {
             {/* CRITERIA LIST */}
             <div className="space-y-2.5">
               {criteria.map((crit) => (
-                <div key={crit.id} className="p-3 bg-surface-subtle rounded-lg border border-surface-border space-y-2">
+                <div key={crit.id} className="p-3 bg-ink-3 rounded-lg border border-line space-y-2">
                   <div className="flex items-center gap-2">
                     <input
                       type="text"
                       value={crit.name}
                       onChange={(e) => updateCriterionName(crit.id, e.target.value)}
-                      className="flex-1 px-2 py-1 rounded bg-white border border-surface-border font-sans text-xs font-bold text-slate-800"
+                      className="flex-1 px-2 py-1 rounded bg-ink-2 border border-line font-sans text-xs font-bold text-fg"
                     />
                     <div className="flex items-center gap-1 w-24">
                       <input
                         type="number"
                         value={crit.weightPct}
                         onChange={(e) => updateWeight(crit.id, Number(e.target.value))}
-                        className="w-16 px-2 py-1 rounded bg-white border border-surface-border font-mono text-xs font-bold text-right"
+                        className="w-16 px-2 py-1 rounded bg-ink-2 border border-line font-mono text-xs font-bold text-right"
                       />
-                      <span className="text-xs font-mono text-slate-400">%</span>
+                      <span className="text-xs font-mono text-fg-3">%</span>
                     </div>
                     <button
                       onClick={() => removeCriterion(crit.id)}
                       disabled={criteria.length <= 2}
-                      className="text-slate-400 hover:text-rose-500 disabled:opacity-20 p-1 cursor-pointer"
+                      className="text-fg-3 hover:text-neg disabled:opacity-20 p-1 cursor-pointer"
                     >
                       <Trash2 size={13} />
                     </button>
                   </div>
 
                   {/* VENDOR SCORES FOR THIS CRITERION */}
-                  <div className="grid grid-cols-3 gap-2 pt-1 border-t border-surface-border/60">
+                  <div className="grid grid-cols-3 gap-2 pt-1 border-t border-line">
                     {suppliers.map((sup) => (
                       <div key={sup.id} className="flex items-center justify-between text-[11px] font-mono">
-                        <span className="text-slate-500 truncate max-w-[80px]" title={sup.name}>
+                        <span className="text-fg-3 truncate max-w-[80px]" title={sup.name}>
                           {sup.name.split(" ")[0]}:
                         </span>
                         <input
@@ -271,7 +271,7 @@ export default function SupplierScorecard() {
                           max={scaleMax}
                           value={sup.scores[crit.id] ?? 0}
                           onChange={(e) => updateScore(sup.id, crit.id, Number(e.target.value))}
-                          className="w-12 px-1.5 py-0.5 rounded bg-white border border-surface-border font-bold text-right text-emerald"
+                          className="w-12 px-1.5 py-0.5 rounded bg-ink-2 border border-line font-bold text-right text-emerald"
                         />
                       </div>
                     ))}
@@ -291,7 +291,7 @@ export default function SupplierScorecard() {
               {suppliers.length < 5 && (
                 <button
                   onClick={addSupplier}
-                  className="text-xs font-mono font-bold text-slate-600 hover:text-emerald flex items-center gap-1"
+                  className="text-xs font-mono font-bold text-fg-2 hover:text-emerald flex items-center gap-1"
                 >
                   <Plus size={13} /> Add Supplier
                 </button>
@@ -304,12 +304,12 @@ export default function SupplierScorecard() {
         <div className="lg:col-span-6 space-y-6">
           {/* RADAR SPIDER CHART */}
           <div className="panel-data p-5 space-y-4">
-            <div className="flex justify-between items-center border-b border-surface-border pb-3">
+            <div className="flex justify-between items-center border-b border-line pb-3">
               <div>
-                <h3 className="font-serif text-sm font-bold text-slate-heading">
+                <h3 className="font-serif text-sm font-bold text-fg">
                   {isAr ? "المخطط الراداري لمقارنة الموردين عبر المعايير" : "Multi-Criteria Radar Benchmark"}
                 </h3>
-                <p className="text-[11px] text-slate-muted font-sans font-medium">
+                <p className="text-[11px] text-fg-3 font-sans font-medium">
                   {isAr ? "مقارنة شمولية لقوة وضعف كل مورد في آن واحد" : "Simultaneous multi-attribute visual comparison"}
                 </p>
               </div>
@@ -321,11 +321,11 @@ export default function SupplierScorecard() {
             <div className="h-72 w-full">
               <ResponsiveContainer width="100%" height="100%">
                 <RadarChart data={radarData} outerRadius="75%">
-                  <PolarGrid stroke="#E2E8F0" />
-                  <PolarAngleAxis dataKey="criterion" stroke="#64748B" fontSize={9} fontFamily="sans-serif" />
-                  <PolarRadiusAxis domain={[0, scaleMax]} stroke="#CBD5E1" fontSize={8} />
+                  <PolarGrid stroke="rgba(158,190,180,0.14)" />
+                  <PolarAngleAxis dataKey="criterion" stroke="#a7b9b2" fontSize={9} fontFamily="sans-serif" />
+                  <PolarRadiusAxis domain={[0, scaleMax]} stroke="#6d817a" fontSize={8} />
                   <Tooltip
-                    contentStyle={{ backgroundColor: "#FFFFFF", borderColor: "#E2E8F0", borderRadius: "8px", fontSize: "11px" }}
+                    contentStyle={{ backgroundColor: "#0e161a", borderColor: "rgba(158,190,180,0.14)", borderRadius: "8px", fontSize: "11px" }}
                   />
                   <Legend wrapperStyle={{ fontSize: "10px", fontFamily: "monospace" }} />
                   {suppliers.map((sup, idx) => (
@@ -345,34 +345,34 @@ export default function SupplierScorecard() {
 
           {/* RANKING LEADERBOARD TABLE */}
           <div className="panel-data p-5">
-            <h3 className="font-mono text-xs font-bold text-slate-heading uppercase tracking-wider mb-3">
+            <h3 className="font-mono text-xs font-bold text-fg uppercase tracking-wider mb-3">
               {isAr ? "جدول الترتيب النهائي للموردين" : "Supplier Final Rankings"}
             </h3>
 
             <table className="w-full text-xs font-mono text-left rtl:text-right border-collapse">
               <thead>
-                <tr className="border-b border-surface-border bg-surface-subtle text-slate-muted">
+                <tr className="border-b border-line bg-ink-3 text-fg-3">
                   <th className="py-2 px-3">Rank</th>
                   <th className="py-2 px-3">Supplier</th>
                   <th className="py-2 px-3 text-right">Weighted Score</th>
                   <th className="py-2 px-3 text-right">Performance %</th>
                 </tr>
               </thead>
-              <tbody className="divide-y divide-surface-border">
+              <tbody className="divide-y divide-line">
                 {rankings.map((r) => (
-                  <tr key={r.supplierId} className="hover:bg-surface-subtle transition-colors">
-                    <td className="py-2.5 px-3 font-bold text-slate-800">
+                  <tr key={r.supplierId} className="hover:bg-ink-3 transition-colors">
+                    <td className="py-2.5 px-3 font-bold text-fg">
                       {r.rank === 1 ? (
-                        <span className="px-1.5 py-0.5 rounded bg-emerald text-white text-[10px]">#1 WIN</span>
+                        <span className="px-1.5 py-0.5 rounded bg-emerald text-ink-0 text-[10px]">#1 WIN</span>
                       ) : (
                         `#${r.rank}`
                       )}
                     </td>
-                    <td className="py-2.5 px-3 font-medium text-slate-900 font-sans">{r.supplierName}</td>
+                    <td className="py-2.5 px-3 font-medium text-fg font-sans">{r.supplierName}</td>
                     <td className="py-2.5 px-3 text-right font-bold text-emerald text-sm">
-                      {r.weightedScore} <span className="text-[10px] text-slate-400">/ {scaleMax}</span>
+                      {r.weightedScore} <span className="text-[10px] text-fg-3">/ {scaleMax}</span>
                     </td>
-                    <td className="py-2.5 px-3 text-right font-bold text-slate-700">
+                    <td className="py-2.5 px-3 text-right font-bold text-fg-2">
                       {r.normalizedScorePct}%
                     </td>
                   </tr>

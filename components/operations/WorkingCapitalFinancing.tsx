@@ -102,7 +102,7 @@ export default function WorkingCapitalFinancing() {
       name: isAr ? "رأس المال العامل التشغيلي (NOWC)" : "Operating NOWC Balance",
       cost: outputs.annualFinancingCostOperating,
       capital: outputs.netWorkingCapital,
-      fill: "#0E7C69",
+      fill: "#17a88a",
     },
     {
       name: isAr ? "دورة التحويل النقدي (CCC)" : "CCC Operational Tie-Up",
@@ -118,7 +118,7 @@ export default function WorkingCapitalFinancing() {
       initial="initial"
       animate="animate"
       exit="exit"
-      className="space-y-6 font-sans text-slate-800"
+      className="space-y-6 font-sans text-fg"
       dir={isAr ? "rtl" : "ltr"}
       id="wc-financing-container"
     >
@@ -149,7 +149,7 @@ export default function WorkingCapitalFinancing() {
       {/* CCC LINK BANNER */}
       {sessionCCC !== null && (
         <div className="p-3.5 bg-emerald/5 border border-emerald/20 rounded-lg flex flex-col sm:flex-row sm:items-center justify-between gap-3 text-xs">
-          <div className="flex items-center gap-2 text-slate-700">
+          <div className="flex items-center gap-2 text-fg-2">
             <LinkIcon size={14} className="text-emerald shrink-0" />
             <span>
               {isAr
@@ -169,7 +169,7 @@ export default function WorkingCapitalFinancing() {
       {/* KPI HIGHLIGHT CARDS */}
       <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 font-mono">
         {/* OPERATING FINANCING COST */}
-        <div className="p-4 rounded-xl border border-emerald-border bg-emerald-dim shadow-xs">
+        <div className="p-4 rounded-xl border border-emerald/30 bg-emerald/10 shadow-xs">
           <span className="text-[10px] text-emerald uppercase font-bold block mb-1">
             {isAr ? "تكلفة التمويل السنوية (الميزانية)" : "Annual Financing Cost (NOWC)"}
           </span>
@@ -184,39 +184,39 @@ export default function WorkingCapitalFinancing() {
         </div>
 
         {/* CCC-BASED FINANCING COST */}
-        <div className="p-4 rounded-xl border border-surface-border bg-white shadow-xs">
-          <span className="text-[10px] text-slate-muted uppercase font-bold block mb-1">
+        <div className="p-4 rounded-xl border border-line bg-ink-2 shadow-xs">
+          <span className="text-[10px] text-fg-3 uppercase font-bold block mb-1">
             {isAr ? "تكلفة التمويل (بناءً على CCC)" : "Annual Financing Cost (CCC)"}
           </span>
           <div className="flex items-baseline gap-1">
-            <span className="text-2xl font-extrabold text-slate-heading">
+            <span className="text-2xl font-extrabold text-fg">
               {currency} {outputs.annualFinancingCostCCC.toLocaleString()}
             </span>
           </div>
-          <span className="text-[10px] text-slate-muted font-sans font-medium block mt-1">
+          <span className="text-[10px] text-fg-3 font-sans font-medium block mt-1">
             {linkedCCC} days × {currency} {outputs.dailyCogs.toLocaleString()} daily COGS
           </span>
         </div>
 
         {/* SAVINGS PER DAY */}
-        <div className="p-4 rounded-xl border border-surface-border bg-white shadow-xs">
-          <span className="text-[10px] text-slate-muted uppercase font-bold block mb-1">
+        <div className="p-4 rounded-xl border border-line bg-ink-2 shadow-xs">
+          <span className="text-[10px] text-fg-3 uppercase font-bold block mb-1">
             {isAr ? "الوفر المالي لكل يوم تخفيض" : "Savings per Day Reduced"}
           </span>
           <div className="flex items-baseline gap-1">
-            <span className="text-2xl font-extrabold text-slate-heading">
+            <span className="text-2xl font-extrabold text-fg">
               {currency} {outputs.savingsPerDayReduction.toLocaleString()}
             </span>
-            <span className="text-xs text-slate-muted">/day</span>
+            <span className="text-xs text-fg-3">/day</span>
           </div>
-          <span className="text-[10px] text-slate-muted font-sans font-medium block mt-1">
+          <span className="text-[10px] text-fg-3 font-sans font-medium block mt-1">
             {isAr ? "وفر مباشر في فوائد التمويل" : "Direct interest expense saved"}
           </span>
         </div>
 
         {/* SCENARIO SENSITIVITY SAVINGS */}
-        <div className="p-4 rounded-xl border border-surface-border bg-white shadow-xs">
-          <span className="text-[10px] text-slate-muted uppercase font-bold block mb-1">
+        <div className="p-4 rounded-xl border border-line bg-ink-2 shadow-xs">
+          <span className="text-[10px] text-fg-3 uppercase font-bold block mb-1">
             {isAr ? `الوفر عند خفض ${sensitivityDays} أيام` : `Savings @ -${sensitivityDays} Days`}
           </span>
           <div className="flex items-baseline gap-1">
@@ -225,7 +225,7 @@ export default function WorkingCapitalFinancing() {
             </span>
             <span className="text-xs text-emerald">/yr</span>
           </div>
-          <span className="text-[10px] text-slate-muted font-sans font-medium block mt-1">
+          <span className="text-[10px] text-fg-3 font-sans font-medium block mt-1">
             {isAr ? "سيولة إضافية حرة سنوياً" : "Recurring annual cash unlocked"}
           </span>
         </div>
@@ -238,60 +238,60 @@ export default function WorkingCapitalFinancing() {
         {/* INPUTS COLUMN (5 COLS) */}
         <div className="lg:col-span-5 space-y-4">
           <div className="panel-input p-5 space-y-4">
-            <h3 className="font-mono text-xs font-bold text-slate-heading uppercase tracking-wider border-b border-surface-border pb-3">
+            <h3 className="font-mono text-xs font-bold text-fg uppercase tracking-wider border-b border-line pb-3">
               {isAr ? "مدخلات رأس المال ومعدل الفائدة" : "Working Capital & Rate Assumptions"}
             </h3>
 
             <div className="space-y-3.5 text-xs">
               <div>
-                <label className="text-slate-body font-medium block mb-1">
+                <label className="text-fg-2 font-medium block mb-1">
                   {isAr ? "المخزون السلعي الحالي" : "Current Inventory Balance"} ({currency})
                 </label>
                 <input
                   type="number"
                   value={inventory}
                   onChange={(e) => setInventory(Number(e.target.value))}
-                  className="w-full px-3 py-2 rounded bg-surface-subtle border border-surface-border font-mono text-xs font-bold"
+                  className="w-full px-3 py-2 rounded bg-ink-3 border border-line font-mono text-xs font-bold"
                 />
               </div>
 
               <div>
-                <label className="text-slate-body font-medium block mb-1">
+                <label className="text-fg-2 font-medium block mb-1">
                   {isAr ? "الذمم المدينة / العملاء (AR)" : "Accounts Receivable (AR)"} ({currency})
                 </label>
                 <input
                   type="number"
                   value={accountsReceivable}
                   onChange={(e) => setAccountsReceivable(Number(e.target.value))}
-                  className="w-full px-3 py-2 rounded bg-surface-subtle border border-surface-border font-mono text-xs font-bold"
+                  className="w-full px-3 py-2 rounded bg-ink-3 border border-line font-mono text-xs font-bold"
                 />
               </div>
 
               <div>
-                <label className="text-slate-body font-medium block mb-1">
+                <label className="text-fg-2 font-medium block mb-1">
                   {isAr ? "الذمم الدائنة / الموردين (AP)" : "Accounts Payable (AP)"} ({currency})
                 </label>
                 <input
                   type="number"
                   value={accountsPayable}
                   onChange={(e) => setAccountsPayable(Number(e.target.value))}
-                  className="w-full px-3 py-2 rounded bg-surface-subtle border border-surface-border font-mono text-xs font-bold"
+                  className="w-full px-3 py-2 rounded bg-ink-3 border border-line font-mono text-xs font-bold"
                 />
               </div>
 
-              <div className="p-3 bg-surface-subtle rounded-lg border border-surface-border">
+              <div className="p-3 bg-ink-3 rounded-lg border border-line">
                 <div className="flex justify-between text-xs font-mono">
-                  <span className="text-slate-600 font-bold">
+                  <span className="text-fg-2 font-bold">
                     {isAr ? "صافي رأس المال العامل (NOWC):" : "Net Working Capital (NOWC):"}
                   </span>
-                  <span className="font-bold text-slate-900">
+                  <span className="font-bold text-fg">
                     {currency} {outputs.netWorkingCapital.toLocaleString()}
                   </span>
                 </div>
               </div>
 
               <div>
-                <label className="text-slate-body font-medium block mb-1">
+                <label className="text-fg-2 font-medium block mb-1">
                   {isAr ? "تكلفة رأس المال / فائدة الاقتراض (%)" : "Cost of Capital / Borrowing Rate (%)"}
                 </label>
                 <input
@@ -299,16 +299,16 @@ export default function WorkingCapitalFinancing() {
                   step="0.1"
                   value={costOfCapitalRate}
                   onChange={(e) => setCostOfCapitalRate(Number(e.target.value))}
-                  className="w-full px-3 py-2 rounded bg-surface-subtle border border-surface-border font-mono text-xs font-bold"
+                  className="w-full px-3 py-2 rounded bg-ink-3 border border-line font-mono text-xs font-bold"
                 />
               </div>
 
-              <div className="pt-2 border-t border-surface-border space-y-3">
+              <div className="pt-2 border-t border-line space-y-3">
                 <div className="flex justify-between items-center">
-                  <span className="font-bold text-slate-800 text-xs">
+                  <span className="font-bold text-fg text-xs">
                     {isAr ? "ربط دورة التحويل النقدي (CCC)" : "CCC-Linked Cash Tie-Up"}
                   </span>
-                  <label className="flex items-center gap-1.5 text-[11px] text-slate-500 cursor-pointer">
+                  <label className="flex items-center gap-1.5 text-[11px] text-fg-3 cursor-pointer">
                     <input
                       type="checkbox"
                       checked={useCccMode}
@@ -322,21 +322,21 @@ export default function WorkingCapitalFinancing() {
                 {useCccMode && (
                   <div className="grid grid-cols-2 gap-2">
                     <div>
-                      <span className="text-[10px] text-slate-400 block mb-0.5">Annual COGS ({currency})</span>
+                      <span className="text-[10px] text-fg-3 block mb-0.5">Annual COGS ({currency})</span>
                       <input
                         type="number"
                         value={cogs}
                         onChange={(e) => setCogs(Number(e.target.value))}
-                        className="w-full px-2 py-1.5 rounded bg-white border border-surface-border font-mono text-xs font-bold"
+                        className="w-full px-2 py-1.5 rounded bg-ink-2 border border-line font-mono text-xs font-bold"
                       />
                     </div>
                     <div>
-                      <span className="text-[10px] text-slate-400 block mb-0.5">CCC (Days)</span>
+                      <span className="text-[10px] text-fg-3 block mb-0.5">CCC (Days)</span>
                       <input
                         type="number"
                         value={linkedCCC || 0}
                         onChange={(e) => setLinkedCCC(Number(e.target.value))}
-                        className="w-full px-2 py-1.5 rounded bg-white border border-surface-border font-mono text-xs font-bold"
+                        className="w-full px-2 py-1.5 rounded bg-ink-2 border border-line font-mono text-xs font-bold"
                       />
                     </div>
                   </div>
@@ -350,12 +350,12 @@ export default function WorkingCapitalFinancing() {
         <div className="lg:col-span-7 space-y-6">
           {/* WHAT-IF SENSITIVITY SLIDER CARD */}
           <div className="panel-data p-5 space-y-4">
-            <div className="flex justify-between items-center border-b border-surface-border pb-3">
+            <div className="flex justify-between items-center border-b border-line pb-3">
               <div>
-                <h3 className="font-serif text-sm font-bold text-slate-heading">
+                <h3 className="font-serif text-sm font-bold text-fg">
                   {isAr ? "محاكاة الحساسية: خفض دورة التحويل النقدي" : "Sensitivity: Reduce CCC Days What-If"}
                 </h3>
-                <p className="text-[11px] text-slate-muted font-sans font-medium">
+                <p className="text-[11px] text-fg-3 font-sans font-medium">
                   {isAr
                     ? "كم توفر الشركة سنوياً عند تسريع التحصيل أو ترشيد المخزون؟"
                     : "Quantifies recurring interest cost eliminated by shortening operating cycle"}
@@ -369,7 +369,7 @@ export default function WorkingCapitalFinancing() {
             <div className="space-y-4 pt-2">
               <div className="space-y-2">
                 <div className="flex justify-between text-xs font-mono font-bold">
-                  <span className="text-slate-600">{isAr ? "أيام التخفيض المستهدفة:" : "Target Days Reduced:"}</span>
+                  <span className="text-fg-2">{isAr ? "أيام التخفيض المستهدفة:" : "Target Days Reduced:"}</span>
                   <span className="text-emerald text-sm">{sensitivityDays} Days</span>
                 </div>
                 <input
@@ -380,7 +380,7 @@ export default function WorkingCapitalFinancing() {
                   onChange={(e) => setSensitivityDays(Number(e.target.value))}
                   className="w-full accent-emerald cursor-pointer"
                 />
-                <div className="flex justify-between text-[10px] font-mono text-slate-400">
+                <div className="flex justify-between text-[10px] font-mono text-fg-3">
                   <span>1 Day</span>
                   <span>15 Days</span>
                   <span>30 Days</span>
@@ -389,7 +389,7 @@ export default function WorkingCapitalFinancing() {
               </div>
 
               {/* SAVINGS HIGHLIGHT BANNER */}
-              <div className="p-4 bg-emerald-dim border border-emerald-border rounded-xl flex items-center justify-between">
+              <div className="p-4 bg-emerald/10 border border-emerald/30 rounded-xl flex items-center justify-between">
                 <div>
                   <span className="text-[11px] text-emerald font-bold uppercase tracking-wider block">
                     {isAr ? "إجمالي الوفر النقدي السنوي" : "Total Annual Financing Expense Saved"}
@@ -398,9 +398,9 @@ export default function WorkingCapitalFinancing() {
                     {currency} {outputs.totalSensitivitySavings.toLocaleString()}
                   </span>
                 </div>
-                <div className="text-right font-mono text-xs text-slate-600">
+                <div className="text-right font-mono text-xs text-fg-2">
                   <div>
-                    {currency} {outputs.savingsPerDayReduction.toLocaleString()} <span className="text-[10px] text-slate-400">/ day</span>
+                    {currency} {outputs.savingsPerDayReduction.toLocaleString()} <span className="text-[10px] text-fg-3">/ day</span>
                   </div>
                   <div className="text-[10px] text-emerald font-bold">
                     Releases {currency} {((outputs.dailyCogs * sensitivityDays) / 1000).toFixed(0)}k Liquidity
@@ -412,18 +412,18 @@ export default function WorkingCapitalFinancing() {
 
           {/* METHOD RECONCILIATION COMPARISON */}
           <div className="panel-data p-5 space-y-4">
-            <h3 className="font-serif text-sm font-bold text-slate-heading border-b border-surface-border pb-3">
+            <h3 className="font-serif text-sm font-bold text-fg border-b border-line pb-3">
               {isAr ? "مقارنة منهجيتي حساب تكلفة السيولة" : "Method Reconciliation: Balance Sheet vs. CCC Operational"}
             </h3>
 
             <div className="h-56 w-full">
               <ResponsiveContainer width="100%" height="100%">
                 <BarChart data={comparisonChartData} margin={{ top: 10, right: 15, left: -10, bottom: 0 }}>
-                  <CartesianGrid strokeDasharray="3 3" stroke="#E2E8F0" vertical={false} />
-                  <XAxis dataKey="name" stroke="#64748B" fontSize={10} fontFamily="monospace" />
-                  <YAxis stroke="#64748B" fontSize={10} fontFamily="monospace" />
+                  <CartesianGrid strokeDasharray="3 3" stroke="rgba(158,190,180,0.14)" vertical={false} />
+                  <XAxis dataKey="name" stroke="#a7b9b2" fontSize={10} fontFamily="monospace" />
+                  <YAxis stroke="#a7b9b2" fontSize={10} fontFamily="monospace" />
                   <Tooltip
-                    contentStyle={{ backgroundColor: "#FFFFFF", borderColor: "#E2E8F0", borderRadius: "8px", fontSize: "11px" }}
+                    contentStyle={{ backgroundColor: "#0e161a", borderColor: "rgba(158,190,180,0.14)", borderRadius: "8px", fontSize: "11px" }}
                     formatter={(val: any) => [`${currency} ${val.toLocaleString()}`, "Cost"]}
                   />
                   <Bar dataKey="cost" radius={[4, 4, 0, 0]}>
@@ -435,8 +435,8 @@ export default function WorkingCapitalFinancing() {
               </ResponsiveContainer>
             </div>
 
-            <div className="p-3 bg-slate-50 rounded-lg border border-slate-200 text-xs text-slate-600 leading-relaxed font-sans">
-              <span className="font-bold text-slate-800 block mb-1">
+            <div className="p-3 bg-ink-3 rounded-lg border border-line text-xs text-fg-2 leading-relaxed font-sans">
+              <span className="font-bold text-fg block mb-1">
                 {isAr ? "ملاحظة التوفيق المحاسبي" : "Reconciliation Note:"}
               </span>
               {isAr

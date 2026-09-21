@@ -196,20 +196,20 @@ export default function MonteCarloPanel() {
       initial="initial"
       animate="animate"
       exit="exit"
-      className="space-y-6 font-sans text-slate-800"
+      className="space-y-6 font-sans text-fg"
       dir={isAr ? "rtl" : "ltr"}
     >
       {/* TOP TITLE HEADER */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 panel-input p-5">
         <div className="flex items-center gap-3">
-          <div className="p-3 rounded-lg bg-emerald-dim border border-emerald-border text-emerald">
+          <div className="p-3 rounded-lg bg-emerald/10 border border-emerald/30 text-emerald">
             <Dices size={24} />
           </div>
           <div>
-            <h1 className="font-serif text-xl font-bold text-slate-heading">
+            <h1 className="font-serif text-xl font-bold text-fg">
               {isAr ? "محاكاة مونتي كارلو للتقييم الكمي" : "Monte Carlo Valuation Simulation Engine"}
             </h1>
-            <p className="text-xs text-slate-muted font-sans font-medium">
+            <p className="text-xs text-fg-3 font-sans font-medium">
               {isAr ? "محاكاة آلاف المسارات العشوائية لقياس المخاطر والت توزيع القيمة الجوهرية" : "Run 5,000–10,000 probability iterations over uncertain DCF inputs"}
             </p>
           </div>
@@ -218,7 +218,7 @@ export default function MonteCarloPanel() {
         <button
           onClick={runSimulation}
           disabled={isRunning}
-          className="flex items-center justify-center gap-2 px-5 py-2.5 rounded-lg bg-emerald hover:bg-emerald-light text-white font-mono font-bold text-xs uppercase tracking-wider transition-all cursor-pointer disabled:opacity-50 shadow-xs"
+          className="flex items-center justify-center gap-2 px-5 py-2.5 rounded-lg bg-emerald hover:bg-emerald-light text-ink-0 font-mono font-bold text-xs uppercase tracking-wider transition-all cursor-pointer disabled:opacity-50 shadow-xs"
         >
           {isRunning ? <RefreshCw className="animate-spin" size={14} /> : <Play size={14} />}
           <span>{isRunning ? (isAr ? "جاري المحاكاة..." : "Running 5,000 Runs...") : (isAr ? "إعادة المحاكاة" : "Run Simulation")}</span>
@@ -230,12 +230,12 @@ export default function MonteCarloPanel() {
         
         {/* INPUT PARAMETERS COLUMN */}
         <div className="panel-input p-5 space-y-5">
-          <div className="flex items-center justify-between border-b border-surface-border pb-3">
-            <h3 className="font-mono text-xs font-bold text-slate-heading uppercase tracking-wider flex items-center gap-2">
+          <div className="flex items-center justify-between border-b border-line pb-3">
+            <h3 className="font-mono text-xs font-bold text-fg uppercase tracking-wider flex items-center gap-2">
               <Sliders size={14} className="text-emerald" />
               <span>{isAr ? "معلمات التوزيع والمدخلات" : "Distribution Parameters"}</span>
             </h3>
-            <span className="px-2 py-0.5 rounded bg-surface-subtle border border-surface-border text-slate-muted font-mono text-[10px]">
+            <span className="px-2 py-0.5 rounded bg-ink-3 border border-line text-fg-3 font-mono text-[10px]">
               {iterations.toLocaleString()} Runs
             </span>
           </div>
@@ -243,56 +243,56 @@ export default function MonteCarloPanel() {
           <div className="space-y-4 text-xs">
             <div className="grid grid-cols-2 gap-2">
               <div>
-                <label className="text-slate-body font-medium block mb-1">
+                <label className="text-fg-2 font-medium block mb-1">
                   {isAr ? "سعر السوق (SAR)" : "Market Price (SAR)"}
                 </label>
                 <input
                   type="number"
                   value={currentMarketPrice}
                   onChange={(e) => setCurrentMarketPrice(Number(e.target.value))}
-                  className="w-full px-3 py-1.5 rounded-md bg-surface-subtle border border-surface-border font-mono text-slate-heading text-xs focus:outline-none focus:border-emerald"
+                  className="w-full px-3 py-1.5 rounded-md bg-ink-3 border border-line font-mono text-fg text-xs focus:outline-none focus:border-emerald"
                 />
               </div>
               <div>
-                <label className="text-slate-body font-medium block mb-1">
+                <label className="text-fg-2 font-medium block mb-1">
                   {isAr ? "الإيرادات الأساسية (M)" : "Base Revenue (SAR M)"}
                 </label>
                 <input
                   type="number"
                   value={baseRev}
                   onChange={(e) => setBaseRev(Number(e.target.value))}
-                  className="w-full px-3 py-1.5 rounded-md bg-surface-subtle border border-surface-border font-mono text-slate-heading text-xs focus:outline-none focus:border-emerald"
+                  className="w-full px-3 py-1.5 rounded-md bg-ink-3 border border-line font-mono text-fg text-xs focus:outline-none focus:border-emerald"
                 />
               </div>
             </div>
 
             <div className="grid grid-cols-2 gap-2">
               <div>
-                <label className="text-slate-body font-medium block mb-1">
+                <label className="text-fg-2 font-medium block mb-1">
                   {isAr ? "الأسهم القائمة (M)" : "Shares Out (M)"}
                 </label>
                 <input
                   type="number"
                   value={baseShares}
                   onChange={(e) => setBaseShares(Number(e.target.value))}
-                  className="w-full px-3 py-1.5 rounded-md bg-surface-subtle border border-surface-border font-mono text-slate-heading text-xs focus:outline-none focus:border-emerald"
+                  className="w-full px-3 py-1.5 rounded-md bg-ink-3 border border-line font-mono text-fg text-xs focus:outline-none focus:border-emerald"
                 />
               </div>
               <div>
-                <label className="text-slate-body font-medium block mb-1">
+                <label className="text-fg-2 font-medium block mb-1">
                   {isAr ? "صافي الدين (SAR M)" : "Net Debt (SAR M)"}
                 </label>
                 <input
                   type="number"
                   value={netDebt}
                   onChange={(e) => setNetDebt(Number(e.target.value))}
-                  className="w-full px-3 py-1.5 rounded-md bg-surface-subtle border border-surface-border font-mono text-slate-heading text-xs focus:outline-none focus:border-emerald"
+                  className="w-full px-3 py-1.5 rounded-md bg-ink-3 border border-line font-mono text-fg text-xs focus:outline-none focus:border-emerald"
                 />
               </div>
             </div>
 
             <div>
-              <label className="text-slate-body font-medium flex justify-between mb-1">
+              <label className="text-fg-2 font-medium flex justify-between mb-1">
                 <span>{isAr ? "نمو الإيرادات (%)" : "Revenue Growth Rate (%)"}</span>
                 <span className="font-mono text-emerald">μ: {revenueGrowthMean}% | σ: {revenueGrowthStd}%</span>
               </label>
@@ -303,7 +303,7 @@ export default function MonteCarloPanel() {
                   value={revenueGrowthMean}
                   onChange={(e) => setRevenueGrowthMean(Number(e.target.value))}
                   placeholder="Mean %"
-                  className="px-3 py-1.5 rounded bg-surface-subtle border border-surface-border font-mono text-xs"
+                  className="px-3 py-1.5 rounded bg-ink-3 border border-line font-mono text-xs"
                 />
                 <input
                   type="number"
@@ -311,13 +311,13 @@ export default function MonteCarloPanel() {
                   value={revenueGrowthStd}
                   onChange={(e) => setRevenueGrowthStd(Number(e.target.value))}
                   placeholder="Std Dev %"
-                  className="px-3 py-1.5 rounded bg-surface-subtle border border-surface-border font-mono text-xs"
+                  className="px-3 py-1.5 rounded bg-ink-3 border border-line font-mono text-xs"
                 />
               </div>
             </div>
 
             <div>
-              <label className="text-slate-body font-medium flex justify-between mb-1">
+              <label className="text-fg-2 font-medium flex justify-between mb-1">
                 <span>{isAr ? "هامش الأرباح EBITDA (%)" : "EBITDA Margin (%)"}</span>
                 <span className="font-mono text-emerald">μ: {ebitdaMarginMean}% | σ: {ebitdaMarginStd}%</span>
               </label>
@@ -327,20 +327,20 @@ export default function MonteCarloPanel() {
                   step="0.5"
                   value={ebitdaMarginMean}
                   onChange={(e) => setEbitdaMarginMean(Number(e.target.value))}
-                  className="px-3 py-1.5 rounded bg-surface-subtle border border-surface-border font-mono text-xs"
+                  className="px-3 py-1.5 rounded bg-ink-3 border border-line font-mono text-xs"
                 />
                 <input
                   type="number"
                   step="0.1"
                   value={ebitdaMarginStd}
                   onChange={(e) => setEbitdaMarginStd(Number(e.target.value))}
-                  className="px-3 py-1.5 rounded bg-surface-subtle border border-surface-border font-mono text-xs"
+                  className="px-3 py-1.5 rounded bg-ink-3 border border-line font-mono text-xs"
                 />
               </div>
             </div>
 
             <div>
-              <label className="text-slate-body font-medium flex justify-between mb-1">
+              <label className="text-fg-2 font-medium flex justify-between mb-1">
                 <span>{isAr ? "تكلفة رأس المال WACC (%)" : "Discount Rate WACC (%)"}</span>
                 <span className="font-mono text-emerald">μ: {waccMean}% | σ: {waccStd}%</span>
               </label>
@@ -350,20 +350,20 @@ export default function MonteCarloPanel() {
                   step="0.1"
                   value={waccMean}
                   onChange={(e) => setWaccMean(Number(e.target.value))}
-                  className="px-3 py-1.5 rounded bg-surface-subtle border border-surface-border font-mono text-xs"
+                  className="px-3 py-1.5 rounded bg-ink-3 border border-line font-mono text-xs"
                 />
                 <input
                   type="number"
                   step="0.1"
                   value={waccStd}
                   onChange={(e) => setWaccStd(Number(e.target.value))}
-                  className="px-3 py-1.5 rounded bg-surface-subtle border border-surface-border font-mono text-xs"
+                  className="px-3 py-1.5 rounded bg-ink-3 border border-line font-mono text-xs"
                 />
               </div>
             </div>
 
             <div>
-              <label className="text-slate-body font-medium block mb-1">
+              <label className="text-fg-2 font-medium block mb-1">
                 {isAr ? "نوع التوزيع الإحصائي" : "Probability Distribution Curve"}
               </label>
               <div className="grid grid-cols-2 gap-2 font-mono text-xs">
@@ -372,8 +372,8 @@ export default function MonteCarloPanel() {
                   onClick={() => setDistributionType("normal")}
                   className={`py-2 rounded border text-center font-bold cursor-pointer transition-all ${
                     distributionType === "normal"
-                      ? "bg-emerald text-white border-emerald"
-                      : "bg-surface-subtle border-surface-border text-slate-muted"
+                      ? "bg-emerald text-ink-0 border-emerald"
+                      : "bg-ink-3 border-line text-fg-3"
                   }`}
                 >
                   Normal (Gaussian)
@@ -383,8 +383,8 @@ export default function MonteCarloPanel() {
                   onClick={() => setDistributionType("triangular")}
                   className={`py-2 rounded border text-center font-bold cursor-pointer transition-all ${
                     distributionType === "triangular"
-                      ? "bg-emerald text-white border-emerald"
-                      : "bg-surface-subtle border-surface-border text-slate-muted"
+                      ? "bg-emerald text-ink-0 border-emerald"
+                      : "bg-ink-3 border-line text-fg-3"
                   }`}
                 >
                   Triangular
@@ -393,13 +393,13 @@ export default function MonteCarloPanel() {
             </div>
 
             <div>
-              <label className="text-slate-body font-medium block mb-1">
+              <label className="text-fg-2 font-medium block mb-1">
                 {isAr ? "عدد التكرارات" : "Iteration Count"}
               </label>
               <select
                 value={iterations}
                 onChange={(e) => setIterations(Number(e.target.value))}
-                className="w-full px-3 py-2 rounded bg-surface-subtle border border-surface-border font-mono text-xs"
+                className="w-full px-3 py-2 rounded bg-ink-3 border border-line font-mono text-xs"
               >
                 <option value={2000}>2,000 Iterations</option>
                 <option value={5000}>5,000 Iterations</option>
@@ -415,47 +415,47 @@ export default function MonteCarloPanel() {
           {/* PERCENTILE HIGHLIGHT CARDS */}
           {stats && (
             <div className="grid grid-cols-2 sm:grid-cols-4 gap-4 font-mono">
-              <div className="p-4 bg-white rounded-xl border border-surface-border shadow-xs">
-                <span className="text-[10px] text-slate-muted uppercase font-bold block mb-1">P10 (Bear Case)</span>
-                <span className="text-xl font-extrabold text-slate-heading">SAR {stats.p10}</span>
-                <span className="text-[10px] text-slate-muted block mt-1">10th Percentile</span>
+              <div className="p-4 bg-ink-2 rounded-xl border border-line shadow-xs">
+                <span className="text-[10px] text-fg-3 uppercase font-bold block mb-1">P10 (Bear Case)</span>
+                <span className="text-xl font-extrabold text-fg">SAR {stats.p10}</span>
+                <span className="text-[10px] text-fg-3 block mt-1">10th Percentile</span>
               </div>
 
-              <div className="p-4 bg-emerald-dim rounded-xl border border-emerald-border shadow-xs">
+              <div className="p-4 bg-emerald/10 rounded-xl border border-emerald/30 shadow-xs">
                 <span className="text-[10px] text-emerald uppercase font-bold block mb-1">P50 (Median)</span>
                 <span className="text-xl font-extrabold text-emerald">SAR {stats.p50}</span>
                 <span className="text-[10px] text-emerald font-bold block mt-1">Expected Outcome</span>
               </div>
 
-              <div className="p-4 bg-white rounded-xl border border-surface-border shadow-xs">
-                <span className="text-[10px] text-slate-muted uppercase font-bold block mb-1">P90 (Bull Case)</span>
-                <span className="text-xl font-extrabold text-slate-heading">SAR {stats.p90}</span>
-                <span className="text-[10px] text-slate-muted block mt-1">90th Percentile</span>
+              <div className="p-4 bg-ink-2 rounded-xl border border-line shadow-xs">
+                <span className="text-[10px] text-fg-3 uppercase font-bold block mb-1">P90 (Bull Case)</span>
+                <span className="text-xl font-extrabold text-fg">SAR {stats.p90}</span>
+                <span className="text-[10px] text-fg-3 block mt-1">90th Percentile</span>
               </div>
 
-              <div className="p-4 bg-white rounded-xl border border-surface-border shadow-xs">
-                <span className="text-[10px] text-slate-muted uppercase font-bold block mb-1">Upside Prob.</span>
+              <div className="p-4 bg-ink-2 rounded-xl border border-line shadow-xs">
+                <span className="text-[10px] text-fg-3 uppercase font-bold block mb-1">Upside Prob.</span>
                 <span className="text-xl font-extrabold text-emerald">{stats.probUpside}%</span>
-                <span className="text-[10px] text-slate-muted block mt-1">&gt; Market Price</span>
+                <span className="text-[10px] text-fg-3 block mt-1">&gt; Market Price</span>
               </div>
             </div>
           )}
 
           {/* RECHARTS HISTOGRAM */}
           <div className="panel-input p-5 space-y-4">
-            <div className="flex items-center justify-between border-b border-surface-border pb-3">
+            <div className="flex items-center justify-between border-b border-line pb-3">
               <div>
-                <h3 className="font-serif text-sm font-bold text-slate-heading">
+                <h3 className="font-serif text-sm font-bold text-fg">
                   {isAr ? "مخطط التوزيع التكراري للقيمة الجوهرية (Histogram)" : "Valuation Outcome Probability Histogram"}
                 </h3>
-                <p className="text-[11px] text-slate-muted font-sans font-medium">
+                <p className="text-[11px] text-fg-3 font-sans font-medium">
                   {isAr ? "يُظهر توزيع النتائج المحسوبة من تكرارات المحاكاة" : "Frequency distribution across 15 valuation price bins"}
                 </p>
               </div>
               {stats && (
-                <div className="text-right font-mono text-[11px] text-slate-muted">
-                  <span>Mean: <strong className="text-slate-heading">SAR {stats.mean}</strong></span> | 
-                  <span> StdDev: <strong className="text-slate-heading">SAR {stats.stdDev}</strong></span>
+                <div className="text-right font-mono text-[11px] text-fg-3">
+                  <span>Mean: <strong className="text-fg">SAR {stats.mean}</strong></span> | 
+                  <span> StdDev: <strong className="text-fg">SAR {stats.stdDev}</strong></span>
                 </div>
               )}
             </div>
@@ -464,19 +464,19 @@ export default function MonteCarloPanel() {
               {stats ? (
                 <ResponsiveContainer width="100%" height="100%">
                   <BarChart data={stats.histogramData} margin={{ top: 10, right: 10, left: -20, bottom: 0 }}>
-                    <CartesianGrid strokeDasharray="3 3" stroke="#E2E8F0" vertical={false} />
-                    <XAxis dataKey="rangeLabel" stroke="#64748B" fontSize={10} fontFamily="monospace" />
-                    <YAxis stroke="#64748B" fontSize={10} fontFamily="monospace" />
+                    <CartesianGrid strokeDasharray="3 3" stroke="rgba(158,190,180,0.14)" vertical={false} />
+                    <XAxis dataKey="rangeLabel" stroke="#a7b9b2" fontSize={10} fontFamily="monospace" />
+                    <YAxis stroke="#a7b9b2" fontSize={10} fontFamily="monospace" />
                     <Tooltip
-                      contentStyle={{ backgroundColor: "#FFFFFF", borderColor: "#E2E8F0", borderRadius: "8px", fontSize: "11px" }}
+                      contentStyle={{ backgroundColor: "#0e161a", borderColor: "rgba(158,190,180,0.14)", borderRadius: "8px", fontSize: "11px" }}
                       formatter={(val: any) => [`${val} Runs`, "Frequency"]}
                     />
-                    <ReferenceLine x={`SAR ${stats.p50}`} stroke="#0E7C69" strokeWidth={2} label={{ value: "P50 Median", fill: "#0E7C69", fontSize: 10 }} />
-                    <Bar dataKey="count" fill="#0E7C69" radius={[4, 4, 0, 0]} />
+                    <ReferenceLine x={`SAR ${stats.p50}`} stroke="#17a88a" strokeWidth={2} label={{ value: "P50 Median", fill: "#17a88a", fontSize: 10 }} />
+                    <Bar dataKey="count" fill="#17a88a" radius={[4, 4, 0, 0]} />
                   </BarChart>
                 </ResponsiveContainer>
               ) : (
-                <div className="h-full flex items-center justify-center text-slate-muted font-mono text-xs">
+                <div className="h-full flex items-center justify-center text-fg-3 font-mono text-xs">
                   <RefreshCw className="animate-spin text-emerald mr-2" size={16} />
                   <span>Computing Monte Carlo Simulation...</span>
                 </div>

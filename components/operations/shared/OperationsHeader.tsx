@@ -1,8 +1,7 @@
-// components/operations/shared/OperationsHeader.tsx
 "use client";
 
 import React, { useState } from "react";
-import { Download, FileSpreadsheet, FileText, Calculator, BookmarkCheck, RotateCcw, Sparkles } from "lucide-react";
+import { FileSpreadsheet, FileText, Calculator, BookmarkCheck, RotateCcw } from "lucide-react";
 
 interface OperationsHeaderProps {
   categoryTag: string;
@@ -21,122 +20,52 @@ interface OperationsHeaderProps {
   isAr?: boolean;
 }
 
+/** Shared header for every operations engine: title, audit trail and exports. */
 export default function OperationsHeader({
-  categoryTag,
-  categoryTagAr,
-  title,
-  titleAr,
-  subtitle,
-  subtitleAr,
-  icon,
-  onOpenAudit,
-  onExportExcel,
-  onExportPdf,
-  onSaveSession,
-  onResetDefaults,
-  isExportingPdf = false,
-  isAr = false,
+  categoryTag, categoryTagAr, title, titleAr, subtitle, subtitleAr, icon,
+  onOpenAudit, onExportExcel, onExportPdf, onSaveSession, onResetDefaults,
+  isExportingPdf = false, isAr = false,
 }: OperationsHeaderProps) {
-  const [savedNotice, setSavedNotice] = useState(false);
-
-  const handleSave = () => {
-    if (onSaveSession) {
-      onSaveSession();
-      setSavedNotice(true);
-      setTimeout(() => setSavedNotice(false), 2200);
-    }
+  const [saved, setSaved] = useState(false);
+  const save = () => {
+    onSaveSession?.();
+    setSaved(true);
+    window.setTimeout(() => setSaved(false), 2000);
   };
 
   return (
-    <div className="panel-input p-5 space-y-4 font-sans" dir={isAr ? "rtl" : "ltr"}>
-      <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-4">
-        {/* TITLE & BADGES */}
-        <div className="flex items-start sm:items-center gap-3.5">
-          <div className="p-3 rounded-lg bg-emerald-dim border border-emerald-border text-emerald shrink-0">
-            {icon}
-          </div>
-          <div>
-            <div className="flex items-center gap-2 mb-1">
-              <span className="label-pill label-pill-emerald text-[9px]">
-                {isAr && categoryTagAr ? categoryTagAr : categoryTag}
-              </span>
-              <span className="text-[10px] font-mono text-slate-400 uppercase tracking-wider">
-                {isAr ? "محرك العمليات التشغيلية" : "OPERATIONS SUITE"}
-              </span>
-            </div>
-            <h1 className="font-serif text-xl sm:text-2xl font-bold text-slate-heading leading-tight">
-              {isAr && titleAr ? titleAr : title}
-            </h1>
-            <p className="text-xs text-slate-muted font-sans font-medium mt-0.5">
-              {isAr && subtitleAr ? subtitleAr : subtitle}
-            </p>
-          </div>
+    <div className="flex flex-col lg:flex-row lg:items-end justify-between gap-4 pb-5 border-b border-line" dir={isAr ? "rtl" : "ltr"}>
+      <div className="flex items-start gap-4">
+        <div className="mt-1 p-2.5 rounded border border-gold/40 bg-gold/10 text-gold shrink-0">{icon}</div>
+        <div>
+          <p className="font-mono text-[10.5px] tracking-[0.18em] text-gold">
+            OPS · {(isAr && categoryTagAr ? categoryTagAr : categoryTag).toUpperCase()}
+          </p>
+          <h1 className={`mt-1 font-serif text-2xl md:text-3xl text-fg leading-tight ${isAr ? "font-cairo font-bold" : ""}`}>
+            {isAr && titleAr ? titleAr : title}
+          </h1>
+          <p className="mt-1 text-[12.5px] text-fg-3 max-w-2xl">{isAr && subtitleAr ? subtitleAr : subtitle}</p>
         </div>
+      </div>
 
-        {/* ACTION BUTTONS */}
-        <div className="flex flex-wrap items-center gap-2">
-          {/* Audit Trace Button */}
-          <button
-            onClick={onOpenAudit}
-            className="btn-secondary"
-            title={isAr ? "عرض تفاصيل الحسابات الرياضية" : "Inspect calculation formula steps"}
-          >
-            <Calculator size={13} className="text-emerald" />
-            <span>{isAr ? "سجل الحسابات" : "Audit Trace"}</span>
+      <div className="flex flex-wrap items-center gap-2 no-print">
+        <button onClick={onOpenAudit} className="btn-secondary" title={isAr ? "عرض خطوات الحساب" : "Show the formula trace"}>
+          <Calculator size={13} className="text-emerald-light" /> {isAr ? "سجل الحساب" : "Audit trail"}
+        </button>
+        <button onClick={onExportExcel} className="btn-secondary"><FileSpreadsheet size={13} className="text-emerald-light" /> Excel</button>
+        <button onClick={onExportPdf} disabled={isExportingPdf} className="btn-secondary">
+          <FileText size={13} className="text-emerald-light" /> {isExportingPdf ? (isAr ? "جارٍ التصدير…" : "Exporting…") : "PDF"}
+        </button>
+        {onSaveSession && (
+          <button onClick={save} className={`btn-secondary ${saved ? "border-emerald text-emerald-light" : ""}`}>
+            <BookmarkCheck size={13} /> {saved ? (isAr ? "تم الحفظ" : "Saved") : (isAr ? "حفظ" : "Save")}
           </button>
-
-          {/* Export Excel Button */}
-          <button
-            onClick={onExportExcel}
-            className="btn-secondary"
-            title={isAr ? "تصدير إلى إكسل" : "Download Excel spreadsheet"}
-          >
-            <FileSpreadsheet size={13} className="text-emerald" />
-            <span>{isAr ? "إكسل" : "Excel"}</span>
+        )}
+        {onResetDefaults && (
+          <button onClick={onResetDefaults} className="p-2 rounded text-fg-3 hover:text-fg hover:bg-ink-4 transition-colors" title={isAr ? "استعادة القيم الافتراضية" : "Reset to sample inputs"}>
+            <RotateCcw size={14} />
           </button>
-
-          {/* Export PDF Button */}
-          <button
-            onClick={onExportPdf}
-            disabled={isExportingPdf}
-            className="btn-secondary"
-            title={isAr ? "تصدير تقرير PDF" : "Download PDF report"}
-          >
-            <FileText size={13} className="text-emerald" />
-            <span>
-              {isExportingPdf
-                ? (isAr ? "جاري التصدير..." : "Exporting...")
-                : (isAr ? "PDF" : "PDF")}
-            </span>
-          </button>
-
-          {/* Save State Button */}
-          {onSaveSession && (
-            <button
-              onClick={handleSave}
-              className={`inline-flex items-center gap-1.5 px-3 py-2 rounded text-xs font-mono font-bold transition-all cursor-pointer border ${
-                savedNotice
-                  ? "bg-emerald text-white border-emerald"
-                  : "bg-emerald-dim text-emerald border-emerald-border hover:bg-emerald/15"
-              }`}
-              title={isAr ? "حفظ النموذج في الجلسة" : "Save analysis to current session"}
-            >
-              <BookmarkCheck size={13} />
-              <span>{savedNotice ? (isAr ? "تم الحفظ!" : "Saved!") : (isAr ? "حفظ" : "Save")}</span>
-            </button>
-          )}
-
-          {/* Reset Defaults */}
-          {onResetDefaults && (
-            <button
-              onClick={onResetDefaults}
-              className="p-2 text-slate-400 hover:text-slate-700 hover:bg-slate-100 rounded transition-colors cursor-pointer"
-              title={isAr ? "استعادة القيم الافتراضية" : "Reset inputs to sample defaults"}
-            >
-              <RotateCcw size={14} />
-            </button>
-          )}
-        </div>
+        )}
       </div>
     </div>
   );

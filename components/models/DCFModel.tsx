@@ -283,7 +283,7 @@ export default function DCFModel() {
       initial="initial"
       animate="animate"
       exit="exit"
-      className="grid grid-cols-1 lg:grid-cols-12 gap-8 text-slate-100 font-mono"
+      className="grid grid-cols-1 lg:grid-cols-12 gap-8 text-fg font-mono"
       dir={isAr ? "rtl" : "ltr"}
     >
       {/* LEFT COLUMN: ASSUMPTIONS & SCENARIOS (4 COLS) */}
@@ -296,14 +296,14 @@ export default function DCFModel() {
         />
 
         <div className="panel-input p-6 space-y-4">
-          <div className="flex items-center justify-between pb-3 border-b border-[#E2E8F0]">
+          <div className="flex items-center justify-between pb-3 border-b border-line">
             <div className="flex items-center gap-3">
               <BarChart3 className="text-emerald" size={22} />
               <div>
-                <h2 className="font-mono text-lg font-extrabold text-slate-900 uppercase">
+                <h2 className="font-mono text-lg font-extrabold text-fg uppercase">
                   {t("dcf_assumptions", language)}
                 </h2>
-                <span className="text-[10px] font-mono text-slate-500 uppercase">
+                <span className="text-[10px] font-mono text-fg-3 uppercase">
                   {isAr ? "مدخلات التقييم اليدوية" : "Manual Valuation Inputs"}
                 </span>
               </div>
@@ -311,106 +311,106 @@ export default function DCFModel() {
           </div>
 
           {/* Base Financials Section */}
-          <div className="space-y-3 font-mono text-xs border-b border-[#E2E8F0] pb-4">
-            <span className="text-[10px] text-slate-500 font-bold uppercase tracking-wider block">
+          <div className="space-y-3 font-mono text-xs border-b border-line pb-4">
+            <span className="text-[10px] text-fg-3 font-bold uppercase tracking-wider block">
               {isAr ? "بيانات الشركة الأساسية" : "Company Base Figures"}
             </span>
 
             <div className="flex justify-between items-center">
-              <label className="text-slate-700">{isAr ? "الإيرادات الأساسية (مليون)" : "Base Revenue (M)"}</label>
+              <label className="text-fg-2">{isAr ? "الإيرادات الأساسية (مليون)" : "Base Revenue (M)"}</label>
               <input
                 type="number"
                 value={baseRevenue}
                 onChange={(e) => setBaseRevenue(Number(e.target.value))}
-                className="w-24 px-2 py-1 bg-slate-50 border border-[#E2E8F0] focus:border-emerald rounded-md text-right text-slate-900 font-mono text-xs focus:outline-none"
+                className="w-24 px-2 py-1 bg-ink-3 border border-line focus:border-emerald rounded-md text-right text-fg font-mono text-xs focus:outline-none"
               />
             </div>
 
             <div className="flex justify-between items-center">
-              <label className="text-slate-700">{isAr ? "صافي الديون (مليون)" : "Net Debt (M)"}</label>
+              <label className="text-fg-2">{isAr ? "صافي الديون (مليون)" : "Net Debt (M)"}</label>
               <input
                 type="number"
                 value={netDebt}
                 onChange={(e) => setNetDebt(Number(e.target.value))}
-                className="w-24 px-2 py-1 bg-slate-50 border border-[#E2E8F0] focus:border-emerald rounded-md text-right text-slate-900 font-mono text-xs focus:outline-none"
+                className="w-24 px-2 py-1 bg-ink-3 border border-line focus:border-emerald rounded-md text-right text-fg font-mono text-xs focus:outline-none"
               />
             </div>
 
             <div className="flex justify-between items-center">
-              <label className="text-slate-700">{isAr ? "الأسهم القائمة (مليون)" : "Shares Outstanding (M)"}</label>
+              <label className="text-fg-2">{isAr ? "الأسهم القائمة (مليون)" : "Shares Outstanding (M)"}</label>
               <input
                 type="number"
                 value={sharesOutstanding}
                 onChange={(e) => setSharesOutstanding(Number(e.target.value))}
-                className="w-24 px-2 py-1 bg-slate-50 border border-[#E2E8F0] focus:border-emerald rounded-md text-right text-slate-900 font-mono text-xs focus:outline-none"
+                className="w-24 px-2 py-1 bg-ink-3 border border-line focus:border-emerald rounded-md text-right text-fg font-mono text-xs focus:outline-none"
               />
             </div>
 
             <div className="flex justify-between items-center">
-              <label className="text-slate-700">{isAr ? "سعر السهم الحالي" : "Current Price (SAR)"}</label>
+              <label className="text-fg-2">{isAr ? "سعر السهم الحالي" : "Current Price (SAR)"}</label>
               <input
                 type="number"
                 step="0.01"
                 value={currentPrice}
                 onChange={(e) => setCurrentPrice(Number(e.target.value))}
-                className="w-24 px-2 py-1 bg-slate-50 border border-[#E2E8F0] focus:border-emerald rounded-md text-right text-slate-900 font-mono text-xs focus:outline-none"
+                className="w-24 px-2 py-1 bg-ink-3 border border-line focus:border-emerald rounded-md text-right text-fg font-mono text-xs focus:outline-none"
               />
             </div>
           </div>
 
           {/* Model Controls Section */}
           <div className="space-y-3 font-mono text-xs">
-            <span className="text-[10px] text-slate-500 font-bold uppercase tracking-wider block">
+            <span className="text-[10px] text-fg-3 font-bold uppercase tracking-wider block">
               {isAr ? "افتراضات التقييم" : "Model Drivers"}
             </span>
 
             <div className="flex justify-between items-center">
-              <label className="text-slate-700">{t("rev_growth", language)} (%)</label>
+              <label className="text-fg-2">{t("rev_growth", language)} (%)</label>
               <input
                 type="number"
                 value={baseRevGrowth}
                 onChange={(e) => setBaseRevGrowth(Number(e.target.value))}
-                className="w-20 px-2 py-1 bg-slate-50 border border-[#E2E8F0] focus:border-emerald rounded-md text-right text-slate-900 font-mono text-xs focus:outline-none"
+                className="w-20 px-2 py-1 bg-ink-3 border border-line focus:border-emerald rounded-md text-right text-fg font-mono text-xs focus:outline-none"
               />
             </div>
 
             <div className="flex justify-between items-center">
-              <label className="text-slate-700">{t("ebitda_margin", language)} (%)</label>
+              <label className="text-fg-2">{t("ebitda_margin", language)} (%)</label>
               <input
                 type="number"
                 value={baseEbitdaMargin}
                 onChange={(e) => setBaseEbitdaMargin(Number(e.target.value))}
-                className="w-20 px-2 py-1 bg-slate-50 border border-[#E2E8F0] focus:border-emerald rounded-md text-right text-slate-900 font-mono text-xs focus:outline-none"
+                className="w-20 px-2 py-1 bg-ink-3 border border-line focus:border-emerald rounded-md text-right text-fg font-mono text-xs focus:outline-none"
               />
             </div>
 
             <div className="flex justify-between items-center">
-              <label className="text-slate-700">{t("capex_rev", language)} (%)</label>
+              <label className="text-fg-2">{t("capex_rev", language)} (%)</label>
               <input
                 type="number"
                 value={baseCapexRev}
                 onChange={(e) => setBaseCapexRev(Number(e.target.value))}
-                className="w-20 px-2 py-1 bg-slate-50 border border-[#E2E8F0] focus:border-emerald rounded-md text-right text-slate-900 font-mono text-xs focus:outline-none"
+                className="w-20 px-2 py-1 bg-ink-3 border border-line focus:border-emerald rounded-md text-right text-fg font-mono text-xs focus:outline-none"
               />
             </div>
 
             <div className="flex justify-between items-center">
-              <label className="text-slate-700">{t("cost_equity", language)} (%)</label>
+              <label className="text-fg-2">{t("cost_equity", language)} (%)</label>
               <input
                 type="number"
                 value={costEquity}
                 onChange={(e) => setCostEquity(Number(e.target.value))}
-                className="w-20 px-2 py-1 bg-slate-50 border border-[#E2E8F0] focus:border-emerald rounded-md text-right text-slate-900 font-mono text-xs focus:outline-none"
+                className="w-20 px-2 py-1 bg-ink-3 border border-line focus:border-emerald rounded-md text-right text-fg font-mono text-xs focus:outline-none"
               />
             </div>
 
             <div className="flex justify-between items-center">
-              <label className="text-slate-700">{t("terminal_growth", language)} (%)</label>
+              <label className="text-fg-2">{t("terminal_growth", language)} (%)</label>
               <input
                 type="number"
                 value={baseTerminalGrowth}
                 onChange={(e) => setBaseTerminalGrowth(Number(e.target.value))}
-                className="w-20 px-2 py-1 bg-slate-50 border border-[#E2E8F0] focus:border-emerald rounded-md text-right text-slate-900 font-mono text-xs focus:outline-none"
+                className="w-20 px-2 py-1 bg-ink-3 border border-line focus:border-emerald rounded-md text-right text-fg font-mono text-xs focus:outline-none"
               />
             </div>
           </div>
@@ -430,16 +430,16 @@ export default function DCFModel() {
       <div className="col-span-12 lg:col-span-8 space-y-6">
         {/* VALUATION SUMMARY BANNER */}
         <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
-          <div className="bg-white p-5 rounded-lg border border-[#E2E8F0] text-center shadow-xs">
-            <span className="text-[10px] font-mono text-slate-500 uppercase tracking-wider block mb-1 font-bold">
+          <div className="bg-ink-2 p-5 rounded-lg border border-line text-center shadow-xs">
+            <span className="text-[10px] font-mono text-fg-3 uppercase tracking-wider block mb-1 font-bold">
               Current Market Price
             </span>
-            <span className="font-mono text-2xl font-extrabold text-slate-900">
+            <span className="font-mono text-2xl font-extrabold text-fg">
               SAR <NumberCounter value={currentPrice} decimals={2} />
             </span>
           </div>
 
-          <div className="bg-emerald-dim p-5 rounded-lg border border-emerald-border text-center shadow-xs">
+          <div className="bg-emerald/10 p-5 rounded-lg border border-emerald/30 text-center shadow-xs">
             <span className="text-[10px] font-mono text-emerald uppercase tracking-wider font-bold block mb-1">
               {t("intrinsic_value", language)} ({activeScenario})
             </span>
@@ -452,14 +452,14 @@ export default function DCFModel() {
             </span>
           </div>
 
-          <div className="bg-white p-5 rounded-lg border border-[#E2E8F0] text-center flex flex-col items-center justify-center shadow-xs">
-            <span className="text-[10px] font-mono text-slate-500 uppercase tracking-wider block mb-1 font-bold">
+          <div className="bg-ink-2 p-5 rounded-lg border border-line text-center flex flex-col items-center justify-center shadow-xs">
+            <span className="text-[10px] font-mono text-fg-3 uppercase tracking-wider block mb-1 font-bold">
               {t("upside_downside", language)}
             </span>
             <span className={`flex items-center gap-1 font-mono text-xl font-extrabold px-3 py-0.5 rounded-md ${
               (dcfResult?.upsidePct || 0) >= 0 
-                ? "text-emerald bg-emerald-dim border border-emerald-border" 
-                : "text-rose-600 bg-rose-50 border border-rose-200"
+                ? "text-emerald bg-emerald/10 border border-emerald/30" 
+                : "text-neg bg-neg/10 border border-neg/30"
             }`}>
               {(dcfResult?.upsidePct || 0) >= 0 ? <TrendingUp size={16} /> : <TrendingDown size={16} />}
               {dcfResult?.upsidePct ? (
@@ -472,7 +472,7 @@ export default function DCFModel() {
         </div>
 
         {/* VISUALIZATION SUITE NAVIGATION TABS */}
-        <div className="flex items-center gap-2 border-b border-[#E2E8F0] pb-3 overflow-x-auto">
+        <div className="flex items-center gap-2 border-b border-line pb-3 overflow-x-auto">
           {[
             { id: "PROJECTIONS", label: isAr ? "توقعات التدفقات" : "5Y Cash Flows" },
             { id: "FOOTBALL", label: isAr ? "ملعب التقييم" : "Football Field" },
@@ -486,8 +486,8 @@ export default function DCFModel() {
                 onClick={() => setActiveTab(tab.id as any)}
                 className={`px-4 py-2 text-xs font-mono font-bold rounded-lg transition-all cursor-pointer whitespace-nowrap ${
                   active
-                    ? "bg-emerald text-white shadow-xs font-bold"
-                    : "bg-white text-slate-600 border border-[#E2E8F0] hover:text-slate-900"
+                    ? "bg-emerald text-ink-0 shadow-xs font-bold"
+                    : "bg-ink-2 text-fg-2 border border-line hover:text-fg"
                 }`}
               >
                 {tab.label}
@@ -499,52 +499,52 @@ export default function DCFModel() {
         {/* TAB CONTENTS */}
         {activeTab === "PROJECTIONS" && (
           <div className="space-y-6">
-            <div className="bg-white p-6 rounded-lg border border-[#E2E8F0] shadow-xs">
-              <h3 className="font-mono text-xs font-bold text-slate-900 uppercase tracking-wider mb-4">
+            <div className="bg-ink-2 p-6 rounded-lg border border-line shadow-xs">
+              <h3 className="font-mono text-xs font-bold text-fg uppercase tracking-wider mb-4">
                 5-Year Free Cash Flow Projections (SAR Millions)
               </h3>
               <div className="overflow-x-auto">
                 <table className="w-full font-mono text-xs text-left rtl:text-right border-collapse">
                   <thead>
-                    <tr className="bg-slate-50 text-slate-600 border-b border-[#E2E8F0]">
+                    <tr className="bg-ink-3 text-fg-2 border-b border-line">
                       <th className="p-2.5">Metric</th>
                       {dcfResult?.fcfProjections?.map((p: any) => (
                         <th key={p.year} className="p-2.5 text-right">{p.year}</th>
                       ))}
                     </tr>
                   </thead>
-                  <tbody className="divide-y divide-[#E2E8F0]">
+                  <tbody className="divide-y divide-line">
                     <tr>
-                      <td className="p-2.5 font-bold text-slate-900">Revenue</td>
+                      <td className="p-2.5 font-bold text-fg">Revenue</td>
                       {dcfResult?.fcfProjections?.map((p: any) => (
-                        <td key={p.year} className="p-2.5 text-right text-slate-700">{p.revenue.toLocaleString()}</td>
+                        <td key={p.year} className="p-2.5 text-right text-fg-2">{p.revenue.toLocaleString()}</td>
                       ))}
                     </tr>
                     <tr>
-                      <td className="p-2.5 text-slate-700">EBITDA</td>
+                      <td className="p-2.5 text-fg-2">EBITDA</td>
                       {dcfResult?.fcfProjections?.map((p: any) => (
-                        <td key={p.year} className="p-2.5 text-right text-slate-700">{p.ebitda.toLocaleString()}</td>
+                        <td key={p.year} className="p-2.5 text-right text-fg-2">{p.ebitda.toLocaleString()}</td>
                       ))}
                     </tr>
                     <tr>
-                      <td className="p-2.5 text-slate-700">EBIT</td>
+                      <td className="p-2.5 text-fg-2">EBIT</td>
                       {dcfResult?.fcfProjections?.map((p: any) => (
-                        <td key={p.year} className="p-2.5 text-right text-slate-700">{p.ebit.toLocaleString()}</td>
+                        <td key={p.year} className="p-2.5 text-right text-fg-2">{p.ebit.toLocaleString()}</td>
                       ))}
                     </tr>
                     <tr>
-                      <td className="p-2.5 text-slate-700">NOPAT (ex-Zakat)</td>
+                      <td className="p-2.5 text-fg-2">NOPAT (ex-Zakat)</td>
                       {dcfResult?.fcfProjections?.map((p: any) => (
-                        <td key={p.year} className="p-2.5 text-right text-slate-700">{p.nopat.toLocaleString()}</td>
+                        <td key={p.year} className="p-2.5 text-right text-fg-2">{p.nopat.toLocaleString()}</td>
                       ))}
                     </tr>
                     <tr>
-                      <td className="p-2.5 text-slate-600">CapEx</td>
+                      <td className="p-2.5 text-fg-2">CapEx</td>
                       {dcfResult?.fcfProjections?.map((p: any) => (
-                        <td key={p.year} className="p-2.5 text-right text-rose-600">-{p.capex.toLocaleString()}</td>
+                        <td key={p.year} className="p-2.5 text-right text-neg">-{p.capex.toLocaleString()}</td>
                       ))}
                     </tr>
-                    <tr className="bg-emerald-dim font-bold border-t border-emerald-border">
+                    <tr className="bg-emerald/10 font-bold border-t border-emerald/30">
                       <td className="p-2.5 text-emerald">Free Cash Flow (FCF)</td>
                       {dcfResult?.fcfProjections?.map((p: any) => (
                         <td key={p.year} className="p-2.5 text-right text-emerald font-bold">{p.fcf.toLocaleString()}</td>
@@ -556,9 +556,9 @@ export default function DCFModel() {
             </div>
 
             {/* 5x5 SENSITIVITY MATRIX HEATMAP */}
-            <div className="bg-white p-6 rounded-lg border border-[#E2E8F0] shadow-xs">
+            <div className="bg-ink-2 p-6 rounded-lg border border-line shadow-xs">
               <div className="flex items-center justify-between mb-4">
-                <h3 className="font-mono text-xs font-bold text-slate-900 uppercase tracking-wider">
+                <h3 className="font-mono text-xs font-bold text-fg uppercase tracking-wider">
                   {t("sensitivity_matrix", language)}
                 </h3>
                 <span className="text-[10px] font-mono text-emerald font-bold">
@@ -569,17 +569,17 @@ export default function DCFModel() {
               <div className="overflow-x-auto">
                 <table className="w-full font-mono text-xs text-center border-collapse">
                   <thead>
-                    <tr className="bg-slate-50">
-                      <th className="p-2 border border-[#E2E8F0] text-slate-600">WACC \ Growth</th>
+                    <tr className="bg-ink-3">
+                      <th className="p-2 border border-line text-fg-2">WACC \ Growth</th>
                       {dcfResult?.sensitivityMatrix?.[0]?.map((col: any, i: number) => (
-                        <th key={i} className="p-2 border border-[#E2E8F0] text-slate-700">{col.growth}%</th>
+                        <th key={i} className="p-2 border border-line text-fg-2">{col.growth}%</th>
                       ))}
                     </tr>
                   </thead>
                   <tbody>
                     {dcfResult?.sensitivityMatrix?.map((row: any, rIdx: number) => (
                       <tr key={rIdx}>
-                        <td className="p-2 border border-[#E2E8F0] font-bold text-slate-800 bg-slate-50">
+                        <td className="p-2 border border-line font-bold text-fg bg-ink-3">
                           {row[0]?.wacc}%
                         </td>
                         {row.map((cell: any, cIdx: number) => {
@@ -587,10 +587,10 @@ export default function DCFModel() {
                           return (
                             <td
                               key={cIdx}
-                              className={`p-2 border border-[#E2E8F0] font-bold transition-all ${
+                              className={`p-2 border border-line font-bold transition-all ${
                                 isBull 
-                                  ? "bg-emerald-dim text-emerald" 
-                                  : "bg-rose-50 text-rose-700"
+                                  ? "bg-emerald/10 text-emerald" 
+                                  : "bg-neg/10 text-neg"
                               }`}
                             >
                               SAR {cell.intrinsicValue}
@@ -606,14 +606,21 @@ export default function DCFModel() {
           </div>
         )}
 
-        {activeTab === "FOOTBALL" && (
-          <FootballFieldChart
-            currentPrice={currentPrice}
-            dcfBasePx={dcfResult?.intrinsicValuePerShare ? Number(dcfResult.intrinsicValuePerShare) : 38.45}
-            dcfBearPx={dcfResult?.intrinsicValuePerShare ? Number((Number(dcfResult.intrinsicValuePerShare) * 0.85).toFixed(2)) : 32.10}
-            dcfBullPx={dcfResult?.intrinsicValuePerShare ? Number((Number(dcfResult.intrinsicValuePerShare) * 1.18).toFixed(2)) : 45.80}
-          />
-        )}
+        {activeTab === "FOOTBALL" && (() => {
+          const cells: number[] = (dcfResult?.sensitivityMatrix || [])
+            .flat()
+            .map((c: any) => Number(c?.intrinsicValue))
+            .filter((v: number) => Number.isFinite(v) && v > 0);
+          const base = dcfResult?.intrinsicValuePerShare ? Number(dcfResult.intrinsicValuePerShare) : undefined;
+          return (
+            <FootballFieldChart
+              currentPrice={currentPrice}
+              dcfBasePx={base}
+              dcfBearPx={cells.length ? Math.min(...cells) : base}
+              dcfBullPx={cells.length ? Math.max(...cells) : base}
+            />
+          );
+        })()}
 
         {activeTab === "TORNADO" && (() => {
           const dynamicYears: DcfYear[] = (dcfResult?.fcfProjections || []).map((p: any, idx: number) => ({
@@ -664,7 +671,7 @@ export default function DCFModel() {
 
           return (
             <TornadoChart
-              baseSharePrice={dcfResult?.intrinsicValuePerShare ? Number(dcfResult.intrinsicValuePerShare) : 38.45}
+              baseSharePrice={dcfResult?.intrinsicValuePerShare ? Number(dcfResult.intrinsicValuePerShare) : 0}
               baseYears={dynamicYears}
               baseBridge={dynamicBridge}
               baseParams={dynamicParams}
@@ -705,7 +712,7 @@ export default function DCFModel() {
 
           return (
             <MonteCarloSimulation
-              baseSharePrice={dcfResult?.intrinsicValuePerShare ? Number(dcfResult.intrinsicValuePerShare) : 38.45}
+              baseSharePrice={dcfResult?.intrinsicValuePerShare ? Number(dcfResult.intrinsicValuePerShare) : 0}
               baseWacc={dcfResult?.wacc ? dcfResult.wacc / 100 : 0.089}
               baseGrowth={terminalGrowth / 100}
               baseRevenue={baseRevenue}

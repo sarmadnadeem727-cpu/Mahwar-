@@ -1,337 +1,167 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useMemo, useState } from "react";
 import Link from "next/link";
 import { motion, AnimatePresence } from "framer-motion";
-import { 
-  Columns, Newspaper, ShieldCheck, BarChart3, Layers, 
-  FileSpreadsheet, FileText, Table, Dices, Calculator, 
-  FileCheck, Pin, PinOff, ChevronRight, ChevronLeft, Sparkles,
-  Coins, Handshake, Activity,
-  RefreshCw, DollarSign, PackageCheck, ShieldAlert, Grid3X3,
-  TrendingUp, Ship, Award, MapPin, LayoutDashboard
-} from "lucide-react";
-import { useTerminalStore, PanelType } from "@/store/useTerminalStore";
-import { t } from "@/lib/i18n";
+import { PanelLeftClose, PanelLeftOpen, X } from "lucide-react";
+import { useTerminalStore } from "@/store/useTerminalStore";
 import MahwarLogo from "@/components/ui/MahwarLogo";
+import { APP, CLUSTERS, SUITES, TOOLS, type ToolDef } from "@/lib/registry";
 
-interface NavItem {
-  id: PanelType;
-  icon: React.ComponentType<{ size?: number; className?: string }>;
-  labelKey: string;
-  tag?: string;
-  subHeaderKey?: string;
-}
-
-interface NavGroup {
-  labelKey: string;
-  items: NavItem[];
-}
-
-const NAV_GROUPS: NavGroup[] = [
-  {
-    labelKey: "nav_platform",
-    items: [
-      { id: "hub", icon: Columns, labelKey: "panel_hub", tag: "HUB" },
-      { id: "news", icon: Newspaper, labelKey: "panel_news", tag: "LIVE" },
-    ],
-  },
-  {
-    labelKey: "nav_models",
-    items: [
-      { id: "DCF", icon: BarChart3, labelKey: "panel_dcf", tag: "VALUATION" },
-      { id: "ddm", icon: Coins, labelKey: "panel_ddm", tag: "DIVIDEND" },
-      { id: "npv_irr", icon: Calculator, labelKey: "panel_npv_irr", tag: "QUICK" },
-      { id: "wacc", icon: Activity, labelKey: "panel_wacc", tag: "CAPM" },
-      { id: "LBO", icon: Layers, labelKey: "panel_lbo", tag: "PE DEAL" },
-      { id: "merger_analysis", icon: Handshake, labelKey: "panel_merger_analysis", tag: "M&A" },
-      { id: "FS", icon: FileSpreadsheet, labelKey: "panel_three_statement", tag: "3S IFRS" },
-      { id: "custom_model", icon: Table, labelKey: "panel_custom_model", tag: "BUILDER" },
-      { id: "monte_carlo", icon: Dices, labelKey: "panel_monte_carlo", tag: "RISK" },
-      { id: "acquisition_cost", icon: Calculator, labelKey: "panel_acquisition_cost", tag: "M&A" },
-      { id: "auto_statements", icon: FileCheck, labelKey: "panel_auto_statements", tag: "AUTO" },
-    ],
-  },
-  {
-    labelKey: "nav_supply_chain",
-    items: [
-      { id: "operations_hub", icon: LayoutDashboard, labelKey: "panel_operations_hub", tag: "SUITE" },
-      // Working Capital Cluster
-      { id: "ccc", icon: RefreshCw, labelKey: "panel_ccc", tag: "WORKING CAP", subHeaderKey: "nav_sub_working_capital" },
-      { id: "wc_financing", icon: DollarSign, labelKey: "panel_wc_financing", tag: "CASH COST" },
-      // Inventory & Ordering Cluster
-      { id: "eoq", icon: PackageCheck, labelKey: "panel_eoq", tag: "INVENTORY", subHeaderKey: "nav_sub_inventory" },
-      { id: "safety_stock", icon: ShieldAlert, labelKey: "panel_safety_stock", tag: "SERVICE LVL" },
-      { id: "abc_xyz", icon: Grid3X3, labelKey: "panel_abc_xyz", tag: "PARETO" },
-      // Planning & Forecasting Cluster
-      { id: "demand_forecast", icon: TrendingUp, labelKey: "panel_demand_forecast", tag: "FORECAST", subHeaderKey: "nav_sub_planning" },
-      { id: "sop_worksheet", icon: FileSpreadsheet, labelKey: "panel_sop_worksheet", tag: "S&OP" },
-      // Cost & Sourcing Cluster
-      { id: "landed_cost", icon: Ship, labelKey: "panel_landed_cost", tag: "IMPORT", subHeaderKey: "nav_sub_cost" },
-      { id: "tco", icon: Coins, labelKey: "panel_tco", tag: "LIFECYCLE" },
-      { id: "supplier_scorecard", icon: Award, labelKey: "panel_supplier_scorecard", tag: "RADAR" },
-      // Network Logistics Cluster
-      { id: "facility_location", icon: MapPin, labelKey: "panel_facility_location", tag: "GRAVITY", subHeaderKey: "nav_sub_network" },
-    ],
-  },
-  {
-    labelKey: "nav_research",
-    items: [
-      { id: "shariah", icon: ShieldCheck, labelKey: "panel_shariah", tag: "AAOIFI" },
-      { id: "bi_report", icon: FileText, labelKey: "panel_bi_report", tag: "SYNTHESIS" },
-    ],
-  },
-];
+const EXPANDED = 272;
+const COLLAPSED = 64;
 
 export default function Sidebar() {
-  const { activePanel, setPanel, language, isMobileMenuOpen, setMobileMenuOpen } = useTerminalStore();
+  const { activePanel, setPanel, language, isMobileMenuOpen, setMobileMenuOpen, sessionAnalyses } = useTerminalStore();
   const isAr = language === "ar";
-  
-  // Hover & Pin State - default to pinned so text is always readable on arrival
-  const [isHovered, setIsHovered] = useState(false);
-  const [isPinned, setIsPinned] = useState(true);
+  const [collapsed, setCollapsed] = useState(false);
+  const expanded = !collapsed;
 
-  // Sidebar is expanded if hovered OR pinned open
-  const isExpanded = isHovered || isPinned;
+  const groups = useMemo(
+    () =>
+      SUITES.map((suite) => ({
+        suite,
+        items: TOOLS.filter((t) => t.suite === suite.id),
+      })),
+    []
+  );
 
-  return (
+  const hasData = (tool: ToolDef) => !!(tool.sessionKey && sessionAnalyses[tool.sessionKey]);
+
+  const nav = (
     <>
-      {/* Mobile Backdrop */}
-      <AnimatePresence>
-        {isMobileMenuOpen && (
-          <motion.div
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            exit={{ opacity: 0 }}
-            onClick={() => setMobileMenuOpen(false)}
-            className="fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-40 lg:hidden"
-          />
-        )}
-      </AnimatePresence>
-
-      <motion.aside
-        onMouseEnter={() => setIsHovered(true)}
-        onMouseLeave={() => setIsHovered(false)}
-        initial={false}
-        animate={{ 
-          width: isExpanded ? 350 : 76,
-        }}
-        transition={{ 
-          type: "spring", 
-          stiffness: 320, 
-          damping: 32,
-          mass: 0.8
-        }}
-        className={`fixed lg:relative bg-white border-r border-[#E2E8F0] flex flex-col h-screen top-0 z-50 lg:z-30 select-none no-print font-sans shadow-[2px_0_12px_rgba(0,0,0,0.03)] transition-[width,transform] duration-200 ${
-          isExpanded ? "ring-1 ring-slate-200/50" : ""
-        } ${
-          isMobileMenuOpen ? "translate-x-0 w-[320px]" : (isAr ? "translate-x-full lg:translate-x-0" : "-translate-x-full lg:translate-x-0")
-        }`}
-        dir={isAr ? "rtl" : "ltr"}
-        aria-label="Sidebar Navigation"
-      >
-      {/* BRAND LOGO HEADER */}
-      <div className="h-[68px] min-h-[68px] border-b border-[#E2E8F0] px-4 flex items-center justify-between overflow-hidden bg-white/80 backdrop-blur-xs">
-        <Link 
-          href="/" 
-          className="flex items-center gap-3.5 group cursor-pointer min-w-0"
-          title={isAr ? "العودة للرئيسية" : "Back to Home"}
-        >
-          <div className="shrink-0">
-            <MahwarLogo size={36} animate={true} />
-          </div>
-
-          <AnimatePresence>
-            {isExpanded && (
-              <motion.div
-                initial={{ opacity: 0, x: isAr ? 12 : -12 }}
-                animate={{ opacity: 1, x: 0 }}
-                exit={{ opacity: 0, x: isAr ? 12 : -12 }}
-                transition={{ duration: 0.2 }}
-                className="flex flex-col whitespace-nowrap overflow-hidden"
-              >
-                <span className="font-serif text-base font-extrabold tracking-wider text-slate-900 group-hover:text-emerald transition-colors leading-tight">
-                  MAHWAR
-                </span>
-                <span className="text-[10px] font-mono font-bold text-emerald tracking-widest uppercase">
-                  محور · TERMINAL
-                </span>
-              </motion.div>
-            )}
-          </AnimatePresence>
-        </Link>
-
-        {/* PIN TOGGLE BUTTON (VISIBLE WHEN EXPANDED) */}
-        <AnimatePresence>
-          {isExpanded && (
-            <motion.button
-              initial={{ opacity: 0, scale: 0.8 }}
-              animate={{ opacity: 1, scale: 1 }}
-              exit={{ opacity: 0, scale: 0.8 }}
-              transition={{ duration: 0.15 }}
-              onClick={() => setIsPinned(prev => !prev)}
-              className={`p-1.5 rounded-md text-slate-400 hover:text-slate-700 hover:bg-slate-100 transition-all cursor-pointer ${
-                isPinned ? "text-emerald bg-emerald-50 hover:bg-emerald-100" : ""
-              }`}
-              title={isPinned ? (isAr ? "إلغاء التثبيت" : "Unpin Sidebar") : (isAr ? "تثبيت الشريط" : "Pin Sidebar Open")}
-            >
-              {isPinned ? <Pin size={15} className="fill-emerald" /> : <PinOff size={15} />}
-            </motion.button>
+      <div className="h-14 min-h-14 px-3 flex items-center justify-between border-b border-line">
+        <Link href="/" className="flex items-center gap-3 min-w-0" title={isAr ? "الصفحة الرئيسية" : "Home"}>
+          <MahwarLogo size={30} animate={false} />
+          {expanded && (
+            <div className="leading-none whitespace-nowrap">
+              <div className="font-serif text-lg text-fg">{APP.name}</div>
+              <div className="font-mono text-[9px] tracking-[0.25em] text-fg-3 mt-1">{APP.nameAr} · v{APP.version}</div>
+            </div>
           )}
-        </AnimatePresence>
+        </Link>
+        <button
+          onClick={() => (isMobileMenuOpen ? setMobileMenuOpen(false) : setCollapsed((c) => !c))}
+          className="p-1.5 rounded text-fg-3 hover:text-fg hover:bg-ink-4 transition-colors"
+          aria-label={isMobileMenuOpen ? "Close menu" : collapsed ? "Expand sidebar" : "Collapse sidebar"}
+        >
+          {isMobileMenuOpen ? <X size={16} /> : collapsed ? <PanelLeftOpen size={16} /> : <PanelLeftClose size={16} />}
+        </button>
       </div>
 
-      {/* NAVIGATION ITEMS */}
-      <nav className="flex-1 overflow-y-auto overflow-x-hidden px-2.5 py-4 space-y-6 scrollbar-thin">
-        {NAV_GROUPS.map((group) => (
-          <div key={group.labelKey} className="space-y-1">
-            {/* GROUP TITLE */}
-            <AnimatePresence>
-              {isExpanded ? (
-                <motion.div
-                  initial={{ opacity: 0, height: 0 }}
-                  animate={{ opacity: 1, height: "auto" }}
-                  exit={{ opacity: 0, height: 0 }}
-                  transition={{ duration: 0.18 }}
-                  className="px-3 pb-1.5 text-[11px] font-mono font-bold text-slate-400 uppercase tracking-wider whitespace-normal leading-tight"
-                >
-                  {t(group.labelKey as any, language)}
-                </motion.div>
-              ) : (
-                <div className="h-2 w-full flex items-center justify-center">
-                  <div className="w-5 h-[1px] bg-slate-200 rounded" />
+      <nav className="flex-1 overflow-y-auto overflow-x-hidden py-3 scrollbar-thin" aria-label="Terminal modules">
+        {groups.map(({ suite, items }) => {
+          let lastCluster: string | undefined;
+          return (
+            <div key={suite.id} className="mb-4">
+              {expanded ? (
+                <div className="px-4 pb-1.5 font-mono text-[10px] tracking-[0.18em] text-fg-4 uppercase">
+                  {isAr ? suite.shortAr : suite.short}
                 </div>
+              ) : (
+                <div className="mx-auto my-2 w-5 h-px bg-line" />
               )}
-            </AnimatePresence>
-
-            {/* ITEMS LIST */}
-            <div className="space-y-1">
-              {group.items.map((item) => {
-                const active = activePanel === item.id;
-                const IconComponent = item.icon;
-                const label = t(item.labelKey as any, language);
-
+              {items.map((tool) => {
+                const Icon = tool.icon;
+                const active = activePanel === tool.id;
+                const showCluster = expanded && tool.cluster && tool.cluster !== lastCluster && suite.id === "operations";
+                lastCluster = tool.cluster;
                 return (
-                  <React.Fragment key={item.id}>
-                    {item.subHeaderKey && isExpanded && (
-                      <div className="pt-2.5 pb-1 px-3 text-[10px] font-mono font-bold text-slate-400 uppercase tracking-wider border-t border-slate-100 mt-1.5 whitespace-normal leading-tight">
-                        {t(item.subHeaderKey as any, language)}
-                      </div>
+                  <React.Fragment key={tool.id}>
+                    {showCluster && (
+                      <div className="px-4 pt-3 pb-1 text-[10px] text-fg-4">{isAr ? CLUSTERS[tool.cluster!].ar : CLUSTERS[tool.cluster!].en}</div>
                     )}
                     <button
                       onClick={() => {
-                        setPanel(item.id);
+                        setPanel(tool.id);
                         setMobileMenuOpen(false);
                       }}
-                      title={!isExpanded ? label : undefined}
-                    className={`relative w-full flex items-center rounded-xl transition-all duration-150 cursor-pointer group ${
-                      isExpanded 
-                        ? "gap-3 px-3 py-2 text-start min-h-[44px]" 
-                        : "justify-center h-12 w-full px-0"
-                    } ${
-                      active
-                        ? "bg-emerald-50 text-emerald-700 font-bold border border-emerald-200/80 shadow-2xs"
-                        : "text-slate-600 hover:text-slate-900 hover:bg-slate-100/80 font-medium"
-                    }`}
-                  >
-                    {/* ACTIVE ACCENT PILL */}
-                    {active && (
-                      <motion.div
-                        layoutId="active-indicator"
-                        className={`absolute rounded-full bg-emerald ${
-                          isExpanded 
-                            ? isAr ? "right-0 top-2 bottom-2 w-1" : "left-0 top-2 bottom-2 w-1"
-                            : "top-1.5 bottom-1.5 w-1 " + (isAr ? "right-0.5" : "left-0.5")
-                        }`}
-                        transition={{ type: "spring", stiffness: 350, damping: 30 }}
-                      />
-                    )}
-
-                    {/* ICON */}
-                    <div className={`shrink-0 flex items-center justify-center transition-transform group-hover:scale-105 ${
-                      active ? "text-emerald" : "text-slate-400 group-hover:text-slate-700"
-                    }`}>
-                      <IconComponent size={19} />
-                    </div>
-
-                    {/* LABEL & TAG WHEN EXPANDED */}
-                    <AnimatePresence>
-                      {isExpanded && (
-                        <motion.div
-                          initial={{ opacity: 0, x: isAr ? 10 : -10 }}
-                          animate={{ opacity: 1, x: 0 }}
-                          exit={{ opacity: 0, x: isAr ? 10 : -10 }}
-                          transition={{ duration: 0.18 }}
-                          className="flex-1 flex items-center justify-between min-w-0 text-start gap-2.5"
-                        >
-                          <span className="text-[13px] font-semibold tracking-normal text-slate-800 group-hover:text-slate-950 leading-snug whitespace-normal break-words">
-                            {label}
-                          </span>
-                          
-                          {item.tag && (
-                            <span className={`text-[9px] font-mono font-bold px-1.5 py-0.5 rounded tracking-wider shrink-0 uppercase ms-2 ${
-                              active 
-                                ? "bg-emerald text-white" 
-                                : "bg-slate-100 text-slate-500 group-hover:bg-slate-200"
-                            }`}>
-                              {item.tag}
-                            </span>
-                          )}
-                        </motion.div>
+                      title={!expanded ? (isAr ? tool.ar : tool.en) : undefined}
+                      aria-current={active ? "page" : undefined}
+                      className={`relative w-full flex items-center gap-3 px-3 mx-0 py-[7px] text-start transition-colors group ${
+                        expanded ? "" : "justify-center"
+                      } ${active ? "text-fg" : "text-fg-2 hover:text-fg hover:bg-ink-3/70"}`}
+                    >
+                      {active && (
+                        <motion.span
+                          layoutId="sidebar-active"
+                          className={`absolute inset-y-1 ${isAr ? "right-0" : "left-0"} w-[3px] rounded-full bg-emerald-light shadow-[0_0_12px_var(--emerald-light)]`}
+                          transition={{ type: "spring", stiffness: 380, damping: 32 }}
+                        />
                       )}
-                    </AnimatePresence>
-                  </button>
-                </React.Fragment>
-              );
+                      {active && <span className="absolute inset-0 bg-emerald/10" />}
+                      <Icon size={16} className={`relative shrink-0 ${active ? "text-emerald-light" : "text-fg-3 group-hover:text-fg-2"}`} />
+                      {expanded && (
+                        <span className="relative flex-1 flex items-center justify-between min-w-0 gap-2">
+                          <span className="text-[13px] truncate">{isAr ? tool.ar : tool.en}</span>
+                          <span className="flex items-center gap-1.5 shrink-0">
+                            {hasData(tool) && <span className="w-1.5 h-1.5 rounded-full bg-emerald-light" title={isAr ? "محفوظ في الجلسة" : "Saved in session"} />}
+                            <span className={`font-mono text-[9.5px] tracking-wider ${active ? "text-emerald-light" : "text-fg-4"}`}>{tool.code}</span>
+                          </span>
+                        </span>
+                      )}
+                    </button>
+                  </React.Fragment>
+                );
               })}
             </div>
-          </div>
-        ))}
+          );
+        })}
       </nav>
 
-      {/* FOOTER WORKSPACE ENGINE STATUS */}
-      <div className="border-t border-[#E2E8F0] bg-slate-50/90 p-3 overflow-hidden">
-        {isExpanded ? (
-          <motion.div
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            exit={{ opacity: 0 }}
-            transition={{ duration: 0.2 }}
-            className="space-y-2"
-          >
-            <div className="flex items-center justify-between text-xs font-mono">
-              <div className="flex items-center gap-2">
-                <span className="relative flex h-2.5 w-2.5">
-                  <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald opacity-75"></span>
-                  <span className="relative inline-flex rounded-full h-2.5 w-2.5 bg-emerald"></span>
-                </span>
-                <span className="font-bold text-slate-800 uppercase tracking-wider text-[11px]">
-                  {isAr ? "المحرك متصل" : "ENGINE ONLINE"}
-                </span>
-              </div>
-              <span className="text-[10px] font-bold text-emerald bg-emerald-50 px-1.5 py-0.5 rounded border border-emerald-200/50">
-                v2.5
-              </span>
-            </div>
-
-            <div className="text-[11px] font-mono text-slate-500 border-t border-slate-200/70 pt-1.5 flex items-center justify-between">
-              <span className="truncate">{isAr ? "محطة عمل محور" : "Mahwar Sovereign"}</span>
-              <span className="text-slate-400 text-[10px]">60FPS</span>
-            </div>
-          </motion.div>
-        ) : (
-          <div className="flex flex-col items-center justify-center py-1">
-            <div 
-              className="relative flex h-3 w-3 cursor-pointer" 
-              title={isAr ? "محرك محور نشط" : "Mahwar Engine Online"}
-            >
-              <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald opacity-75"></span>
-              <span className="relative inline-flex rounded-full h-3 w-3 bg-emerald"></span>
-            </div>
+      <div className="border-t border-line p-3 font-mono text-[10px] text-fg-3">
+        {expanded ? (
+          <div className="flex items-center justify-between">
+            <span className="flex items-center gap-2">
+              <span className="w-1.5 h-1.5 rounded-full bg-emerald-light animate-pulse" />
+              {isAr ? "المحرك يعمل محلياً" : "engines run locally"}
+            </span>
+            <span>{Object.keys(sessionAnalyses).length} {isAr ? "محفوظ" : "saved"}</span>
           </div>
+        ) : (
+          <span className="block mx-auto w-1.5 h-1.5 rounded-full bg-emerald-light animate-pulse" />
         )}
       </div>
-    </motion.aside>
+    </>
+  );
+
+  return (
+    <>
+      {/* Desktop */}
+      <motion.aside
+        initial={false}
+        animate={{ width: expanded ? EXPANDED : COLLAPSED }}
+        transition={{ type: "spring", stiffness: 320, damping: 34 }}
+        className="hidden lg:flex flex-col h-full bg-ink-2 border-e border-line shrink-0 no-print"
+        dir={isAr ? "rtl" : "ltr"}
+      >
+        {nav}
+      </motion.aside>
+
+      {/* Mobile drawer */}
+      <AnimatePresence>
+        {isMobileMenuOpen && (
+          <>
+            <motion.div
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              onClick={() => setMobileMenuOpen(false)}
+              className="fixed inset-0 bg-ink-0/70 backdrop-blur-sm z-40 lg:hidden"
+            />
+            <motion.aside
+              initial={{ x: isAr ? "100%" : "-100%" }}
+              animate={{ x: 0 }}
+              exit={{ x: isAr ? "100%" : "-100%" }}
+              transition={{ type: "spring", stiffness: 320, damping: 34 }}
+              className={`fixed top-0 bottom-0 ${isAr ? "right-0" : "left-0"} w-[280px] flex flex-col bg-ink-2 border-e border-line z-50 lg:hidden`}
+              dir={isAr ? "rtl" : "ltr"}
+            >
+              {nav}
+            </motion.aside>
+          </>
+        )}
+      </AnimatePresence>
     </>
   );
 }

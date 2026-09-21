@@ -25,18 +25,18 @@ export default function ChartWrapper({
   return (
     <div className={`panel-data overflow-hidden flex flex-col ${className}`} dir={isAr ? "rtl" : "ltr"}>
       {/* Header */}
-      <div className="flex items-center justify-between p-4 border-b border-[#E2E8F0] bg-slate-50/50">
+      <div className="flex items-center justify-between p-4 border-b border-line bg-ink-3/90">
         <div>
-          <h3 className="font-mono font-bold text-slate-900 text-sm uppercase tracking-tight">{title}</h3>
+          <h3 className="font-mono font-bold text-fg text-sm uppercase tracking-tight">{title}</h3>
           {subtitle && (
-            <p className="text-[10px] font-mono text-slate-500 uppercase mt-0.5">{subtitle}</p>
+            <p className="text-[10px] font-mono text-fg-3 uppercase mt-0.5">{subtitle}</p>
           )}
         </div>
         <div className="flex items-center gap-2">
           {onExportExcel && (
             <button 
               onClick={onExportExcel}
-              className="p-1.5 text-slate-400 hover:text-emerald hover:bg-emerald/10 rounded transition-colors"
+              className="p-1.5 text-fg-3 hover:text-emerald hover:bg-emerald/10 rounded transition-colors"
               title="Export to Excel"
             >
               <FileSpreadsheet size={16} />
@@ -45,7 +45,7 @@ export default function ChartWrapper({
           {onExportPDF && (
             <button 
               onClick={onExportPDF}
-              className="p-1.5 text-slate-400 hover:text-rose-600 hover:bg-rose-50 rounded transition-colors"
+              className="p-1.5 text-fg-3 hover:text-neg hover:bg-neg/10 rounded transition-colors"
               title="Export to PDF"
             >
               <FileText size={16} />

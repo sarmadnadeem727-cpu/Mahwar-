@@ -99,20 +99,20 @@ export default function AutoFinancialStatements() {
       initial="initial"
       animate="animate"
       exit="exit"
-      className="space-y-6 font-sans text-slate-800"
+      className="space-y-6 font-sans text-fg"
       dir={isAr ? "rtl" : "ltr"}
     >
       {/* TITLE HEADER */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 panel-input p-5">
         <div className="flex items-center gap-3">
-          <div className="p-3 rounded-lg bg-emerald-dim border border-emerald-border text-emerald">
+          <div className="p-3 rounded-lg bg-emerald/10 border border-emerald/30 text-emerald">
             <FileCheck size={24} />
           </div>
           <div>
-            <h1 className="font-serif text-xl font-bold text-slate-heading">
+            <h1 className="font-serif text-xl font-bold text-fg">
               {isAr ? "محرك توليد القوائم المالية التلقائي" : "Guided Auto-Generated Financial Statements"}
             </h1>
-            <p className="text-xs text-slate-muted font-sans font-medium">
+            <p className="text-xs text-fg-3 font-sans font-medium">
               {isAr ? "أسرع طريقة لبناء القوائم المترابطة (الدخل، الميزانية، التدفقات) عبر إدخال المتغيرات الأساسية" : "Fastest zero-formula way to build linked Income, Balance Sheet, and Cash Flow statements"}
             </p>
           </div>
@@ -120,7 +120,7 @@ export default function AutoFinancialStatements() {
 
         <button
           onClick={sendToDcf}
-          className="flex items-center justify-center gap-2 px-5 py-2.5 rounded-lg bg-emerald hover:bg-emerald-light text-white font-mono font-bold text-xs uppercase tracking-wider transition-all cursor-pointer shadow-xs group"
+          className="flex items-center justify-center gap-2 px-5 py-2.5 rounded-lg bg-emerald hover:bg-emerald-light text-ink-0 font-mono font-bold text-xs uppercase tracking-wider transition-all cursor-pointer shadow-xs group"
         >
           <span>{isAr ? "إرسال إلى نموذج DCF" : "Export to DCF Engine"}</span>
           <ArrowRight size={14} className="group-hover:translate-x-1 rtl:group-hover:-translate-x-1 transition-transform" />
@@ -132,105 +132,105 @@ export default function AutoFinancialStatements() {
         
         {/* GUIDED INPUT FORM */}
         <div className="panel-input p-5 space-y-4">
-          <h3 className="font-mono text-xs font-bold text-slate-heading uppercase tracking-wider border-b border-surface-border pb-3 flex items-center gap-2">
+          <h3 className="font-mono text-xs font-bold text-fg uppercase tracking-wider border-b border-line pb-3 flex items-center gap-2">
             <Sliders size={14} className="text-emerald" />
             <span>{isAr ? "إدخال المؤشرات الرئيسية" : "Core Operational Inputs"}</span>
           </h3>
 
           <div className="space-y-3.5 text-xs font-sans">
             <div>
-              <label className="text-slate-body font-medium block mb-1">Base Year Revenue (SAR M)</label>
+              <label className="text-fg-2 font-medium block mb-1">Base Year Revenue (SAR M)</label>
               <input
                 type="number"
                 value={baseRevenue}
                 onChange={(e) => setBaseRevenue(Number(e.target.value))}
-                className="w-full px-3 py-2 rounded bg-surface-subtle border border-surface-border font-mono text-xs font-bold text-slate-heading"
+                className="w-full px-3 py-2 rounded bg-ink-3 border border-line font-mono text-xs font-bold text-fg"
               />
             </div>
 
             <div>
-              <label className="text-slate-body font-medium block mb-1">Annual Revenue Growth Rate (%)</label>
+              <label className="text-fg-2 font-medium block mb-1">Annual Revenue Growth Rate (%)</label>
               <input
                 type="number"
                 step="0.5"
                 value={growthRate}
                 onChange={(e) => setGrowthRate(Number(e.target.value))}
-                className="w-full px-3 py-2 rounded bg-surface-subtle border border-surface-border font-mono text-xs"
+                className="w-full px-3 py-2 rounded bg-ink-3 border border-line font-mono text-xs"
               />
             </div>
 
             <div>
-              <label className="text-slate-body font-medium block mb-1">COGS / Revenue (%)</label>
+              <label className="text-fg-2 font-medium block mb-1">COGS / Revenue (%)</label>
               <input
                 type="number"
                 step="0.5"
                 value={cogsMargin}
                 onChange={(e) => setCogsMargin(Number(e.target.value))}
-                className="w-full px-3 py-2 rounded bg-surface-subtle border border-surface-border font-mono text-xs"
+                className="w-full px-3 py-2 rounded bg-ink-3 border border-line font-mono text-xs"
               />
             </div>
 
             <div>
-              <label className="text-slate-body font-medium block mb-1">OPEX / Revenue (%)</label>
+              <label className="text-fg-2 font-medium block mb-1">OPEX / Revenue (%)</label>
               <input
                 type="number"
                 step="0.5"
                 value={opexMargin}
                 onChange={(e) => setOpexMargin(Number(e.target.value))}
-                className="w-full px-3 py-2 rounded bg-surface-subtle border border-surface-border font-mono text-xs"
+                className="w-full px-3 py-2 rounded bg-ink-3 border border-line font-mono text-xs"
               />
             </div>
 
             <div>
-              <label className="text-slate-body font-medium block mb-1">Saudi Zakat / Tax Rate (%)</label>
+              <label className="text-fg-2 font-medium block mb-1">Saudi Zakat / Tax Rate (%)</label>
               <input
                 type="number"
                 step="0.1"
                 value={taxZakatRate}
                 onChange={(e) => setTaxZakatRate(Number(e.target.value))}
-                className="w-full px-3 py-2 rounded bg-surface-subtle border border-surface-border font-mono text-xs"
+                className="w-full px-3 py-2 rounded bg-ink-3 border border-line font-mono text-xs"
               />
             </div>
 
             <div>
-              <label className="text-slate-body font-medium block mb-1">CapEx / Revenue (%)</label>
+              <label className="text-fg-2 font-medium block mb-1">CapEx / Revenue (%)</label>
               <input
                 type="number"
                 step="0.5"
                 value={capexPct}
                 onChange={(e) => setCapexPct(Number(e.target.value))}
-                className="w-full px-3 py-2 rounded bg-surface-subtle border border-surface-border font-mono text-xs"
+                className="w-full px-3 py-2 rounded bg-ink-3 border border-line font-mono text-xs"
               />
             </div>
 
             <div>
-              <label className="text-slate-body font-medium block mb-1">D&A / Revenue (%)</label>
+              <label className="text-fg-2 font-medium block mb-1">D&A / Revenue (%)</label>
               <input
                 type="number"
                 step="0.5"
                 value={dnaPct}
                 onChange={(e) => setDnaPct(Number(e.target.value))}
-                className="w-full px-3 py-2 rounded bg-surface-subtle border border-surface-border font-mono text-xs"
+                className="w-full px-3 py-2 rounded bg-ink-3 border border-line font-mono text-xs"
               />
             </div>
 
             <div>
-              <label className="text-slate-body font-medium block mb-1">Starting Cash (SAR M)</label>
+              <label className="text-fg-2 font-medium block mb-1">Starting Cash (SAR M)</label>
               <input
                 type="number"
                 value={startingCash}
                 onChange={(e) => setStartingCash(Number(e.target.value))}
-                className="w-full px-3 py-2 rounded bg-surface-subtle border border-surface-border font-mono text-xs"
+                className="w-full px-3 py-2 rounded bg-ink-3 border border-line font-mono text-xs"
               />
             </div>
 
             <div>
-              <label className="text-slate-body font-medium block mb-1">Starting Debt (SAR M)</label>
+              <label className="text-fg-2 font-medium block mb-1">Starting Debt (SAR M)</label>
               <input
                 type="number"
                 value={startingDebt}
                 onChange={(e) => setStartingDebt(Number(e.target.value))}
-                className="w-full px-3 py-2 rounded bg-surface-subtle border border-surface-border font-mono text-xs"
+                className="w-full px-3 py-2 rounded bg-ink-3 border border-line font-mono text-xs"
               />
             </div>
           </div>
@@ -242,12 +242,12 @@ export default function AutoFinancialStatements() {
           <div className="panel-input p-5 space-y-4">
             
             {/* STATEMENT SELECTOR TABS */}
-            <div className="flex items-center justify-between border-b border-surface-border pb-3">
+            <div className="flex items-center justify-between border-b border-line pb-3">
               <div className="flex items-center gap-2">
                 <button
                   onClick={() => setActiveTab("IS")}
                   className={`px-3 py-1.5 rounded font-mono text-xs font-bold transition-all cursor-pointer ${
-                    activeTab === "IS" ? "bg-emerald text-white" : "bg-surface-subtle border border-surface-border text-slate-muted"
+                    activeTab === "IS" ? "bg-emerald text-ink-0" : "bg-ink-3 border border-line text-fg-3"
                   }`}
                 >
                   Income Statement
@@ -255,7 +255,7 @@ export default function AutoFinancialStatements() {
                 <button
                   onClick={() => setActiveTab("CF")}
                   className={`px-3 py-1.5 rounded font-mono text-xs font-bold transition-all cursor-pointer ${
-                    activeTab === "CF" ? "bg-emerald text-white" : "bg-surface-subtle border border-surface-border text-slate-muted"
+                    activeTab === "CF" ? "bg-emerald text-ink-0" : "bg-ink-3 border border-line text-fg-3"
                   }`}
                 >
                   Cash Flow Statement
@@ -263,14 +263,14 @@ export default function AutoFinancialStatements() {
                 <button
                   onClick={() => setActiveTab("BS")}
                   className={`px-3 py-1.5 rounded font-mono text-xs font-bold transition-all cursor-pointer ${
-                    activeTab === "BS" ? "bg-emerald text-white" : "bg-surface-subtle border border-surface-border text-slate-muted"
+                    activeTab === "BS" ? "bg-emerald text-ink-0" : "bg-ink-3 border border-line text-fg-3"
                   }`}
                 >
                   Balance Sheet
                 </button>
               </div>
 
-              <div className="flex items-center gap-1 text-[10px] font-mono text-emerald font-bold bg-emerald-dim px-2.5 py-1 rounded border border-emerald-border">
+              <div className="flex items-center gap-1 text-[10px] font-mono text-emerald font-bold bg-emerald/10 px-2.5 py-1 rounded border border-emerald/30">
                 <CheckCircle2 size={12} />
                 <span>3-STATEMENTS LINKED</span>
               </div>
@@ -280,45 +280,45 @@ export default function AutoFinancialStatements() {
             <div className="overflow-x-auto">
               <table className="w-full text-xs font-mono text-left rtl:text-right border-collapse">
                 <thead>
-                  <tr className="border-b border-surface-border bg-surface-subtle text-slate-muted">
+                  <tr className="border-b border-line bg-ink-3 text-fg-3">
                     <th className="py-2.5 px-3">Line Item (SAR M)</th>
                     {projectionData.map(d => (
                       <th key={d.year} className="py-2.5 px-3 text-right">{d.year}</th>
                     ))}
                   </tr>
                 </thead>
-                <tbody className="divide-y divide-surface-border">
+                <tbody className="divide-y divide-line">
                   {activeTab === "IS" && (
                     <>
                       <tr>
-                        <td className="py-2 px-3 font-bold text-slate-heading">Revenue</td>
+                        <td className="py-2 px-3 font-bold text-fg">Revenue</td>
                         {projectionData.map(d => <td key={d.year} className="py-2 px-3 text-right font-bold">{d.revenue}</td>)}
                       </tr>
                       <tr>
-                        <td className="py-2 px-3 text-slate-muted">COGS</td>
-                        {projectionData.map(d => <td key={d.year} className="py-2 px-3 text-right text-slate-muted">({d.cogs})</td>)}
+                        <td className="py-2 px-3 text-fg-3">COGS</td>
+                        {projectionData.map(d => <td key={d.year} className="py-2 px-3 text-right text-fg-3">({d.cogs})</td>)}
                       </tr>
-                      <tr className="bg-surface-subtle font-bold">
-                        <td className="py-2 px-3 text-slate-heading">Gross Profit</td>
+                      <tr className="bg-ink-3 font-bold">
+                        <td className="py-2 px-3 text-fg">Gross Profit</td>
                         {projectionData.map(d => <td key={d.year} className="py-2 px-3 text-right text-emerald">{d.grossProfit}</td>)}
                       </tr>
                       <tr>
-                        <td className="py-2 px-3 text-slate-muted">OPEX</td>
-                        {projectionData.map(d => <td key={d.year} className="py-2 px-3 text-right text-slate-muted">({d.opex})</td>)}
+                        <td className="py-2 px-3 text-fg-3">OPEX</td>
+                        {projectionData.map(d => <td key={d.year} className="py-2 px-3 text-right text-fg-3">({d.opex})</td>)}
                       </tr>
                       <tr className="font-bold">
-                        <td className="py-2 px-3 text-slate-heading">EBITDA</td>
-                        {projectionData.map(d => <td key={d.year} className="py-2 px-3 text-right text-slate-heading">{d.ebitda}</td>)}
+                        <td className="py-2 px-3 text-fg">EBITDA</td>
+                        {projectionData.map(d => <td key={d.year} className="py-2 px-3 text-right text-fg">{d.ebitda}</td>)}
                       </tr>
                       <tr>
-                        <td className="py-2 px-3 text-slate-muted">D&A</td>
-                        {projectionData.map(d => <td key={d.year} className="py-2 px-3 text-right text-slate-muted">({d.dna})</td>)}
+                        <td className="py-2 px-3 text-fg-3">D&A</td>
+                        {projectionData.map(d => <td key={d.year} className="py-2 px-3 text-right text-fg-3">({d.dna})</td>)}
                       </tr>
                       <tr>
-                        <td className="py-2 px-3 text-slate-muted">Zakat / Tax (2.5%)</td>
-                        {projectionData.map(d => <td key={d.year} className="py-2 px-3 text-right text-slate-muted">({d.taxZakat})</td>)}
+                        <td className="py-2 px-3 text-fg-3">Zakat / Tax (2.5%)</td>
+                        {projectionData.map(d => <td key={d.year} className="py-2 px-3 text-right text-fg-3">({d.taxZakat})</td>)}
                       </tr>
-                      <tr className="bg-emerald-dim font-bold text-emerald border-t border-emerald-border">
+                      <tr className="bg-emerald/10 font-bold text-emerald border-t border-emerald/30">
                         <td className="py-2.5 px-3">NET INCOME</td>
                         {projectionData.map(d => <td key={d.year} className="py-2.5 px-3 text-right text-sm">{d.netIncome}</td>)}
                       </tr>
@@ -328,22 +328,22 @@ export default function AutoFinancialStatements() {
                   {activeTab === "CF" && (
                     <>
                       <tr className="font-bold">
-                        <td className="py-2 px-3 text-slate-heading">Net Income</td>
+                        <td className="py-2 px-3 text-fg">Net Income</td>
                         {projectionData.map(d => <td key={d.year} className="py-2 px-3 text-right">{d.netIncome}</td>)}
                       </tr>
                       <tr>
-                        <td className="py-2 px-3 text-slate-muted">+ Depreciation & Amortization</td>
+                        <td className="py-2 px-3 text-fg-3">+ Depreciation & Amortization</td>
                         {projectionData.map(d => <td key={d.year} className="py-2 px-3 text-right">{d.dna}</td>)}
                       </tr>
-                      <tr className="bg-surface-subtle font-bold">
-                        <td className="py-2 px-3 text-slate-heading">Operating Cash Flow (OCF)</td>
+                      <tr className="bg-ink-3 font-bold">
+                        <td className="py-2 px-3 text-fg">Operating Cash Flow (OCF)</td>
                         {projectionData.map(d => <td key={d.year} className="py-2 px-3 text-right text-emerald">{d.ocf}</td>)}
                       </tr>
                       <tr>
-                        <td className="py-2 px-3 text-slate-muted">Capital Expenditures (CapEx)</td>
-                        {projectionData.map(d => <td key={d.year} className="py-2 px-3 text-right text-slate-muted">({d.capex})</td>)}
+                        <td className="py-2 px-3 text-fg-3">Capital Expenditures (CapEx)</td>
+                        {projectionData.map(d => <td key={d.year} className="py-2 px-3 text-right text-fg-3">({d.capex})</td>)}
                       </tr>
-                      <tr className="bg-emerald-dim font-bold text-emerald border-t border-emerald-border">
+                      <tr className="bg-emerald/10 font-bold text-emerald border-t border-emerald/30">
                         <td className="py-2.5 px-3">FREE CASH FLOW (FCF)</td>
                         {projectionData.map(d => <td key={d.year} className="py-2.5 px-3 text-right text-sm">{d.fcf}</td>)}
                       </tr>
@@ -353,22 +353,22 @@ export default function AutoFinancialStatements() {
                   {activeTab === "BS" && (
                     <>
                       <tr>
-                        <td className="py-2 px-3 font-bold text-slate-heading">Cash & Equivalents</td>
+                        <td className="py-2 px-3 font-bold text-fg">Cash & Equivalents</td>
                         {projectionData.map(d => <td key={d.year} className="py-2 px-3 text-right text-emerald font-bold">{d.cash}</td>)}
                       </tr>
                       <tr>
-                        <td className="py-2 px-3 text-slate-muted">Net PP&E</td>
+                        <td className="py-2 px-3 text-fg-3">Net PP&E</td>
                         {projectionData.map(d => <td key={d.year} className="py-2 px-3 text-right">{d.netPpe}</td>)}
                       </tr>
-                      <tr className="bg-surface-subtle font-bold">
-                        <td className="py-2 px-3 text-slate-heading">TOTAL ASSETS</td>
+                      <tr className="bg-ink-3 font-bold">
+                        <td className="py-2 px-3 text-fg">TOTAL ASSETS</td>
                         {projectionData.map(d => <td key={d.year} className="py-2 px-3 text-right">{d.totalAssets}</td>)}
                       </tr>
                       <tr>
-                        <td className="py-2 px-3 text-slate-muted">Total Debt</td>
+                        <td className="py-2 px-3 text-fg-3">Total Debt</td>
                         {projectionData.map(d => <td key={d.year} className="py-2 px-3 text-right">{d.debt}</td>)}
                       </tr>
-                      <tr className="bg-emerald-dim font-bold text-emerald">
+                      <tr className="bg-emerald/10 font-bold text-emerald">
                         <td className="py-2.5 px-3">SHAREHOLDERS' EQUITY</td>
                         {projectionData.map(d => <td key={d.year} className="py-2.5 px-3 text-right">{d.equity}</td>)}
                       </tr>

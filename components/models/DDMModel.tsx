@@ -80,10 +80,10 @@ export default function DDMModel() {
       <div className="flex items-center gap-3 mb-6">
         <Coins className="text-emerald" size={24} />
         <div>
-          <h2 className="font-mono text-xl font-extrabold text-slate-900 uppercase">
+          <h2 className="font-mono text-xl font-extrabold text-fg uppercase">
             {isAr ? "نموذج خصم التوزيعات (DDM)" : "Dividend Discount Model (DDM)"}
           </h2>
-          <p className="text-xs text-slate-500 font-mono">
+          <p className="text-xs text-fg-3 font-mono">
             {isAr ? "تقييم الشركات الموزعة للأرباح بنموذج متعدد المراحل" : "Multi-stage valuation for dividend-paying equities"}
           </p>
         </div>
@@ -93,7 +93,7 @@ export default function DDMModel() {
         {/* INPUTS - 4 COLS */}
         <div className="lg:col-span-4 space-y-6">
           <div className="panel-input p-5 space-y-4">
-            <h3 className="font-bold text-slate-900 font-mono text-xs uppercase border-b pb-2">
+            <h3 className="font-bold text-fg font-mono text-xs uppercase border-b pb-2">
               {isAr ? "المدخلات الأساسية" : "Model Assumptions"}
             </h3>
             <InputGroup label={isAr ? "توزيعات السهم الحالية (DPS)" : "Current DPS"} value={currentDPS} onChange={setCurrentDPS} prefix={currency} step={0.1} />
@@ -101,7 +101,7 @@ export default function DDMModel() {
           </div>
 
           <div className="panel-input p-5 space-y-4">
-            <h3 className="font-bold text-slate-900 font-mono text-xs uppercase border-b pb-2">
+            <h3 className="font-bold text-fg font-mono text-xs uppercase border-b pb-2">
               {isAr ? "مراحل النمو" : "Growth Stages"}
             </h3>
             <InputGroup label={isAr ? "معدل النمو العالي" : "High Growth Rate"} value={highGrowthRate} onChange={setHighGrowthRate} suffix="%" step={0.5} />
@@ -110,7 +110,7 @@ export default function DDMModel() {
           </div>
           
           <div className="panel-result text-white p-6 flex flex-col items-center justify-center text-center">
-            <span className="block text-xs text-slate-400 font-mono uppercase mb-2">
+            <span className="block text-xs text-fg-3 font-mono uppercase mb-2">
               {isAr ? "القيمة الضمنية للسهم" : "Implied Share Price"}
             </span>
             <span className="font-mono text-4xl font-extrabold text-emerald tracking-tight">
@@ -124,17 +124,17 @@ export default function DDMModel() {
           <ChartWrapper title={isAr ? "جسر القيمة الحالية" : "Value Contribution Bridge"} isAr={isAr}>
             <ResponsiveContainer width="100%" height={250}>
               <BarChart data={results.bridgeData} margin={{ top: 20, right: 30, left: 20, bottom: 5 }}>
-                <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#E2E8F0" />
-                <XAxis dataKey="name" axisLine={false} tickLine={false} tick={{ fontSize: 10, fill: '#64748b', fontFamily: 'monospace' }} />
-                <YAxis axisLine={false} tickLine={false} tick={{ fontSize: 10, fill: '#64748b', fontFamily: 'monospace' }} tickFormatter={(val) => `${currency} ${val}`} />
+                <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="rgba(158,190,180,0.14)" />
+                <XAxis dataKey="name" axisLine={false} tickLine={false} tick={{ fontSize: 10, fill: '#a7b9b2', fontFamily: 'monospace' }} />
+                <YAxis axisLine={false} tickLine={false} tick={{ fontSize: 10, fill: '#a7b9b2', fontFamily: 'monospace' }} tickFormatter={(val) => `${currency} ${val}`} />
                 <ReTooltip
-                  cursor={{ fill: '#F8FAFC' }}
+                  cursor={{ fill: '#131e23' }}
                   contentStyle={{ fontFamily: 'monospace', fontSize: '12px', borderRadius: '8px', border: '1px solid #E2E8F0', boxShadow: '0 4px 6px -1px rgb(0 0 0 / 0.1)' }}
                   formatter={(val: number) => [`${currency} ${val.toFixed(2)}`, "PV Contribution"]}
                 />
                 <Bar dataKey="value" radius={[4, 4, 0, 0]} maxBarSize={60}>
                   {results.bridgeData.map((entry, index) => (
-                    <Cell key={`cell-${index}`} fill={entry.type === 'tv' ? '#0f172a' : '#10b981'} />
+                    <Cell key={`cell-${index}`} fill={entry.type === 'tv' ? '#e8f1ed' : '#17a88a'} />
                   ))}
                 </Bar>
               </BarChart>
@@ -143,28 +143,28 @@ export default function DDMModel() {
 
           {/* Sensitivity Table */}
           <div className="panel-input p-5 overflow-x-auto">
-            <h3 className="font-bold text-slate-900 font-mono text-xs uppercase mb-4">
+            <h3 className="font-bold text-fg font-mono text-xs uppercase mb-4">
               {isAr ? "جدول الحساسية (تكلفة الملكية مقابل النمو النهائي)" : "Sensitivity Analysis (Ke vs Terminal Growth)"}
             </h3>
             <table className="w-full text-xs font-mono text-right" dir="ltr">
               <thead>
                 <tr>
-                  <th className="p-2 border-b-2 border-r-2 border-[#E2E8F0] bg-slate-50 text-slate-500 font-bold">Ke \ TG</th>
+                  <th className="p-2 border-b-2 border-r-2 border-line bg-ink-3 text-fg-3 font-bold">Ke \ TG</th>
                   {results.sensTg.map(tg => (
-                    <th key={tg} className="p-2 border-b-2 border-[#E2E8F0] bg-slate-50 text-slate-700">{tg.toFixed(1)}%</th>
+                    <th key={tg} className="p-2 border-b-2 border-line bg-ink-3 text-fg-2">{tg.toFixed(1)}%</th>
                   ))}
                 </tr>
               </thead>
               <tbody>
                 {results.sensitivity.map((row, idx) => (
-                  <tr key={idx} className="border-b border-slate-100 last:border-0 hover:bg-slate-50">
-                    <td className="p-2 border-r-2 border-[#E2E8F0] bg-slate-50 text-slate-700 font-bold">{row.ke}</td>
+                  <tr key={idx} className="border-b border-line last:border-0 hover:bg-ink-3">
+                    <td className="p-2 border-r-2 border-line bg-ink-3 text-fg-2 font-bold">{row.ke}</td>
                     {results.sensTg.map(tg => {
                       const val = row[tg.toFixed(1) + '%'];
                       // highlight center cell
                       const isCenter = idx === 2 && tg === terminalGrowthRate;
                       return (
-                        <td key={tg} className={`p-2 ${isCenter ? 'bg-emerald/10 text-emerald font-bold' : 'text-slate-600'}`}>
+                        <td key={tg} className={`p-2 ${isCenter ? 'bg-emerald/10 text-emerald font-bold' : 'text-fg-2'}`}>
                           {currency} {val.toFixed(2)}
                         </td>
                       );

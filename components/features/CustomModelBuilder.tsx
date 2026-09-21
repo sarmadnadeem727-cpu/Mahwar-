@@ -229,29 +229,29 @@ export default function CustomModelBuilder() {
       initial="initial"
       animate="animate"
       exit="exit"
-      className="grid grid-cols-12 gap-8 text-slate-heading font-mono"
+      className="grid grid-cols-12 gap-8 text-fg font-mono"
       dir={isAr ? "rtl" : "ltr"}
     >
       {/* LEFT COLUMN: MODEL MANAGER & ROW ADDER (4 COLS) */}
       <div className="col-span-12 lg:col-span-4 space-y-6">
         
         {/* MODEL SELECTOR & CREATOR */}
-        <div className="bg-white p-6 rounded-xl border border-surface-border space-y-4 shadow-terminal-card">
-          <div className="flex items-center justify-between pb-3 border-b border-surface-border">
+        <div className="bg-ink-2 p-6 rounded-xl border border-line space-y-4 shadow-terminal-card">
+          <div className="flex items-center justify-between pb-3 border-b border-line">
             <div className="flex items-center gap-2.5">
               <FileSpreadsheet className="text-emerald" size={22} />
               <div>
-                <h2 className="font-mono text-heading-sm font-bold text-slate-heading uppercase">
+                <h2 className="font-mono text-heading-sm font-bold text-fg uppercase">
                   {isAr ? "نماذج النمذجة المخصصة" : "Custom Model Library"}
                 </h2>
-                <span className="text-mono-caption font-mono text-slate-muted">
+                <span className="text-mono-caption font-mono text-fg-3">
                   {isAr ? "حفظ وتخصيص معادلات Excel" : "Saved Excel-Style Sheets"}
                 </span>
               </div>
             </div>
             <button
               onClick={handleCreateNewModel}
-              className="p-2 rounded-lg bg-surface-subtle border border-surface-border hover:border-emerald text-emerald transition-colors cursor-pointer"
+              className="p-2 rounded-lg bg-ink-3 border border-line hover:border-emerald text-emerald transition-colors cursor-pointer"
               title="Create New Model"
             >
               <FolderPlus size={16} />
@@ -260,11 +260,11 @@ export default function CustomModelBuilder() {
 
           <div className="space-y-3 font-mono text-xs">
             <div className="space-y-1">
-              <label className="text-slate-muted block text-[10px] uppercase font-bold">{isAr ? "اختر النموذج" : "Select Active Sheet"}</label>
+              <label className="text-fg-3 block text-[10px] uppercase font-bold">{isAr ? "اختر النموذج" : "Select Active Sheet"}</label>
               <select
                 value={activeModelId}
                 onChange={(e) => setActiveModelId(e.target.value)}
-                className="w-full px-3 py-2 bg-surface-subtle border border-surface-border focus:border-emerald rounded-lg text-slate-heading font-mono text-xs focus:outline-none cursor-pointer"
+                className="w-full px-3 py-2 bg-ink-3 border border-line focus:border-emerald rounded-lg text-fg font-mono text-xs focus:outline-none cursor-pointer"
               >
                 {savedModels.map((m) => (
                   <option key={m.id} value={m.id}>{m.name}</option>
@@ -273,18 +273,18 @@ export default function CustomModelBuilder() {
             </div>
 
             <div className="space-y-1">
-              <label className="text-slate-muted block text-[10px] uppercase font-bold">{isAr ? "اسم النموذج الحالي" : "Model Title"}</label>
+              <label className="text-fg-3 block text-[10px] uppercase font-bold">{isAr ? "اسم النموذج الحالي" : "Model Title"}</label>
               <input
                 type="text"
                 value={modelNameInput}
                 onChange={(e) => setModelNameInput(e.target.value)}
-                className="w-full px-3 py-2 bg-surface-subtle border border-surface-border focus:border-emerald rounded-lg text-slate-heading font-mono text-xs focus:outline-none"
+                className="w-full px-3 py-2 bg-ink-3 border border-line focus:border-emerald rounded-lg text-fg font-mono text-xs focus:outline-none"
               />
             </div>
 
             <button
               onClick={handleSaveModel}
-              className="w-full py-2.5 rounded-lg bg-emerald hover:bg-emerald-light text-white font-mono font-bold text-xs uppercase tracking-wider flex items-center justify-center gap-2 transition-all cursor-pointer shadow-sm"
+              className="w-full py-2.5 rounded-lg bg-emerald hover:bg-emerald-light text-ink-0 font-mono font-bold text-xs uppercase tracking-wider flex items-center justify-center gap-2 transition-all cursor-pointer shadow-sm"
             >
               <Save size={14} />
               <span>{isAr ? "حفظ نموذج العمل" : "Save Model State"}</span>
@@ -293,65 +293,65 @@ export default function CustomModelBuilder() {
         </div>
 
         {/* ADD ROW FORM */}
-        <div className="bg-white p-6 rounded-xl border border-surface-border space-y-4 shadow-terminal-card">
-          <h3 className="font-mono text-xs font-bold text-slate-heading uppercase tracking-wider pb-2 border-b border-surface-border flex items-center gap-2">
+        <div className="bg-ink-2 p-6 rounded-xl border border-line space-y-4 shadow-terminal-card">
+          <h3 className="font-mono text-xs font-bold text-fg uppercase tracking-wider pb-2 border-b border-line flex items-center gap-2">
             <Plus size={15} className="text-emerald" />
             <span>{isAr ? "إضافة بنـد مالي جديد" : "Add Line Item (Row)"}</span>
           </h3>
 
           <form onSubmit={handleAddRow} className="space-y-3 font-mono text-xs">
             <div className="space-y-1">
-              <label className="text-slate-muted block text-[10px] font-bold">Line Item Name (EN) *</label>
+              <label className="text-fg-3 block text-[10px] font-bold">Line Item Name (EN) *</label>
               <input
                 type="text"
                 required
                 placeholder="e.g. EBITDA Margin"
                 value={newRowName}
                 onChange={(e) => setNewRowName(e.target.value)}
-                className="w-full px-3 py-2 bg-surface-subtle border border-surface-border focus:border-emerald rounded-lg text-slate-heading font-mono text-xs focus:outline-none"
+                className="w-full px-3 py-2 bg-ink-3 border border-line focus:border-emerald rounded-lg text-fg font-mono text-xs focus:outline-none"
               />
             </div>
 
             <div className="space-y-1">
-              <label className="text-slate-muted block text-[10px] font-bold">Line Item Name (AR)</label>
+              <label className="text-fg-3 block text-[10px] font-bold">Line Item Name (AR)</label>
               <input
                 type="text"
                 placeholder="e.g. هامش الأرباح"
                 value={newRowNameAr}
                 onChange={(e) => setNewRowNameAr(e.target.value)}
-                className="w-full px-3 py-2 bg-surface-subtle border border-surface-border focus:border-emerald rounded-lg text-slate-heading font-mono text-xs focus:outline-none"
+                className="w-full px-3 py-2 bg-ink-3 border border-line focus:border-emerald rounded-lg text-fg font-mono text-xs focus:outline-none"
               />
             </div>
 
             <div className="space-y-1">
-              <label className="text-slate-muted block text-[10px] font-bold">Formula or Raw Value (e.g. =Revenue - COGS or 250)</label>
+              <label className="text-fg-3 block text-[10px] font-bold">Formula or Raw Value (e.g. =Revenue - COGS or 250)</label>
               <input
                 type="text"
                 placeholder="e.g. =Rental Income - Facility OpEx"
                 value={newFormulaOrValue}
                 onChange={(e) => setNewFormulaOrValue(e.target.value)}
-                className="w-full px-3 py-2 bg-surface-subtle border border-surface-border focus:border-emerald rounded-lg text-slate-heading font-mono text-xs focus:outline-none"
+                className="w-full px-3 py-2 bg-ink-3 border border-line focus:border-emerald rounded-lg text-fg font-mono text-xs focus:outline-none"
               />
             </div>
 
             {!newFormulaOrValue.startsWith("=") && (
               <div className="grid grid-cols-2 gap-3">
                 <div className="space-y-1">
-                  <label className="text-slate-muted block text-[10px] font-bold">Base Value (Y1)</label>
+                  <label className="text-fg-3 block text-[10px] font-bold">Base Value (Y1)</label>
                   <input
                     type="number"
                     value={newBaseVal}
                     onChange={(e) => setNewBaseVal(e.target.value)}
-                    className="w-full px-3 py-1.5 bg-surface-subtle border border-surface-border focus:border-emerald rounded-lg text-slate-heading font-mono text-xs focus:outline-none"
+                    className="w-full px-3 py-1.5 bg-ink-3 border border-line focus:border-emerald rounded-lg text-fg font-mono text-xs focus:outline-none"
                   />
                 </div>
                 <div className="space-y-1">
-                  <label className="text-slate-muted block text-[10px] font-bold">YoY Growth (%)</label>
+                  <label className="text-fg-3 block text-[10px] font-bold">YoY Growth (%)</label>
                   <input
                     type="number"
                     value={newGrowth}
                     onChange={(e) => setNewGrowth(e.target.value)}
-                    className="w-full px-3 py-1.5 bg-surface-subtle border border-surface-border focus:border-emerald rounded-lg text-slate-heading font-mono text-xs focus:outline-none"
+                    className="w-full px-3 py-1.5 bg-ink-3 border border-line focus:border-emerald rounded-lg text-fg font-mono text-xs focus:outline-none"
                   />
                 </div>
               </div>
@@ -359,7 +359,7 @@ export default function CustomModelBuilder() {
 
             <button
               type="submit"
-              className="w-full py-2.5 rounded-lg bg-slate-heading hover:bg-slate-800 text-white font-mono font-bold uppercase tracking-wider transition-all cursor-pointer text-xs flex items-center justify-center gap-2"
+              className="w-full py-2.5 rounded-lg bg-ink-0 hover:bg-ink-4 text-white font-mono font-bold uppercase tracking-wider transition-all cursor-pointer text-xs flex items-center justify-center gap-2"
             >
               <Plus size={14} />
               <span>{isAr ? "إدراج البند" : "Insert Line Item"}</span>
@@ -374,23 +374,23 @@ export default function CustomModelBuilder() {
         
         {/* SPREADSHEET TABLE GRID */}
         <div className="panel-input p-6 overflow-x-auto">
-          <div className="flex justify-between items-center mb-4 pb-3 border-b border-surface-border">
+          <div className="flex justify-between items-center mb-4 pb-3 border-b border-line">
             <div>
-              <h3 className="font-serif text-lg font-bold text-slate-heading">
+              <h3 className="font-serif text-lg font-bold text-fg">
                 {modelNameInput}
               </h3>
-              <span className="text-mono-caption font-mono text-slate-muted">
+              <span className="text-mono-caption font-mono text-fg-3">
                 {isAr ? "جدول الحسابات التفاعلي والربط المباشر" : "Live Excel-Style Formula Cascade Grid"}
               </span>
             </div>
-            <span className="px-2.5 py-1 rounded bg-emerald-dim border border-emerald-border text-emerald font-mono font-bold text-mono-caption">
+            <span className="px-2.5 py-1 rounded bg-emerald/10 border border-emerald/30 text-emerald font-mono font-bold text-mono-caption">
               {rows.length} {isAr ? "بنود إجمالية" : "Active Line Items"}
             </span>
           </div>
 
           <table className="w-full font-mono text-xs text-left rtl:text-right border-collapse">
             <thead>
-              <tr className="bg-surface-subtle border-b border-surface-border text-slate-muted">
+              <tr className="bg-ink-3 border-b border-line text-fg-3">
                 <th className="p-3">Line Item (Row)</th>
                 <th className="p-3">Formula / Value Input</th>
                 <th className="p-3 text-right">Year 1</th>
@@ -401,22 +401,22 @@ export default function CustomModelBuilder() {
                 <th className="p-3 text-center">Action</th>
               </tr>
             </thead>
-            <tbody className="divide-y divide-surface-border">
+            <tbody className="divide-y divide-line">
               {rows.map((row) => {
                 const isSelectedForChart = row.id === selectedChartRowId;
                 return (
                   <tr 
                     key={row.id} 
                     className={`transition-colors ${
-                      isSelectedForChart ? "bg-emerald-dim/40" : "hover:bg-surface-subtle"
+                      isSelectedForChart ? "bg-emerald/10" : "hover:bg-ink-3"
                     }`}
                   >
                     <td 
                       onClick={() => setSelectedChartRowId(row.id)}
-                      className="p-3 font-bold text-slate-heading cursor-pointer hover:text-emerald"
+                      className="p-3 font-bold text-fg cursor-pointer hover:text-emerald"
                     >
                       <div className="flex items-center gap-1.5">
-                        <span className={`w-2 h-2 rounded-full ${row.isFormula ? "bg-emerald" : "bg-slate-400"}`} />
+                        <span className={`w-2 h-2 rounded-full ${row.isFormula ? "bg-emerald" : "bg-fg-3"}`} />
                         <span>{isAr ? row.nameAr || row.name : row.name}</span>
                       </div>
                     </td>
@@ -426,8 +426,8 @@ export default function CustomModelBuilder() {
                         type="text"
                         value={row.formulaOrValue}
                         onChange={(e) => handleCellFormulaChange(row.id, e.target.value)}
-                        className={`w-full px-2 py-1 bg-surface-subtle border rounded font-mono text-[11px] focus:outline-none focus:border-emerald ${
-                          row.isFormula ? "text-emerald font-bold border-emerald-border" : "text-slate-body border-surface-border"
+                        className={`w-full px-2 py-1 bg-ink-3 border rounded font-mono text-[11px] focus:outline-none focus:border-emerald ${
+                          row.isFormula ? "text-emerald font-bold border-emerald/30" : "text-fg-2 border-line"
                         }`}
                       />
                     </td>
@@ -436,7 +436,7 @@ export default function CustomModelBuilder() {
                       <td 
                         key={vIdx} 
                         className={`p-3 text-right font-bold ${
-                          row.isFormula ? "text-emerald font-extrabold" : "text-slate-heading"
+                          row.isFormula ? "text-emerald font-extrabold" : "text-fg"
                         }`}
                       >
                         {v.toLocaleString()}
@@ -446,7 +446,7 @@ export default function CustomModelBuilder() {
                     <td className="p-3 text-center">
                       <button
                         onClick={() => handleDeleteRow(row.id)}
-                        className="text-slate-400 hover:text-rose-600 p-1 transition-colors cursor-pointer"
+                        className="text-fg-3 hover:text-neg p-1 transition-colors cursor-pointer"
                         title="Delete Row"
                       >
                         <Trash2 size={13} />
@@ -461,14 +461,14 @@ export default function CustomModelBuilder() {
 
         {/* VISUAL RECHARTS PROJECTION GRAPH FOR SELECTED ROW */}
         <div className="panel-input p-6 space-y-4">
-          <div className="flex justify-between items-center pb-3 border-b border-surface-border">
+          <div className="flex justify-between items-center pb-3 border-b border-line">
             <div className="flex items-center gap-2">
               <LineChart size={18} className="text-emerald" />
-              <h4 className="font-mono text-xs font-bold text-slate-heading uppercase tracking-wider">
+              <h4 className="font-mono text-xs font-bold text-fg uppercase tracking-wider">
                 {isAr ? "رسم بياني للبند المحدد:" : "Projections Chart:"} <span className="text-emerald">{selectedRow?.name}</span>
               </h4>
             </div>
-            <span className="text-mono-caption font-mono text-slate-muted">
+            <span className="text-mono-caption font-mono text-fg-3">
               5-Year Quantitative Curve
             </span>
           </div>
@@ -476,13 +476,13 @@ export default function CustomModelBuilder() {
           <div className="h-[220px] w-full pt-2">
             <ResponsiveContainer width="100%" height="100%">
               <ReLineChart data={chartData}>
-                <CartesianGrid strokeDasharray="3 3" stroke="#E2E8F0" />
-                <XAxis dataKey="year" stroke="#64748B" fontSize={10} tickLine={false} />
-                <YAxis stroke="#64748B" fontSize={10} tickLine={false} />
+                <CartesianGrid strokeDasharray="3 3" stroke="rgba(158,190,180,0.14)" />
+                <XAxis dataKey="year" stroke="#a7b9b2" fontSize={10} tickLine={false} />
+                <YAxis stroke="#a7b9b2" fontSize={10} tickLine={false} />
                 <Tooltip
-                  contentStyle={{ backgroundColor: "#FFFFFF", borderColor: "#E2E8F0", borderRadius: "8px", fontSize: "12px", fontFamily: "var(--font-mono)" }}
+                  contentStyle={{ backgroundColor: "#0e161a", borderColor: "rgba(158,190,180,0.14)", borderRadius: "8px", fontSize: "12px", fontFamily: "var(--font-mono)" }}
                 />
-                <Line type="monotone" dataKey="value" stroke="#0E7C69" strokeWidth={3} dot={{ fill: "#0E7C69", r: 4 }} />
+                <Line type="monotone" dataKey="value" stroke="#17a88a" strokeWidth={3} dot={{ fill: "#17a88a", r: 4 }} />
               </ReLineChart>
             </ResponsiveContainer>
           </div>

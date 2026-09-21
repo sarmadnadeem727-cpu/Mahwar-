@@ -130,7 +130,7 @@ export function StatementCharts({
 
   const renderIncomeCharts = () => (
     <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 h-full">
-      <div className="bg-white border border-[var(--border)] rounded-3xl p-8 flex flex-col h-[400px]">
+      <div className="bg-ink-2 border border-[var(--border)] rounded-3xl p-8 flex flex-col h-[400px]">
         <h3 className="text-[10px] font-bold text-[var(--text3)] uppercase tracking-[0.3em] mb-8">Revenue & Gross Profit Trend</h3>
         <ResponsiveContainer width="100%" height="100%">
           <ComposedChart data={chartData}>
@@ -157,7 +157,7 @@ export function StatementCharts({
         </ResponsiveContainer>
       </div>
 
-      <div className="bg-white border border-[var(--border)] rounded-3xl p-8 flex flex-col h-[400px]">
+      <div className="bg-ink-2 border border-[var(--border)] rounded-3xl p-8 flex flex-col h-[400px]">
         <h3 className="text-[10px] font-bold text-[var(--text3)] uppercase tracking-[0.3em] mb-8">EBITDA Margin Efficiency</h3>
 
         <ResponsiveContainer width="100%" height="100%">
@@ -200,7 +200,7 @@ export function StatementCharts({
 
   const renderBalanceCharts = () => (
     <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 h-full">
-      <div className="bg-white border border-[var(--border)] rounded-3xl p-8 flex flex-col h-[400px]">
+      <div className="bg-ink-2 border border-[var(--border)] rounded-3xl p-8 flex flex-col h-[400px]">
 
         <h3 className="text-[10px] font-bold text-[var(--text3)] uppercase tracking-[0.3em] mb-8">Capital Structure Composition</h3>
         <ResponsiveContainer width="100%" height="100%">
@@ -229,7 +229,7 @@ export function StatementCharts({
         </ResponsiveContainer>
       </div>
 
-      <div className="bg-white border border-[var(--border)] rounded-3xl p-8 flex flex-col h-[400px]">
+      <div className="bg-ink-2 border border-[var(--border)] rounded-3xl p-8 flex flex-col h-[400px]">
 
         <h3 className="text-[10px] font-bold text-[var(--text3)] uppercase tracking-[0.3em] mb-8">Asset Growth vs Cash Reserves</h3>
         <ResponsiveContainer width="100%" height="100%">
@@ -261,7 +261,7 @@ export function StatementCharts({
 
   const renderCashCharts = () => (
     <div className="grid grid-cols-1 gap-8 h-full">
-      <div className="bg-white border border-[var(--border)] rounded-3xl p-8 flex flex-col h-[500px]">
+      <div className="bg-ink-2 border border-[var(--border)] rounded-3xl p-8 flex flex-col h-[500px]">
         <h3 className="text-[10px] font-bold text-[var(--text3)] uppercase tracking-[0.3em] mb-8">Cash Flow Allocation (SAR Millions)</h3>
         <ResponsiveContainer width="100%" height="100%">
           <BarChart data={chartData} margin={{ top: 20, right: 30, left: 20, bottom: 5 }}>
@@ -308,7 +308,7 @@ export function StatementCharts({
         {activeStatement === "CF" && renderCashCharts()}
 
         {chartData.length === 0 && (
-          <div className="flex flex-col items-center justify-center py-24 bg-white border border-[var(--border)] rounded-3xl opacity-30">
+          <div className="flex flex-col items-center justify-center py-24 bg-ink-2 border border-[var(--border)] rounded-3xl opacity-30">
             <p className="text-[10px] uppercase tracking-[0.4em] font-mono">Terminal data missing or invalid</p>
           </div>
         )}

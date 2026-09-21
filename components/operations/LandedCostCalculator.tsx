@@ -175,7 +175,7 @@ export default function LandedCostCalculator() {
       initial="initial"
       animate="animate"
       exit="exit"
-      className="space-y-6 font-sans text-slate-800"
+      className="space-y-6 font-sans text-fg"
       dir={isAr ? "rtl" : "ltr"}
       id="landed-cost-container"
     >
@@ -200,7 +200,7 @@ export default function LandedCostCalculator() {
       {/* KPI HIGHLIGHT CARDS */}
       <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 font-mono">
         {/* LANDED COST PER UNIT */}
-        <div className="p-4 rounded-xl border border-emerald-border bg-emerald-dim shadow-xs">
+        <div className="p-4 rounded-xl border border-emerald/30 bg-emerald/10 shadow-xs">
           <span className="text-[10px] text-emerald uppercase font-bold block mb-1">
             {isAr ? "التكلفة الواصلة للوحدة" : "Delivered Landed Cost / Unit"}
           </span>
@@ -214,46 +214,46 @@ export default function LandedCostCalculator() {
         </div>
 
         {/* TOTAL SHIPMENT LANDED */}
-        <div className="p-4 rounded-xl border border-surface-border bg-white shadow-xs">
-          <span className="text-[10px] text-slate-muted uppercase font-bold block mb-1">
+        <div className="p-4 rounded-xl border border-line bg-ink-2 shadow-xs">
+          <span className="text-[10px] text-fg-3 uppercase font-bold block mb-1">
             {isAr ? "إجمالي تكلفة الشحنة الواصلة" : "Total Shipment Outlay"}
           </span>
           <div className="flex items-baseline gap-1.5">
-            <span className="text-2xl font-extrabold text-slate-heading">
+            <span className="text-2xl font-extrabold text-fg">
               {currency} {currentCalc.totalLandedCost.toLocaleString()}
             </span>
           </div>
-          <span className="text-[10px] text-slate-muted font-sans font-medium block mt-1">
+          <span className="text-[10px] text-fg-3 font-sans font-medium block mt-1">
             For {currentScenario.units.toLocaleString()} units
           </span>
         </div>
 
         {/* CUSTOMS DUTY */}
-        <div className="p-4 rounded-xl border border-surface-border bg-white shadow-xs">
-          <span className="text-[10px] text-slate-muted uppercase font-bold block mb-1">
+        <div className="p-4 rounded-xl border border-line bg-ink-2 shadow-xs">
+          <span className="text-[10px] text-fg-3 uppercase font-bold block mb-1">
             {isAr ? "إجمالي الرسوم الجمركية" : "Assessed Customs Duty"}
           </span>
           <div className="flex items-baseline gap-1.5">
-            <span className="text-2xl font-extrabold text-slate-heading">
+            <span className="text-2xl font-extrabold text-fg">
               {currency} {currentCalc.customsDutyTotal.toLocaleString()}
             </span>
           </div>
-          <span className="text-[10px] text-slate-muted font-sans font-medium block mt-1">
+          <span className="text-[10px] text-fg-3 font-sans font-medium block mt-1">
             {currentScenario.dutyRatePct}% on {currency} {currentCalc.customsValue.toLocaleString()} CIF/CFR
           </span>
         </div>
 
         {/* FREIGHT & LOGISTICS IMPACT */}
-        <div className="p-4 rounded-xl border border-surface-border bg-white shadow-xs">
-          <span className="text-[10px] text-slate-muted uppercase font-bold block mb-1">
+        <div className="p-4 rounded-xl border border-line bg-ink-2 shadow-xs">
+          <span className="text-[10px] text-fg-3 uppercase font-bold block mb-1">
             {isAr ? "تكاليف الشحن والخدمات" : "Freight & Port Fees"}
           </span>
           <div className="flex items-baseline gap-1.5">
-            <span className="text-2xl font-extrabold text-slate-heading">
+            <span className="text-2xl font-extrabold text-fg">
               {currency} {(currentScenario.freightCostTotal + currentCalc.otherFeesTotal).toLocaleString()}
             </span>
           </div>
-          <span className="text-[10px] text-slate-muted font-sans font-medium block mt-1">
+          <span className="text-[10px] text-fg-3 font-sans font-medium block mt-1">
             {((((currentScenario.freightCostTotal + currentCalc.otherFeesTotal) / currentCalc.totalLandedCost) * 100).toFixed(1))}% of total landed cost
           </span>
         </div>
@@ -265,8 +265,8 @@ export default function LandedCostCalculator() {
         <div className="lg:col-span-5 space-y-4">
           <div className="panel-input p-5 space-y-4">
             {/* SCENARIO SELECTOR */}
-            <div className="flex items-center justify-between border-b border-surface-border pb-3">
-              <span className="font-mono text-xs font-bold text-slate-heading uppercase tracking-wider">
+            <div className="flex items-center justify-between border-b border-line pb-3">
+              <span className="font-mono text-xs font-bold text-fg uppercase tracking-wider">
                 {isAr ? "خيارات التوريد والموردين" : "Sourcing Scenarios"}
               </span>
               <div className="flex items-center gap-1.5">
@@ -276,8 +276,8 @@ export default function LandedCostCalculator() {
                     onClick={() => setActiveScenarioId(s.id)}
                     className={`px-2 py-1 rounded text-xs font-mono font-bold transition-all cursor-pointer truncate max-w-[130px] ${
                       activeScenarioId === s.id
-                        ? "bg-emerald text-white"
-                        : "bg-surface-subtle text-slate-600 hover:bg-slate-100"
+                        ? "bg-emerald text-ink-0"
+                        : "bg-ink-3 text-fg-2 hover:bg-ink-4"
                     }`}
                   >
                     {s.name}
@@ -285,7 +285,7 @@ export default function LandedCostCalculator() {
                 ))}
                 <button
                   onClick={addScenario}
-                  className="p-1 rounded bg-surface-subtle hover:bg-slate-100 text-emerald"
+                  className="p-1 rounded bg-ink-3 hover:bg-ink-4 text-emerald"
                   title="Add Sourcing Scenario"
                 >
                   <Plus size={14} />
@@ -297,71 +297,71 @@ export default function LandedCostCalculator() {
             <div className="space-y-3.5 text-xs">
               <div className="grid grid-cols-2 gap-3">
                 <div>
-                  <label className="text-slate-body font-medium block mb-1">Scenario Label</label>
+                  <label className="text-fg-2 font-medium block mb-1">Scenario Label</label>
                   <input
                     type="text"
                     value={currentScenario.name}
                     onChange={(e) => updateActiveField("name", e.target.value)}
-                    className="w-full px-2.5 py-1.5 rounded bg-surface-subtle border border-surface-border font-mono text-xs font-bold"
+                    className="w-full px-2.5 py-1.5 rounded bg-ink-3 border border-line font-mono text-xs font-bold"
                   />
                 </div>
                 <div>
-                  <label className="text-slate-body font-medium block mb-1">Country / Origin</label>
+                  <label className="text-fg-2 font-medium block mb-1">Country / Origin</label>
                   <input
                     type="text"
                     value={currentScenario.origin}
                     onChange={(e) => updateActiveField("origin", e.target.value)}
-                    className="w-full px-2.5 py-1.5 rounded bg-surface-subtle border border-surface-border font-mono text-xs"
+                    className="w-full px-2.5 py-1.5 rounded bg-ink-3 border border-line font-mono text-xs"
                   />
                 </div>
               </div>
 
               <div className="grid grid-cols-2 gap-3">
                 <div>
-                  <label className="text-slate-body font-medium block mb-1">Shipment Units</label>
+                  <label className="text-fg-2 font-medium block mb-1">Shipment Units</label>
                   <input
                     type="number"
                     value={currentScenario.units}
                     onChange={(e) => updateActiveField("units", Number(e.target.value))}
-                    className="w-full px-2.5 py-1.5 rounded bg-surface-subtle border border-surface-border font-mono text-xs font-bold"
+                    className="w-full px-2.5 py-1.5 rounded bg-ink-3 border border-line font-mono text-xs font-bold"
                   />
                 </div>
                 <div>
-                  <label className="text-slate-body font-medium block mb-1">FOB Price / Unit ({currency})</label>
+                  <label className="text-fg-2 font-medium block mb-1">FOB Price / Unit ({currency})</label>
                   <input
                     type="number"
                     value={currentScenario.unitCostFob}
                     onChange={(e) => updateActiveField("unitCostFob", Number(e.target.value))}
-                    className="w-full px-2.5 py-1.5 rounded bg-surface-subtle border border-surface-border font-mono text-xs font-bold"
+                    className="w-full px-2.5 py-1.5 rounded bg-ink-3 border border-line font-mono text-xs font-bold"
                   />
                 </div>
               </div>
 
               <div className="grid grid-cols-2 gap-3">
                 <div>
-                  <label className="text-slate-body font-medium block mb-1">International Freight ({currency})</label>
+                  <label className="text-fg-2 font-medium block mb-1">International Freight ({currency})</label>
                   <input
                     type="number"
                     value={currentScenario.freightCostTotal}
                     onChange={(e) => updateActiveField("freightCostTotal", Number(e.target.value))}
-                    className="w-full px-2.5 py-1.5 rounded bg-surface-subtle border border-surface-border font-mono text-xs"
+                    className="w-full px-2.5 py-1.5 rounded bg-ink-3 border border-line font-mono text-xs"
                   />
                 </div>
                 <div>
-                  <label className="text-slate-body font-medium block mb-1">Cargo Insurance ({currency})</label>
+                  <label className="text-fg-2 font-medium block mb-1">Cargo Insurance ({currency})</label>
                   <input
                     type="number"
                     value={currentScenario.insuranceCostTotal}
                     onChange={(e) => updateActiveField("insuranceCostTotal", Number(e.target.value))}
-                    className="w-full px-2.5 py-1.5 rounded bg-surface-subtle border border-surface-border font-mono text-xs"
+                    className="w-full px-2.5 py-1.5 rounded bg-ink-3 border border-line font-mono text-xs"
                   />
                 </div>
               </div>
 
-              <div className="p-3 bg-surface-subtle rounded-lg border border-surface-border space-y-2">
+              <div className="p-3 bg-ink-3 rounded-lg border border-line space-y-2">
                 <div className="flex justify-between items-center">
-                  <label className="text-slate-body font-medium">Customs Duty Rate (%)</label>
-                  <label className="flex items-center gap-1.5 text-[10px] text-slate-500 cursor-pointer">
+                  <label className="text-fg-2 font-medium">Customs Duty Rate (%)</label>
+                  <label className="flex items-center gap-1.5 text-[10px] text-fg-3 cursor-pointer">
                     <input
                       type="checkbox"
                       checked={currentScenario.includeInsuranceInCustomsValue}
@@ -376,14 +376,14 @@ export default function LandedCostCalculator() {
                   step="0.5"
                   value={currentScenario.dutyRatePct}
                   onChange={(e) => updateActiveField("dutyRatePct", Number(e.target.value))}
-                  className="w-full px-2.5 py-1.5 rounded bg-white border border-surface-border font-mono text-xs font-bold"
+                  className="w-full px-2.5 py-1.5 rounded bg-ink-2 border border-line font-mono text-xs font-bold"
                 />
               </div>
 
               {/* ITEMIZED OTHER FEES */}
-              <div className="space-y-2 pt-2 border-t border-surface-border">
+              <div className="space-y-2 pt-2 border-t border-line">
                 <div className="flex justify-between items-center">
-                  <span className="font-bold text-slate-800 text-xs">Port, Clearance & Handling Fees:</span>
+                  <span className="font-bold text-fg text-xs">Port, Clearance & Handling Fees:</span>
                   <button
                     onClick={addFee}
                     className="text-[11px] font-mono text-emerald hover:underline flex items-center gap-0.5"
@@ -399,17 +399,17 @@ export default function LandedCostCalculator() {
                         type="text"
                         value={fee.name}
                         onChange={(e) => updateFee(fee.id, "name", e.target.value)}
-                        className="flex-1 px-2 py-1 rounded bg-surface-subtle border border-surface-border text-xs"
+                        className="flex-1 px-2 py-1 rounded bg-ink-3 border border-line text-xs"
                       />
                       <input
                         type="number"
                         value={fee.amount}
                         onChange={(e) => updateFee(fee.id, "amount", Number(e.target.value))}
-                        className="w-24 px-2 py-1 rounded bg-surface-subtle border border-surface-border font-mono text-xs text-right"
+                        className="w-24 px-2 py-1 rounded bg-ink-3 border border-line font-mono text-xs text-right"
                       />
                       <button
                         onClick={() => removeFee(fee.id)}
-                        className="text-slate-400 hover:text-rose-500 p-1"
+                        className="text-fg-3 hover:text-neg p-1"
                       >
                         <Trash2 size={13} />
                       </button>
@@ -422,7 +422,7 @@ export default function LandedCostCalculator() {
                 <div className="pt-2 flex justify-end">
                   <button
                     onClick={() => removeScenario(currentScenario.id)}
-                    className="text-rose-600 hover:text-rose-700 flex items-center gap-1 text-xs cursor-pointer"
+                    className="text-neg hover:text-neg flex items-center gap-1 text-xs cursor-pointer"
                   >
                     <Trash2 size={13} />
                     <span>Delete This Sourcing Scenario</span>
@@ -437,12 +437,12 @@ export default function LandedCostCalculator() {
         <div className="lg:col-span-7 space-y-6">
           {/* STACKED COST PER UNIT COMPARISON CHART */}
           <div className="panel-data p-5 space-y-4">
-            <div className="flex justify-between items-center border-b border-surface-border pb-3">
+            <div className="flex justify-between items-center border-b border-line pb-3">
               <div>
-                <h3 className="font-serif text-sm font-bold text-slate-heading">
+                <h3 className="font-serif text-sm font-bold text-fg">
                   {isAr ? "مقارنة تكلفة الوحدة الواصلة عبر سيناريوهات التوريد" : "Delivered Landed Cost per Unit Comparison"}
                 </h3>
-                <p className="text-[11px] text-slate-muted font-sans font-medium">
+                <p className="text-[11px] text-fg-3 font-sans font-medium">
                   {isAr ? "توزيع مكونات التكلفة لكل خيار توريد" : "Stacked cost contribution per sourcing route"}
                 </p>
               </div>
@@ -454,14 +454,14 @@ export default function LandedCostCalculator() {
             <div className="h-64 w-full">
               <ResponsiveContainer width="100%" height="100%">
                 <BarChart data={comparisonData} margin={{ top: 10, right: 15, left: -10, bottom: 0 }}>
-                  <CartesianGrid strokeDasharray="3 3" stroke="#E2E8F0" vertical={false} />
-                  <XAxis dataKey="name" stroke="#64748B" fontSize={10} fontFamily="monospace" />
-                  <YAxis stroke="#64748B" fontSize={10} fontFamily="monospace" unit={` ${currency}`} />
+                  <CartesianGrid strokeDasharray="3 3" stroke="rgba(158,190,180,0.14)" vertical={false} />
+                  <XAxis dataKey="name" stroke="#a7b9b2" fontSize={10} fontFamily="monospace" />
+                  <YAxis stroke="#a7b9b2" fontSize={10} fontFamily="monospace" unit={` ${currency}`} />
                   <Tooltip
-                    contentStyle={{ backgroundColor: "#FFFFFF", borderColor: "#E2E8F0", borderRadius: "8px", fontSize: "11px" }}
+                    contentStyle={{ backgroundColor: "#0e161a", borderColor: "rgba(158,190,180,0.14)", borderRadius: "8px", fontSize: "11px" }}
                   />
                   <Legend wrapperStyle={{ fontSize: "11px", fontFamily: "monospace" }} />
-                  <Bar dataKey="FOB Product" stackId="a" fill="#0E7C69" />
+                  <Bar dataKey="FOB Product" stackId="a" fill="#17a88a" />
                   <Bar dataKey="Freight" stackId="a" fill="#3B82F6" />
                   <Bar dataKey="Insurance" stackId="a" fill="#8B5CF6" />
                   <Bar dataKey="Duty" stackId="a" fill="#F59E0B" />
@@ -473,32 +473,32 @@ export default function LandedCostCalculator() {
 
           {/* WATERFALL BREAKDOWN TABLE */}
           <div className="panel-data p-5">
-            <h3 className="font-mono text-xs font-bold text-slate-heading uppercase tracking-wider mb-3">
+            <h3 className="font-mono text-xs font-bold text-fg uppercase tracking-wider mb-3">
               {currentScenario.name} — Full Component Stack
             </h3>
 
             <table className="w-full text-xs font-mono text-left rtl:text-right border-collapse">
               <thead>
-                <tr className="border-b border-surface-border bg-surface-subtle text-slate-muted">
+                <tr className="border-b border-line bg-ink-3 text-fg-3">
                   <th className="py-2 px-3">Cost Component</th>
                   <th className="py-2 px-3 text-right">Total Shipment</th>
                   <th className="py-2 px-3 text-right">Cost / Unit</th>
                   <th className="py-2 px-3 text-right">% of Landed</th>
                 </tr>
               </thead>
-              <tbody className="divide-y divide-surface-border">
+              <tbody className="divide-y divide-line">
                 {currentCalc.breakdown.map((item) => (
-                  <tr key={item.name} className="hover:bg-surface-subtle">
-                    <td className="py-2.5 px-3 font-medium text-slate-900 flex items-center gap-2">
+                  <tr key={item.name} className="hover:bg-ink-3">
+                    <td className="py-2.5 px-3 font-medium text-fg flex items-center gap-2">
                       <span className="w-2.5 h-2.5 rounded-full" style={{ backgroundColor: item.color }} />
                       <span>{item.name}</span>
                     </td>
                     <td className="py-2.5 px-3 text-right">{currency} {item.amount.toLocaleString()}</td>
                     <td className="py-2.5 px-3 text-right">{currency} {(item.amount / currentScenario.units).toFixed(2)}</td>
-                    <td className="py-2.5 px-3 text-right text-slate-500">{item.pct.toFixed(1)}%</td>
+                    <td className="py-2.5 px-3 text-right text-fg-3">{item.pct.toFixed(1)}%</td>
                   </tr>
                 ))}
-                <tr className="border-t-2 border-slate-900 bg-emerald-dim font-bold text-emerald">
+                <tr className="border-t-2 border-line-strong bg-emerald/10 font-bold text-emerald">
                   <td className="py-3 px-3">TOTAL DELIVERED LANDED COST</td>
                   <td className="py-3 px-3 text-right">{currency} {currentCalc.totalLandedCost.toLocaleString()}</td>
                   <td className="py-3 px-3 text-right text-sm">{currency} {currentCalc.landedCostPerUnit}</td>

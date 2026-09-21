@@ -108,7 +108,7 @@ export default function SafetyStockCalculator() {
       initial="initial"
       animate="animate"
       exit="exit"
-      className="space-y-6 font-sans text-slate-800"
+      className="space-y-6 font-sans text-fg"
       dir={isAr ? "rtl" : "ltr"}
       id="safety-stock-container"
     >
@@ -140,7 +140,7 @@ export default function SafetyStockCalculator() {
       {/* KPI HIGHLIGHT CARDS */}
       <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 font-mono">
         {/* SAFETY STOCK */}
-        <div className="p-4 rounded-xl border border-emerald-border bg-emerald-dim shadow-xs">
+        <div className="p-4 rounded-xl border border-emerald/30 bg-emerald/10 shadow-xs">
           <span className="text-[10px] text-emerald uppercase font-bold block mb-1">
             {isAr ? "مخزون الأمان المطلوب" : "Required Safety Stock"}
           </span>
@@ -154,43 +154,43 @@ export default function SafetyStockCalculator() {
         </div>
 
         {/* REORDER POINT (ROP) */}
-        <div className="p-4 rounded-xl border border-surface-border bg-white shadow-xs">
-          <span className="text-[10px] text-slate-muted uppercase font-bold block mb-1">
+        <div className="p-4 rounded-xl border border-line bg-ink-2 shadow-xs">
+          <span className="text-[10px] text-fg-3 uppercase font-bold block mb-1">
             {isAr ? "نقطة إعادة الطلب (ROP)" : "Reorder Point (ROP)"}
           </span>
           <div className="flex items-baseline gap-1.5">
-            <span className="text-2xl font-extrabold text-slate-heading">{outputs.reorderPoint.toLocaleString()}</span>
-            <span className="text-xs font-bold text-slate-muted">{isAr ? "وحدة" : "Units"}</span>
+            <span className="text-2xl font-extrabold text-fg">{outputs.reorderPoint.toLocaleString()}</span>
+            <span className="text-xs font-bold text-fg-3">{isAr ? "وحدة" : "Units"}</span>
           </div>
-          <span className="text-[10px] text-slate-muted font-sans font-medium block mt-1">
+          <span className="text-[10px] text-fg-3 font-sans font-medium block mt-1">
             {isAr ? "أصدر أمر شراء فور بلوغ هذا الرصيد" : "Trigger order immediately when hit"}
           </span>
         </div>
 
         {/* LEAD TIME DEMAND */}
-        <div className="p-4 rounded-xl border border-surface-border bg-white shadow-xs">
-          <span className="text-[10px] text-slate-muted uppercase font-bold block mb-1">
+        <div className="p-4 rounded-xl border border-line bg-ink-2 shadow-xs">
+          <span className="text-[10px] text-fg-3 uppercase font-bold block mb-1">
             {isAr ? "الاستهلاك المتوقع خلال التوريد" : "Expected Lead Time Demand"}
           </span>
           <div className="flex items-baseline gap-1.5">
-            <span className="text-2xl font-extrabold text-slate-heading">{outputs.leadTimeDemand.toLocaleString()}</span>
-            <span className="text-xs font-bold text-slate-muted">{isAr ? "وحدة" : "Units"}</span>
+            <span className="text-2xl font-extrabold text-fg">{outputs.leadTimeDemand.toLocaleString()}</span>
+            <span className="text-xs font-bold text-fg-3">{isAr ? "وحدة" : "Units"}</span>
           </div>
-          <span className="text-[10px] text-slate-muted font-sans font-medium block mt-1">
+          <span className="text-[10px] text-fg-3 font-sans font-medium block mt-1">
             {dailyDemand} units/day × {leadTimeDays} days LT
           </span>
         </div>
 
         {/* STATISTICAL Z-SCORE */}
-        <div className="p-4 rounded-xl border border-surface-border bg-white shadow-xs">
-          <span className="text-[10px] text-slate-muted uppercase font-bold block mb-1">
+        <div className="p-4 rounded-xl border border-line bg-ink-2 shadow-xs">
+          <span className="text-[10px] text-fg-3 uppercase font-bold block mb-1">
             {isAr ? "معامل الخدمة الإحصائي (Z)" : "Statistical Z-Factor"}
           </span>
           <div className="flex items-baseline gap-1.5">
-            <span className="text-2xl font-extrabold text-slate-heading">{outputs.zScore}</span>
-            <span className="text-xs font-bold text-slate-muted">σ</span>
+            <span className="text-2xl font-extrabold text-fg">{outputs.zScore}</span>
+            <span className="text-xs font-bold text-fg-3">σ</span>
           </div>
-          <span className="text-[10px] text-slate-muted font-sans font-medium block mt-1">
+          <span className="text-[10px] text-fg-3 font-sans font-medium block mt-1">
             Combined σ = {outputs.combinedStdDev} units
           </span>
         </div>
@@ -203,52 +203,52 @@ export default function SafetyStockCalculator() {
         {/* INPUTS COLUMN (5 COLS) */}
         <div className="lg:col-span-5 space-y-4">
           <div className="panel-input p-5 space-y-4">
-            <h3 className="font-mono text-xs font-bold text-slate-heading uppercase tracking-wider border-b border-surface-border pb-3">
+            <h3 className="font-mono text-xs font-bold text-fg uppercase tracking-wider border-b border-line pb-3">
               {isAr ? "معلمات الطلب وفترة التوريد" : "Demand & Lead Time Variability"}
             </h3>
 
             <div className="space-y-3.5 text-xs">
               <div>
-                <label className="text-slate-body font-medium block mb-1">
+                <label className="text-fg-2 font-medium block mb-1">
                   {isAr ? "متوسط الطلب اليومي (d)" : "Average Daily Demand (d)"} ({isAr ? "وحدة/يوم" : "Units/day"})
                 </label>
                 <input
                   type="number"
                   value={dailyDemand}
                   onChange={(e) => setDailyDemand(Number(e.target.value))}
-                  className="w-full px-3 py-2 rounded bg-surface-subtle border border-surface-border font-mono text-xs font-bold"
+                  className="w-full px-3 py-2 rounded bg-ink-3 border border-line font-mono text-xs font-bold"
                 />
               </div>
 
               <div>
-                <label className="text-slate-body font-medium block mb-1">
+                <label className="text-fg-2 font-medium block mb-1">
                   {isAr ? "الانحراف المعياري للطلب اليومي (σ_d)" : "Std Deviation of Daily Demand (σ_d)"}
                 </label>
                 <input
                   type="number"
                   value={demandStdDev}
                   onChange={(e) => setDemandStdDev(Number(e.target.value))}
-                  className="w-full px-3 py-2 rounded bg-surface-subtle border border-surface-border font-mono text-xs font-bold"
+                  className="w-full px-3 py-2 rounded bg-ink-3 border border-line font-mono text-xs font-bold"
                 />
-                <span className="text-[10px] text-slate-400 block mt-0.5">
+                <span className="text-[10px] text-fg-3 block mt-0.5">
                   Measures day-to-day demand volatility
                 </span>
               </div>
 
               <div>
-                <label className="text-slate-body font-medium block mb-1">
+                <label className="text-fg-2 font-medium block mb-1">
                   {isAr ? "متوسط فترة التوريد بالأيام (LT)" : "Average Lead Time (LT Days)"}
                 </label>
                 <input
                   type="number"
                   value={leadTimeDays}
                   onChange={(e) => setLeadTimeDays(Number(e.target.value))}
-                  className="w-full px-3 py-2 rounded bg-surface-subtle border border-surface-border font-mono text-xs font-bold"
+                  className="w-full px-3 py-2 rounded bg-ink-3 border border-line font-mono text-xs font-bold"
                 />
               </div>
 
               <div>
-                <label className="text-slate-body font-medium block mb-1">
+                <label className="text-fg-2 font-medium block mb-1">
                   {isAr ? "الانحراف المعياري لفترة التوريد (σ_LT)" : "Std Deviation of Lead Time (σ_LT Days)"}
                 </label>
                 <input
@@ -256,20 +256,20 @@ export default function SafetyStockCalculator() {
                   step="0.5"
                   value={leadTimeStdDev}
                   onChange={(e) => setLeadTimeStdDev(Number(e.target.value))}
-                  className="w-full px-3 py-2 rounded bg-surface-subtle border border-surface-border font-mono text-xs font-bold"
+                  className="w-full px-3 py-2 rounded bg-ink-3 border border-line font-mono text-xs font-bold"
                 />
-                <span className="text-[10px] text-slate-400 block mt-0.5">
+                <span className="text-[10px] text-fg-3 block mt-0.5">
                   Set to 0 if supplier delivery lead time is completely constant
                 </span>
               </div>
 
               {/* SERVICE LEVEL SELECTOR */}
-              <div className="p-3.5 bg-surface-subtle rounded-lg border border-surface-border space-y-2">
+              <div className="p-3.5 bg-ink-3 rounded-lg border border-line space-y-2">
                 <div className="flex justify-between items-center">
-                  <span className="font-bold text-slate-800">
+                  <span className="font-bold text-fg">
                     {isAr ? "مستوى الخدمة المستهدف (%)" : "Target Service Level (%)"}
                   </span>
-                  <label className="flex items-center gap-1.5 text-[11px] text-slate-500 cursor-pointer">
+                  <label className="flex items-center gap-1.5 text-[11px] text-fg-3 cursor-pointer">
                     <input
                       type="checkbox"
                       checked={useManualZ}
@@ -288,8 +288,8 @@ export default function SafetyStockCalculator() {
                         onClick={() => setServiceLevelPct(lvl)}
                         className={`py-1.5 rounded text-center transition-all cursor-pointer font-bold ${
                           serviceLevelPct === lvl
-                            ? "bg-emerald text-white shadow-2xs"
-                            : "bg-white text-slate-700 hover:bg-slate-100 border border-surface-border"
+                            ? "bg-emerald text-ink-0 shadow-2xs"
+                            : "bg-ink-2 text-fg-2 hover:bg-ink-4 border border-line"
                         }`}
                       >
                         {lvl}%
@@ -303,9 +303,9 @@ export default function SafetyStockCalculator() {
                       step="0.01"
                       value={customZScore}
                       onChange={(e) => setCustomZScore(Number(e.target.value))}
-                      className="w-full px-3 py-1.5 rounded bg-white border border-surface-border font-mono text-xs font-bold"
+                      className="w-full px-3 py-1.5 rounded bg-ink-2 border border-line font-mono text-xs font-bold"
                     />
-                    <span className="text-[10px] text-slate-400 block mt-1">
+                    <span className="text-[10px] text-fg-3 block mt-1">
                       Direct standard normal score Z (e.g., 1.645 for 95%, 2.33 for 99%)
                     </span>
                   </div>
@@ -318,12 +318,12 @@ export default function SafetyStockCalculator() {
         {/* SENSITIVITY CHART COLUMN (7 COLS) */}
         <div className="lg:col-span-7 space-y-6">
           <div className="panel-data p-5 space-y-4">
-            <div className="flex justify-between items-center border-b border-surface-border pb-3">
+            <div className="flex justify-between items-center border-b border-line pb-3">
               <div>
-                <h3 className="font-serif text-sm font-bold text-slate-heading">
+                <h3 className="font-serif text-sm font-bold text-fg">
                   {isAr ? "مخطط حساسية مقايضة التكلفة ومستوى الخدمة" : "Cost-Service Level Tradeoff Curve"}
                 </h3>
-                <p className="text-[11px] text-slate-muted font-sans font-medium">
+                <p className="text-[11px] text-fg-3 font-sans font-medium">
                   {isAr
                     ? "ارتفاع مستوى الخدمة فوق 95% يتطلب زيادة غير خطية في مخزون الأمان"
                     : "Pushing service level above 95% requires exponentially higher buffer investment"}
@@ -337,18 +337,18 @@ export default function SafetyStockCalculator() {
             <div className="h-64 w-full">
               <ResponsiveContainer width="100%" height="100%">
                 <BarChart data={sensitivityChartData} margin={{ top: 10, right: 15, left: 10, bottom: 0 }}>
-                  <CartesianGrid strokeDasharray="3 3" stroke="#E2E8F0" vertical={false} />
-                  <XAxis dataKey="name" stroke="#64748B" fontSize={10} fontFamily="monospace" />
-                  <YAxis stroke="#64748B" fontSize={10} fontFamily="monospace" />
+                  <CartesianGrid strokeDasharray="3 3" stroke="rgba(158,190,180,0.14)" vertical={false} />
+                  <XAxis dataKey="name" stroke="#a7b9b2" fontSize={10} fontFamily="monospace" />
+                  <YAxis stroke="#a7b9b2" fontSize={10} fontFamily="monospace" />
                   <Tooltip
-                    contentStyle={{ backgroundColor: "#FFFFFF", borderColor: "#E2E8F0", borderRadius: "8px", fontSize: "11px" }}
+                    contentStyle={{ backgroundColor: "#0e161a", borderColor: "rgba(158,190,180,0.14)", borderRadius: "8px", fontSize: "11px" }}
                     formatter={(val: any) => [`${val} Units`, "Safety Stock"]}
                   />
                   <Bar dataKey="safetyStock" radius={[4, 4, 0, 0]}>
                     {sensitivityChartData.map((entry, index) => (
                       <Cell
                         key={`cell-${index}`}
-                        fill={entry.isCurrent ? "#0E7C69" : "#94A3B8"}
+                        fill={entry.isCurrent ? "#17a88a" : "#6d817a"}
                       />
                     ))}
                   </Bar>
@@ -359,27 +359,27 @@ export default function SafetyStockCalculator() {
 
           {/* SENSITIVITY TABLE */}
           <div className="panel-data p-5">
-            <h3 className="font-mono text-xs font-bold text-slate-heading uppercase tracking-wider mb-3">
+            <h3 className="font-mono text-xs font-bold text-fg uppercase tracking-wider mb-3">
               {isAr ? "جدول مقايضة مستويات الخدمة" : "Service Level Lookup Matrix"}
             </h3>
 
             <div className="overflow-x-auto">
               <table className="w-full text-xs font-mono text-left rtl:text-right border-collapse">
                 <thead>
-                  <tr className="border-b border-surface-border bg-surface-subtle text-slate-muted">
+                  <tr className="border-b border-line bg-ink-3 text-fg-3">
                     <th className="py-2 px-3">Service Level</th>
                     <th className="py-2 px-3 text-right">Z-Score</th>
                     <th className="py-2 px-3 text-right">Safety Stock</th>
                     <th className="py-2 px-3 text-right font-bold text-emerald">Reorder Point (ROP)</th>
                   </tr>
                 </thead>
-                <tbody className="divide-y divide-surface-border">
+                <tbody className="divide-y divide-line">
                   {outputs.sensitivityPoints.map((pt) => {
                     const isSelected = pt.serviceLevel === serviceLevelPct;
                     return (
                       <tr
                         key={pt.serviceLevel}
-                        className={`hover:bg-surface-subtle transition-colors cursor-pointer ${
+                        className={`hover:bg-ink-3 transition-colors cursor-pointer ${
                           isSelected ? "bg-emerald/5 font-bold" : ""
                         }`}
                         onClick={() => {
@@ -387,7 +387,7 @@ export default function SafetyStockCalculator() {
                           setUseManualZ(false);
                         }}
                       >
-                        <td className="py-2 px-3 font-medium text-slate-heading flex items-center gap-1.5">
+                        <td className="py-2 px-3 font-medium text-fg flex items-center gap-1.5">
                           {isSelected && <span className="w-1.5 h-1.5 rounded-full bg-emerald" />}
                           <span>{pt.serviceLevel}%</span>
                         </td>
@@ -401,8 +401,8 @@ export default function SafetyStockCalculator() {
               </table>
             </div>
 
-            <div className="mt-4 p-3 bg-slate-50 rounded-lg border border-slate-200 text-xs font-sans text-slate-600">
-              <span className="font-bold text-slate-800 block mb-1">
+            <div className="mt-4 p-3 bg-ink-3 rounded-lg border border-line text-xs font-sans text-fg-2">
+              <span className="font-bold text-fg block mb-1">
                 {isAr ? "تحليل الكفاءة والمخاطر" : "Operational Insight:"}
               </span>
               {isAr

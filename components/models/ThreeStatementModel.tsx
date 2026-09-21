@@ -132,20 +132,20 @@ export default function ThreeStatementModel() {
       initial="initial"
       animate="animate"
       exit="exit"
-      className="grid grid-cols-1 lg:grid-cols-12 gap-8 text-slate-100 font-mono"
+      className="grid grid-cols-1 lg:grid-cols-12 gap-8 text-fg font-mono"
       dir={isAr ? "rtl" : "ltr"}
     >
       {/* LEFT COLUMN: DRIVERS (4 COLS) */}
       <div className="col-span-12 lg:col-span-4 space-y-6">
         <div className="panel-input p-6 space-y-4">
-          <div className="flex items-center justify-between pb-3 border-b border-[#E2E8F0]">
+          <div className="flex items-center justify-between pb-3 border-b border-line">
             <div className="flex items-center gap-3">
               <FileSpreadsheet className="text-emerald" size={22} />
               <div>
-                <h2 className="font-mono text-lg font-extrabold text-slate-900 uppercase">
+                <h2 className="font-mono text-lg font-extrabold text-fg uppercase">
                   {isAr ? "افتراضات القوائم الثلاث" : "3-Statement Drivers"}
                 </h2>
-                <span className="text-[10px] font-mono text-slate-500 uppercase">
+                <span className="text-[10px] font-mono text-fg-3 uppercase">
                   {isAr ? "مدخلات التنبؤات والنموذج" : "Forecast Drivers"}
                 </span>
               </div>
@@ -155,91 +155,91 @@ export default function ThreeStatementModel() {
           <div className="space-y-4 font-mono text-xs">
             {/* Base Revenue */}
             <div className="flex justify-between items-center">
-              <label className="text-slate-700">{isAr ? "الإيرادات الأساسية" : "Base Revenue (M)"}</label>
+              <label className="text-fg-2">{isAr ? "الإيرادات الأساسية" : "Base Revenue (M)"}</label>
               <input
                 type="number"
                 value={baseRev}
                 onChange={(e) => setBaseRev(Number(e.target.value))}
-                className="w-24 px-2 py-1 bg-slate-50 border border-[#E2E8F0] focus:border-emerald rounded-md text-right text-slate-900 font-mono text-xs focus:outline-none"
+                className="w-24 px-2 py-1 bg-ink-3 border border-line focus:border-emerald rounded-md text-right text-fg font-mono text-xs focus:outline-none"
               />
             </div>
 
             {/* Growth Rate */}
             <div className="flex justify-between items-center">
-              <label className="text-slate-700">{isAr ? "معدل النمو (%)" : "Growth Rate (%)"}</label>
+              <label className="text-fg-2">{isAr ? "معدل النمو (%)" : "Growth Rate (%)"}</label>
               <input
                 type="number"
                 value={growthRate}
                 onChange={(e) => setGrowthRate(Number(e.target.value))}
-                className="w-24 px-2 py-1 bg-slate-50 border border-[#E2E8F0] focus:border-emerald rounded-md text-right text-slate-900 font-mono text-xs focus:outline-none"
+                className="w-24 px-2 py-1 bg-ink-3 border border-line focus:border-emerald rounded-md text-right text-fg font-mono text-xs focus:outline-none"
               />
             </div>
 
             {/* COGS % */}
             <div className="flex justify-between items-center">
-              <label className="text-slate-700">{isAr ? "تكلفة المبيعات (%)" : "COGS (%)"}</label>
+              <label className="text-fg-2">{isAr ? "تكلفة المبيعات (%)" : "COGS (%)"}</label>
               <input
                 type="number"
                 value={cogsPct}
                 onChange={(e) => setCogsPct(Number(e.target.value))}
-                className="w-24 px-2 py-1 bg-slate-50 border border-[#E2E8F0] focus:border-emerald rounded-md text-right text-slate-900 font-mono text-xs focus:outline-none"
+                className="w-24 px-2 py-1 bg-ink-3 border border-line focus:border-emerald rounded-md text-right text-fg font-mono text-xs focus:outline-none"
               />
             </div>
 
             {/* OpEx % */}
             <div className="flex justify-between items-center">
-              <label className="text-slate-700">{isAr ? "المصاريف التشغيلية (%)" : "OpEx (%)"}</label>
+              <label className="text-fg-2">{isAr ? "المصاريف التشغيلية (%)" : "OpEx (%)"}</label>
               <input
                 type="number"
                 value={opexPct}
                 onChange={(e) => setOpexPct(Number(e.target.value))}
-                className="w-24 px-2 py-1 bg-slate-50 border border-[#E2E8F0] focus:border-emerald rounded-md text-right text-slate-900 font-mono text-xs focus:outline-none"
+                className="w-24 px-2 py-1 bg-ink-3 border border-line focus:border-emerald rounded-md text-right text-fg font-mono text-xs focus:outline-none"
               />
             </div>
 
             {/* CapEx % */}
             <div className="flex justify-between items-center">
-              <label className="text-slate-700">{isAr ? "الإنفاق الرأسمالي (% من الإيرادات)" : "CapEx (% of Rev)"}</label>
+              <label className="text-fg-2">{isAr ? "الإنفاق الرأسمالي (% من الإيرادات)" : "CapEx (% of Rev)"}</label>
               <input
                 type="number"
                 value={capexPct}
                 onChange={(e) => setCapexPct(Number(e.target.value))}
-                className="w-24 px-2 py-1 bg-slate-50 border border-[#E2E8F0] focus:border-emerald rounded-md text-right text-slate-900 font-mono text-xs focus:outline-none"
+                className="w-24 px-2 py-1 bg-ink-3 border border-line focus:border-emerald rounded-md text-right text-fg font-mono text-xs focus:outline-none"
               />
             </div>
 
             {/* Starting Cash */}
             <div className="flex justify-between items-center">
-              <label className="text-slate-700">{isAr ? "النقد الابتدائي (مليون)" : "Starting Cash (M)"}</label>
+              <label className="text-fg-2">{isAr ? "النقد الابتدائي (مليون)" : "Starting Cash (M)"}</label>
               <input
                 type="number"
                 value={startingCash}
                 onChange={(e) => setStartingCash(Number(e.target.value))}
-                className="w-24 px-2 py-1 bg-slate-50 border border-[#E2E8F0] focus:border-emerald rounded-md text-right text-slate-900 font-mono text-xs focus:outline-none"
+                className="w-24 px-2 py-1 bg-ink-3 border border-line focus:border-emerald rounded-md text-right text-fg font-mono text-xs focus:outline-none"
               />
             </div>
 
             {/* Initial Debt */}
             <div className="flex justify-between items-center">
-              <label className="text-slate-700">{isAr ? "الدين القائم (مليون)" : "Existing Debt (M)"}</label>
+              <label className="text-fg-2">{isAr ? "الدين القائم (مليون)" : "Existing Debt (M)"}</label>
               <input
                 type="number"
                 value={initialDebt}
                 onChange={(e) => setInitialDebt(Number(e.target.value))}
-                className="w-24 px-2 py-1 bg-slate-50 border border-[#E2E8F0] focus:border-emerald rounded-md text-right text-slate-900 font-mono text-xs focus:outline-none"
+                className="w-24 px-2 py-1 bg-ink-3 border border-line focus:border-emerald rounded-md text-right text-fg font-mono text-xs focus:outline-none"
               />
             </div>
 
-            <hr className="border-[#E2E8F0]" />
+            <hr className="border-line" />
 
             {/* GAAP Mode Toggle */}
             <div className="space-y-2">
-              <label className="text-slate-500 text-[10px] block uppercase font-bold tracking-wider">
+              <label className="text-fg-3 text-[10px] block uppercase font-bold tracking-wider">
                 {isAr ? "المعيار المحاسبي والزكاة" : "Accounting Standard & Zakat"}
               </label>
               <button
                 onClick={() => setGaapMode(gaapMode === "SAUDI_GAAP" ? "IFRS" : "SAUDI_GAAP")}
-                className="w-full flex items-center justify-between px-3 py-2 rounded-md border border-emerald-border bg-emerald-dim text-emerald font-bold cursor-pointer transition-colors"
+                className="w-full flex items-center justify-between px-3 py-2 rounded-md border border-emerald/30 bg-emerald/10 text-emerald font-bold cursor-pointer transition-colors"
               >
                 <span>{gaapMode === "SAUDI_GAAP" ? "Saudi GAAP (Zakat 2.5%)" : "IFRS (Corp Tax 20%)"}</span>
                 {gaapMode === "SAUDI_GAAP" ? <ToggleRight size={18} /> : <ToggleLeft size={18} />}
@@ -251,15 +251,15 @@ export default function ThreeStatementModel() {
 
       {/* RIGHT COLUMN: PREVIEWS & EXPORTS (8 COLS) */}
       <div className="col-span-12 lg:col-span-8 space-y-6">
-        <div className="bg-white p-4 rounded-lg border border-[#E2E8F0] flex justify-between items-center shadow-xs">
-          <span className="font-mono text-xs text-slate-700 font-bold uppercase tracking-wider">
+        <div className="bg-ink-2 p-4 rounded-lg border border-line flex justify-between items-center shadow-xs">
+          <span className="font-mono text-xs text-fg-2 font-bold uppercase tracking-wider">
             {isAr ? "تصدير القوائم المالية" : "Statement Projections Output"}
           </span>
 
           <div className="flex items-center gap-3">
             <button
               onClick={exportExcel}
-              className="flex items-center gap-1.5 px-3 py-1.5 rounded-md bg-emerald text-white font-mono text-xs font-bold hover:bg-emerald-light transition-colors cursor-pointer uppercase shadow-xs"
+              className="flex items-center gap-1.5 px-3 py-1.5 rounded-md bg-emerald text-ink-0 font-mono text-xs font-bold hover:bg-emerald-light transition-colors cursor-pointer uppercase shadow-xs"
             >
               <Download size={13} />
               <span>{t("export_excel", language)}</span>
@@ -267,7 +267,7 @@ export default function ThreeStatementModel() {
 
             <button
               onClick={exportPDF}
-              className="flex items-center gap-1.5 px-3 py-1.5 rounded-md bg-slate-50 border border-[#E2E8F0] text-slate-700 font-mono text-xs font-bold hover:bg-slate-100 transition-colors cursor-pointer uppercase"
+              className="flex items-center gap-1.5 px-3 py-1.5 rounded-md bg-ink-3 border border-line text-fg-2 font-mono text-xs font-bold hover:bg-ink-4 transition-colors cursor-pointer uppercase"
             >
               <FileText size={13} />
               <span>{t("export_pdf", language)}</span>
@@ -276,7 +276,7 @@ export default function ThreeStatementModel() {
         </div>
 
         {/* TABS */}
-        <div className="flex border-b border-[#E2E8F0] font-mono text-xs gap-2">
+        <div className="flex border-b border-line font-mono text-xs gap-2">
           {["income", "balance", "cashflow"].map((tab) => {
             const active = activeTab === tab;
             return (
@@ -285,8 +285,8 @@ export default function ThreeStatementModel() {
                 onClick={() => setActiveTab(tab as any)}
                 className={`px-5 py-2.5 font-bold rounded-t-lg transition-all cursor-pointer uppercase tracking-wider ${
                   active
-                    ? "bg-emerald text-white border-t border-x border-[#E2E8F0] font-bold shadow-xs"
-                    : "text-slate-500 hover:text-slate-900 bg-slate-50"
+                    ? "bg-emerald text-ink-0 border-t border-x border-line font-bold shadow-xs"
+                    : "text-fg-3 hover:text-fg bg-ink-3"
                 }`}
               >
                 {tab === "income" ? t("tab_income", language) : tab === "balance" ? t("tab_balance", language) : t("tab_cashflow", language)}
@@ -296,68 +296,68 @@ export default function ThreeStatementModel() {
         </div>
 
         {/* STATEMENT TABLE */}
-        <div className="bg-white p-6 rounded-lg border border-[#E2E8F0] shadow-xs overflow-x-auto">
+        <div className="bg-ink-2 p-6 rounded-lg border border-line shadow-xs overflow-x-auto">
           <table className="w-full font-mono text-xs text-left rtl:text-right border-collapse">
             <thead>
-              <tr className="bg-slate-50 border-b border-[#E2E8F0] text-slate-600">
+              <tr className="bg-ink-3 border-b border-line text-fg-2">
                 <th className="p-2.5">Financial Metric (SAR M)</th>
                 {projections.map((p) => (
                   <th key={p.year} className="p-2.5 text-right">{p.year}</th>
                 ))}
               </tr>
             </thead>
-            <tbody className="divide-y divide-[#E2E8F0]">
+            <tbody className="divide-y divide-line">
               {activeTab === "income" && (
                 <>
-                  <tr className="bg-emerald-dim font-bold">
+                  <tr className="bg-emerald/10 font-bold">
                     <td className="p-2.5 text-emerald">Revenue (Driver: +{growthRate}%)</td>
                     {projections.map((p) => (
                       <td key={p.year} className="p-2.5 text-right text-emerald font-bold">{p.rev.toLocaleString()}</td>
                     ))}
                   </tr>
                   <tr>
-                    <td className="p-2.5 text-slate-700">Cost of Goods Sold (COGS)</td>
+                    <td className="p-2.5 text-fg-2">Cost of Goods Sold (COGS)</td>
                     {projections.map((p) => (
-                      <td key={p.year} className="p-2.5 text-right text-rose-600">-{p.cogs.toLocaleString()}</td>
+                      <td key={p.year} className="p-2.5 text-right text-neg">-{p.cogs.toLocaleString()}</td>
                     ))}
                   </tr>
-                  <tr className="font-bold border-t border-[#E2E8F0] bg-slate-50">
-                    <td className="p-2.5 text-slate-900">Gross Profit</td>
+                  <tr className="font-bold border-t border-line bg-ink-3">
+                    <td className="p-2.5 text-fg">Gross Profit</td>
                     {projections.map((p) => (
-                      <td key={p.year} className="p-2.5 text-right text-slate-900 font-bold">{p.grossProfit.toLocaleString()}</td>
-                    ))}
-                  </tr>
-                  <tr>
-                    <td className="p-2.5 text-slate-700">Operating Expenses (OpEx)</td>
-                    {projections.map((p) => (
-                      <td key={p.year} className="p-2.5 text-right text-rose-600">-{p.opex.toLocaleString()}</td>
-                    ))}
-                  </tr>
-                  <tr className="font-bold border-t border-[#E2E8F0] bg-slate-50">
-                    <td className="p-2.5 text-slate-900">EBITDA</td>
-                    {projections.map((p) => (
-                      <td key={p.year} className="p-2.5 text-right text-slate-900 font-bold">{p.ebitda.toLocaleString()}</td>
+                      <td key={p.year} className="p-2.5 text-right text-fg font-bold">{p.grossProfit.toLocaleString()}</td>
                     ))}
                   </tr>
                   <tr>
-                    <td className="p-2.5 text-slate-600">Depreciation & Amortization</td>
+                    <td className="p-2.5 text-fg-2">Operating Expenses (OpEx)</td>
                     {projections.map((p) => (
-                      <td key={p.year} className="p-2.5 text-right text-slate-600">-{p.da.toLocaleString()}</td>
+                      <td key={p.year} className="p-2.5 text-right text-neg">-{p.opex.toLocaleString()}</td>
                     ))}
                   </tr>
-                  <tr className="font-bold text-slate-900">
+                  <tr className="font-bold border-t border-line bg-ink-3">
+                    <td className="p-2.5 text-fg">EBITDA</td>
+                    {projections.map((p) => (
+                      <td key={p.year} className="p-2.5 text-right text-fg font-bold">{p.ebitda.toLocaleString()}</td>
+                    ))}
+                  </tr>
+                  <tr>
+                    <td className="p-2.5 text-fg-2">Depreciation & Amortization</td>
+                    {projections.map((p) => (
+                      <td key={p.year} className="p-2.5 text-right text-fg-2">-{p.da.toLocaleString()}</td>
+                    ))}
+                  </tr>
+                  <tr className="font-bold text-fg">
                     <td className="p-2.5">Operating Income (EBIT)</td>
                     {projections.map((p) => (
-                      <td key={p.year} className="p-2.5 text-right text-slate-900 font-bold">{p.ebit.toLocaleString()}</td>
+                      <td key={p.year} className="p-2.5 text-right text-fg font-bold">{p.ebit.toLocaleString()}</td>
                     ))}
                   </tr>
-                  <tr className="bg-amber-50 text-amber-900 font-bold">
+                  <tr className="bg-gold/10 text-gold font-bold">
                     <td className="p-2.5">{gaapMode === "SAUDI_GAAP" ? "Zakat Provision (2.5%)" : "Corporate Tax (20%)"}</td>
                     {projections.map((p) => (
                       <td key={p.year} className="p-2.5 text-right font-bold">-{p.zakatOrTax.toLocaleString()}</td>
                     ))}
                   </tr>
-                  <tr className="bg-emerald-dim font-bold text-emerald border-t-2 border-emerald">
+                  <tr className="bg-emerald/10 font-bold text-emerald border-t-2 border-emerald">
                     <td className="p-2.5 text-emerald">Net Income</td>
                     {projections.map((p) => (
                       <td key={p.year} className="p-2.5 text-right text-emerald font-extrabold text-sm">{p.netIncome.toLocaleString()}</td>
@@ -368,58 +368,58 @@ export default function ThreeStatementModel() {
 
               {activeTab === "balance" && (
                 <>
-                  <tr className="bg-slate-50 font-bold text-slate-900">
+                  <tr className="bg-ink-3 font-bold text-fg">
                     <td className="p-2.5">Cash & Cash Equivalents</td>
                     {projections.map((p) => (
                       <td key={p.year} className="p-2.5 text-right text-emerald font-bold">{p.cash.toLocaleString()}</td>
                     ))}
                   </tr>
                   <tr>
-                    <td className="p-2.5 text-slate-700">Accounts Receivable</td>
+                    <td className="p-2.5 text-fg-2">Accounts Receivable</td>
                     {projections.map((p) => (
-                      <td key={p.year} className="p-2.5 text-right text-slate-700">{p.receivables.toLocaleString()}</td>
+                      <td key={p.year} className="p-2.5 text-right text-fg-2">{p.receivables.toLocaleString()}</td>
                     ))}
                   </tr>
                   <tr>
-                    <td className="p-2.5 text-slate-700">Net Property, Plant & Equipment (PP&E)</td>
+                    <td className="p-2.5 text-fg-2">Net Property, Plant & Equipment (PP&E)</td>
                     {projections.map((p) => (
-                      <td key={p.year} className="p-2.5 text-right text-slate-700">{p.netPpe.toLocaleString()}</td>
+                      <td key={p.year} className="p-2.5 text-right text-fg-2">{p.netPpe.toLocaleString()}</td>
                     ))}
                   </tr>
-                  <tr className="font-bold border-t border-[#E2E8F0] bg-slate-50 text-slate-900">
+                  <tr className="font-bold border-t border-line bg-ink-3 text-fg">
                     <td className="p-2.5">Total Assets</td>
                     {projections.map((p) => (
-                      <td key={p.year} className="p-2.5 text-right text-slate-900 font-extrabold">{p.totalAssets.toLocaleString()}</td>
+                      <td key={p.year} className="p-2.5 text-right text-fg font-extrabold">{p.totalAssets.toLocaleString()}</td>
                     ))}
                   </tr>
                   <tr>
-                    <td className="p-2.5 text-slate-700">Accounts Payable & Accruals</td>
+                    <td className="p-2.5 text-fg-2">Accounts Payable & Accruals</td>
                     {projections.map((p) => (
-                      <td key={p.year} className="p-2.5 text-right text-rose-600">{p.payables.toLocaleString()}</td>
+                      <td key={p.year} className="p-2.5 text-right text-neg">{p.payables.toLocaleString()}</td>
                     ))}
                   </tr>
                   <tr>
-                    <td className="p-2.5 text-slate-700">Long-Term Debt & Sukuk</td>
+                    <td className="p-2.5 text-fg-2">Long-Term Debt & Sukuk</td>
                     {projections.map((p) => (
-                      <td key={p.year} className="p-2.5 text-right text-rose-600">{p.debt.toLocaleString()}</td>
+                      <td key={p.year} className="p-2.5 text-right text-neg">{p.debt.toLocaleString()}</td>
                     ))}
                   </tr>
-                  <tr className="font-bold text-slate-900">
+                  <tr className="font-bold text-fg">
                     <td className="p-2.5">Total Liabilities</td>
                     {projections.map((p) => (
-                      <td key={p.year} className="p-2.5 text-right text-slate-900">{p.totalLiab.toLocaleString()}</td>
+                      <td key={p.year} className="p-2.5 text-right text-fg">{p.totalLiab.toLocaleString()}</td>
                     ))}
                   </tr>
-                  <tr className="bg-emerald-dim font-bold text-emerald">
+                  <tr className="bg-emerald/10 font-bold text-emerald">
                     <td className="p-2.5">Total Shareholders' Equity</td>
                     {projections.map((p) => (
                       <td key={p.year} className="p-2.5 text-right text-emerald font-bold">{p.equity.toLocaleString()}</td>
                     ))}
                   </tr>
-                  <tr className="font-bold border-t-2 border-slate-900 bg-slate-100 text-slate-900">
+                  <tr className="font-bold border-t-2 border-line-strong bg-ink-4 text-fg">
                     <td className="p-2.5">Total Liabilities & Equity</td>
                     {projections.map((p) => (
-                      <td key={p.year} className="p-2.5 text-right font-extrabold text-slate-900">{(p.totalLiab + p.equity).toLocaleString()}</td>
+                      <td key={p.year} className="p-2.5 text-right font-extrabold text-fg">{(p.totalLiab + p.equity).toLocaleString()}</td>
                     ))}
                   </tr>
                 </>
@@ -427,19 +427,19 @@ export default function ThreeStatementModel() {
 
               {activeTab === "cashflow" && (
                 <>
-                  <tr className="bg-slate-50 font-bold text-slate-900">
+                  <tr className="bg-ink-3 font-bold text-fg">
                     <td className="p-2.5">Operating Cash Flow (CFO)</td>
                     {projections.map((p) => (
                       <td key={p.year} className="p-2.5 text-right text-emerald font-bold">{p.operatingCF.toLocaleString()}</td>
                     ))}
                   </tr>
                   <tr>
-                    <td className="p-2.5 text-slate-700">Capital Expenditures (CapEx)</td>
+                    <td className="p-2.5 text-fg-2">Capital Expenditures (CapEx)</td>
                     {projections.map((p) => (
-                      <td key={p.year} className="p-2.5 text-right text-rose-600">-{p.capex.toLocaleString()}</td>
+                      <td key={p.year} className="p-2.5 text-right text-neg">-{p.capex.toLocaleString()}</td>
                     ))}
                   </tr>
-                  <tr className="bg-emerald-dim font-bold text-emerald border-t border-emerald-border">
+                  <tr className="bg-emerald/10 font-bold text-emerald border-t border-emerald/30">
                     <td className="p-2.5 text-emerald">Net Cash Flow Generation (FCF)</td>
                     {projections.map((p) => (
                       <td key={p.year} className="p-2.5 text-right text-emerald font-bold">{p.fcf.toLocaleString()}</td>

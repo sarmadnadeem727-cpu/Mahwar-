@@ -12,11 +12,11 @@ export default function InlineError({ message, className = "", isAr = false }: I
   if (!message) return null;
   return (
     <div
-      className={`flex items-center gap-2 p-2.5 rounded border border-rose-200 bg-rose-50 text-rose-700 text-xs font-mono font-medium ${className}`}
+      className={`flex items-center gap-2 p-2.5 rounded border border-neg/30 bg-neg/10 text-neg text-xs font-mono font-medium ${className}`}
       dir={isAr ? "rtl" : "ltr"}
       role="alert"
     >
-      <AlertTriangle size={15} className="shrink-0 text-rose-600" />
+      <AlertTriangle size={15} className="shrink-0 text-neg" />
       <span>{message}</span>
     </div>
   );

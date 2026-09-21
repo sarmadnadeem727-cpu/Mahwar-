@@ -165,13 +165,13 @@ export default function MonteCarloSimulation({
 
   return (
     <div className="panel-input p-6 font-mono text-xs space-y-6">
-      <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 pb-4 border-b border-[#E2E8F0]">
+      <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 pb-4 border-b border-line">
         <div>
           <div className="flex items-center gap-2 text-emerald font-bold uppercase tracking-wider text-[11px] mb-1">
             <Sparkles size={14} />
             <span>{isAr ? "محاكاة مونت كارلو الاحتمالية" : "1,000-Run Client-Side Monte Carlo Engine"}</span>
           </div>
-          <h3 className="text-sm font-extrabold text-slate-900 font-serif">
+          <h3 className="text-sm font-extrabold text-fg font-serif">
             {isAr ? "توزيع احتمالية القيمة العادلة للسهم (Probabilistic Valuation)" : "Implied Valuation Probability Distribution"}
           </h3>
         </div>
@@ -179,7 +179,7 @@ export default function MonteCarloSimulation({
         <button
           onClick={runSimulation}
           disabled={isRunning}
-          className="px-4 py-2 bg-emerald hover:bg-emerald-light text-white font-bold rounded-lg flex items-center gap-2 cursor-pointer transition-all uppercase tracking-wider text-xs shadow-xs"
+          className="px-4 py-2 bg-emerald hover:bg-emerald-light text-ink-0 font-bold rounded-lg flex items-center gap-2 cursor-pointer transition-all uppercase tracking-wider text-xs shadow-xs"
         >
           {isRunning ? <RefreshCw size={13} className="animate-spin" /> : <Play size={13} />}
           <span>{isAr ? "إعادة المحاكاة (1,000 جولة)" : "Run 1,000 Simulations"}</span>
@@ -189,16 +189,16 @@ export default function MonteCarloSimulation({
       {/* PERCENTILE CALLOUTS */}
       {simResults && (
         <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
-          <div className="p-4 bg-slate-50 border border-[#E2E8F0] rounded-lg text-center">
-            <span className="text-[10px] text-slate-500 font-bold uppercase block mb-1">
+          <div className="p-4 bg-ink-3 border border-line rounded-lg text-center">
+            <span className="text-[10px] text-fg-3 font-bold uppercase block mb-1">
               {isAr ? "النسبة المئوية P10 (تحفظية)" : "P10 Percentile (Bear)"}
             </span>
-            <span className="text-xl font-extrabold text-rose-400">
+            <span className="text-xl font-extrabold text-neg">
               SAR {simResults.p10.toFixed(2)}
             </span>
           </div>
 
-          <div className="p-4 bg-terminal-emerald-dim border border-terminal-border-emerald rounded-sm text-center">
+          <div className="p-4 bg-emerald/10 border border-emerald/30 rounded-sm text-center">
             <span className="text-[10px] text-emerald font-bold uppercase block mb-1">
               {isAr ? "النسبة المئوية P50 (الوسيط)" : "P50 Percentile (Median)"}
             </span>
@@ -207,11 +207,11 @@ export default function MonteCarloSimulation({
             </span>
           </div>
 
-          <div className="p-4 bg-slate-50 border border-[#E2E8F0] rounded-lg text-center">
-            <span className="text-[10px] text-slate-500 font-bold uppercase block mb-1">
+          <div className="p-4 bg-ink-3 border border-line rounded-lg text-center">
+            <span className="text-[10px] text-fg-3 font-bold uppercase block mb-1">
               {isAr ? "النسبة المئوية P90 (تفاؤلية)" : "P90 Percentile (Bull)"}
             </span>
-            <span className="text-xl font-extrabold text-slate-900">
+            <span className="text-xl font-extrabold text-fg">
               SAR {simResults.p90.toFixed(2)}
             </span>
           </div>
@@ -223,18 +223,18 @@ export default function MonteCarloSimulation({
         {simResults ? (
           <ResponsiveContainer width="100%" height="100%">
             <BarChart data={simResults.histogramData} margin={{ top: 10, right: 10, left: -20, bottom: 0 }}>
-              <CartesianGrid strokeDasharray="3 3" stroke="#E2E8F0" vertical={false} />
-              <XAxis dataKey="rangeLabel" stroke="#64748B" tickLine={false} fontSize={10} />
-              <YAxis stroke="#64748B" tickLine={false} fontSize={10} />
+              <CartesianGrid strokeDasharray="3 3" stroke="rgba(158,190,180,0.14)" vertical={false} />
+              <XAxis dataKey="rangeLabel" stroke="#a7b9b2" tickLine={false} fontSize={10} />
+              <YAxis stroke="#a7b9b2" tickLine={false} fontSize={10} />
               <Tooltip
-                contentStyle={{ backgroundColor: "#FFFFFF", borderColor: "#E2E8F0", borderRadius: "8px", color: "#0F172A", fontSize: "11px", boxShadow: "0 4px 12px rgba(0,0,0,0.05)" }}
+                contentStyle={{ backgroundColor: "#0e161a", borderColor: "rgba(158,190,180,0.14)", borderRadius: "8px", color: "#e8f1ed", fontSize: "11px", boxShadow: "0 4px 12px rgba(158,190,180,0.1)" }}
                 formatter={(val: any) => [`${val} runs`, "Frequency"]}
               />
-              <Bar dataKey="count" fill="#0E7C69" radius={[3, 3, 0, 0]} />
+              <Bar dataKey="count" fill="#17a88a" radius={[3, 3, 0, 0]} />
             </BarChart>
           </ResponsiveContainer>
         ) : (
-          <div className="h-full flex items-center justify-center text-slate-500 font-mono text-xs">
+          <div className="h-full flex items-center justify-center text-fg-3 font-mono text-xs">
             Calculating 1,000 Monte Carlo iterations...
           </div>
         )}

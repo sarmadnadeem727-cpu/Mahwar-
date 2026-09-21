@@ -120,7 +120,7 @@ export default function SopWorksheet() {
       initial="initial"
       animate="animate"
       exit="exit"
-      className="space-y-6 font-sans text-slate-800"
+      className="space-y-6 font-sans text-fg"
       dir={isAr ? "rtl" : "ltr"}
       id="sop-container"
     >
@@ -150,7 +150,7 @@ export default function SopWorksheet() {
         {forecastAvailable && (
           <button
             onClick={pullForecast}
-            className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-emerald-dim border border-emerald-border text-emerald text-xs font-mono font-bold hover:bg-emerald/15 transition-all cursor-pointer"
+            className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-emerald/10 border border-emerald/30 text-emerald text-xs font-mono font-bold hover:bg-emerald/15 transition-all cursor-pointer"
           >
             <ArrowUpRight size={13} />
             <span>{isAr ? "استيراد توقعات الطلب من أداة التنبؤ" : "Pull from Demand Forecast Tool"}</span>
@@ -159,7 +159,7 @@ export default function SopWorksheet() {
         {safetyStockAvailable && (
           <button
             onClick={pullSafetyStock}
-            className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-emerald-dim border border-emerald-border text-emerald text-xs font-mono font-bold hover:bg-emerald/15 transition-all cursor-pointer"
+            className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-emerald/10 border border-emerald/30 text-emerald text-xs font-mono font-bold hover:bg-emerald/15 transition-all cursor-pointer"
           >
             <ArrowUpRight size={13} />
             <span>{isAr ? "استيراد مخزون الأمان من أداة الأمان" : "Pull Target from Safety Stock Tool"}</span>
@@ -170,7 +170,7 @@ export default function SopWorksheet() {
       {/* KPI SUMMARY TILES */}
       <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 font-mono">
         {/* STOCKOUT ALERTS */}
-        <div className={`p-4 rounded-xl border shadow-xs ${summary.stockoutCount > 0 ? "border-rose-300 bg-rose-50 text-rose-700" : "border-emerald-border bg-emerald-dim text-emerald"}`}>
+        <div className={`p-4 rounded-xl border shadow-xs ${summary.stockoutCount > 0 ? "border-neg/30 bg-neg/10 text-neg" : "border-emerald/30 bg-emerald/10 text-emerald"}`}>
           <div className="flex justify-between items-center mb-1">
             <span className="text-[10px] uppercase font-bold">
               {isAr ? "فترات النفاذ والعجز" : "Stockout Periods"}
@@ -184,41 +184,41 @@ export default function SopWorksheet() {
         </div>
 
         {/* BELOW SAFETY STOCK */}
-        <div className={`p-4 rounded-xl border shadow-xs ${summary.belowSafetyCount > 0 ? "border-amber-300 bg-amber-50/50 text-amber-800" : "border-surface-border bg-white text-slate-800"}`}>
+        <div className={`p-4 rounded-xl border shadow-xs ${summary.belowSafetyCount > 0 ? "border-gold/40 bg-gold/10 text-gold" : "border-line bg-ink-2 text-fg"}`}>
           <div className="flex justify-between items-center mb-1">
-            <span className="text-[10px] uppercase font-bold text-slate-muted">
+            <span className="text-[10px] uppercase font-bold text-fg-3">
               {isAr ? "تحت مخزون الأمان" : "Below Safety Stock"}
             </span>
-            <AlertTriangle size={14} className={summary.belowSafetyCount > 0 ? "text-amber-600" : "text-slate-400"} />
+            <AlertTriangle size={14} className={summary.belowSafetyCount > 0 ? "text-gold" : "text-fg-3"} />
           </div>
           <span className="text-2xl font-extrabold">{summary.belowSafetyCount}</span>
-          <span className="text-[10px] font-sans font-medium block mt-1 text-slate-muted">
+          <span className="text-[10px] font-sans font-medium block mt-1 text-fg-3">
             Periods below target buffer
           </span>
         </div>
 
         {/* AVERAGE ENDING INVENTORY */}
-        <div className="p-4 rounded-xl border border-surface-border bg-white shadow-xs">
-          <span className="text-[10px] text-slate-muted uppercase font-bold block mb-1">
+        <div className="p-4 rounded-xl border border-line bg-ink-2 shadow-xs">
+          <span className="text-[10px] text-fg-3 uppercase font-bold block mb-1">
             {isAr ? "متوسط رصيد المخزون" : "Average Ending Inventory"}
           </span>
-          <span className="text-2xl font-extrabold text-slate-heading">
+          <span className="text-2xl font-extrabold text-fg">
             {summary.averageEndingInventory.toLocaleString()}
           </span>
-          <span className="text-[10px] text-slate-muted font-sans font-medium block mt-1">
+          <span className="text-[10px] text-fg-3 font-sans font-medium block mt-1">
             Units across 12-month horizon
           </span>
         </div>
 
         {/* MINIMUM ENDING INVENTORY */}
-        <div className="p-4 rounded-xl border border-surface-border bg-white shadow-xs">
-          <span className="text-[10px] text-slate-muted uppercase font-bold block mb-1">
+        <div className="p-4 rounded-xl border border-line bg-ink-2 shadow-xs">
+          <span className="text-[10px] text-fg-3 uppercase font-bold block mb-1">
             {isAr ? "أدنى رصيد متوقع" : "Minimum Inventory Trough"}
           </span>
-          <span className={`text-2xl font-extrabold ${summary.minEndingInventory < 0 ? "text-rose-600" : "text-slate-heading"}`}>
+          <span className={`text-2xl font-extrabold ${summary.minEndingInventory < 0 ? "text-neg" : "text-fg"}`}>
             {summary.minEndingInventory.toLocaleString()}
           </span>
-          <span className="text-[10px] text-slate-muted font-sans font-medium block mt-1">
+          <span className="text-[10px] text-fg-3 font-sans font-medium block mt-1">
             Max: {summary.maxEndingInventory.toLocaleString()} units
           </span>
         </div>
@@ -226,12 +226,12 @@ export default function SopWorksheet() {
 
       {/* TRAJECTORY CHART WITH SAFETY STOCK REFERENCE */}
       <div className="panel-data p-5 space-y-4">
-        <div className="flex justify-between items-center border-b border-surface-border pb-3">
+        <div className="flex justify-between items-center border-b border-line pb-3">
           <div>
-            <h3 className="font-serif text-sm font-bold text-slate-heading">
+            <h3 className="font-serif text-sm font-bold text-fg">
               {isAr ? "مسار المخزون المستقبلي مقابل حدود الأمان" : "Inventory Trajectory vs. Safety Stock Target"}
             </h3>
-            <p className="text-[11px] text-slate-muted font-sans font-medium">
+            <p className="text-[11px] text-fg-3 font-sans font-medium">
               {isAr ? "مقارنة التوريد والطلب مع مسار الرصيد النهائي" : "Rolling trajectory with target buffer reference line"}
             </p>
           </div>
@@ -243,16 +243,16 @@ export default function SopWorksheet() {
         <div className="h-72 w-full">
           <ResponsiveContainer width="100%" height="100%">
             <ComposedChart data={chartData} margin={{ top: 10, right: 15, left: -10, bottom: 0 }}>
-              <CartesianGrid strokeDasharray="3 3" stroke="#E2E8F0" vertical={false} />
-              <XAxis dataKey="name" stroke="#64748B" fontSize={10} fontFamily="monospace" />
-              <YAxis stroke="#64748B" fontSize={10} fontFamily="monospace" />
+              <CartesianGrid strokeDasharray="3 3" stroke="rgba(158,190,180,0.14)" vertical={false} />
+              <XAxis dataKey="name" stroke="#a7b9b2" fontSize={10} fontFamily="monospace" />
+              <YAxis stroke="#a7b9b2" fontSize={10} fontFamily="monospace" />
               <Tooltip
-                contentStyle={{ backgroundColor: "#FFFFFF", borderColor: "#E2E8F0", borderRadius: "8px", fontSize: "11px" }}
+                contentStyle={{ backgroundColor: "#0e161a", borderColor: "rgba(158,190,180,0.14)", borderRadius: "8px", fontSize: "11px" }}
               />
               <Legend wrapperStyle={{ fontSize: "11px", fontFamily: "monospace" }} />
-              <Bar dataKey="Supply" name="Planned Supply" fill="#CBD5E1" radius={[3, 3, 0, 0]} />
-              <Bar dataKey="Demand" name="Forecast Demand" fill="#94A3B8" radius={[3, 3, 0, 0]} />
-              <Line type="monotone" dataKey="EndingInventory" name="Ending Inventory" stroke="#0E7C69" strokeWidth={3} dot={{ r: 3 }} />
+              <Bar dataKey="Supply" name="Planned Supply" fill="#6d817a" radius={[3, 3, 0, 0]} />
+              <Bar dataKey="Demand" name="Forecast Demand" fill="#6d817a" radius={[3, 3, 0, 0]} />
+              <Line type="monotone" dataKey="EndingInventory" name="Ending Inventory" stroke="#17a88a" strokeWidth={3} dot={{ r: 3 }} />
               <Line type="step" dataKey="TargetSafetyStock" name="Target Safety Buffer" stroke="#F59E0B" strokeWidth={2} strokeDasharray="4 4" dot={false} />
             </ComposedChart>
           </ResponsiveContainer>
@@ -261,23 +261,23 @@ export default function SopWorksheet() {
 
       {/* SPREADSHEET BALANCING GRID */}
       <div className="panel-data p-5 space-y-4">
-        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b border-surface-border pb-3">
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b border-line pb-3">
           <div>
-            <h3 className="font-mono text-xs font-bold text-slate-heading uppercase tracking-wider">
+            <h3 className="font-mono text-xs font-bold text-fg uppercase tracking-wider">
               {isAr ? "جدول موازنة الخطط الدورية التفاعلي" : "Rolling Horizon Interactive Plan Grid"}
             </h3>
-            <p className="text-[11px] text-slate-muted font-sans font-medium">
+            <p className="text-[11px] text-fg-3 font-sans font-medium">
               {isAr ? "يمكنك تعديل كميات التوريد والطلب مباشرة في الخلايا" : "Edit Supply and Demand directly in table cells below"}
             </p>
           </div>
 
           <div className="flex items-center gap-2 text-xs font-mono">
-            <span className="text-slate-500 font-bold">Beginning Inv (M1):</span>
+            <span className="text-fg-3 font-bold">Beginning Inv (M1):</span>
             <input
               type="number"
               value={initialBeginning}
               onChange={(e) => setInitialBeginning(Number(e.target.value))}
-              className="w-24 px-2 py-1 rounded bg-surface-subtle border border-surface-border font-bold text-right text-emerald"
+              className="w-24 px-2 py-1 rounded bg-ink-3 border border-line font-bold text-right text-emerald"
             />
           </div>
         </div>
@@ -285,7 +285,7 @@ export default function SopWorksheet() {
         <div className="overflow-x-auto">
           <table className="w-full text-xs font-mono text-left rtl:text-right border-collapse">
             <thead>
-              <tr className="border-b border-surface-border bg-surface-subtle text-slate-muted">
+              <tr className="border-b border-line bg-ink-3 text-fg-3">
                 <th className="py-2.5 px-3">Period</th>
                 <th className="py-2.5 px-3 text-right">Beginning</th>
                 <th className="py-2.5 px-3 text-right">Planned Supply</th>
@@ -296,29 +296,29 @@ export default function SopWorksheet() {
                 <th className="py-2.5 px-3 text-center">Status Flag</th>
               </tr>
             </thead>
-            <tbody className="divide-y divide-surface-border">
+            <tbody className="divide-y divide-line">
               {rows.map((row, idx) => {
-                let badgeClass = "bg-emerald-dim text-emerald border border-emerald-border";
+                let badgeClass = "bg-emerald/10 text-emerald border border-emerald/30";
                 let statusLabel = isAr ? "آمن" : "HEALTHY";
 
                 if (row.status === "STOCKOUT") {
-                  badgeClass = "bg-rose-100 text-rose-700 border border-rose-300 font-bold";
+                  badgeClass = "bg-neg/10 text-neg border border-neg/30 font-bold";
                   statusLabel = isAr ? "نفاذ (عجز)" : "STOCKOUT";
                 } else if (row.status === "BELOW_SAFETY_STOCK") {
-                  badgeClass = "bg-amber-100 text-amber-800 border border-amber-300";
+                  badgeClass = "bg-gold/10 text-gold border border-gold/40";
                   statusLabel = isAr ? "تحت الأمان" : "LOW BUFFER";
                 }
 
                 return (
-                  <tr key={row.period} className="hover:bg-surface-subtle transition-colors">
-                    <td className="py-2.5 px-3 font-bold text-slate-800">{row.label}</td>
-                    <td className="py-2.5 px-3 text-right text-slate-500">{row.beginningInventory.toLocaleString()}</td>
+                  <tr key={row.period} className="hover:bg-ink-3 transition-colors">
+                    <td className="py-2.5 px-3 font-bold text-fg">{row.label}</td>
+                    <td className="py-2.5 px-3 text-right text-fg-3">{row.beginningInventory.toLocaleString()}</td>
                     <td className="py-2.5 px-2 text-right">
                       <input
                         type="number"
                         value={plans[idx].plannedSupply}
                         onChange={(e) => updatePlanField(idx, "plannedSupply", Number(e.target.value))}
-                        className="w-20 px-1.5 py-0.5 rounded bg-white border border-surface-border text-right font-bold"
+                        className="w-20 px-1.5 py-0.5 rounded bg-ink-2 border border-line text-right font-bold"
                       />
                     </td>
                     <td className="py-2.5 px-2 text-right">
@@ -326,10 +326,10 @@ export default function SopWorksheet() {
                         type="number"
                         value={plans[idx].demand}
                         onChange={(e) => updatePlanField(idx, "demand", Number(e.target.value))}
-                        className="w-20 px-1.5 py-0.5 rounded bg-white border border-surface-border text-right"
+                        className="w-20 px-1.5 py-0.5 rounded bg-ink-2 border border-line text-right"
                       />
                     </td>
-                    <td className={`py-2.5 px-3 text-right font-bold ${row.endingInventory < 0 ? "text-rose-600 font-extrabold" : "text-slate-900"}`}>
+                    <td className={`py-2.5 px-3 text-right font-bold ${row.endingInventory < 0 ? "text-neg font-extrabold" : "text-fg"}`}>
                       {row.endingInventory.toLocaleString()}
                     </td>
                     <td className="py-2.5 px-2 text-right">
@@ -337,10 +337,10 @@ export default function SopWorksheet() {
                         type="number"
                         value={plans[idx].targetSafetyStock}
                         onChange={(e) => updatePlanField(idx, "targetSafetyStock", Number(e.target.value))}
-                        className="w-18 px-1.5 py-0.5 rounded bg-white border border-surface-border text-right text-slate-500"
+                        className="w-18 px-1.5 py-0.5 rounded bg-ink-2 border border-line text-right text-fg-3"
                       />
                     </td>
-                    <td className={`py-2.5 px-3 text-right ${row.inventoryPositionVsTarget < 0 ? "text-rose-600" : "text-slate-500"}`}>
+                    <td className={`py-2.5 px-3 text-right ${row.inventoryPositionVsTarget < 0 ? "text-neg" : "text-fg-3"}`}>
                       {row.inventoryPositionVsTarget > 0 ? `+${row.inventoryPositionVsTarget}` : row.inventoryPositionVsTarget}
                     </td>
                     <td className="py-2.5 px-3 text-center">

@@ -166,7 +166,7 @@ export default function LBOModel() {
       initial="initial"
       animate="animate"
       exit="exit"
-      className="grid grid-cols-1 lg:grid-cols-12 gap-8 text-slate-100 font-mono"
+      className="grid grid-cols-1 lg:grid-cols-12 gap-8 text-fg font-mono"
       dir={isAr ? "rtl" : "ltr"}
     >
       {/* LEFT COLUMN: ASSUMPTIONS & SCENARIOS (4 COLS) */}
@@ -178,14 +178,14 @@ export default function LBOModel() {
         />
 
         <div className="panel-input p-6 space-y-4">
-          <div className="flex items-center justify-between pb-3 border-b border-[#E2E8F0]">
+          <div className="flex items-center justify-between pb-3 border-b border-line">
             <div className="flex items-center gap-3">
               <Layers className="text-emerald" size={22} />
               <div>
-                <h2 className="font-mono text-lg font-extrabold text-slate-900 uppercase">
+                <h2 className="font-mono text-lg font-extrabold text-fg uppercase">
                   {t("lbo_inputs", language)}
                 </h2>
-                <span className="text-[10px] font-mono text-slate-500 uppercase">
+                <span className="text-[10px] font-mono text-fg-3 uppercase">
                   {isAr ? "معايير الاستحواذ والهيكل المالي" : "Buyout & Debt Parameters"}
                 </span>
               </div>
@@ -194,76 +194,76 @@ export default function LBOModel() {
 
           <div className="space-y-3 font-mono text-xs">
             <div className="flex justify-between items-center">
-              <label className="text-slate-700">{t("entry_price", language)}</label>
+              <label className="text-fg-2">{t("entry_price", language)}</label>
               <input
                 type="number"
                 value={basePurchasePrice}
                 onChange={(e) => setBasePurchasePrice(Number(e.target.value))}
-                className="w-24 px-2 py-1 bg-slate-50 border border-[#E2E8F0] focus:border-emerald rounded-md text-right text-slate-900 font-mono text-xs focus:outline-none"
+                className="w-24 px-2 py-1 bg-ink-3 border border-line focus:border-emerald rounded-md text-right text-fg font-mono text-xs focus:outline-none"
               />
             </div>
 
             <div className="flex justify-between items-center">
-              <label className="text-slate-700">{t("entry_ebitda_mult", language)}</label>
+              <label className="text-fg-2">{t("entry_ebitda_mult", language)}</label>
               <input
                 type="number"
                 step="0.1"
                 value={ebitdaMultiple}
                 onChange={(e) => setEbitdaMultiple(Number(e.target.value))}
-                className="w-24 px-2 py-1 bg-slate-50 border border-[#E2E8F0] focus:border-emerald rounded-md text-right text-slate-900 font-mono text-xs focus:outline-none"
+                className="w-24 px-2 py-1 bg-ink-3 border border-line focus:border-emerald rounded-md text-right text-fg font-mono text-xs focus:outline-none"
               />
             </div>
 
             <div className="flex justify-between items-center">
-              <label className="text-slate-700">{t("mgmt_equity_pct", language)}</label>
+              <label className="text-fg-2">{t("mgmt_equity_pct", language)}</label>
               <input
                 type="number"
                 value={mgmtEquityPct}
                 onChange={(e) => setMgmtEquityPct(Number(e.target.value))}
-                className="w-24 px-2 py-1 bg-slate-50 border border-[#E2E8F0] focus:border-emerald rounded-md text-right text-slate-900 font-mono text-xs focus:outline-none"
+                className="w-24 px-2 py-1 bg-ink-3 border border-line focus:border-emerald rounded-md text-right text-fg font-mono text-xs focus:outline-none"
               />
             </div>
 
-            <hr className="border-[#E2E8F0]" />
+            <hr className="border-line" />
 
             <div className="flex justify-between items-center">
-              <label className="text-slate-700">{t("senior_debt", language)}</label>
+              <label className="text-fg-2">{t("senior_debt", language)}</label>
               <input
                 type="number"
                 value={seniorDebt}
                 onChange={(e) => setSeniorDebt(Number(e.target.value))}
-                className="w-24 px-2 py-1 bg-slate-50 border border-[#E2E8F0] focus:border-emerald rounded-md text-right text-slate-900 font-mono text-xs focus:outline-none"
+                className="w-24 px-2 py-1 bg-ink-3 border border-line focus:border-emerald rounded-md text-right text-fg font-mono text-xs focus:outline-none"
               />
             </div>
 
             <div className="flex justify-between items-center">
-              <label className="text-slate-700">{t("mezz_debt", language)}</label>
+              <label className="text-fg-2">{t("mezz_debt", language)}</label>
               <input
                 type="number"
                 value={mezzDebt}
                 onChange={(e) => setMezzDebt(Number(e.target.value))}
-                className="w-24 px-2 py-1 bg-slate-50 border border-[#E2E8F0] focus:border-emerald rounded-md text-right text-slate-900 font-mono text-xs focus:outline-none"
+                className="w-24 px-2 py-1 bg-ink-3 border border-line focus:border-emerald rounded-md text-right text-fg font-mono text-xs focus:outline-none"
               />
             </div>
 
             <div className="flex justify-between items-center">
-              <label className="text-slate-700">{t("pik_notes", language)}</label>
+              <label className="text-fg-2">{t("pik_notes", language)}</label>
               <input
                 type="number"
                 value={pikNotes}
                 onChange={(e) => setPikNotes(Number(e.target.value))}
-                className="w-24 px-2 py-1 bg-slate-50 border border-[#E2E8F0] focus:border-emerald rounded-md text-right text-slate-900 font-mono text-xs focus:outline-none"
+                className="w-24 px-2 py-1 bg-ink-3 border border-line focus:border-emerald rounded-md text-right text-fg font-mono text-xs focus:outline-none"
               />
             </div>
 
             <div className="flex justify-between items-center">
-              <label className="text-slate-700">{t("exit_multiple", language)} (x)</label>
+              <label className="text-fg-2">{t("exit_multiple", language)} (x)</label>
               <input
                 type="number"
                 step="0.5"
                 value={baseExitMultiple}
                 onChange={(e) => setBaseExitMultiple(Number(e.target.value))}
-                className="w-24 px-2 py-1 bg-slate-50 border border-[#E2E8F0] focus:border-emerald rounded-md text-right text-slate-900 font-mono text-xs focus:outline-none"
+                className="w-24 px-2 py-1 bg-ink-3 border border-line focus:border-emerald rounded-md text-right text-fg font-mono text-xs focus:outline-none"
               />
             </div>
           </div>
@@ -273,16 +273,16 @@ export default function LBOModel() {
       {/* RIGHT COLUMN: RETURNS SUMMARY & CHARTS (8 COLS) */}
       <div className="col-span-12 lg:col-span-8 space-y-6">
         <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
-          <div className="bg-white p-5 rounded-lg border border-[#E2E8F0] text-center shadow-xs">
-            <span className="text-[10px] font-mono text-slate-500 uppercase tracking-wider block mb-1 font-bold">
+          <div className="bg-ink-2 p-5 rounded-lg border border-line text-center shadow-xs">
+            <span className="text-[10px] font-mono text-fg-3 uppercase tracking-wider block mb-1 font-bold">
               Sponsor Equity Required
             </span>
-            <span className="font-mono text-xl font-extrabold text-slate-900">
+            <span className="font-mono text-xl font-extrabold text-fg">
               SAR <NumberCounter value={sponsorEquity} decimals={0} />M
             </span>
           </div>
 
-          <div className="bg-emerald-dim p-5 rounded-lg border border-emerald-border text-center shadow-xs">
+          <div className="bg-emerald/10 p-5 rounded-lg border border-emerald/30 text-center shadow-xs">
             <span className="text-[10px] font-mono text-emerald uppercase tracking-wider font-bold block mb-1">
               {t("moic", language)} ({activeScenario})
             </span>
@@ -291,8 +291,8 @@ export default function LBOModel() {
             </span>
           </div>
 
-          <div className="bg-white p-5 rounded-lg border border-[#E2E8F0] text-center shadow-xs">
-            <span className="text-[10px] font-mono text-slate-500 uppercase tracking-wider block mb-1 font-bold">
+          <div className="bg-ink-2 p-5 rounded-lg border border-line text-center shadow-xs">
+            <span className="text-[10px] font-mono text-fg-3 uppercase tracking-wider block mb-1 font-bold">
               Projected IRR
             </span>
             <span className="font-mono text-2xl font-extrabold text-emerald">

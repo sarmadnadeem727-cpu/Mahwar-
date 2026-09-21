@@ -46,26 +46,26 @@ export default function NewsFeed() {
       initial="initial"
       animate="animate"
       exit="exit"
-      className="space-y-6 text-slate-800 font-sans"
+      className="space-y-6 text-fg font-sans"
       dir={isAr ? "rtl" : "ltr"}
     >
       {/* NEWS WIRE HEADER */}
       <div className="panel-input p-6 flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
         <div className="flex items-center gap-3">
-          <div className="p-2.5 rounded-lg bg-emerald-dim border border-emerald-border text-emerald">
+          <div className="p-2.5 rounded-lg bg-emerald/10 border border-emerald/30 text-emerald">
             <Newspaper size={22} />
           </div>
           <div>
             <div className="flex items-center gap-2">
-              <h2 className="font-serif text-xl font-bold text-slate-900">
+              <h2 className="font-serif text-xl font-bold text-fg">
                 {isAr ? "موجز الأخبار المالية لأسواق الخليج" : "GCC Financial Market Wire"}
               </h2>
-              <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] font-mono font-bold text-emerald bg-emerald-dim border border-emerald-border">
+              <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] font-mono font-bold text-emerald bg-emerald/10 border border-emerald/30">
                 <Radio size={10} className="animate-pulse" />
                 <span>{provider || "LIVE WIRE"}</span>
               </span>
             </div>
-            <p className="text-xs font-mono text-slate-500 mt-0.5">
+            <p className="text-xs font-mono text-fg-3 mt-0.5">
               {isAr ? "بث حي ومباشر عبر Marketaux GCC & Finlight Arabic" : "Real-time market intelligence powered by Marketaux & Finlight APIs"}
             </p>
           </div>
@@ -74,7 +74,7 @@ export default function NewsFeed() {
         <button
           onClick={fetchNews}
           disabled={loading}
-          className="flex items-center gap-2 px-4 py-2 bg-slate-50 border border-[#E2E8F0] hover:bg-slate-100 text-slate-700 font-mono text-xs font-bold rounded-lg cursor-pointer transition-colors"
+          className="flex items-center gap-2 px-4 py-2 bg-ink-3 border border-line hover:bg-ink-4 text-fg-2 font-mono text-xs font-bold rounded-lg cursor-pointer transition-colors"
         >
           <RefreshCw size={13} className={loading ? "animate-spin" : ""} />
           <span>{isAr ? "تحديث البث" : "Refresh Wire"}</span>
@@ -82,7 +82,7 @@ export default function NewsFeed() {
       </div>
 
       {/* FILTER TABS */}
-      <div className="flex border-b border-[#E2E8F0] font-mono text-xs gap-2">
+      <div className="flex border-b border-line font-mono text-xs gap-2">
         {[
           { id: "ALL", label: isAr ? "جميع الأخبار" : "All GCC Wire" },
           { id: "SAUDI", label: isAr ? "السوق السعودي" : "Tadawul & KSA" },
@@ -96,8 +96,8 @@ export default function NewsFeed() {
               onClick={() => setActiveTab(tab.id as any)}
               className={`px-4 py-2.5 font-bold rounded-t-lg transition-all cursor-pointer ${
                 active
-                  ? "bg-emerald text-white border-t border-x border-[#E2E8F0] font-bold shadow-xs"
-                  : "text-slate-500 hover:text-slate-900 bg-slate-50"
+                  ? "bg-emerald text-ink-0 border-t border-x border-line font-bold shadow-xs"
+                  : "text-fg-3 hover:text-fg bg-ink-3"
               }`}
             >
               {tab.label}
@@ -108,12 +108,12 @@ export default function NewsFeed() {
 
       {/* ARTICLES GRID */}
       {loading ? (
-        <div className="py-16 text-center font-mono text-xs text-slate-500 flex flex-col items-center gap-3">
+        <div className="py-16 text-center font-mono text-xs text-fg-3 flex flex-col items-center gap-3">
           <RefreshCw size={20} className="animate-spin text-emerald" />
           <span>{isAr ? "جاري تحميل البث المباشر..." : "CONNECTING TO GCC NEWS WIRE..."}</span>
         </div>
       ) : filteredArticles.length === 0 ? (
-        <div className="p-12 text-center bg-white border border-[#E2E8F0] rounded-lg font-mono text-xs text-slate-500">
+        <div className="p-12 text-center bg-ink-2 border border-line rounded-lg font-mono text-xs text-fg-3">
           {isAr ? "لا توجد أخبار متاحة في هذا التصنيف حاليًا." : "No news items in selected category."}
         </div>
       ) : (
@@ -125,25 +125,25 @@ export default function NewsFeed() {
             >
               <div>
                 <div className="flex justify-between items-center mb-3">
-                  <span className="px-2 py-0.5 rounded text-[10px] font-mono font-bold bg-slate-100 text-slate-600 uppercase border border-slate-200">
+                  <span className="px-2 py-0.5 rounded text-[10px] font-mono font-bold bg-ink-4 text-fg-2 uppercase border border-line">
                     {article.category}
                   </span>
-                  <span className="text-[10px] font-mono text-slate-400">
+                  <span className="text-[10px] font-mono text-fg-3">
                     {new Date(article.publishedAt).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
                   </span>
                 </div>
 
-                <h3 className="font-serif text-base font-bold text-slate-900 group-hover:text-emerald transition-colors leading-snug mb-2">
+                <h3 className="font-serif text-base font-bold text-fg group-hover:text-emerald transition-colors leading-snug mb-2">
                   {isAr && article.titleAr ? article.titleAr : article.title}
                 </h3>
 
-                <p className="text-xs text-slate-600 leading-relaxed font-sans line-clamp-3">
+                <p className="text-xs text-fg-2 leading-relaxed font-sans line-clamp-3">
                   {article.summary}
                 </p>
               </div>
 
-              <div className="border-t border-slate-100 pt-3 mt-4 flex justify-between items-center text-xs font-mono">
-                <span className="text-slate-500 font-medium">{article.source}</span>
+              <div className="border-t border-line pt-3 mt-4 flex justify-between items-center text-xs font-mono">
+                <span className="text-fg-3 font-medium">{article.source}</span>
                 <a
                   href={article.url}
                   target="_blank"

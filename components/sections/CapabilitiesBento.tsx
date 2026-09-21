@@ -2,153 +2,95 @@
 
 import React from "react";
 import { motion } from "framer-motion";
-import { ShieldCheck, BarChart3, Database, FileSpreadsheet, ArrowRight, Activity, Globe } from "lucide-react";
+import { Languages, ShieldCheck, FileOutput, Terminal, Database, Calculator } from "lucide-react";
 import { useTerminalStore } from "@/store/useTerminalStore";
-import Link from "next/link";
+import { reveal, staggerContainer, staggerItem, viewportOnce } from "@/lib/motion";
 
+/**
+ * What makes the terminal trustworthy — six concrete commitments, stated plainly.
+ * Sized bento: the two that matter most (audit trail, GCC accounting) get the wide cells.
+ */
 export default function CapabilitiesBento() {
   const { language } = useTerminalStore();
-  const isAr = language === 'ar';
+  const isAr = language === "ar";
+
+  const cells = [
+    {
+      icon: Calculator, wide: true,
+      en: "Every number has an audit trail",
+      ar: "لكل رقم سجل تدقيق",
+      descEn: "Each engine ships a formula trace: inputs, intermediate steps and the equation used. Open it before you trust a result.",
+      descAr: "كل محرك يرفق سجل صيغ: المدخلات والخطوات الوسيطة والمعادلة المستخدمة. افتحه قبل أن تثق بالنتيجة.",
+    },
+    {
+      icon: ShieldCheck, wide: true,
+      en: "GCC accounting, not a US template",
+      ar: "محاسبة خليجية لا قالباً أمريكياً",
+      descEn: "Zakat at 2.5% of the base with no tax shield, IFRS / Saudi GAAP toggles, AAOIFI Standard 21 screens, GCC common tariff in landed cost.",
+      descAr: "زكاة 2.5٪ دون درع ضريبي، تبديل بين IFRS والمعايير السعودية، فحص أيوفي 21، والتعرفة الخليجية الموحدة في التكلفة الواصلة.",
+    },
+    {
+      icon: Terminal,
+      en: "A command line, like the pros use",
+      ar: "سطر أوامر كما يستخدمه المحترفون",
+      descEn: "Type DCF, EOQ or CCC and press GO. ⌘K opens the palette.",
+      descAr: "اكتب DCF أو EOQ أو CCC واضغط GO. ⌘K يفتح اللوحة.",
+    },
+    {
+      icon: Languages,
+      en: "Arabic and English, mirrored",
+      ar: "عربي وإنجليزي بواجهة معكوسة",
+      descEn: "Full RTL layout, Cairo typography, bilingual exports.",
+      descAr: "تخطيط RTL كامل وخط Cairo وتصدير ثنائي اللغة.",
+    },
+    {
+      icon: Database,
+      en: "Your session survives a refresh",
+      ar: "جلستك تبقى بعد التحديث",
+      descEn: "Analyses persist locally in the browser. Nothing leaves your machine unless you export it.",
+      descAr: "التحليلات تُحفظ محلياً في المتصفح. لا يغادر شيء جهازك إلا عند التصدير.",
+    },
+    {
+      icon: FileOutput,
+      en: "One report from everything",
+      ar: "تقرير واحد من كل شيء",
+      descEn: "The BI engine consolidates every saved analysis into PDF or Excel.",
+      descAr: "محرك التقارير يجمع كل تحليل محفوظ في PDF أو Excel.",
+    },
+  ];
 
   return (
-    <section className="py-24 bg-[#F8FAFC] border-y border-[#E2E8F0] overflow-hidden font-sans" dir={isAr ? "rtl" : "ltr"}>
-      <div className="max-w-7xl mx-auto px-6 relative">
-        <div className="text-center max-w-2xl mx-auto mb-16">
-          <motion.div
-            initial={{ opacity: 0, y: 10 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            className="label-pill label-pill-emerald mb-6"
-          >
-            <Database size={12} />
-            <span>{isAr ? "قدرات النظام الأساسية" : "Core Capabilities"}</span>
-          </motion.div>
-          <motion.h2
-            initial={{ opacity: 0, y: 10 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            transition={{ delay: 0.1 }}
-            className="font-serif text-3xl sm:text-5xl font-extrabold text-slate-900 leading-tight mb-4"
-          >
-            {isAr ? "بنية تحتية متكاملة لأسواق رأس المال" : "Unrivaled Depth for GCC Markets"}
-          </motion.h2>
-          <motion.p
-            initial={{ opacity: 0, y: 10 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            transition={{ delay: 0.2 }}
-            className="text-slate-600 font-medium"
-          >
-            {isAr 
-              ? "مجموعة أدوات متكاملة مصممة خصيصاً لتلبية متطلبات الامتثال المحلي والمعايير المحاسبية في الشرق الأوسط."
-              : "A unified suite of institutional-grade tools built specifically for Middle Eastern regulatory, accounting, and compliance frameworks."}
-          </motion.p>
-        </div>
+    <section className="py-28 bg-ink-2/40 border-y border-line" dir={isAr ? "rtl" : "ltr"}>
+      <div className="max-w-7xl mx-auto px-6">
+        <motion.div variants={reveal} initial="hidden" whileInView="show" viewport={viewportOnce} className="max-w-3xl">
+          <p className="font-mono text-[11px] tracking-[0.2em] text-emerald-light">{isAr ? "الالتزامات" : "Commitments"}</p>
+          <h2 className={`mt-4 font-serif text-display-lg text-fg ${isAr ? "font-cairo font-bold" : ""}`}>
+            {isAr ? "ما يجعل المحطة جديرة بالثقة." : "What makes the terminal worth trusting."}
+          </h2>
+        </motion.div>
 
-        {/* Bento Grid */}
-        <div className="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-4 gap-4 auto-rows-[240px]">
-          
-          {/* Card 1: AAOIFI Shariah - Large Square */}
-          <motion.div 
-            initial={{ opacity: 0, scale: 0.95 }}
-            whileInView={{ opacity: 1, scale: 1 }}
-            viewport={{ once: true }}
-            transition={{ delay: 0.1 }}
-            className="md:col-span-2 md:row-span-2 bg-white rounded-[10px] p-8 border border-[rgba(0,0,0,0.08)] relative overflow-hidden group" style={{ boxShadow: 'var(--shadow-card)' }}
-          >
-            {/* No decorative blob — removed filler gradient */}
-            
-            <ShieldCheck size={32} className="text-emerald mb-6" />
-            <h3 className="text-2xl font-bold text-slate-900 mb-3 font-serif">
-              {isAr ? "محرك الفحص الشرعي (AAOIFI)" : "AAOIFI Shariah Engine"}
-            </h3>
-            <p className="text-slate-500 mb-8 max-w-sm">
-              {isAr 
-                ? "فحص آلي وفوري للشركات بناءً على معايير هيئة المحاسبة والمراجعة للمؤسسات المالية الإسلامية مع تنقية الإيرادات."
-                : "Automated real-time compliance screening against AAOIFI standards, including revenue purification and debt ratio limits."}
-            </p>
-            
-            <div className="absolute bottom-8 left-8 right-8">
-              <div className="bg-[#F8FAFC] border border-[#E2E8F0] rounded-lg p-4 font-mono text-xs flex justify-between items-center">
-                <span className="text-slate-600 font-bold uppercase">{isAr ? "حالة الامتثال" : "Compliance Status"}</span>
-                <span className="bg-emerald/10 text-emerald px-2 py-1 rounded font-bold">COMPLIANT (PASS)</span>
-              </div>
-            </div>
-          </motion.div>
-
-          {/* Card 2: LBO/DCF Modeling - Wide Rectangle */}
-          <motion.div 
-            initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            transition={{ delay: 0.2 }}
-            className="md:col-span-2 lg:col-span-2 bg-slate-900 rounded-[10px] p-8 relative overflow-hidden group" style={{ boxShadow: 'var(--shadow-card)' }}
-          >
-            <div className="absolute inset-0 bg-[linear-gradient(to_right,rgba(255,255,255,0.05)_1px,transparent_1px),linear-gradient(to_bottom,rgba(255,255,255,0.05)_1px,transparent_1px)] bg-[size:1.5rem_1.5rem] [mask-image:radial-gradient(ellipse_60%_60%_at_50%_50%,#000_70%,transparent_100%)] pointer-events-none" />
-            
-            <div className="relative z-10 flex flex-col h-full justify-between">
-              <div>
-                <BarChart3 size={28} className="text-emerald mb-4" />
-                <h3 className="text-xl font-bold text-white mb-2 font-serif">
-                  {isAr ? "النمذجة الكمية (DCF & LBO)" : "Quantitative Valuation (DCF & LBO)"}
-                </h3>
-                <p className="text-slate-400 text-sm">
-                  {isAr 
-                    ? "نماذج تقييم متقدمة مع تكامل للزكاة وتحليل الحساسية."
-                    : "Institutional modeling with integrated Zakat, WACC calculation, and multi-stage growth assumptions."}
-                </p>
-              </div>
-              <Link href="/dashboard?panel=DCF" className="inline-flex items-center gap-2 text-emerald font-mono text-xs font-bold uppercase mt-4 hover:text-white transition-colors">
-                <span>{isAr ? "استكشف النماذج" : "Launch Models"}</span>
-                <ArrowRight size={14} className={isAr ? "rotate-180" : ""} />
-              </Link>
-            </div>
-          </motion.div>
-
-          {/* Card 3: 3-Statement - Small Square */}
-          <motion.div 
-            initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            transition={{ delay: 0.3 }}
-            className="bg-white rounded-[10px] p-6 border border-[rgba(0,0,0,0.08)] flex flex-col group hover:border-emerald/30 transition-colors" style={{ boxShadow: 'var(--shadow-card)' }}
-          >
-            <FileSpreadsheet size={24} className="text-slate-700 mb-4 group-hover:text-emerald transition-colors" />
-            <h3 className="text-lg font-bold text-slate-900 mb-2 font-serif">
-              {isAr ? "القوائم المالية (IFRS)" : "3-Statement IFRS"}
-            </h3>
-            <p className="text-slate-500 text-sm flex-1">
-              {isAr 
-                ? "توليد آلي للقوائم المالية الثلاث بناءً على معايير IFRS المعتمدة في المنطقة."
-                : "Auto-generated 3-statement models aligned with regional IFRS adoption."}
-            </p>
-          </motion.div>
-
-          {/* Card 4: Live Data - Small Square */}
-          <motion.div 
-            initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            transition={{ delay: 0.4 }}
-            className="bg-white rounded-[10px] p-6 border border-[rgba(0,0,0,0.08)] flex flex-col group hover:border-emerald/30 transition-colors overflow-hidden relative" style={{ boxShadow: 'var(--shadow-card)' }}
-          >
-            {/* Sparkline decorative background */}
-            <svg className="absolute bottom-0 left-0 w-full h-24 opacity-[0.03] group-hover:opacity-10 transition-opacity" viewBox="0 0 100 30" preserveAspectRatio="none">
-              <path d="M0,30 L0,20 Q10,15 20,25 T40,15 T60,20 T80,5 T100,10 L100,30 Z" fill="#0E7C69" />
-            </svg>
-            
-            <Activity size={24} className="text-slate-700 mb-4 group-hover:text-emerald transition-colors relative z-10" />
-            <h3 className="text-lg font-bold text-slate-900 mb-2 font-serif relative z-10">
-              {isAr ? "بيانات حية من تداول" : "Tadawul Live Data"}
-            </h3>
-            <p className="text-slate-500 text-sm flex-1 relative z-10">
-              {isAr 
-                ? "اتصال مباشر مع سوق الأسهم السعودي لاستيراد الأسعار والبيانات التاريخية."
-                : "Direct feed integration for real-time Saudi equity pricing and historical financials."}
-            </p>
-          </motion.div>
-          
-        </div>
+        <motion.div
+          variants={staggerContainer}
+          initial="hidden"
+          whileInView="show"
+          viewport={viewportOnce}
+          className="mt-12 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4"
+        >
+          {cells.map((c) => {
+            const Icon = c.icon;
+            return (
+              <motion.div
+                key={c.en}
+                variants={staggerItem}
+                className={`panel-data p-6 flex flex-col gap-4 ${c.wide ? "lg:col-span-2" : ""}`}
+              >
+                <Icon size={18} className="text-emerald-light" />
+                <h3 className="font-serif text-2xl text-fg leading-tight">{isAr ? c.ar : c.en}</h3>
+                <p className="text-[13.5px] text-fg-2 leading-relaxed">{isAr ? c.descAr : c.descEn}</p>
+              </motion.div>
+            );
+          })}
+        </motion.div>
       </div>
     </section>
   );

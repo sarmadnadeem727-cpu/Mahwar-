@@ -127,7 +127,7 @@ export default function FacilityLocation() {
       initial="initial"
       animate="animate"
       exit="exit"
-      className="space-y-6 font-sans text-slate-800"
+      className="space-y-6 font-sans text-fg"
       dir={isAr ? "rtl" : "ltr"}
       id="facility-location-container"
     >
@@ -155,7 +155,7 @@ export default function FacilityLocation() {
       {/* KPI HIGHLIGHT CARDS */}
       <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 font-mono">
         {/* OPTIMAL COORDINATES */}
-        <div className="p-4 rounded-xl border border-emerald-border bg-emerald-dim shadow-xs">
+        <div className="p-4 rounded-xl border border-emerald/30 bg-emerald/10 shadow-xs">
           <span className="text-[10px] text-emerald uppercase font-bold block mb-1">
             {isAr ? "مركز الثقل الأمثل المحسوب" : "Calculated Center of Gravity"}
           </span>
@@ -168,25 +168,25 @@ export default function FacilityLocation() {
         </div>
 
         {/* TOTAL VOLUME */}
-        <div className="p-4 rounded-xl border border-surface-border bg-white shadow-xs">
-          <span className="text-[10px] text-slate-muted uppercase font-bold block mb-1">
+        <div className="p-4 rounded-xl border border-line bg-ink-2 shadow-xs">
+          <span className="text-[10px] text-fg-3 uppercase font-bold block mb-1">
             {isAr ? "إجمالي حجم الطلب الموزع" : "Aggregate Demand Volume"}
           </span>
           <div className="flex items-baseline gap-1.5">
-            <span className="text-2xl font-extrabold text-slate-heading">{totalVolume.toLocaleString()}</span>
-            <span className="text-xs font-bold text-slate-muted">Tons</span>
+            <span className="text-2xl font-extrabold text-fg">{totalVolume.toLocaleString()}</span>
+            <span className="text-xs font-bold text-fg-3">Tons</span>
           </div>
-          <span className="text-[10px] text-slate-muted font-sans font-medium block mt-1">
+          <span className="text-[10px] text-fg-3 font-sans font-medium block mt-1">
             Across {demandPoints.length} demand hubs
           </span>
         </div>
 
         {/* BEST REAL CANDIDATE */}
-        <div className="p-4 rounded-xl border border-surface-border bg-white shadow-xs">
-          <span className="text-[10px] text-slate-muted uppercase font-bold block mb-1">
+        <div className="p-4 rounded-xl border border-line bg-ink-2 shadow-xs">
+          <span className="text-[10px] text-fg-3 uppercase font-bold block mb-1">
             {isAr ? "الموقع المرشح الأفضل (#1)" : "Top Ranked Candidate Site"}
           </span>
-          <div className="text-sm font-extrabold text-slate-heading truncate">
+          <div className="text-sm font-extrabold text-fg truncate">
             {evaluatedCandidates[0]?.name || "None Evaluated"}
           </div>
           <span className="text-[10px] text-emerald font-bold block mt-1">
@@ -195,14 +195,14 @@ export default function FacilityLocation() {
         </div>
 
         {/* NETWORK BALANCE */}
-        <div className="p-4 rounded-xl border border-surface-border bg-white shadow-xs">
-          <span className="text-[10px] text-slate-muted uppercase font-bold block mb-1">
+        <div className="p-4 rounded-xl border border-line bg-ink-2 shadow-xs">
+          <span className="text-[10px] text-fg-3 uppercase font-bold block mb-1">
             {isAr ? "نطاق الشبكة" : "Network Extent"}
           </span>
-          <div className="text-sm font-extrabold text-slate-heading">
+          <div className="text-sm font-extrabold text-fg">
             GCC Regional Scale
           </div>
-          <span className="text-[10px] text-slate-muted font-sans font-medium block mt-1">
+          <span className="text-[10px] text-fg-3 font-sans font-medium block mt-1">
             Compatible with Lat/Lon or relative grids
           </span>
         </div>
@@ -213,12 +213,12 @@ export default function FacilityLocation() {
         {/* DEMAND POINTS & CANDIDATES TABLE (6 COLS) */}
         <div className="lg:col-span-6 space-y-4">
           <div className="panel-input p-5 space-y-4">
-            <div className="flex justify-between items-center border-b border-surface-border pb-3">
+            <div className="flex justify-between items-center border-b border-line pb-3">
               <div>
-                <h3 className="font-mono text-xs font-bold text-slate-heading uppercase tracking-wider">
+                <h3 className="font-mono text-xs font-bold text-fg uppercase tracking-wider">
                   {isAr ? "نقاط الطلب الإقليمية والأوزان" : "Regional Demand Points & Freight Volumes"}
                 </h3>
-                <p className="text-[11px] text-slate-muted font-sans">
+                <p className="text-[11px] text-fg-3 font-sans">
                   {isAr ? "إحداثيات جغرافية مع حجم الاستهلاك السنوي" : "X/Y coordinates weighted by freight demand"}
                 </p>
               </div>
@@ -232,46 +232,46 @@ export default function FacilityLocation() {
 
             <div className="space-y-2 max-h-72 overflow-y-auto pr-1">
               {demandPoints.map((dp) => (
-                <div key={dp.id} className="p-2.5 bg-surface-subtle rounded-lg border border-surface-border text-xs font-mono flex items-center gap-2">
+                <div key={dp.id} className="p-2.5 bg-ink-3 rounded-lg border border-line text-xs font-mono flex items-center gap-2">
                   <input
                     type="text"
                     value={dp.name}
                     onChange={(e) => updatePoint(dp.id, "name", e.target.value)}
-                    className="flex-1 px-2 py-1 rounded bg-white border border-surface-border font-sans font-medium"
+                    className="flex-1 px-2 py-1 rounded bg-ink-2 border border-line font-sans font-medium"
                   />
                   <div className="flex items-center gap-1">
-                    <span className="text-[10px] text-slate-400">X:</span>
+                    <span className="text-[10px] text-fg-3">X:</span>
                     <input
                       type="number"
                       step="0.01"
                       value={dp.x}
                       onChange={(e) => updatePoint(dp.id, "x", Number(e.target.value))}
-                      className="w-16 px-1.5 py-1 rounded bg-white border border-surface-border text-right"
+                      className="w-16 px-1.5 py-1 rounded bg-ink-2 border border-line text-right"
                     />
                   </div>
                   <div className="flex items-center gap-1">
-                    <span className="text-[10px] text-slate-400">Y:</span>
+                    <span className="text-[10px] text-fg-3">Y:</span>
                     <input
                       type="number"
                       step="0.01"
                       value={dp.y}
                       onChange={(e) => updatePoint(dp.id, "y", Number(e.target.value))}
-                      className="w-16 px-1.5 py-1 rounded bg-white border border-surface-border text-right"
+                      className="w-16 px-1.5 py-1 rounded bg-ink-2 border border-line text-right"
                     />
                   </div>
                   <div className="flex items-center gap-1">
-                    <span className="text-[10px] text-slate-400">Vol:</span>
+                    <span className="text-[10px] text-fg-3">Vol:</span>
                     <input
                       type="number"
                       value={dp.volume}
                       onChange={(e) => updatePoint(dp.id, "volume", Number(e.target.value))}
-                      className="w-20 px-1.5 py-1 rounded bg-white border border-surface-border font-bold text-right text-emerald"
+                      className="w-20 px-1.5 py-1 rounded bg-ink-2 border border-line font-bold text-right text-emerald"
                     />
                   </div>
                   <button
                     onClick={() => removePoint(dp.id)}
                     disabled={demandPoints.length <= 2}
-                    className="text-slate-400 hover:text-rose-500 disabled:opacity-20 p-1"
+                    className="text-fg-3 hover:text-neg disabled:opacity-20 p-1"
                   >
                     <Trash2 size={13} />
                   </button>
@@ -280,9 +280,9 @@ export default function FacilityLocation() {
             </div>
 
             {/* CANDIDATES EVALUATION */}
-            <div className="pt-3 border-t border-surface-border space-y-3">
+            <div className="pt-3 border-t border-line space-y-3">
               <div className="flex justify-between items-center">
-                <span className="font-bold text-slate-800 text-xs">
+                <span className="font-bold text-fg text-xs">
                   {isAr ? "مواقع المنشآت المرشحة للمقارنة" : "Candidate Real Sites Evaluated:"}
                 </span>
                 {candidates.length < 4 && (
@@ -297,13 +297,13 @@ export default function FacilityLocation() {
 
               <div className="space-y-1.5">
                 {evaluatedCandidates.map((cand) => (
-                  <div key={cand.id} className="p-2 rounded bg-white border border-surface-border flex items-center justify-between text-xs font-mono">
+                  <div key={cand.id} className="p-2 rounded bg-ink-2 border border-line flex items-center justify-between text-xs font-mono">
                     <div className="flex items-center gap-2">
-                      <span className="px-1.5 py-0.5 rounded bg-emerald text-white text-[9px] font-bold">
+                      <span className="px-1.5 py-0.5 rounded bg-emerald text-ink-0 text-[9px] font-bold">
                         #{cand.rank}
                       </span>
-                      <span className="font-medium font-sans text-slate-800">{cand.name}</span>
-                      <span className="text-[10px] text-slate-400">({cand.x}, {cand.y})</span>
+                      <span className="font-medium font-sans text-fg">{cand.name}</span>
+                      <span className="text-[10px] text-fg-3">({cand.x}, {cand.y})</span>
                     </div>
                     <div className="flex items-center gap-2">
                       <span className="font-bold text-emerald text-[11px]">
@@ -311,7 +311,7 @@ export default function FacilityLocation() {
                       </span>
                       <button
                         onClick={() => removeCandidate(cand.id)}
-                        className="text-slate-400 hover:text-rose-500 p-0.5"
+                        className="text-fg-3 hover:text-neg p-0.5"
                       >
                         <Trash2 size={12} />
                       </button>
@@ -326,12 +326,12 @@ export default function FacilityLocation() {
         {/* 2D SCATTER PLOT COLUMN (6 COLS) */}
         <div className="lg:col-span-6 space-y-6">
           <div className="panel-data p-5 space-y-4">
-            <div className="flex justify-between items-center border-b border-surface-border pb-3">
+            <div className="flex justify-between items-center border-b border-line pb-3">
               <div>
-                <h3 className="font-serif text-sm font-bold text-slate-heading">
+                <h3 className="font-serif text-sm font-bold text-fg">
                   {isAr ? "خريطة التوزيع الجغرافي ومركز الثقل" : "2D Geographic Scatter Map & Gravity Center"}
                 </h3>
-                <p className="text-[11px] text-slate-muted font-sans font-medium">
+                <p className="text-[11px] text-fg-3 font-sans font-medium">
                   {isAr ? "حجم الدوائر يتناسب مع حجم الطلب، والنجمة الخضراء تمثل المركز الأمثل" : "Bubble sizes proportional to freight demand; emerald crosshair marks optimal hub"}
                 </p>
               </div>
@@ -343,12 +343,12 @@ export default function FacilityLocation() {
             <div className="h-80 w-full">
               <ResponsiveContainer width="100%" height="100%">
                 <ScatterChart margin={{ top: 20, right: 20, bottom: 20, left: 0 }}>
-                  <CartesianGrid strokeDasharray="3 3" stroke="#E2E8F0" />
+                  <CartesianGrid strokeDasharray="3 3" stroke="rgba(158,190,180,0.14)" />
                   <XAxis
                     type="number"
                     dataKey="x"
                     name="X (Lon)"
-                    stroke="#64748B"
+                    stroke="#a7b9b2"
                     fontSize={10}
                     fontFamily="monospace"
                     domain={['auto', 'auto']}
@@ -357,7 +357,7 @@ export default function FacilityLocation() {
                     type="number"
                     dataKey="y"
                     name="Y (Lat)"
-                    stroke="#64748B"
+                    stroke="#a7b9b2"
                     fontSize={10}
                     fontFamily="monospace"
                     domain={['auto', 'auto']}
@@ -365,7 +365,7 @@ export default function FacilityLocation() {
                   <ZAxis type="number" dataKey="volume" range={[60, 450]} />
                   <Tooltip
                     cursor={{ strokeDasharray: '3 3' }}
-                    contentStyle={{ backgroundColor: "#FFFFFF", borderColor: "#E2E8F0", borderRadius: "8px", fontSize: "11px" }}
+                    contentStyle={{ backgroundColor: "#0e161a", borderColor: "rgba(158,190,180,0.14)", borderRadius: "8px", fontSize: "11px" }}
                     formatter={(val: any, name: any) => [val, name]}
                   />
                   <Scatter name="Demand Nodes" data={demandPoints} fill="#3B82F6" opacity={0.7} />
@@ -373,7 +373,7 @@ export default function FacilityLocation() {
                   <Scatter
                     name="Optimal Center of Gravity"
                     data={[{ name: "Optimal Hub", x: cgX, y: cgY, volume: 300 }]}
-                    fill="#0E7C69"
+                    fill="#17a88a"
                     shape="cross"
                   />
                   {/* Candidate sites */}
@@ -390,8 +390,8 @@ export default function FacilityLocation() {
               </ResponsiveContainer>
             </div>
 
-            <div className="p-3 bg-slate-50 rounded-lg border border-slate-200 text-xs text-slate-600 font-sans leading-relaxed">
-              <span className="font-bold text-slate-800 block mb-0.5">
+            <div className="p-3 bg-ink-3 rounded-lg border border-line text-xs text-fg-2 font-sans leading-relaxed">
+              <span className="font-bold text-fg block mb-0.5">
                 {isAr ? "ملاحظة نموذج التوزيع" : "Logistics Optimization Note:"}
               </span>
               {isAr

@@ -188,7 +188,7 @@ export default function CashConversionCycle() {
       initial="initial"
       animate="animate"
       exit="exit"
-      className="space-y-6 font-sans text-slate-800"
+      className="space-y-6 font-sans text-fg"
       dir={isAr ? "rtl" : "ltr"}
       id="ccc-container"
     >
@@ -213,7 +213,7 @@ export default function CashConversionCycle() {
       {/* STATEMENTS INTEGRATION BANNER */}
       {canPullFromStatements && (
         <div className="p-3.5 bg-emerald/5 border border-emerald/20 rounded-lg flex flex-col sm:flex-row sm:items-center justify-between gap-3 text-xs">
-          <div className="flex items-center gap-2 text-slate-700">
+          <div className="flex items-center gap-2 text-fg-2">
             <span className="w-2 h-2 rounded-full bg-emerald shrink-0" />
             <span>
               {isAr
@@ -223,7 +223,7 @@ export default function CashConversionCycle() {
           </div>
           <button
             onClick={pullFromStatements}
-            className="inline-flex items-center gap-1.5 px-3 py-1.5 bg-emerald text-white rounded text-[11px] font-mono font-bold hover:bg-emerald-light transition-colors cursor-pointer shrink-0"
+            className="inline-flex items-center gap-1.5 px-3 py-1.5 bg-emerald text-ink-0 rounded text-[11px] font-mono font-bold hover:bg-emerald-light transition-colors cursor-pointer shrink-0"
           >
             <span>{isAr ? "استيراد البيانات من النموذج" : "Auto-Populate from 3-Statement Model"}</span>
             <ArrowUpRight size={13} />
@@ -234,12 +234,12 @@ export default function CashConversionCycle() {
       {/* KPI HIGHLIGHT CARDS (CURRENT PERIOD) */}
       <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 font-mono">
         {/* CCC MASTER CARD */}
-        <div className="p-4 rounded-xl border border-emerald-border bg-emerald-dim shadow-xs">
+        <div className="p-4 rounded-xl border border-emerald/30 bg-emerald/10 shadow-xs">
           <div className="flex justify-between items-center mb-1">
             <span className="text-[10px] text-emerald uppercase font-bold">
               {isAr ? "دورة التحويل النقدي (CCC)" : "Cash Conversion Cycle"}
             </span>
-            <span className="text-[9px] font-bold px-1.5 py-0.5 rounded bg-white text-emerald border border-emerald-border">
+            <span className="text-[9px] font-bold px-1.5 py-0.5 rounded bg-ink-2 text-emerald border border-emerald/30">
               {currentPeriod.periodLabel}
             </span>
           </div>
@@ -254,54 +254,54 @@ export default function CashConversionCycle() {
                   <TrendingDown size={12} /> {Math.abs(yoyDeltaCCC)} days faster (improved)
                 </span>
               ) : (
-                <span className="text-rose-600 font-bold flex items-center gap-0.5">
+                <span className="text-neg font-bold flex items-center gap-0.5">
                   <TrendingUp size={12} /> +{yoyDeltaCCC} days slower (cash tied longer)
                 </span>
               )
             ) : (
-              <span className="text-slate-500">{isAr ? "المعيار الأقصر هو الأفضل" : "Shorter cycle frees liquidity"}</span>
+              <span className="text-fg-3">{isAr ? "المعيار الأقصر هو الأفضل" : "Shorter cycle frees liquidity"}</span>
             )}
           </div>
         </div>
 
         {/* DIO */}
-        <div className="p-4 rounded-xl border border-surface-border bg-white shadow-xs">
-          <span className="text-[10px] text-slate-muted uppercase font-bold block mb-1">
+        <div className="p-4 rounded-xl border border-line bg-ink-2 shadow-xs">
+          <span className="text-[10px] text-fg-3 uppercase font-bold block mb-1">
             {isAr ? "دوران المخزون (DIO)" : "Days Inventory (DIO)"}
           </span>
           <div className="flex items-baseline gap-1.5">
-            <span className="text-2xl font-extrabold text-slate-heading">{currentOutput.dio}</span>
-            <span className="text-xs font-bold text-slate-muted">{isAr ? "يوم" : "Days"}</span>
+            <span className="text-2xl font-extrabold text-fg">{currentOutput.dio}</span>
+            <span className="text-xs font-bold text-fg-3">{isAr ? "يوم" : "Days"}</span>
           </div>
-          <span className="text-[10px] text-slate-muted block mt-2 font-sans font-medium">
+          <span className="text-[10px] text-fg-3 block mt-2 font-sans font-medium">
             {isAr ? "مدة بقاء البضاعة بالمستودع" : "Holding duration before sale"}
           </span>
         </div>
 
         {/* DSO */}
-        <div className="p-4 rounded-xl border border-surface-border bg-white shadow-xs">
-          <span className="text-[10px] text-slate-muted uppercase font-bold block mb-1">
+        <div className="p-4 rounded-xl border border-line bg-ink-2 shadow-xs">
+          <span className="text-[10px] text-fg-3 uppercase font-bold block mb-1">
             {isAr ? "أيام تحصيل المبيعات (DSO)" : "Days Sales Out. (DSO)"}
           </span>
           <div className="flex items-baseline gap-1.5">
-            <span className="text-2xl font-extrabold text-slate-heading">{currentOutput.dso}</span>
-            <span className="text-xs font-bold text-slate-muted">{isAr ? "يوم" : "Days"}</span>
+            <span className="text-2xl font-extrabold text-fg">{currentOutput.dso}</span>
+            <span className="text-xs font-bold text-fg-3">{isAr ? "يوم" : "Days"}</span>
           </div>
-          <span className="text-[10px] text-slate-muted block mt-2 font-sans font-medium">
+          <span className="text-[10px] text-fg-3 block mt-2 font-sans font-medium">
             {isAr ? "سرعة تحصيل مستحقات العملاء" : "Credit collection turnaround"}
           </span>
         </div>
 
         {/* DPO */}
-        <div className="p-4 rounded-xl border border-surface-border bg-white shadow-xs">
-          <span className="text-[10px] text-slate-muted uppercase font-bold block mb-1">
+        <div className="p-4 rounded-xl border border-line bg-ink-2 shadow-xs">
+          <span className="text-[10px] text-fg-3 uppercase font-bold block mb-1">
             {isAr ? "أيام سداد الموردين (DPO)" : "Days Payable Out. (DPO)"}
           </span>
           <div className="flex items-baseline gap-1.5">
-            <span className="text-2xl font-extrabold text-slate-heading">{currentOutput.dpo}</span>
-            <span className="text-xs font-bold text-slate-muted">{isAr ? "يوم" : "Days"}</span>
+            <span className="text-2xl font-extrabold text-fg">{currentOutput.dpo}</span>
+            <span className="text-xs font-bold text-fg-3">{isAr ? "يوم" : "Days"}</span>
           </div>
-          <span className="text-[10px] text-slate-muted block mt-2 font-sans font-medium">
+          <span className="text-[10px] text-fg-3 block mt-2 font-sans font-medium">
             {isAr ? "تمويل ائتماني مجاني من الموردين" : "Vendor financing leverage"}
           </span>
         </div>
@@ -316,8 +316,8 @@ export default function CashConversionCycle() {
         <div className="lg:col-span-5 space-y-4">
           <div className="panel-input p-5 space-y-4">
             {/* PERIOD SELECTOR TABS */}
-            <div className="flex items-center justify-between border-b border-surface-border pb-3">
-              <span className="font-mono text-xs font-bold text-slate-heading uppercase tracking-wider">
+            <div className="flex items-center justify-between border-b border-line pb-3">
+              <span className="font-mono text-xs font-bold text-fg uppercase tracking-wider">
                 {isAr ? "الفترة المالية النشطة" : "Active Period Inputs"}
               </span>
               <div className="flex items-center gap-1.5">
@@ -327,8 +327,8 @@ export default function CashConversionCycle() {
                     onClick={() => setActivePeriodId(p.periodId)}
                     className={`px-2.5 py-1 rounded text-xs font-mono font-bold transition-all cursor-pointer ${
                       activePeriodId === p.periodId
-                        ? "bg-emerald text-white"
-                        : "bg-surface-subtle text-slate-600 hover:bg-surface-hover"
+                        ? "bg-emerald text-ink-0"
+                        : "bg-ink-3 text-fg-2 hover:bg-ink-4"
                     }`}
                   >
                     {p.periodLabel}
@@ -336,7 +336,7 @@ export default function CashConversionCycle() {
                 ))}
                 <button
                   onClick={addPeriod}
-                  className="p-1 rounded bg-surface-subtle hover:bg-surface-hover text-emerald"
+                  className="p-1 rounded bg-ink-3 hover:bg-ink-4 text-emerald"
                   title={isAr ? "إضافة فترة جديدة" : "Add Period"}
                 >
                   <Plus size={14} />
@@ -348,24 +348,24 @@ export default function CashConversionCycle() {
             <div className="space-y-3.5 text-xs">
               <div className="grid grid-cols-2 gap-3">
                 <div>
-                  <label className="text-slate-body font-medium block mb-1">
+                  <label className="text-fg-2 font-medium block mb-1">
                     {isAr ? "تسمية الفترة" : "Period Label"}
                   </label>
                   <input
                     type="text"
                     value={currentPeriod.periodLabel}
                     onChange={(e) => updateActiveField("periodLabel", e.target.value)}
-                    className="w-full px-3 py-2 rounded bg-surface-subtle border border-surface-border font-mono text-xs font-bold"
+                    className="w-full px-3 py-2 rounded bg-ink-3 border border-line font-mono text-xs font-bold"
                   />
                 </div>
                 <div>
-                  <label className="text-slate-body font-medium block mb-1">
+                  <label className="text-fg-2 font-medium block mb-1">
                     {isAr ? "أيام الفترة" : "Days in Period"}
                   </label>
                   <select
                     value={currentPeriod.daysInPeriod}
                     onChange={(e) => updateActiveField("daysInPeriod", Number(e.target.value))}
-                    className="w-full px-3 py-2 rounded bg-surface-subtle border border-surface-border font-mono text-xs font-bold"
+                    className="w-full px-3 py-2 rounded bg-ink-3 border border-line font-mono text-xs font-bold"
                   >
                     <option value={365}>365 (Annual)</option>
                     <option value={90}>90 (Quarterly)</option>
@@ -375,36 +375,36 @@ export default function CashConversionCycle() {
               </div>
 
               <div>
-                <label className="text-slate-body font-medium block mb-1">
+                <label className="text-fg-2 font-medium block mb-1">
                   {isAr ? "الإيرادات السنوية" : "Annual Revenue"} ({currency})
                 </label>
                 <input
                   type="number"
                   value={currentPeriod.revenue}
                   onChange={(e) => updateActiveField("revenue", Number(e.target.value))}
-                  className="w-full px-3 py-2 rounded bg-surface-subtle border border-surface-border font-mono text-xs font-bold"
+                  className="w-full px-3 py-2 rounded bg-ink-3 border border-line font-mono text-xs font-bold"
                 />
               </div>
 
               <div>
-                <label className="text-slate-body font-medium block mb-1">
+                <label className="text-fg-2 font-medium block mb-1">
                   {isAr ? "تكلفة البضاعة المباعة (COGS)" : "Cost of Goods Sold (COGS)"} ({currency})
                 </label>
                 <input
                   type="number"
                   value={currentPeriod.cogs}
                   onChange={(e) => updateActiveField("cogs", Number(e.target.value))}
-                  className="w-full px-3 py-2 rounded bg-surface-subtle border border-surface-border font-mono text-xs font-bold"
+                  className="w-full px-3 py-2 rounded bg-ink-3 border border-line font-mono text-xs font-bold"
                 />
               </div>
 
               {/* INVENTORY INPUT WITH TOGGLE */}
-              <div className="p-3 bg-surface-subtle rounded-lg border border-surface-border space-y-2">
+              <div className="p-3 bg-ink-3 rounded-lg border border-line space-y-2">
                 <div className="flex justify-between items-center">
-                  <span className="font-bold text-slate-800">
+                  <span className="font-bold text-fg">
                     {isAr ? "المخزون السلعي" : "Inventory"}
                   </span>
-                  <label className="flex items-center gap-1.5 text-[11px] text-slate-500 cursor-pointer">
+                  <label className="flex items-center gap-1.5 text-[11px] text-fg-3 cursor-pointer">
                     <input
                       type="checkbox"
                       checked={currentPeriod.useBeginningEnding}
@@ -418,21 +418,21 @@ export default function CashConversionCycle() {
                 {currentPeriod.useBeginningEnding ? (
                   <div className="grid grid-cols-2 gap-2">
                     <div>
-                      <span className="text-[10px] text-slate-400 block mb-0.5">Beginning</span>
+                      <span className="text-[10px] text-fg-3 block mb-0.5">Beginning</span>
                       <input
                         type="number"
                         value={currentPeriod.beginningInventory || 0}
                         onChange={(e) => updateActiveField("beginningInventory", Number(e.target.value))}
-                        className="w-full px-2 py-1.5 rounded bg-white border border-surface-border font-mono text-xs"
+                        className="w-full px-2 py-1.5 rounded bg-ink-2 border border-line font-mono text-xs"
                       />
                     </div>
                     <div>
-                      <span className="text-[10px] text-slate-400 block mb-0.5">Ending</span>
+                      <span className="text-[10px] text-fg-3 block mb-0.5">Ending</span>
                       <input
                         type="number"
                         value={currentPeriod.endingInventory || 0}
                         onChange={(e) => updateActiveField("endingInventory", Number(e.target.value))}
-                        className="w-full px-2 py-1.5 rounded bg-white border border-surface-border font-mono text-xs"
+                        className="w-full px-2 py-1.5 rounded bg-ink-2 border border-line font-mono text-xs"
                       />
                     </div>
                   </div>
@@ -441,34 +441,34 @@ export default function CashConversionCycle() {
                     type="number"
                     value={currentPeriod.averageInventory}
                     onChange={(e) => updateActiveField("averageInventory", Number(e.target.value))}
-                    className="w-full px-3 py-2 rounded bg-white border border-surface-border font-mono text-xs font-bold"
+                    className="w-full px-3 py-2 rounded bg-ink-2 border border-line font-mono text-xs font-bold"
                   />
                 )}
               </div>
 
               {/* ACCOUNTS RECEIVABLE */}
               <div>
-                <label className="text-slate-body font-medium block mb-1">
+                <label className="text-fg-2 font-medium block mb-1">
                   {isAr ? "الذمم المدينة / العملاء (AR)" : "Accounts Receivable (AR)"} ({currency})
                 </label>
                 <input
                   type="number"
                   value={currentPeriod.averageAR}
                   onChange={(e) => updateActiveField("averageAR", Number(e.target.value))}
-                  className="w-full px-3 py-2 rounded bg-surface-subtle border border-surface-border font-mono text-xs font-bold"
+                  className="w-full px-3 py-2 rounded bg-ink-3 border border-line font-mono text-xs font-bold"
                 />
               </div>
 
               {/* ACCOUNTS PAYABLE */}
               <div>
-                <label className="text-slate-body font-medium block mb-1">
+                <label className="text-fg-2 font-medium block mb-1">
                   {isAr ? "الذمم الدائنة / الموردين (AP)" : "Accounts Payable (AP)"} ({currency})
                 </label>
                 <input
                   type="number"
                   value={currentPeriod.averageAP}
                   onChange={(e) => updateActiveField("averageAP", Number(e.target.value))}
-                  className="w-full px-3 py-2 rounded bg-surface-subtle border border-surface-border font-mono text-xs font-bold"
+                  className="w-full px-3 py-2 rounded bg-ink-3 border border-line font-mono text-xs font-bold"
                 />
               </div>
 
@@ -476,7 +476,7 @@ export default function CashConversionCycle() {
                 <div className="pt-2 flex justify-end">
                   <button
                     onClick={() => removePeriod(currentPeriod.periodId)}
-                    className="text-rose-600 hover:text-rose-700 flex items-center gap-1 text-xs font-medium cursor-pointer"
+                    className="text-neg hover:text-neg flex items-center gap-1 text-xs font-medium cursor-pointer"
                   >
                     <Trash2 size={13} />
                     <span>{isAr ? "حذف هذه الفترة" : "Delete Period"}</span>
@@ -491,16 +491,16 @@ export default function CashConversionCycle() {
         <div className="lg:col-span-7 space-y-6">
           {/* MULTI-PERIOD TREND CHART */}
           <div className="panel-data p-5 space-y-4">
-            <div className="flex justify-between items-center border-b border-surface-border pb-3">
+            <div className="flex justify-between items-center border-b border-line pb-3">
               <div>
-                <h3 className="font-serif text-sm font-bold text-slate-heading">
+                <h3 className="font-serif text-sm font-bold text-fg">
                   {isAr ? "مسار تطور دورة التحويل النقدي عبر الفترات" : "CCC Component Multi-Period Trajectory"}
                 </h3>
-                <p className="text-[11px] text-slate-muted font-sans font-medium">
+                <p className="text-[11px] text-fg-3 font-sans font-medium">
                   {isAr ? "مقارنة DIO و DSO و DPO ومحصلة CCC" : "Line trend for DIO, DSO, DPO and net CCC days"}
                 </p>
               </div>
-              <span className="label-pill text-slate-500 font-mono text-[10px]">
+              <span className="label-pill text-fg-3 font-mono text-[10px]">
                 {periods.length} {isAr ? "فترات" : "Periods"}
               </span>
             </div>
@@ -517,18 +517,18 @@ export default function CashConversionCycle() {
                   }))}
                   margin={{ top: 10, right: 15, left: -10, bottom: 0 }}
                 >
-                  <CartesianGrid strokeDasharray="3 3" stroke="#E2E8F0" vertical={false} />
-                  <XAxis dataKey="period" stroke="#64748B" fontSize={10} fontFamily="monospace" />
-                  <YAxis stroke="#64748B" fontSize={10} fontFamily="monospace" />
+                  <CartesianGrid strokeDasharray="3 3" stroke="rgba(158,190,180,0.14)" vertical={false} />
+                  <XAxis dataKey="period" stroke="#a7b9b2" fontSize={10} fontFamily="monospace" />
+                  <YAxis stroke="#a7b9b2" fontSize={10} fontFamily="monospace" />
                   <Tooltip
-                    contentStyle={{ backgroundColor: "#FFFFFF", borderColor: "#E2E8F0", borderRadius: "8px", fontSize: "11px" }}
+                    contentStyle={{ backgroundColor: "#0e161a", borderColor: "rgba(158,190,180,0.14)", borderRadius: "8px", fontSize: "11px" }}
                     formatter={(val: any) => [`${val} Days`, ""]}
                   />
                   <Legend wrapperStyle={{ fontSize: "11px", fontFamily: "monospace" }} />
                   <Line type="monotone" dataKey="DIO" stroke="#F59E0B" strokeWidth={2} dot={{ r: 3 }} />
                   <Line type="monotone" dataKey="DSO" stroke="#3B82F6" strokeWidth={2} dot={{ r: 3 }} />
                   <Line type="monotone" dataKey="DPO" stroke="#8B5CF6" strokeWidth={2} dot={{ r: 3 }} />
-                  <Line type="monotone" dataKey="CCC" stroke="#0E7C69" strokeWidth={3} dot={{ r: 4 }} />
+                  <Line type="monotone" dataKey="CCC" stroke="#17a88a" strokeWidth={3} dot={{ r: 4 }} />
                 </LineChart>
               </ResponsiveContainer>
             </div>
@@ -536,14 +536,14 @@ export default function CashConversionCycle() {
 
           {/* PERIODS COMPARISON TABLE */}
           <div className="panel-data p-5">
-            <h3 className="font-mono text-xs font-bold text-slate-heading uppercase tracking-wider mb-3">
+            <h3 className="font-mono text-xs font-bold text-fg uppercase tracking-wider mb-3">
               {isAr ? "جدول مقارنة المؤشرات عبر الفترات" : "Working Capital Cycle Multi-Period Table"}
             </h3>
 
             <div className="overflow-x-auto">
               <table className="w-full text-xs font-mono text-left rtl:text-right border-collapse">
                 <thead>
-                  <tr className="border-b border-surface-border bg-surface-subtle text-slate-muted">
+                  <tr className="border-b border-line bg-ink-3 text-fg-3">
                     <th className="py-2 px-3">Period</th>
                     <th className="py-2 px-3 text-right">DIO (Days)</th>
                     <th className="py-2 px-3 text-right">DSO (Days)</th>
@@ -551,11 +551,11 @@ export default function CashConversionCycle() {
                     <th className="py-2 px-3 text-right font-bold text-emerald">CCC (Days)</th>
                   </tr>
                 </thead>
-                <tbody className="divide-y divide-surface-border">
+                <tbody className="divide-y divide-line">
                   {computedOutputs.map((out) => (
                     <tr
                       key={out.periodLabel}
-                      className={`hover:bg-surface-subtle transition-colors cursor-pointer ${
+                      className={`hover:bg-ink-3 transition-colors cursor-pointer ${
                         out.periodLabel === currentPeriod.periodLabel ? "bg-emerald/5 font-bold" : ""
                       }`}
                       onClick={() => {
@@ -563,7 +563,7 @@ export default function CashConversionCycle() {
                         if (target) setActivePeriodId(target.periodId);
                       }}
                     >
-                      <td className="py-2.5 px-3 font-medium text-slate-heading flex items-center gap-1.5">
+                      <td className="py-2.5 px-3 font-medium text-fg flex items-center gap-1.5">
                         {out.periodLabel === currentPeriod.periodLabel && (
                           <span className="w-1.5 h-1.5 rounded-full bg-emerald" />
                         )}
@@ -581,8 +581,8 @@ export default function CashConversionCycle() {
               </table>
             </div>
 
-            <div className="mt-4 p-3 bg-slate-50 rounded-lg border border-slate-200 text-xs font-sans text-slate-600 space-y-1">
-              <div className="font-bold text-slate-800 flex items-center gap-1.5">
+            <div className="mt-4 p-3 bg-ink-3 rounded-lg border border-line text-xs font-sans text-fg-2 space-y-1">
+              <div className="font-bold text-fg flex items-center gap-1.5">
                 <HelpCircle size={14} className="text-emerald" />
                 <span>{isAr ? "التفسير العملي للنتائج" : "Managerial Interpretation"}</span>
               </div>

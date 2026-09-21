@@ -1,4 +1,5 @@
 import { create } from "zustand";
+import { persist, createJSONStorage } from "zustand/middleware";
 
 export type Currency = 'SAR' | 'AED' | 'KWD' | 'BHD' | 'OMR' | 'QAR' | 'USD';
 export type Language = 'en' | 'ar';
@@ -80,6 +81,10 @@ interface TerminalState {
   currency: Currency;
   searchQuery: string;
   isMobileMenuOpen: boolean;
+  /** Most recently opened panels (newest first) — drives the hub activity strip. */
+  recentPanels: PanelType[];
+  sessionStartedAt: string;
+  hasHydrated: boolean;
 
   // Session analyses store
   sessionAnalyses: SessionAnalyses;
@@ -93,34 +98,59 @@ interface TerminalState {
   setCurrency: (currency: Currency) => void;
   setSearchQuery: (query: string) => void;
   setMobileMenuOpen: (isOpen: boolean) => void;
+  setHasHydrated: (value: boolean) => void;
 }
 
-export const useTerminalStore = create<TerminalState>((set) => ({
-  activePanel: "hub",
-  isLoading: false,
-  globalError: null,
-  
-  language: "en",
-  currency: "SAR",
-  searchQuery: "",
-  isMobileMenuOpen: false,
+const STORAGE_KEY = "mahwar-terminal-v3";
 
-  sessionAnalyses: {},
-  updateSessionAnalysis: (key, data) => 
-    set((state) => ({
-      sessionAnalyses: {
-        ...state.sessionAnalyses,
-        [key]: data
-      }
-    })),
-  clearSessionAnalyses: () => set({ sessionAnalyses: {} }),
-  
-  setPanel: (activePanel) => set({ activePanel }),
-  setLoading: (isLoading) => set({ isLoading }),
-  setError: (globalError) => set({ globalError }),
-  setLanguage: (language) => set({ language }),
-  setCurrency: (currency) => set({ currency }),
-  setSearchQuery: (searchQuery) => set({ searchQuery }),
-  setMobileMenuOpen: (isMobileMenuOpen) => set({ isMobileMenuOpen }),
-}));
+export const useTerminalStore = create<TerminalState>()(
+  persist(
+    (set) => ({
+      activePanel: "hub",
+      isLoading: false,
+      globalError: null,
+
+      language: "en",
+      currency: "SAR",
+      searchQuery: "",
+      isMobileMenuOpen: false,
+      recentPanels: [],
+      sessionStartedAt: new Date().toISOString(),
+      hasHydrated: false,
+
+      sessionAnalyses: {},
+      updateSessionAnalysis: (key, data) =>
+        set((state) => ({
+          sessionAnalyses: { ...state.sessionAnalyses, [key]: data },
+        })),
+      clearSessionAnalyses: () => set({ sessionAnalyses: {}, sessionStartedAt: new Date().toISOString() }),
+
+      setPanel: (activePanel) =>
+        set((state) => ({
+          activePanel,
+          recentPanels: [activePanel, ...state.recentPanels.filter((p) => p !== activePanel)].slice(0, 8),
+        })),
+      setLoading: (isLoading) => set({ isLoading }),
+      setError: (globalError) => set({ globalError }),
+      setLanguage: (language) => set({ language }),
+      setCurrency: (currency) => set({ currency }),
+      setSearchQuery: (searchQuery) => set({ searchQuery }),
+      setMobileMenuOpen: (isMobileMenuOpen) => set({ isMobileMenuOpen }),
+      setHasHydrated: (hasHydrated) => set({ hasHydrated }),
+    }),
+    {
+      name: STORAGE_KEY,
+      storage: createJSONStorage(() => localStorage),
+      // Only durable workspace state is persisted; UI flags stay per-tab.
+      partialize: (state) => ({
+        language: state.language,
+        currency: state.currency,
+        sessionAnalyses: state.sessionAnalyses,
+        recentPanels: state.recentPanels,
+        sessionStartedAt: state.sessionStartedAt,
+      }),
+      onRehydrateStorage: () => (state) => state?.setHasHydrated(true),
+    }
+  )
+);
 

@@ -117,7 +117,7 @@ export default function DemandForecasting() {
       initial="initial"
       animate="animate"
       exit="exit"
-      className="space-y-6 font-sans text-slate-800"
+      className="space-y-6 font-sans text-fg"
       dir={isAr ? "rtl" : "ltr"}
       id="forecast-container"
     >
@@ -148,7 +148,7 @@ export default function DemandForecasting() {
       {/* KPI ACCURACY CARDS */}
       <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 font-mono">
         {/* ACTIVE METHOD & HORIZON */}
-        <div className="p-4 rounded-xl border border-emerald-border bg-emerald-dim shadow-xs">
+        <div className="p-4 rounded-xl border border-emerald/30 bg-emerald/10 shadow-xs">
           <span className="text-[10px] text-emerald uppercase font-bold block mb-1">
             {isAr ? "النموذج النشط وأفق التوقع" : "Active Model Horizon"}
           </span>
@@ -162,46 +162,46 @@ export default function DemandForecasting() {
         </div>
 
         {/* MAPE */}
-        <div className="p-4 rounded-xl border border-surface-border bg-white shadow-xs">
-          <span className="text-[10px] text-slate-muted uppercase font-bold block mb-1">
+        <div className="p-4 rounded-xl border border-line bg-ink-2 shadow-xs">
+          <span className="text-[10px] text-fg-3 uppercase font-bold block mb-1">
             MAPE (Accuracy Error)
           </span>
           <div className="flex items-baseline gap-1.5">
-            <span className={`text-2xl font-extrabold ${outputs.mape < 10 ? "text-emerald" : "text-slate-heading"}`}>
+            <span className={`text-2xl font-extrabold ${outputs.mape < 10 ? "text-emerald" : "text-fg"}`}>
               {outputs.mape}%
             </span>
           </div>
-          <span className="text-[10px] text-slate-muted font-sans font-medium block mt-1">
+          <span className="text-[10px] text-fg-3 font-sans font-medium block mt-1">
             {outputs.mape < 10 ? "High precision fit (<10%)" : "Acceptable deviation"}
           </span>
         </div>
 
         {/* MAD */}
-        <div className="p-4 rounded-xl border border-surface-border bg-white shadow-xs">
-          <span className="text-[10px] text-slate-muted uppercase font-bold block mb-1">
+        <div className="p-4 rounded-xl border border-line bg-ink-2 shadow-xs">
+          <span className="text-[10px] text-fg-3 uppercase font-bold block mb-1">
             MAD (Mean Abs Deviation)
           </span>
           <div className="flex items-baseline gap-1.5">
-            <span className="text-2xl font-extrabold text-slate-heading">{outputs.mad}</span>
-            <span className="text-xs font-bold text-slate-muted">units</span>
+            <span className="text-2xl font-extrabold text-fg">{outputs.mad}</span>
+            <span className="text-xs font-bold text-fg-3">units</span>
           </div>
-          <span className="text-[10px] text-slate-muted font-sans font-medium block mt-1">
+          <span className="text-[10px] text-fg-3 font-sans font-medium block mt-1">
             Average absolute unit variance
           </span>
         </div>
 
         {/* FORECAST BIAS */}
-        <div className="p-4 rounded-xl border border-surface-border bg-white shadow-xs">
-          <span className="text-[10px] text-slate-muted uppercase font-bold block mb-1">
+        <div className="p-4 rounded-xl border border-line bg-ink-2 shadow-xs">
+          <span className="text-[10px] text-fg-3 uppercase font-bold block mb-1">
             Tracking Bias
           </span>
           <div className="flex items-baseline gap-1.5">
-            <span className={`text-2xl font-extrabold ${outputs.bias > 0 ? "text-amber-600" : outputs.bias < 0 ? "text-blue-600" : "text-emerald"}`}>
+            <span className={`text-2xl font-extrabold ${outputs.bias > 0 ? "text-gold" : outputs.bias < 0 ? "text-sky-400" : "text-emerald"}`}>
               {outputs.bias > 0 ? `+${outputs.bias}` : outputs.bias}
             </span>
-            <span className="text-xs font-bold text-slate-muted">units</span>
+            <span className="text-xs font-bold text-fg-3">units</span>
           </div>
-          <span className="text-[10px] text-slate-muted font-sans font-medium block mt-1">
+          <span className="text-[10px] text-fg-3 font-sans font-medium block mt-1">
             {outputs.bias > 0 ? "Slight under-forecasting" : outputs.bias < 0 ? "Slight over-forecasting" : "Unbiased"}
           </span>
         </div>
@@ -214,7 +214,7 @@ export default function DemandForecasting() {
         {/* CONFIG & INPUTS COLUMN (5 COLS) */}
         <div className="lg:col-span-5 space-y-4">
           <div className="panel-input p-5 space-y-4">
-            <h3 className="font-mono text-xs font-bold text-slate-heading uppercase tracking-wider border-b border-surface-border pb-3">
+            <h3 className="font-mono text-xs font-bold text-fg uppercase tracking-wider border-b border-line pb-3">
               {isAr ? "اختيار النموذج ومعلمات التنبؤ" : "Model Selection & Hyperparameters"}
             </h3>
 
@@ -226,8 +226,8 @@ export default function DemandForecasting() {
                   onClick={() => setMethod(m)}
                   className={`py-2 px-1 rounded text-center transition-all cursor-pointer font-bold ${
                     method === m
-                      ? "bg-emerald text-white shadow-2xs"
-                      : "bg-surface-subtle text-slate-700 hover:bg-slate-100 border border-surface-border"
+                      ? "bg-emerald text-ink-0 shadow-2xs"
+                      : "bg-ink-3 text-fg-2 hover:bg-ink-4 border border-line"
                   }`}
                 >
                   {m}
@@ -239,7 +239,7 @@ export default function DemandForecasting() {
             <div className="space-y-3 text-xs">
               <div>
                 <div className="flex justify-between items-center mb-1">
-                  <label className="text-slate-body font-medium">
+                  <label className="text-fg-2 font-medium">
                     {isAr ? "أفق التوقع المستقبلي (فترات)" : "Forecast Horizon (Periods ahead)"}
                   </label>
                   <span className="font-mono font-bold text-emerald">{horizon} Periods</span>
@@ -257,7 +257,7 @@ export default function DemandForecasting() {
               {/* METHOD-SPECIFIC PARAMETERS */}
               {method === "SMA" && (
                 <div>
-                  <label className="text-slate-body font-medium block mb-1">
+                  <label className="text-fg-2 font-medium block mb-1">
                     {isAr ? "نافذة المتوسط المتحرك (n)" : "SMA Window Size (n periods)"}
                   </label>
                   <input
@@ -266,9 +266,9 @@ export default function DemandForecasting() {
                     max={series.length - 1}
                     value={smaWindow}
                     onChange={(e) => setSmaWindow(Number(e.target.value))}
-                    className="w-full px-3 py-2 rounded bg-surface-subtle border border-surface-border font-mono text-xs font-bold"
+                    className="w-full px-3 py-2 rounded bg-ink-3 border border-line font-mono text-xs font-bold"
                   />
-                  <span className="text-[10px] text-slate-400 block mt-0.5">
+                  <span className="text-[10px] text-fg-3 block mt-0.5">
                     Averages the last {smaWindow} historical actuals
                   </span>
                 </div>
@@ -276,7 +276,7 @@ export default function DemandForecasting() {
 
               {method === "WMA" && (
                 <div>
-                  <label className="text-slate-body font-medium block mb-1">
+                  <label className="text-fg-2 font-medium block mb-1">
                     {isAr ? "أوزان الفترات الأحدث (مفصولة بفاصلة)" : "WMA Weights (recent to oldest, comma separated)"}
                   </label>
                   <input
@@ -284,11 +284,11 @@ export default function DemandForecasting() {
                     value={wmaWeightsStr}
                     onChange={(e) => setWmaWeightsStr(e.target.value)}
                     placeholder="0.5, 0.3, 0.2"
-                    className="w-full px-3 py-2 rounded bg-surface-subtle border border-surface-border font-mono text-xs font-bold"
+                    className="w-full px-3 py-2 rounded bg-ink-3 border border-line font-mono text-xs font-bold"
                   />
-                  <div className="flex justify-between text-[10px] text-slate-400 mt-1 font-mono">
+                  <div className="flex justify-between text-[10px] text-fg-3 mt-1 font-mono">
                     <span>Sum: {weightSum.toFixed(2)}</span>
-                    <span className={isWeightValid ? "text-emerald" : "text-rose-500 font-bold"}>
+                    <span className={isWeightValid ? "text-emerald" : "text-neg font-bold"}>
                       {isWeightValid ? "Valid (Sums to 1.0)" : "Must sum to 1.0"}
                     </span>
                   </div>
@@ -298,7 +298,7 @@ export default function DemandForecasting() {
               {method === "SES" && (
                 <div>
                   <div className="flex justify-between items-center mb-1">
-                    <label className="text-slate-body font-medium">
+                    <label className="text-fg-2 font-medium">
                       {isAr ? "معامل التمهيد الأسي (α)" : "Smoothing Constant (α Alpha)"}
                     </label>
                     <span className="font-mono font-bold text-emerald">{sesAlpha}</span>
@@ -312,7 +312,7 @@ export default function DemandForecasting() {
                     onChange={(e) => setSesAlpha(Number(e.target.value))}
                     className="w-full accent-emerald cursor-pointer"
                   />
-                  <div className="flex justify-between text-[10px] font-mono text-slate-400">
+                  <div className="flex justify-between text-[10px] font-mono text-fg-3">
                     <span>0.05 (Smooth)</span>
                     <span>0.5</span>
                     <span>0.95 (Reactive)</span>
@@ -324,13 +324,13 @@ export default function DemandForecasting() {
 
           {/* HISTORICAL SERIES TABLE */}
           <div className="panel-input p-5 space-y-3">
-            <div className="flex justify-between items-center border-b border-surface-border pb-2">
-              <span className="font-mono text-xs font-bold text-slate-heading uppercase">
+            <div className="flex justify-between items-center border-b border-line pb-2">
+              <span className="font-mono text-xs font-bold text-fg uppercase">
                 {isAr ? "البيانات التاريخية الفعلية" : "Historical Demand Series"}
               </span>
               <button
                 onClick={addPeriod}
-                className="flex items-center gap-1 text-[11px] font-mono font-bold text-emerald hover:text-emerald-dark"
+                className="flex items-center gap-1 text-[11px] font-mono font-bold text-emerald hover:text-emerald-light"
               >
                 <Plus size={13} /> {isAr ? "إضافة فترة" : "Add Period"}
               </button>
@@ -339,17 +339,17 @@ export default function DemandForecasting() {
             <div className="space-y-2 max-h-56 overflow-y-auto pr-1">
               {series.map((item, idx) => (
                 <div key={item.period} className="flex items-center gap-2 text-xs font-mono">
-                  <span className="w-12 text-slate-400 font-bold">{item.periodLabel}</span>
+                  <span className="w-12 text-fg-3 font-bold">{item.periodLabel}</span>
                   <input
                     type="number"
                     value={item.actual}
                     onChange={(e) => updateActual(idx, Number(e.target.value))}
-                    className="flex-1 px-2.5 py-1 rounded bg-surface-subtle border border-surface-border font-bold text-right"
+                    className="flex-1 px-2.5 py-1 rounded bg-ink-3 border border-line font-bold text-right"
                   />
                   <button
                     onClick={() => removePeriod(idx)}
                     disabled={series.length <= 4}
-                    className="text-slate-400 hover:text-rose-500 disabled:opacity-20 p-1"
+                    className="text-fg-3 hover:text-neg disabled:opacity-20 p-1"
                   >
                     <Trash2 size={13} />
                   </button>
@@ -363,12 +363,12 @@ export default function DemandForecasting() {
         <div className="lg:col-span-7 space-y-6">
           {/* TIMELINE VISUALIZATION */}
           <div className="panel-data p-5 space-y-4">
-            <div className="flex justify-between items-center border-b border-surface-border pb-3">
+            <div className="flex justify-between items-center border-b border-line pb-3">
               <div>
-                <h3 className="font-serif text-sm font-bold text-slate-heading">
+                <h3 className="font-serif text-sm font-bold text-fg">
                   {isAr ? "المسار الزمني: الفعلي مقابل التوقع" : "Actual vs. Fitted & Projected Horizon"}
                 </h3>
-                <p className="text-[11px] text-slate-muted font-sans font-medium">
+                <p className="text-[11px] text-fg-3 font-sans font-medium">
                   {isAr ? "الخط المنقط يمثل الأفق المستقبلي المتوقع" : "Dashed extension visualizes the out-of-sample forward forecast"}
                 </p>
               </div>
@@ -380,19 +380,19 @@ export default function DemandForecasting() {
             <div className="h-64 w-full">
               <ResponsiveContainer width="100%" height="100%">
                 <LineChart data={outputs.chartData} margin={{ top: 10, right: 15, left: -10, bottom: 0 }}>
-                  <CartesianGrid strokeDasharray="3 3" stroke="#E2E8F0" vertical={false} />
-                  <XAxis dataKey="label" stroke="#64748B" fontSize={10} fontFamily="monospace" />
-                  <YAxis stroke="#64748B" fontSize={10} fontFamily="monospace" />
+                  <CartesianGrid strokeDasharray="3 3" stroke="rgba(158,190,180,0.14)" vertical={false} />
+                  <XAxis dataKey="label" stroke="#a7b9b2" fontSize={10} fontFamily="monospace" />
+                  <YAxis stroke="#a7b9b2" fontSize={10} fontFamily="monospace" />
                   <Tooltip
-                    contentStyle={{ backgroundColor: "#FFFFFF", borderColor: "#E2E8F0", borderRadius: "8px", fontSize: "11px" }}
+                    contentStyle={{ backgroundColor: "#0e161a", borderColor: "rgba(158,190,180,0.14)", borderRadius: "8px", fontSize: "11px" }}
                   />
                   <Legend wrapperStyle={{ fontSize: "11px", fontFamily: "monospace" }} />
-                  <Line type="monotone" dataKey="actual" name="Actual Demand" stroke="#0F172A" strokeWidth={2.5} dot={{ r: 3 }} />
+                  <Line type="monotone" dataKey="actual" name="Actual Demand" stroke="#e8f1ed" strokeWidth={2.5} dot={{ r: 3 }} />
                   <Line
                     type="monotone"
                     dataKey="fitted"
                     name={`${method} Fit & Forecast`}
-                    stroke="#0E7C69"
+                    stroke="#17a88a"
                     strokeWidth={2.5}
                     strokeDasharray="4 4"
                     dot={{ r: 3 }}
@@ -405,16 +405,16 @@ export default function DemandForecasting() {
           {/* SIDE-BY-SIDE METHOD COMPARISON TABLE */}
           <div className="panel-data p-5 space-y-3">
             <div className="flex justify-between items-center">
-              <h3 className="font-mono text-xs font-bold text-slate-heading uppercase tracking-wider">
+              <h3 className="font-mono text-xs font-bold text-fg uppercase tracking-wider">
                 {isAr ? "مقارنة دقة النماذج الثلاثة جنباً إلى جنب" : "Side-by-Side Model Accuracy Tournament"}
               </h3>
-              <span className="text-[10px] text-slate-400 font-mono">Lower MAPE is superior</span>
+              <span className="text-[10px] text-fg-3 font-mono">Lower MAPE is superior</span>
             </div>
 
             <div className="overflow-x-auto">
               <table className="w-full text-xs font-mono text-left rtl:text-right border-collapse">
                 <thead>
-                  <tr className="border-b border-surface-border bg-surface-subtle text-slate-muted">
+                  <tr className="border-b border-line bg-ink-3 text-fg-3">
                     <th className="py-2 px-3">Method</th>
                     <th className="py-2 px-3 text-right">MAPE (%)</th>
                     <th className="py-2 px-3 text-right">MAD (Units)</th>
@@ -422,18 +422,18 @@ export default function DemandForecasting() {
                     <th className="py-2 px-3 text-center">Selection</th>
                   </tr>
                 </thead>
-                <tbody className="divide-y divide-surface-border">
+                <tbody className="divide-y divide-line">
                   {outputs.comparativeMetrics.map((comp) => {
                     const isSelected = comp.method === method;
                     return (
                       <tr
                         key={comp.method}
-                        className={`hover:bg-surface-subtle transition-colors cursor-pointer ${
+                        className={`hover:bg-ink-3 transition-colors cursor-pointer ${
                           isSelected ? "bg-emerald/5 font-bold" : ""
                         }`}
                         onClick={() => setMethod(comp.method)}
                       >
-                        <td className="py-2.5 px-3 font-medium text-slate-900 flex items-center gap-1.5">
+                        <td className="py-2.5 px-3 font-medium text-fg flex items-center gap-1.5">
                           {isSelected && <span className="w-1.5 h-1.5 rounded-full bg-emerald" />}
                           <span>{comp.name}</span>
                         </td>
@@ -444,13 +444,13 @@ export default function DemandForecasting() {
                         <td className="py-2.5 px-3 text-right">{comp.bias}</td>
                         <td className="py-2.5 px-3 text-center">
                           {isSelected ? (
-                            <span className="text-[10px] font-bold text-emerald bg-emerald-dim px-2 py-0.5 rounded">
+                            <span className="text-[10px] font-bold text-emerald bg-emerald/10 px-2 py-0.5 rounded">
                               ACTIVE
                             </span>
                           ) : (
                             <button
                               onClick={() => setMethod(comp.method)}
-                              className="text-[10px] text-slate-500 hover:text-emerald underline cursor-pointer"
+                              className="text-[10px] text-fg-3 hover:text-emerald underline cursor-pointer"
                             >
                               Apply
                             </button>
@@ -463,8 +463,8 @@ export default function DemandForecasting() {
               </table>
             </div>
 
-            <div className="mt-3 p-3 bg-slate-50 rounded-lg border border-slate-200 text-xs font-sans text-slate-600">
-              <span className="font-bold text-slate-800 block mb-0.5">
+            <div className="mt-3 p-3 bg-ink-3 rounded-lg border border-line text-xs font-sans text-fg-2">
+              <span className="font-bold text-fg block mb-0.5">
                 {isAr ? "توصية الاختيار الآلي" : "Model Recommendation:"}
               </span>
               The method with the lowest MAPE provides the closest fit to your historical sales cadence with minimal systematic bias.

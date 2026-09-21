@@ -1,35 +1,38 @@
 /**
- * Mahwar Sovereign Financial Terminal - Unified Chart Design System
- * Institutional color mapping, axis formatting, and tooltip design for Recharts.
+ * Unified Recharts theme for the dark terminal. Values mirror the CSS tokens
+ * in app/globals.css (Recharts needs literal colours for SVG fills).
  */
-
 export const TERMINAL_CHART_THEME = {
   colors: {
-    emerald: "#0E7C69",
-    emeraldLight: "#12A189",
-    emeraldDim: "rgba(14, 124, 105, 0.12)",
-    emeraldGlow: "rgba(14, 124, 105, 0.25)",
-    
-    charcoal: "#171717",
-    charcoalLight: "#262626",
-    
-    slate: "#64748B",
-    slateLight: "#94A3B8",
-    slateDim: "#E2E8F0",
-    grid: "rgba(0, 0, 0, 0.06)",
-    
-    positive: "#16A34A",
-    positiveDim: "rgba(22, 163, 74, 0.12)",
-    negative: "#DC2626",
-    negativeDim: "rgba(220, 38, 38, 0.12)",
-    neutral: "#64748B",
-    
-    sponsor: "#0E7C69",
-    management: "#64748B",
-    debt: "#DC2626",
+    emerald: "#17a88a",
+    emeraldLight: "#3ddbb4",
+    emeraldDim: "rgba(23, 168, 138, 0.18)",
+    emeraldGlow: "rgba(23, 168, 138, 0.35)",
+    gold: "#d9b36e",
+    goldDim: "rgba(217, 179, 110, 0.2)",
+
+    charcoal: "#e8f1ed",
+    charcoalLight: "#a7b9b2",
+
+    slate: "#a7b9b2",
+    slateLight: "#6d817a",
+    slateDim: "rgba(158, 190, 180, 0.12)",
+    grid: "rgba(158, 190, 180, 0.08)",
+
+    positive: "#2ed08a",
+    positiveDim: "rgba(46, 208, 138, 0.18)",
+    negative: "#ff6b6b",
+    negativeDim: "rgba(255, 107, 107, 0.18)",
+    neutral: "#6d817a",
+
+    sponsor: "#17a88a",
+    management: "#d9b36e",
+    debt: "#ff6b6b",
   },
+  /** Ordered series palette for multi-line charts. */
+  series: ["#17a88a", "#d9b36e", "#5ec8ff", "#c792ea", "#ff6b6b", "#3ddbb4"],
   axis: {
-    stroke: "#94A3B8",
+    stroke: "#6d817a",
     fontSize: 10,
     fontFamily: "var(--font-mono), 'IBM Plex Mono', monospace",
     tickLine: false,
@@ -37,17 +40,19 @@ export const TERMINAL_CHART_THEME = {
   },
   grid: {
     strokeDasharray: "3 3",
-    stroke: "rgba(0, 0, 0, 0.06)",
+    stroke: "rgba(158, 190, 180, 0.08)",
     vertical: false,
   },
   tooltipStyle: {
-    backgroundColor: "#FFFFFF",
-    borderColor: "rgba(0, 0, 0, 0.12)",
-    borderRadius: "8px",
-    boxShadow: "0 4px 20px -2px rgba(0, 0, 0, 0.08)",
+    backgroundColor: "#131e23",
+    borderColor: "rgba(158, 190, 180, 0.26)",
+    borderRadius: "6px",
+    boxShadow: "0 20px 50px -20px rgba(0,0,0,0.9)",
     padding: "8px 12px",
     fontSize: "11px",
     fontFamily: "var(--font-mono), 'IBM Plex Mono', monospace",
-    color: "#171717",
-  }
+    color: "#e8f1ed",
+  },
+  tooltipLabelStyle: { color: "#a7b9b2", marginBottom: 4 },
+  tooltipItemStyle: { color: "#e8f1ed" },
 };

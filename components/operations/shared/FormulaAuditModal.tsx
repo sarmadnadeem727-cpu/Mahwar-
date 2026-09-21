@@ -23,19 +23,19 @@ export default function FormulaAuditModal({
 
   return (
     <AnimatePresence>
-      <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/60 backdrop-blur-xs font-sans">
+      <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-ink-0/70 backdrop-blur-xs font-sans">
         <motion.div
           initial={{ opacity: 0, scale: 0.95, y: 10 }}
           animate={{ opacity: 1, scale: 1, y: 0 }}
           exit={{ opacity: 0, scale: 0.95, y: 10 }}
           transition={{ duration: 0.2 }}
-          className="bg-white border border-[#E2E8F0] rounded-xl shadow-2xl max-w-2xl w-full max-h-[85vh] flex flex-col overflow-hidden"
+          className="bg-ink-2 border border-line rounded-xl shadow-2xl max-w-2xl w-full max-h-[85vh] flex flex-col overflow-hidden"
           dir={isAr ? "rtl" : "ltr"}
         >
           {/* MODAL HEADER */}
-          <div className="p-5 border-b border-[#E2E8F0] bg-slate-50 flex items-center justify-between">
+          <div className="p-5 border-b border-line bg-ink-3 flex items-center justify-between">
             <div className="flex items-center gap-3">
-              <div className="p-2.5 rounded-lg bg-emerald-dim border border-emerald-border text-emerald">
+              <div className="p-2.5 rounded-lg bg-emerald/10 border border-emerald/30 text-emerald">
                 <Calculator size={20} />
               </div>
               <div>
@@ -43,11 +43,11 @@ export default function FormulaAuditModal({
                   <span className="label-pill label-pill-emerald text-[9px]">
                     {isAr ? "سجل التدقيق الرياضي" : "FORMULA AUDIT TRACE"}
                   </span>
-                  <span className="text-[10px] font-mono text-slate-400">
+                  <span className="text-[10px] font-mono text-fg-3">
                     {isAr ? "التحقق المالي" : "VERIFIED CALCULATION"}
                   </span>
                 </div>
-                <h3 className="font-serif text-lg font-bold text-slate-900 mt-0.5">
+                <h3 className="font-serif text-lg font-bold text-fg mt-0.5">
                   {isAr ? auditData.toolNameAr : auditData.toolName}
                 </h3>
               </div>
@@ -55,14 +55,14 @@ export default function FormulaAuditModal({
 
             <button
               onClick={onClose}
-              className="p-1.5 rounded-md text-slate-400 hover:text-slate-700 hover:bg-slate-200/60 transition-colors cursor-pointer"
+              className="p-1.5 rounded-md text-fg-3 hover:text-fg-2 hover:bg-ink-5/60 transition-colors cursor-pointer"
             >
               <X size={18} />
             </button>
           </div>
 
           {/* SUMMARY CALLOUT */}
-          <div className="px-5 py-3.5 bg-emerald/5 border-b border-emerald/10 text-xs font-medium text-slate-700 flex items-start gap-2">
+          <div className="px-5 py-3.5 bg-emerald/5 border-b border-emerald/10 text-xs font-medium text-fg-2 flex items-start gap-2">
             <ShieldCheck size={16} className="text-emerald shrink-0 mt-0.5" />
             <p className="leading-relaxed">
               {isAr ? auditData.summaryAr : auditData.summary}
@@ -74,10 +74,10 @@ export default function FormulaAuditModal({
             {auditData.steps.map((step, idx) => (
               <div
                 key={idx}
-                className="p-4 rounded-lg bg-[#F8FAFC] border border-[#E2E8F0] space-y-2.5"
+                className="p-4 rounded-lg bg-ink-3 border border-line space-y-2.5"
               >
-                <div className="flex items-center justify-between border-b border-[#E2E8F0] pb-2">
-                  <span className="font-bold text-slate-900 text-xs">
+                <div className="flex items-center justify-between border-b border-line pb-2">
+                  <span className="font-bold text-fg text-xs">
                     {step.title}
                   </span>
                   <span className="text-[10px] font-bold text-emerald bg-emerald/10 px-2 py-0.5 rounded">
@@ -87,19 +87,19 @@ export default function FormulaAuditModal({
 
                 <div className="space-y-1.5 font-mono text-[11px]">
                   <div className="flex flex-col sm:flex-row sm:items-baseline gap-1 sm:gap-2">
-                    <span className="text-slate-400 font-bold uppercase text-[9px] w-24 shrink-0">
+                    <span className="text-fg-3 font-bold uppercase text-[9px] w-24 shrink-0">
                       Formula:
                     </span>
-                    <span className="text-slate-800 font-bold bg-white px-2 py-0.5 rounded border border-slate-200">
+                    <span className="text-fg font-bold bg-ink-2 px-2 py-0.5 rounded border border-line">
                       {step.formula}
                     </span>
                   </div>
 
                   <div className="flex flex-col sm:flex-row sm:items-baseline gap-1 sm:gap-2">
-                    <span className="text-slate-400 font-bold uppercase text-[9px] w-24 shrink-0">
+                    <span className="text-fg-3 font-bold uppercase text-[9px] w-24 shrink-0">
                       Input Values:
                     </span>
-                    <span className="text-slate-700 bg-white px-2 py-0.5 rounded border border-slate-200">
+                    <span className="text-fg-2 bg-ink-2 px-2 py-0.5 rounded border border-line">
                       {step.substitution}
                     </span>
                   </div>
@@ -108,14 +108,14 @@ export default function FormulaAuditModal({
                     <span className="text-emerald font-bold uppercase text-[9px] w-24 shrink-0">
                       Computed:
                     </span>
-                    <span className="font-bold text-emerald bg-emerald-dim border border-emerald-border px-2.5 py-0.5 rounded text-xs">
+                    <span className="font-bold text-emerald bg-emerald/10 border border-emerald/30 px-2.5 py-0.5 rounded text-xs">
                       = {step.result}
                     </span>
                   </div>
                 </div>
 
                 {step.explanation && (
-                  <p className="text-[11px] font-sans text-slate-500 pt-1 border-t border-dashed border-slate-200 leading-relaxed">
+                  <p className="text-[11px] font-sans text-fg-3 pt-1 border-t border-dashed border-line leading-relaxed">
                     {step.explanation}
                   </p>
                 )}
@@ -124,13 +124,13 @@ export default function FormulaAuditModal({
           </div>
 
           {/* MODAL FOOTER */}
-          <div className="p-4 border-t border-[#E2E8F0] bg-slate-50 flex items-center justify-between text-xs">
-            <span className="text-[11px] text-slate-500 font-mono">
+          <div className="p-4 border-t border-line bg-ink-3 flex items-center justify-between text-xs">
+            <span className="text-[11px] text-fg-3 font-mono">
               {isAr ? "حساب فوري من جهة العميل بدون خوادم خارجية" : "Deterministic Client-Side Computation"}
             </span>
             <button
               onClick={onClose}
-              className="px-4 py-2 bg-slate-900 hover:bg-slate-800 text-white font-mono font-bold text-xs rounded transition-colors cursor-pointer"
+              className="px-4 py-2 bg-ink-0 hover:bg-ink-4 text-white font-mono font-bold text-xs rounded transition-colors cursor-pointer"
             >
               {isAr ? "إغلاق السجل" : "Close Audit Trace"}
             </button>

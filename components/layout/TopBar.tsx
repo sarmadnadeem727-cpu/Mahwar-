@@ -1,115 +1,152 @@
 "use client";
 
-import React, { useState, useEffect } from "react";
-import { Globe, Search, Command, Sparkles, Activity, Menu } from "lucide-react";
-import { useTerminalStore, Currency } from "@/store/useTerminalStore";
-import { t } from "@/lib/i18n";
+import React, { useEffect, useMemo, useRef, useState } from "react";
+import { Globe, Menu, Command, CornerDownLeft } from "lucide-react";
+import { useTerminalStore, type Currency } from "@/store/useTerminalStore";
+import { getTool, resolveCommand, TOOLS } from "@/lib/registry";
 import CommandPalette from "@/components/ui/CommandPalette";
 
-export default function TopBar() {
-  const { activePanel, language, setLanguage, currency, setCurrency, isMobileMenuOpen, setMobileMenuOpen } = useTerminalStore();
-  const isAr = language === 'ar';
-  const [isPaletteOpen, setIsPaletteOpen] = useState(false);
+const CURRENCIES: Currency[] = ["SAR", "AED", "KWD", "BHD", "OMR", "QAR", "USD"];
 
-  // Global keyboard shortcut: Cmd+K / Ctrl+K
+/**
+ * TopBar — the command line. Type a function code (DCF, EOQ, CCC…) and press
+ * Enter / GO, exactly like a Bloomberg keyboard. ⌘K / Ctrl+K opens the palette,
+ * "/" focuses the line from anywhere.
+ */
+export default function TopBar() {
+  const { activePanel, setPanel, language, setLanguage, currency, setCurrency, isMobileMenuOpen, setMobileMenuOpen } = useTerminalStore();
+  const isAr = language === "ar";
+  const [paletteOpen, setPaletteOpen] = useState(false);
+  const [cmd, setCmd] = useState("");
+  const [flash, setFlash] = useState<"ok" | "err" | null>(null);
+  const inputRef = useRef<HTMLInputElement>(null);
+  const tool = getTool(activePanel);
+
+  const suggestion = useMemo(() => (cmd.trim() ? resolveCommand(cmd) : undefined), [cmd]);
+
   useEffect(() => {
-    const handleKeyDown = (e: KeyboardEvent) => {
+    const onKey = (e: KeyboardEvent) => {
+      const target = e.target as HTMLElement | null;
+      const typing = target && (target.tagName === "INPUT" || target.tagName === "TEXTAREA" || target.isContentEditable);
       if ((e.metaKey || e.ctrlKey) && e.key.toLowerCase() === "k") {
         e.preventDefault();
-        setIsPaletteOpen(prev => !prev);
+        setPaletteOpen((v) => !v);
+      } else if (e.key === "/" && !typing) {
+        e.preventDefault();
+        inputRef.current?.focus();
       }
     };
-    window.addEventListener("keydown", handleKeyDown);
-    return () => window.removeEventListener("keydown", handleKeyDown);
+    window.addEventListener("keydown", onKey);
+    return () => window.removeEventListener("keydown", onKey);
   }, []);
 
-  const getPanelDisplayName = () => {
-    switch (activePanel) {
-      case "hub": return isAr ? "مركز الاستخبارات" : "Intelligence Hub";
-      case "news": return isAr ? "موجز الأخبار المالية" : "Market Wire";
-      case "shariah": return isAr ? "الفحص الشرعي AAOIFI" : "AAOIFI Screening";
-      case "custom_model": return isAr ? "باني النماذج المخصصة" : "Custom Model Builder";
-      case "monte_carlo": return isAr ? "محاكاة مونتي كارلو" : "Monte Carlo Simulation";
-      case "acquisition_cost": return isAr ? "تكاليف الاستحواذ M&A" : "M&A Acquisition Cost";
-      case "auto_statements": return isAr ? "القوائم المالية التلقائية" : "Auto Financial Statements";
-      case "bi_report": return isAr ? "تقرير الأعمال الموحد" : "BI Synthesis";
-      case "DCF": return isAr ? "نموذج التقييم DCF" : "DCF Valuation";
-      case "LBO": return isAr ? "صفقات الاستحواذ LBO" : "LBO Deal Builder";
-      case "FS": return isAr ? "القوائم المالية الثلاث" : "3-Statement Model";
-      default: return String(activePanel).toUpperCase();
+  const go = () => {
+    const hit = resolveCommand(cmd);
+    if (hit) {
+      setPanel(hit.id);
+      setCmd("");
+      setFlash("ok");
+    } else {
+      setFlash("err");
     }
+    window.setTimeout(() => setFlash(null), 600);
   };
 
   return (
     <>
-      <header className="h-[64px] min-h-[64px] border-b border-[#E2E8F0] bg-white flex items-center justify-between px-6 sticky top-0 z-20 no-print font-sans" dir={isAr ? "rtl" : "ltr"}>
-        {/* LEFT: ACTIVE PANEL STATUS & HAMBURGER */}
-        <div className="flex items-center gap-3 lg:gap-4">
-          <button 
-            className="lg:hidden p-2 text-slate-500 hover:text-slate-900 bg-slate-50 hover:bg-slate-100 rounded-md border border-[#E2E8F0] transition-colors"
-            onClick={() => setMobileMenuOpen(!isMobileMenuOpen)}
-          >
-            <Menu size={18} />
-          </button>
-          
-          <div className="flex items-center gap-2">
-            <span className="relative flex h-2 w-2">
-              <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald opacity-75"></span>
-              <span className="relative inline-flex rounded-full h-2 w-2 bg-emerald"></span>
-            </span>
-            <span className="font-mono text-xs font-bold uppercase tracking-wider text-slate-900">
-              {getPanelDisplayName()}
-            </span>
-          </div>
-
-        </div>
-
-        {/* CENTER: PERSISTENT SEARCH COMMAND PILL */}
+      <header
+        className="h-14 min-h-14 border-b border-line bg-ink-2/90 backdrop-blur-xl flex items-center gap-3 px-3 md:px-5 sticky top-0 z-20 no-print"
+        dir={isAr ? "rtl" : "ltr"}
+      >
         <button
-          onClick={() => setIsPaletteOpen(true)}
-          className="hidden md:flex items-center gap-3 px-3.5 py-1.5 bg-slate-50 hover:bg-slate-100 border border-[#E2E8F0] rounded-lg text-xs text-slate-500 transition-all cursor-pointer shadow-2xs max-w-sm w-full mx-4"
+          className="lg:hidden p-2 text-fg-3 hover:text-fg rounded hover:bg-ink-4"
+          onClick={() => setMobileMenuOpen(!isMobileMenuOpen)}
+          aria-label="Toggle navigation"
         >
-          <Search size={13} className="text-slate-400 shrink-0" />
-          <span className="truncate flex-1 text-left rtl:text-right font-mono text-xs text-slate-600">
-            {isAr ? "ابحث عن أداة نمذجة (Cmd+K)..." : "Search model or command (Cmd+K)..."}
-          </span>
-          <div className="flex items-center gap-0.5 px-1.5 py-0.5 rounded bg-white border border-[#E2E8F0] text-[10px] font-mono font-bold text-emerald shrink-0">
-            <Command size={10} />
-            <span>K</span>
-          </div>
+          <Menu size={18} />
         </button>
 
-        {/* RIGHT: CURRENCY & LANGUAGE CONTROLS */}
-        <div className="flex items-center gap-3 shrink-0">
-          {/* Currency Selector */}
-          <div className="flex items-center gap-1">
-            <select
-              value={currency}
-              onChange={(e) => setCurrency(e.target.value as Currency)}
-              className="bg-slate-50 border border-[#E2E8F0] text-xs font-mono font-bold text-slate-900 px-2.5 py-1.5 rounded-lg focus:outline-none focus:border-emerald cursor-pointer"
-            >
-              {['SAR', 'AED', 'KWD', 'BHD', 'OMR', 'QAR', 'USD'].map((cur) => (
-                <option key={cur} value={cur}>{cur}</option>
-              ))}
-            </select>
-          </div>
+        {/* Active module */}
+        <div className="hidden sm:flex items-center gap-2.5 min-w-0 shrink-0">
+          <span className="font-mono text-[11px] tracking-wider text-emerald-light">{tool?.code ?? "HOME"}</span>
+          <span className="text-[13px] text-fg truncate max-w-[220px]">{tool ? (isAr ? tool.ar : tool.en) : ""}</span>
+        </div>
 
-          {/* EN / AR Language Toggle */}
-          <button
-            onClick={() => setLanguage(isAr ? 'en' : 'ar')}
-            className="flex items-center gap-1.5 px-3 py-1.5 bg-slate-50 border border-[#E2E8F0] hover:bg-slate-100 text-xs font-mono font-bold text-slate-700 rounded-lg transition-colors cursor-pointer"
+        {/* GO line */}
+        <div className="flex-1 flex justify-center min-w-0">
+          <form
+            onSubmit={(e) => {
+              e.preventDefault();
+              go();
+            }}
+            className={`relative flex items-center gap-2 w-full max-w-xl h-9 px-3 rounded border bg-ink-1 font-mono text-[12px] transition-colors ${
+              flash === "err" ? "border-neg/60" : flash === "ok" ? "border-emerald" : "border-line-strong focus-within:border-emerald"
+            }`}
+            dir="ltr"
           >
-            <Globe size={13} className="text-emerald shrink-0" />
-            <span className="hidden sm:inline">{isAr ? "English" : "العربية"}</span>
+            <span className="text-emerald-light select-none">{">"}</span>
+            <input
+              ref={inputRef}
+              value={cmd}
+              onChange={(e) => setCmd(e.target.value)}
+              onKeyDown={(e) => {
+                if (e.key === "Tab" && suggestion) {
+                  e.preventDefault();
+                  setCmd(suggestion.code);
+                }
+              }}
+              placeholder={isAr ? "اكتب كوداً مثل DCF أو EOQ ثم اضغط GO" : "Type a code — DCF, EOQ, CCC — then GO"}
+              className="flex-1 bg-transparent outline-none text-fg placeholder:text-fg-4 min-w-0"
+              spellCheck={false}
+              autoComplete="off"
+              aria-label="Command line"
+            />
+            {suggestion && cmd && suggestion.code.toLowerCase() !== cmd.trim().toLowerCase() && (
+              <span className="hidden md:inline text-[10px] text-fg-3 whitespace-nowrap">
+                tab → <span className="text-fg-2">{suggestion.code}</span>
+              </span>
+            )}
+            <button
+              type="submit"
+              className="flex items-center gap-1 px-2 py-0.5 rounded bg-emerald/15 text-emerald-light text-[10px] font-bold tracking-wider hover:bg-emerald/25"
+              aria-label="Go"
+            >
+              GO <CornerDownLeft size={10} />
+            </button>
+            <button
+              type="button"
+              onClick={() => setPaletteOpen(true)}
+              className="hidden md:flex items-center gap-0.5 px-1.5 py-0.5 rounded border border-line text-[10px] text-fg-3 hover:text-fg"
+              title="Command palette"
+            >
+              <Command size={10} />K
+            </button>
+          </form>
+        </div>
+
+        {/* Controls */}
+        <div className="flex items-center gap-2 shrink-0">
+          <select
+            value={currency}
+            onChange={(e) => setCurrency(e.target.value as Currency)}
+            className="h-8 bg-ink-1 border border-line-strong text-[11px] font-mono text-fg px-2 rounded focus:outline-none focus:border-emerald cursor-pointer"
+            aria-label="Reporting currency"
+          >
+            {CURRENCIES.map((c) => (
+              <option key={c} value={c}>{c}</option>
+            ))}
+          </select>
+          <button
+            onClick={() => setLanguage(isAr ? "en" : "ar")}
+            className="h-8 flex items-center gap-1.5 px-2.5 bg-ink-1 border border-line-strong hover:border-emerald/40 text-[11px] font-mono text-fg-2 hover:text-fg rounded transition-colors"
+          >
+            <Globe size={12} className="text-emerald-light" />
+            <span className="hidden sm:inline">{isAr ? "EN" : "ع"}</span>
           </button>
         </div>
       </header>
 
-      {/* GLOBAL COMMAND PALETTE MODAL */}
-      <CommandPalette 
-        isOpen={isPaletteOpen} 
-        onClose={() => setIsPaletteOpen(false)} 
-      />
+      <CommandPalette isOpen={paletteOpen} onClose={() => setPaletteOpen(false)} tools={TOOLS} />
     </>
   );
 }

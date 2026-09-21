@@ -156,7 +156,7 @@ export default function TcoCalculator() {
       initial="initial"
       animate="animate"
       exit="exit"
-      className="space-y-6 font-sans text-slate-800"
+      className="space-y-6 font-sans text-fg"
       dir={isAr ? "rtl" : "ltr"}
       id="tco-container"
     >
@@ -179,9 +179,9 @@ export default function TcoCalculator() {
       />
 
       {/* WINNER HIGHLIGHT BANNER */}
-      <div className="p-4 bg-emerald-dim border border-emerald-border rounded-xl flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+      <div className="p-4 bg-emerald/10 border border-emerald/30 rounded-xl flex flex-col sm:flex-row sm:items-center justify-between gap-3">
         <div className="flex items-center gap-3">
-          <div className="p-2 rounded-lg bg-emerald text-white">
+          <div className="p-2 rounded-lg bg-emerald text-ink-0">
             <Award size={20} />
           </div>
           <div>
@@ -190,14 +190,14 @@ export default function TcoCalculator() {
                 {isAr ? "الخيار الأفضل اقتصادياً" : "Optimal Capital Procurement Decision"}
               </span>
             </div>
-            <h3 className="font-serif text-base font-bold text-slate-900">
+            <h3 className="font-serif text-base font-bold text-fg">
               {winningOption.option.name}
             </h3>
           </div>
         </div>
 
         <div className="text-right font-mono">
-          <span className="text-xs text-slate-500 block">Lowest Net TCO (PV):</span>
+          <span className="text-xs text-fg-3 block">Lowest Net TCO (PV):</span>
           <span className="text-xl font-extrabold text-emerald">
             {currency} {winningOption.calc.netTcoPv.toLocaleString()}
           </span>
@@ -211,50 +211,50 @@ export default function TcoCalculator() {
 
       {/* KPI HIGHLIGHT CARDS (ACTIVE OPTION) */}
       <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 font-mono">
-        <div className="p-4 rounded-xl border border-surface-border bg-white shadow-xs">
-          <span className="text-[10px] text-slate-muted uppercase font-bold block mb-1">
+        <div className="p-4 rounded-xl border border-line bg-ink-2 shadow-xs">
+          <span className="text-[10px] text-fg-3 uppercase font-bold block mb-1">
             {currentOption.name} (TCO PV)
           </span>
           <div className="flex items-baseline gap-1.5">
-            <span className="text-2xl font-extrabold text-slate-heading">
+            <span className="text-2xl font-extrabold text-fg">
               {currency} {currentCalc.netTcoPv.toLocaleString()}
             </span>
           </div>
-          <span className="text-[10px] text-slate-muted font-sans font-medium block mt-1">
+          <span className="text-[10px] text-fg-3 font-sans font-medium block mt-1">
             Present value @ {currentOption.discountRatePct}% over {currentOption.usefulLifeYears} yrs
           </span>
         </div>
 
-        <div className="p-4 rounded-xl border border-surface-border bg-white shadow-xs">
-          <span className="text-[10px] text-slate-muted uppercase font-bold block mb-1">
+        <div className="p-4 rounded-xl border border-line bg-ink-2 shadow-xs">
+          <span className="text-[10px] text-fg-3 uppercase font-bold block mb-1">
             Upfront CapEx (Price + Setup)
           </span>
           <div className="flex items-baseline gap-1.5">
-            <span className="text-2xl font-extrabold text-slate-heading">
+            <span className="text-2xl font-extrabold text-fg">
               {currency} {(currentOption.purchasePrice + currentOption.installationCost).toLocaleString()}
             </span>
           </div>
-          <span className="text-[10px] text-slate-muted font-sans font-medium block mt-1">
+          <span className="text-[10px] text-fg-3 font-sans font-medium block mt-1">
             {((((currentOption.purchasePrice + currentOption.installationCost) / currentCalc.netTcoPv) * 100).toFixed(0))}% of lifecycle burden
           </span>
         </div>
 
-        <div className="p-4 rounded-xl border border-surface-border bg-white shadow-xs">
-          <span className="text-[10px] text-slate-muted uppercase font-bold block mb-1">
+        <div className="p-4 rounded-xl border border-line bg-ink-2 shadow-xs">
+          <span className="text-[10px] text-fg-3 uppercase font-bold block mb-1">
             PV Recurring (Op & Maint)
           </span>
           <div className="flex items-baseline gap-1.5">
-            <span className="text-2xl font-extrabold text-slate-heading">
+            <span className="text-2xl font-extrabold text-fg">
               {currency} {currentCalc.pvAnnualTotal.toLocaleString()}
             </span>
           </div>
-          <span className="text-[10px] text-slate-muted font-sans font-medium block mt-1">
+          <span className="text-[10px] text-fg-3 font-sans font-medium block mt-1">
             Op: {currency} {currentCalc.pvAnnualOperating.toLocaleString()} | Maint: {currency} {currentCalc.pvAnnualMaintenance.toLocaleString()}
           </span>
         </div>
 
-        <div className="p-4 rounded-xl border border-surface-border bg-white shadow-xs">
-          <span className="text-[10px] text-slate-muted uppercase font-bold block mb-1">
+        <div className="p-4 rounded-xl border border-line bg-ink-2 shadow-xs">
+          <span className="text-[10px] text-fg-3 uppercase font-bold block mb-1">
             Terminal Salvage Credit (PV)
           </span>
           <div className="flex items-baseline gap-1.5">
@@ -262,7 +262,7 @@ export default function TcoCalculator() {
               -{currency} {currentCalc.pvSalvage.toLocaleString()}
             </span>
           </div>
-          <span className="text-[10px] text-slate-muted font-sans font-medium block mt-1">
+          <span className="text-[10px] text-fg-3 font-sans font-medium block mt-1">
             {currency} {currentOption.salvageValue.toLocaleString()} nominal at Year {currentOption.usefulLifeYears}
           </span>
         </div>
@@ -274,8 +274,8 @@ export default function TcoCalculator() {
         <div className="lg:col-span-5 space-y-4">
           <div className="panel-input p-5 space-y-4">
             {/* OPTION SELECTOR TABS */}
-            <div className="flex items-center justify-between border-b border-surface-border pb-3">
-              <span className="font-mono text-xs font-bold text-slate-heading uppercase tracking-wider">
+            <div className="flex items-center justify-between border-b border-line pb-3">
+              <span className="font-mono text-xs font-bold text-fg uppercase tracking-wider">
                 {isAr ? "خيارات المعدات والأصول" : "Equipment / Asset Options"}
               </span>
               <div className="flex items-center gap-1.5">
@@ -285,8 +285,8 @@ export default function TcoCalculator() {
                     onClick={() => setActiveOptionId(o.id)}
                     className={`px-2 py-1 rounded text-xs font-mono font-bold transition-all cursor-pointer truncate max-w-[120px] ${
                       activeOptionId === o.id
-                        ? "bg-emerald text-white"
-                        : "bg-surface-subtle text-slate-600 hover:bg-slate-100"
+                        ? "bg-emerald text-ink-0"
+                        : "bg-ink-3 text-fg-2 hover:bg-ink-4"
                     }`}
                   >
                     {o.name}
@@ -295,7 +295,7 @@ export default function TcoCalculator() {
                 {options.length < 4 && (
                   <button
                     onClick={addOption}
-                    className="p-1 rounded bg-surface-subtle hover:bg-slate-100 text-emerald"
+                    className="p-1 rounded bg-ink-3 hover:bg-ink-4 text-emerald"
                     title="Add Asset Option"
                   >
                     <Plus size={14} />
@@ -307,86 +307,86 @@ export default function TcoCalculator() {
             {/* INPUT FIELDS */}
             <div className="space-y-3 text-xs">
               <div>
-                <label className="text-slate-body font-medium block mb-1">Option Name / Model</label>
+                <label className="text-fg-2 font-medium block mb-1">Option Name / Model</label>
                 <input
                   type="text"
                   value={currentOption.name}
                   onChange={(e) => updateActiveField("name", e.target.value)}
-                  className="w-full px-2.5 py-1.5 rounded bg-surface-subtle border border-surface-border font-mono text-xs font-bold"
+                  className="w-full px-2.5 py-1.5 rounded bg-ink-3 border border-line font-mono text-xs font-bold"
                 />
               </div>
 
               <div className="grid grid-cols-2 gap-3">
                 <div>
-                  <label className="text-slate-body font-medium block mb-1">Purchase Price ({currency})</label>
+                  <label className="text-fg-2 font-medium block mb-1">Purchase Price ({currency})</label>
                   <input
                     type="number"
                     value={currentOption.purchasePrice}
                     onChange={(e) => updateActiveField("purchasePrice", Number(e.target.value))}
-                    className="w-full px-2.5 py-1.5 rounded bg-surface-subtle border border-surface-border font-mono text-xs font-bold"
+                    className="w-full px-2.5 py-1.5 rounded bg-ink-3 border border-line font-mono text-xs font-bold"
                   />
                 </div>
                 <div>
-                  <label className="text-slate-body font-medium block mb-1">Installation / Setup ({currency})</label>
+                  <label className="text-fg-2 font-medium block mb-1">Installation / Setup ({currency})</label>
                   <input
                     type="number"
                     value={currentOption.installationCost}
                     onChange={(e) => updateActiveField("installationCost", Number(e.target.value))}
-                    className="w-full px-2.5 py-1.5 rounded bg-surface-subtle border border-surface-border font-mono text-xs"
+                    className="w-full px-2.5 py-1.5 rounded bg-ink-3 border border-line font-mono text-xs"
                   />
                 </div>
               </div>
 
               <div className="grid grid-cols-2 gap-3">
                 <div>
-                  <label className="text-slate-body font-medium block mb-1">Annual Operating Cost ({currency})</label>
+                  <label className="text-fg-2 font-medium block mb-1">Annual Operating Cost ({currency})</label>
                   <input
                     type="number"
                     value={currentOption.annualOperatingCost}
                     onChange={(e) => updateActiveField("annualOperatingCost", Number(e.target.value))}
-                    className="w-full px-2.5 py-1.5 rounded bg-surface-subtle border border-surface-border font-mono text-xs font-bold"
+                    className="w-full px-2.5 py-1.5 rounded bg-ink-3 border border-line font-mono text-xs font-bold"
                   />
-                  <span className="text-[10px] text-slate-400 block mt-0.5">Energy, consumables</span>
+                  <span className="text-[10px] text-fg-3 block mt-0.5">Energy, consumables</span>
                 </div>
                 <div>
-                  <label className="text-slate-body font-medium block mb-1">Annual Maintenance ({currency})</label>
+                  <label className="text-fg-2 font-medium block mb-1">Annual Maintenance ({currency})</label>
                   <input
                     type="number"
                     value={currentOption.annualMaintenanceCost}
                     onChange={(e) => updateActiveField("annualMaintenanceCost", Number(e.target.value))}
-                    className="w-full px-2.5 py-1.5 rounded bg-surface-subtle border border-surface-border font-mono text-xs font-bold"
+                    className="w-full px-2.5 py-1.5 rounded bg-ink-3 border border-line font-mono text-xs font-bold"
                   />
-                  <span className="text-[10px] text-slate-400 block mt-0.5">Servicing & spare parts</span>
+                  <span className="text-[10px] text-fg-3 block mt-0.5">Servicing & spare parts</span>
                 </div>
               </div>
 
               <div className="grid grid-cols-3 gap-2">
                 <div>
-                  <label className="text-slate-body font-medium block mb-1">Lifespan (Yrs)</label>
+                  <label className="text-fg-2 font-medium block mb-1">Lifespan (Yrs)</label>
                   <input
                     type="number"
                     value={currentOption.usefulLifeYears}
                     onChange={(e) => updateActiveField("usefulLifeYears", Number(e.target.value))}
-                    className="w-full px-2 py-1.5 rounded bg-surface-subtle border border-surface-border font-mono text-xs"
+                    className="w-full px-2 py-1.5 rounded bg-ink-3 border border-line font-mono text-xs"
                   />
                 </div>
                 <div>
-                  <label className="text-slate-body font-medium block mb-1">Salvage Value</label>
+                  <label className="text-fg-2 font-medium block mb-1">Salvage Value</label>
                   <input
                     type="number"
                     value={currentOption.salvageValue}
                     onChange={(e) => updateActiveField("salvageValue", Number(e.target.value))}
-                    className="w-full px-2 py-1.5 rounded bg-surface-subtle border border-surface-border font-mono text-xs"
+                    className="w-full px-2 py-1.5 rounded bg-ink-3 border border-line font-mono text-xs"
                   />
                 </div>
                 <div>
-                  <label className="text-slate-body font-medium block mb-1">Discount Rate (%)</label>
+                  <label className="text-fg-2 font-medium block mb-1">Discount Rate (%)</label>
                   <input
                     type="number"
                     step="0.5"
                     value={currentOption.discountRatePct}
                     onChange={(e) => updateActiveField("discountRatePct", Number(e.target.value))}
-                    className="w-full px-2 py-1.5 rounded bg-surface-subtle border border-surface-border font-mono text-xs font-bold"
+                    className="w-full px-2 py-1.5 rounded bg-ink-3 border border-line font-mono text-xs font-bold"
                   />
                 </div>
               </div>
@@ -395,7 +395,7 @@ export default function TcoCalculator() {
                 <div className="pt-2 flex justify-end">
                   <button
                     onClick={() => removeOption(currentOption.id)}
-                    className="text-rose-600 hover:text-rose-700 flex items-center gap-1 text-xs cursor-pointer"
+                    className="text-neg hover:text-neg flex items-center gap-1 text-xs cursor-pointer"
                   >
                     <Trash2 size={13} />
                     <span>Delete Option</span>
@@ -410,12 +410,12 @@ export default function TcoCalculator() {
         <div className="lg:col-span-7 space-y-6">
           {/* TCO STACKED LIFECYCLE CHART */}
           <div className="panel-data p-5 space-y-4">
-            <div className="flex justify-between items-center border-b border-surface-border pb-3">
+            <div className="flex justify-between items-center border-b border-line pb-3">
               <div>
-                <h3 className="font-serif text-sm font-bold text-slate-heading">
+                <h3 className="font-serif text-sm font-bold text-fg">
                   {isAr ? "مقارنة شلال التكلفة الإجمالية لدورة الحياة" : "Discounted Lifecycle Cost Breakdown"}
                 </h3>
-                <p className="text-[11px] text-slate-muted font-sans font-medium">
+                <p className="text-[11px] text-fg-3 font-sans font-medium">
                   {isAr ? "مقارنة بين تكلفة الشراء المبدئية وتكاليف التشغيل المستقبلية المخصومة" : "Shows how low purchase price options can cost significantly more over lifespan"}
                 </p>
               </div>
@@ -427,14 +427,14 @@ export default function TcoCalculator() {
             <div className="h-64 w-full">
               <ResponsiveContainer width="100%" height="100%">
                 <BarChart data={comparisonChartData} margin={{ top: 10, right: 15, left: 10, bottom: 0 }}>
-                  <CartesianGrid strokeDasharray="3 3" stroke="#E2E8F0" vertical={false} />
-                  <XAxis dataKey="name" stroke="#64748B" fontSize={10} fontFamily="monospace" />
-                  <YAxis stroke="#64748B" fontSize={10} fontFamily="monospace" />
+                  <CartesianGrid strokeDasharray="3 3" stroke="rgba(158,190,180,0.14)" vertical={false} />
+                  <XAxis dataKey="name" stroke="#a7b9b2" fontSize={10} fontFamily="monospace" />
+                  <YAxis stroke="#a7b9b2" fontSize={10} fontFamily="monospace" />
                   <Tooltip
-                    contentStyle={{ backgroundColor: "#FFFFFF", borderColor: "#E2E8F0", borderRadius: "8px", fontSize: "11px" }}
+                    contentStyle={{ backgroundColor: "#0e161a", borderColor: "rgba(158,190,180,0.14)", borderRadius: "8px", fontSize: "11px" }}
                   />
                   <Legend wrapperStyle={{ fontSize: "11px", fontFamily: "monospace" }} />
-                  <Bar dataKey="Purchase Price" stackId="a" fill="#0E7C69" />
+                  <Bar dataKey="Purchase Price" stackId="a" fill="#17a88a" />
                   <Bar dataKey="Installation" stackId="a" fill="#3B82F6" />
                   <Bar dataKey="PV Operating" stackId="a" fill="#F59E0B" />
                   <Bar dataKey="PV Maintenance" stackId="a" fill="#8B5CF6" />
@@ -445,13 +445,13 @@ export default function TcoCalculator() {
 
           {/* RANKED TCO LEADERBOARD TABLE */}
           <div className="panel-data p-5">
-            <h3 className="font-mono text-xs font-bold text-slate-heading uppercase tracking-wider mb-3">
+            <h3 className="font-mono text-xs font-bold text-fg uppercase tracking-wider mb-3">
               {isAr ? "جدول تصنيف الخيارات الاستثمارية" : "Lifecycle Procurement Leaderboard"}
             </h3>
 
             <table className="w-full text-xs font-mono text-left rtl:text-right border-collapse">
               <thead>
-                <tr className="border-b border-surface-border bg-surface-subtle text-slate-muted">
+                <tr className="border-b border-line bg-ink-3 text-fg-3">
                   <th className="py-2 px-3">Rank</th>
                   <th className="py-2 px-3">Option</th>
                   <th className="py-2 px-3 text-right">CapEx</th>
@@ -459,17 +459,17 @@ export default function TcoCalculator() {
                   <th className="py-2 px-3 text-right font-bold text-emerald">Net TCO (PV)</th>
                 </tr>
               </thead>
-              <tbody className="divide-y divide-surface-border">
+              <tbody className="divide-y divide-line">
                 {evaluatedOptions.map(({ option, calc }, idx) => (
-                  <tr key={option.id} className="hover:bg-surface-subtle transition-colors">
-                    <td className="py-2.5 px-3 font-bold text-slate-800">
+                  <tr key={option.id} className="hover:bg-ink-3 transition-colors">
+                    <td className="py-2.5 px-3 font-bold text-fg">
                       {idx === 0 ? (
-                        <span className="px-1.5 py-0.5 rounded bg-emerald text-white text-[10px]">#1 WIN</span>
+                        <span className="px-1.5 py-0.5 rounded bg-emerald text-ink-0 text-[10px]">#1 WIN</span>
                       ) : (
                         `#${idx + 1}`
                       )}
                     </td>
-                    <td className="py-2.5 px-3 font-medium text-slate-900 font-sans">{option.name}</td>
+                    <td className="py-2.5 px-3 font-medium text-fg font-sans">{option.name}</td>
                     <td className="py-2.5 px-3 text-right">{currency} {(option.purchasePrice + option.installationCost).toLocaleString()}</td>
                     <td className="py-2.5 px-3 text-right">{currency} {calc.pvAnnualTotal.toLocaleString()}</td>
                     <td className="py-2.5 px-3 text-right font-bold text-emerald text-sm">
@@ -480,8 +480,8 @@ export default function TcoCalculator() {
               </tbody>
             </table>
 
-            <div className="mt-4 p-3 bg-slate-50 rounded-lg border border-slate-200 text-xs text-slate-600 font-sans">
-              <span className="font-bold text-slate-800 block mb-0.5">
+            <div className="mt-4 p-3 bg-ink-3 rounded-lg border border-line text-xs text-fg-2 font-sans">
+              <span className="font-bold text-fg block mb-0.5">
                 {isAr ? "تحليل قرار الشراء" : "Procurement Analysis:"}
               </span>
               {costSavingsVsRunnerUp > 0

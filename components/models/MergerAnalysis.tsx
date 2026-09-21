@@ -92,10 +92,10 @@ export default function MergerAnalysis() {
       <div className="flex items-center gap-3 mb-6">
         <Handshake className="text-emerald" size={24} />
         <div>
-          <h2 className="font-mono text-xl font-extrabold text-slate-900 uppercase">
+          <h2 className="font-mono text-xl font-extrabold text-fg uppercase">
             {isAr ? "تحليل الاندماج والاستحواذ (EPS)" : "Merger Accretion / Dilution"}
           </h2>
-          <p className="text-xs text-slate-500 font-mono">
+          <p className="text-xs text-fg-3 font-mono">
             {isAr ? "تقييم أثر الصفقات على ربحية السهم والتخفيف" : "Pro forma EPS impact and synergy bridge"}
           </p>
         </div>
@@ -107,7 +107,7 @@ export default function MergerAnalysis() {
           <div className="grid grid-cols-2 gap-4">
             {/* Acquirer */}
             <div className="panel-input p-4 space-y-3">
-              <h3 className="font-bold text-slate-900 font-mono text-xs uppercase border-b pb-2">
+              <h3 className="font-bold text-fg font-mono text-xs uppercase border-b pb-2">
                 {isAr ? "الشركة المستحوذة" : "Acquirer (Base)"}
               </h3>
               <InputGroup label={isAr ? "صافي الدخل" : "Net Income"} value={acqNetIncome} onChange={setAcqNetIncome} prefix={`${currency}M`} />
@@ -117,7 +117,7 @@ export default function MergerAnalysis() {
             
             {/* Target */}
             <div className="panel-input p-4 space-y-3">
-              <h3 className="font-bold text-slate-900 font-mono text-xs uppercase border-b pb-2">
+              <h3 className="font-bold text-fg font-mono text-xs uppercase border-b pb-2">
                 {isAr ? "الشركة المستهدفة" : "Target"}
               </h3>
               <InputGroup label={isAr ? "صافي الدخل" : "Net Income"} value={tgtNetIncome} onChange={setTgtNetIncome} prefix={`${currency}M`} />
@@ -128,7 +128,7 @@ export default function MergerAnalysis() {
 
           {/* Deal Structure */}
           <div className="panel-input p-5 space-y-4">
-            <h3 className="font-bold text-slate-900 font-mono text-xs uppercase border-b pb-2">
+            <h3 className="font-bold text-fg font-mono text-xs uppercase border-b pb-2">
               {isAr ? "هيكل الصفقة" : "Deal Structure & Financing"}
             </h3>
             <InputGroup label={isAr ? "علاوة الاستحواذ" : "Offer Premium"} value={premium} onChange={setPremium} suffix="%" />
@@ -142,35 +142,35 @@ export default function MergerAnalysis() {
         {/* OUTPUTS - 7 COLS */}
         <div className="lg:col-span-7 space-y-6">
           <div className="grid grid-cols-2 gap-4">
-            <div className={`p-6 rounded-[10px] flex flex-col items-center justify-center text-center text-white ${isAccretive ? 'bg-emerald' : 'bg-rose-600'}`} style={{ boxShadow: 'var(--shadow-card)' }}>
+            <div className={`p-6 rounded-[10px] flex flex-col items-center justify-center text-center text-ink-0 ${isAccretive ? 'bg-emerald' : 'bg-neg'}`} style={{ boxShadow: 'var(--shadow-card)' }}>
               <span className="block text-xs font-mono uppercase mb-1 opacity-80">
                 {isAr ? "الأثر على ربحية السهم" : "EPS Impact"}
               </span>
               <span className="font-mono text-4xl font-extrabold tracking-tight">
                 {isAccretive ? "+" : ""}{results.epsAccretionPct.toFixed(2)}%
               </span>
-              <span className="mt-2 text-sm font-bold bg-white/20 px-3 py-1 rounded-full uppercase">
+              <span className="mt-2 text-sm font-bold bg-ink-3/60 px-3 py-1 rounded-full uppercase">
                 {isAccretive ? (isAr ? "نمو (Accretive)" : "Accretive") : (isAr ? "تخفيف (Dilutive)" : "Dilutive")}
               </span>
             </div>
             
             <div className="panel-result text-white p-6 flex flex-col justify-center space-y-3">
-              <div className="flex justify-between border-b border-white/10 pb-2">
+              <div className="flex justify-between border-b border-line pb-2">
                 <span className="text-xs font-mono opacity-70">{isAr ? "سعر العرض للمستهدف" : "Target Offer Price"}</span>
                 <span className="font-mono font-bold">{currency} {results.offerPrice.toFixed(2)}</span>
               </div>
-              <div className="flex justify-between border-b border-white/10 pb-2">
+              <div className="flex justify-between border-b border-line pb-2">
                 <span className="text-xs font-mono opacity-70">{isAr ? "حجم الصفقة الإجمالي" : "Total Deal Value"}</span>
                 <span className="font-mono font-bold">{currency} {results.totalDealValue.toLocaleString(undefined, { maximumFractionDigits: 0 })}M</span>
               </div>
-              <div className="flex justify-between border-b border-white/10 pb-2">
+              <div className="flex justify-between border-b border-line pb-2">
                 <span className="text-xs font-mono opacity-70">{isAr ? "ربحية سهم المستحوذ (الحالي)" : "Acquirer Standalone EPS"}</span>
                 <span className="font-mono font-bold">{currency} {results.acqEPS.toFixed(2)}</span>
               </div>
               <div className="flex justify-between">
                 <span className="text-xs font-mono opacity-70">{isAr ? "ربحية السهم بعد الاندماج" : "Pro Forma EPS"}</span>
                 {/* Color is functional: green = accretive, rose = dilutive */}
-                <span className={`font-mono font-bold ${isAccretive ? 'text-emerald' : 'text-rose-400'}`}>{currency} {results.pfEPS.toFixed(2)}</span>
+                <span className={`font-mono font-bold ${isAccretive ? 'text-emerald' : 'text-neg'}`}>{currency} {results.pfEPS.toFixed(2)}</span>
               </div>
             </div>
           </div>
@@ -178,20 +178,20 @@ export default function MergerAnalysis() {
           <ChartWrapper title={isAr ? "تحليل أثر مكونات الاندماج على الربحية" : "EPS Impact Bridge"} isAr={isAr}>
             <ResponsiveContainer width="100%" height={300}>
               <BarChart data={results.bridgeData} margin={{ top: 20, right: 30, left: 20, bottom: 5 }}>
-                <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#E2E8F0" />
-                <XAxis dataKey="name" axisLine={false} tickLine={false} tick={{ fontSize: 10, fill: '#64748b', fontFamily: 'monospace' }} />
-                <YAxis axisLine={false} tickLine={false} tick={{ fontSize: 10, fill: '#64748b', fontFamily: 'monospace' }} tickFormatter={(val) => `${currency} ${val.toFixed(2)}`} domain={['auto', 'auto']} />
+                <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="rgba(158,190,180,0.14)" />
+                <XAxis dataKey="name" axisLine={false} tickLine={false} tick={{ fontSize: 10, fill: '#a7b9b2', fontFamily: 'monospace' }} />
+                <YAxis axisLine={false} tickLine={false} tick={{ fontSize: 10, fill: '#a7b9b2', fontFamily: 'monospace' }} tickFormatter={(val) => `${currency} ${val.toFixed(2)}`} domain={['auto', 'auto']} />
                 <ReTooltip
-                  cursor={{ fill: '#F8FAFC' }}
+                  cursor={{ fill: '#131e23' }}
                   contentStyle={{ fontFamily: 'monospace', fontSize: '12px', borderRadius: '8px', border: '1px solid #E2E8F0', boxShadow: '0 4px 6px -1px rgb(0 0 0 / 0.1)' }}
                   formatter={(val: number) => [`${currency} ${val.toFixed(2)}`, "Impact/EPS"]}
                 />
                 <Bar dataKey="value" radius={[4, 4, 0, 0]} maxBarSize={50}>
                   {results.bridgeData.map((entry, index) => {
-                    let color = "#94a3b8"; // default/base
-                    if (entry.type === "pos") color = "#10b981";
+                    let color = "#6d817a"; // default/base
+                    if (entry.type === "pos") color = "#17a88a";
                     else if (entry.type === "neg") color = "#f43f5e";
-                    else if (entry.type === "total") color = "#0f172a";
+                    else if (entry.type === "total") color = "#e8f1ed";
                     return <Cell key={`cell-${index}`} fill={color} />;
                   })}
                 </Bar>

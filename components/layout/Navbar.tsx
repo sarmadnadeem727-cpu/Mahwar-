@@ -1,125 +1,112 @@
 "use client";
 
-import React, { useState, useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import Link from "next/link";
+import { AnimatePresence, motion } from "framer-motion";
 import { Globe, Menu, X, ArrowRight } from "lucide-react";
 import { useTerminalStore } from "@/store/useTerminalStore";
 import MahwarLogo from "@/components/ui/MahwarLogo";
+import { APP } from "@/lib/registry";
+
+const LINKS = [
+  { href: "#thesis", en: "Why both", ar: "لماذا الاثنان" },
+  { href: "#modules", en: "Modules", ar: "الوحدات" },
+  { href: "#network", en: "GCC network", ar: "شبكة الخليج" },
+  { href: "#wire", en: "Wire", ar: "الأخبار" },
+];
 
 export default function Navbar() {
-  const [isScrolled, setIsScrolled] = useState(false);
-  const [mobileOpen, setMobileOpen] = useState(false);
+  const [scrolled, setScrolled] = useState(false);
+  const [open, setOpen] = useState(false);
   const { language, setLanguage } = useTerminalStore();
-  const isAr = language === 'ar';
+  const isAr = language === "ar";
 
   useEffect(() => {
-    const handleScroll = () => {
-      if (window.scrollY > 30) {
-        setIsScrolled(true);
-      } else {
-        setIsScrolled(false);
-      }
-    };
-    window.addEventListener("scroll", handleScroll);
-    return () => window.removeEventListener("scroll", handleScroll);
+    const onScroll = () => setScrolled(window.scrollY > 24);
+    onScroll();
+    window.addEventListener("scroll", onScroll, { passive: true });
+    return () => window.removeEventListener("scroll", onScroll);
   }, []);
 
   return (
-    <nav 
-      className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${
-        isScrolled 
-          ? "bg-white/90 backdrop-blur-md border-b border-[#E2E8F0] shadow-xs py-3" 
-          : "bg-transparent py-5"
+    <nav
+      className={`fixed top-0 inset-x-0 z-50 transition-all duration-300 ${
+        scrolled ? "bg-ink-1/80 backdrop-blur-xl border-b border-line py-2.5" : "bg-transparent py-5"
       }`}
       dir={isAr ? "rtl" : "ltr"}
     >
       <div className="max-w-7xl mx-auto px-6 flex items-center justify-between">
-        {/* Brand Logo */}
         <Link href="/" className="flex items-center gap-3 group">
-          <MahwarLogo size={36} animate={true} />
-          <div className="flex flex-col">
-            <span className="font-serif text-lg font-bold tracking-wider text-slate-900 group-hover:text-emerald transition-colors">
-              MAHWAR
-            </span>
-            <span className="text-[10px] font-mono font-bold text-emerald tracking-widest uppercase -mt-0.5">
-              محور · SOVEREIGN TERMINAL
-            </span>
+          <MahwarLogo size={34} animate={false} />
+          <div className="leading-none">
+            <div className="font-serif text-xl font-semibold tracking-wide text-fg group-hover:text-emerald-light transition-colors">
+              {APP.name}
+            </div>
+            <div className="font-mono text-[9.5px] tracking-[0.25em] text-fg-3 mt-1">{APP.nameAr} · TERMINAL</div>
           </div>
         </Link>
 
-        {/* Center Links */}
-        <div className="hidden md:flex items-center gap-8 text-xs font-mono font-bold text-slate-600">
-          <a href="#problem" className="hover:text-emerald transition-colors">
-            {isAr ? "التحدي" : "Market Gap"}
-          </a>
-          <a href="#solution" className="hover:text-emerald transition-colors">
-            {isAr ? "القدرات" : "Engine Suite"}
-          </a>
+        <div className="hidden md:flex items-center gap-7 text-[13px] text-fg-2">
+          {LINKS.map((l) => (
+            <a key={l.href} href={l.href} className="hover:text-fg transition-colors">
+              {isAr ? l.ar : l.en}
+            </a>
+          ))}
         </div>
 
-        {/* Right Actions */}
-        <div className="hidden md:flex items-center gap-4">
-          <button
-            onClick={() => setLanguage(isAr ? 'en' : 'ar')}
-            className="btn-secondary"
-          >
+        <div className="hidden md:flex items-center gap-3">
+          <button onClick={() => setLanguage(isAr ? "en" : "ar")} className="btn-secondary py-2">
             <Globe size={12} />
             <span>{isAr ? "English" : "العربية"}</span>
           </button>
-
-          <Link
-            href="/dashboard"
-            className="btn-primary"
-          >
-            <span>{isAr ? "تشغيل المنصة" : "ENTER TERMINAL"}</span>
-            <ArrowRight size={13} />
+          <Link href="/dashboard" className="btn-primary py-2">
+            <span>{isAr ? "المحطة" : "Open terminal"}</span>
+            <ArrowRight size={13} className={isAr ? "rotate-180" : ""} />
           </Link>
         </div>
 
-        {/* Mobile Hamburger Toggle */}
         <button
-          onClick={() => setMobileOpen(!mobileOpen)}
-          className="md:hidden text-slate-700 hover:text-slate-900 p-2"
+          onClick={() => setOpen((v) => !v)}
+          className="md:hidden p-2 text-fg-2 hover:text-fg"
+          aria-label={open ? "Close menu" : "Open menu"}
+          aria-expanded={open}
         >
-          {mobileOpen ? <X size={24} /> : <Menu size={24} />}
+          {open ? <X size={22} /> : <Menu size={22} />}
         </button>
       </div>
 
-      {/* Mobile Drawer */}
-      {mobileOpen && (
-        <div className="md:hidden bg-white border-b border-[#E2E8F0] px-6 py-6 space-y-4 text-xs font-mono font-bold text-slate-700">
-          <a href="#problem" onClick={() => setMobileOpen(false)} className="block py-2">
-            {isAr ? "التحدي" : "Market Gap"}
-          </a>
-          <a href="#solution" onClick={() => setMobileOpen(false)} className="block py-2">
-            {isAr ? "القدرات" : "Platform Suite"}
-          </a>
-
-          
-          <hr className="border-[#E2E8F0]" />
-          
-          <div className="flex flex-col gap-3 pt-2">
-            <button
-              onClick={() => {
-                setLanguage(isAr ? 'en' : 'ar');
-                setMobileOpen(false);
-              }}
-              className="w-full flex items-center justify-center gap-2 py-2 rounded-lg border border-[#E2E8F0] bg-slate-50 text-slate-800 font-mono text-xs font-bold"
-            >
-              <Globe size={14} className="text-emerald" />
-              <span>{isAr ? "English" : "العربية"}</span>
-            </button>
-
-            <Link
-              href="/dashboard"
-              onClick={() => setMobileOpen(false)}
-              className="w-full text-center py-2.5 rounded-lg bg-emerald hover:bg-emerald-light text-white font-mono text-xs font-bold uppercase tracking-wider block"
-            >
-              <span>{isAr ? "تشغيل المنصة" : "ENTER TERMINAL"}</span>
-            </Link>
-          </div>
-        </div>
-      )}
+      <AnimatePresence>
+        {open && (
+          <motion.div
+            initial={{ opacity: 0, y: -8 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: -8 }}
+            transition={{ duration: 0.2 }}
+            className="md:hidden bg-ink-2 border-y border-line px-6 py-5 space-y-1 text-sm"
+          >
+            {LINKS.map((l) => (
+              <a key={l.href} href={l.href} onClick={() => setOpen(false)} className="block py-2.5 text-fg-2">
+                {isAr ? l.ar : l.en}
+              </a>
+            ))}
+            <div className="pt-3 flex flex-col gap-2">
+              <button
+                onClick={() => {
+                  setLanguage(isAr ? "en" : "ar");
+                  setOpen(false);
+                }}
+                className="btn-secondary w-full"
+              >
+                <Globe size={13} />
+                <span>{isAr ? "English" : "العربية"}</span>
+              </button>
+              <Link href="/dashboard" onClick={() => setOpen(false)} className="btn-primary w-full">
+                {isAr ? "ادخل إلى المحطة" : "Open terminal"}
+              </Link>
+            </div>
+          </motion.div>
+        )}
+      </AnimatePresence>
     </nav>
   );
 }

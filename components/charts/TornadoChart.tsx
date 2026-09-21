@@ -12,7 +12,10 @@ interface TornadoChartProps {
 }
 
 export default function TornadoChart({
-  baseSharePrice = 38.45,
+  baseParams,
+  baseYears,
+  baseBridge,
+  baseSharePrice = 0,
 }: TornadoChartProps) {
   const { language } = useTerminalStore();
   const isAr = language === "ar";
@@ -125,16 +128,16 @@ export default function TornadoChart({
 
   return (
     <div className="panel-input p-6 font-mono text-xs space-y-6">
-      <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 pb-4 border-b border-[#E2E8F0]">
+      <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 pb-4 border-b border-line">
         <div>
           <div className="flex items-center gap-2 text-emerald font-bold uppercase tracking-wider text-[11px] mb-1">
             <span>{isAr ? "مخطط تورنادو الحساسية" : "DCF Driver Sensitivity Tornado Chart"}</span>
           </div>
-          <h3 className="text-sm font-extrabold text-slate-900 font-serif">
+          <h3 className="text-sm font-extrabold text-fg font-serif">
             {isAr ? "ترتيب افتراضات النمذجة حسب حجم تأثيرها على القيمة العادلة" : "Share Price Swing Impact Ranked by Valuation Driver"}
           </h3>
         </div>
-        <div className="px-3 py-1 bg-slate-50 border border-[#E2E8F0] rounded text-emerald font-bold">
+        <div className="px-3 py-1 bg-ink-3 border border-line rounded text-emerald font-bold">
           Base: SAR {baseSharePrice.toFixed(2)}
         </div>
       </div>
@@ -150,20 +153,20 @@ export default function TornadoChart({
           return (
             <div key={i} className="space-y-1.5">
               <div className="flex justify-between items-center text-xs">
-                <span className="font-bold text-slate-900">{d.name}</span>
-                <span className="text-[11px] text-slate-500">
+                <span className="font-bold text-fg">{d.name}</span>
+                <span className="text-[11px] text-fg-3">
                   Swing: <span className="text-emerald font-bold">SAR {d.range.toFixed(2)}</span> (SAR {d.lowPx.toFixed(2)} — SAR {d.highPx.toFixed(2)})
                 </span>
               </div>
 
               {/* Centered Tornado Bar Container */}
-              <div className="h-7 bg-slate-100 border border-[#E2E8F0] rounded-lg relative flex items-center">
+              <div className="h-7 bg-ink-4 border border-line rounded-lg relative flex items-center">
                 {/* Center Baseline Indicator */}
-                <div className="absolute left-1/2 top-0 bottom-0 w-0.5 bg-slate-400 z-10" />
+                <div className="absolute left-1/2 top-0 bottom-0 w-0.5 bg-fg-3 z-10" />
 
                 {/* Left Negative Bar */}
                 <div
-                  className="absolute right-1/2 h-4 bg-rose-500 rounded-l transition-all"
+                  className="absolute right-1/2 h-4 bg-neg rounded-l transition-all"
                   style={{ width: `${negPct}%` }}
                 />
 

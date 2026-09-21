@@ -2,67 +2,48 @@
 
 import React from "react";
 import Link from "next/link";
-import { ArrowRight, ShieldCheck, Zap } from "lucide-react";
+import { motion } from "framer-motion";
 import { useTerminalStore } from "@/store/useTerminalStore";
+import FlowField from "@/components/ui/FlowField";
+import { reveal, viewportOnce } from "@/lib/motion";
 
 export default function CTASection() {
   const { language } = useTerminalStore();
-  const isAr = language === 'ar';
+  const isAr = language === "ar";
 
   return (
-    <section className="py-20 bg-white relative overflow-hidden font-sans" dir={isAr ? "rtl" : "ltr"}>
-      {/* CONTINUOUS LIVE BACKGROUND VIDEO */}
-      <video
-        autoPlay
-        loop
-        muted
-        playsInline
-        className="absolute inset-0 w-full h-full object-cover opacity-15 pointer-events-none z-0"
-        src="/bg-video.mp4"
-      />
-      <div className="max-w-7xl mx-auto px-6 relative z-10">
-        <div className="rounded-xl bg-surface-subtle p-10 md:p-14 text-center relative overflow-hidden shadow-terminal-card border border-surface-border">
-
-          <div className="max-w-3xl mx-auto relative z-10 space-y-6">
-            <div className="label-pill label-pill-emerald">
-              <Zap size={11} className="text-emerald" />
-              <span>{isAr ? "جاهز للاستخدام الفوري" : "INSTANT INSTITUTIONAL ACCESS"}</span>
-            </div>
-
-            <h2 className="font-serif text-3xl sm:text-4xl md:text-5xl font-bold text-slate-heading tracking-tight">
-              {isAr ? "ارتقِ بتحليلاتك المالية لمستوى المحطة التكتيكية" : "Launch Your GCC Financial Engine Today"}
-            </h2>
-
-            <p className="text-slate-body text-body-sm leading-relaxed max-w-2xl mx-auto font-medium">
-              {isAr 
-                ? "ابدأ بنمذجة التقييم المالي، الفحص الشرعي، مقارنة الشركات، والتقارير الموحدة بدون أي تعقيد."
-                : "Experience institutional quantitative depth tailored specifically for Saudi & Gulf Capital Markets."
-              }
-            </p>
-
-            <div className="pt-2 flex flex-col sm:flex-row items-center justify-center gap-4">
-              <Link
-                href="/dashboard"
-                className="btn-primary"
-              >
-                <span>{isAr ? "تشغيل محطة المحور" : "ENTER TERMINAL"}</span>
-                <ArrowRight size={13} />
-              </Link>
-            </div>
-
-            {/* Single Unobtrusive Technical Stack Line & Author Credit */}
-            <div className="pt-6 mt-6 border-t border-surface-border border-dashed text-mono-caption font-mono text-slate-muted flex flex-col sm:flex-row items-center justify-center gap-4">
-              <div className="flex items-center gap-2">
-                <ShieldCheck size={14} className="text-emerald" />
-                <span>{isAr ? "تطوير: محمد سرمد نديم" : "Architected & Developed by Muhammad Sarmad Nadeem"}</span>
-              </div>
-              <span className="hidden sm:inline">•</span>
-              <span className="text-[10px]">Next.js 15 • Tailwind CSS • Framer Motion • Recharts</span>
-            </div>
-
-          </div>
-        </div>
+    <section className="relative py-32 overflow-hidden bg-ink-0 border-t border-line" dir={isAr ? "rtl" : "ltr"}>
+      <div className="absolute inset-0 opacity-70">
+        <FlowField density={0.6} />
       </div>
+      <div className="absolute inset-0 vignette" />
+      <motion.div
+        variants={reveal}
+        initial="hidden"
+        whileInView="show"
+        viewport={viewportOnce}
+        className="relative max-w-3xl mx-auto px-6 text-center"
+      >
+        <div className="inline-flex items-center gap-2 font-mono text-sm text-fg-2" dir="ltr">
+          <span className="text-emerald-light">{">"}</span>
+          <span>mahwar</span>
+          <span className="text-gold">GO</span>
+          <span className="w-[8px] h-[16px] bg-emerald-light animate-blink inline-block" />
+        </div>
+        <h2 className={`mt-6 font-serif text-display-lg text-fg ${isAr ? "font-cairo font-bold" : ""}`}>
+          {isAr ? "المحطة جاهزة. لا حساب مطلوب." : "The terminal is ready. No account needed."}
+        </h2>
+        <p className="mt-5 text-fg-2 leading-relaxed">
+          {isAr
+            ? "افتح أي محرك، أدخل أرقامك، صدّر التقرير. كل شيء يعمل في متصفحك."
+            : "Open any engine, enter your numbers, export the report. Everything runs in your browser."}
+        </p>
+        <div className="mt-10">
+          <Link href="/dashboard" className="btn-primary px-8 py-4 text-[12px]">
+            {isAr ? "ادخل إلى المحطة" : "Enter the terminal"}
+          </Link>
+        </div>
+      </motion.div>
     </section>
   );
 }

@@ -85,10 +85,10 @@ export default function QuickNPV() {
       <div className="flex items-center gap-3 mb-6">
         <Calculator className="text-emerald" size={24} />
         <div>
-          <h2 className="font-mono text-xl font-extrabold text-slate-900 uppercase">
+          <h2 className="font-mono text-xl font-extrabold text-fg uppercase">
             {isAr ? "حاسبة القيمة الحالية (NPV / IRR)" : "Standalone NPV / IRR Calculator"}
           </h2>
-          <p className="text-xs text-slate-500 font-mono">
+          <p className="text-xs text-fg-3 font-mono">
             {isAr ? "تحليل سريع للتدفقات النقدية" : "Lightweight cash flow series analysis"}
           </p>
         </div>
@@ -97,7 +97,7 @@ export default function QuickNPV() {
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
         <div className="md:col-span-1 space-y-4">
           <div className="panel-input p-5 space-y-4">
-            <h3 className="font-bold text-slate-900 font-mono text-xs uppercase border-b pb-2">
+            <h3 className="font-bold text-fg font-mono text-xs uppercase border-b pb-2">
               {isAr ? "معلمات الاستثمار" : "Investment Parameters"}
             </h3>
             <InputGroup
@@ -116,21 +116,21 @@ export default function QuickNPV() {
           </div>
 
           <div className="panel-result text-white p-5 space-y-4">
-            <h3 className="font-bold font-mono text-xs uppercase text-slate-400">
+            <h3 className="font-bold font-mono text-xs uppercase text-fg-3">
               {isAr ? "النتائج المباشرة" : "Live Results"}
             </h3>
             
             <div>
-              <span className="block text-[10px] text-slate-400 font-mono uppercase mb-1">
+              <span className="block text-[10px] text-fg-3 font-mono uppercase mb-1">
                 {isAr ? "القيمة الحالية الصافية (NPV)" : "Net Present Value (NPV)"}
               </span>
-              <span className={`font-mono text-2xl font-bold ${results.npv >= 0 ? "text-emerald" : "text-rose-400"}`}>
+              <span className={`font-mono text-2xl font-bold ${results.npv >= 0 ? "text-emerald" : "text-neg"}`}>
                 {currency} {results.npv.toLocaleString(undefined, { maximumFractionDigits: 0 })}
               </span>
             </div>
 
             <div>
-              <span className="block text-[10px] text-slate-400 font-mono uppercase mb-1">
+              <span className="block text-[10px] text-fg-3 font-mono uppercase mb-1">
                 {isAr ? "معدل العائد الداخلي (IRR)" : "Internal Rate of Return (IRR)"}
               </span>
               <span className="font-mono text-xl font-bold">
@@ -139,7 +139,7 @@ export default function QuickNPV() {
             </div>
 
             <div>
-              <span className="block text-[10px] text-slate-400 font-mono uppercase mb-1">
+              <span className="block text-[10px] text-fg-3 font-mono uppercase mb-1">
                 {isAr ? "فترة الاسترداد" : "Payback Period"}
               </span>
               <span className="font-mono text-lg font-bold">
@@ -152,12 +152,12 @@ export default function QuickNPV() {
         <div className="md:col-span-2">
           <div className="panel-input p-5">
             <div className="flex justify-between items-center border-b pb-2 mb-4">
-              <h3 className="font-bold text-slate-900 font-mono text-xs uppercase">
+              <h3 className="font-bold text-fg font-mono text-xs uppercase">
                 {isAr ? "التدفقات النقدية الدورية" : "Periodic Cash Flows"}
               </h3>
               <button 
                 onClick={addYear}
-                className="flex items-center gap-1 text-xs font-mono font-bold text-emerald hover:text-emerald-dark bg-emerald/10 px-2 py-1 rounded"
+                className="flex items-center gap-1 text-xs font-mono font-bold text-emerald hover:text-emerald-light bg-emerald/10 px-2 py-1 rounded"
               >
                 <Plus size={14} /> {isAr ? "إضافة سنة" : "Add Year"}
               </button>
@@ -166,7 +166,7 @@ export default function QuickNPV() {
             <div className="space-y-3 max-h-[400px] overflow-y-auto pr-2">
               {cashFlows.map((cf, idx) => (
                 <div key={idx} className="flex items-center gap-3">
-                  <span className="font-mono font-bold text-xs text-slate-400 w-16">
+                  <span className="font-mono font-bold text-xs text-fg-3 w-16">
                     Year {idx + 1}
                   </span>
                   <div className="flex-1">
@@ -180,7 +180,7 @@ export default function QuickNPV() {
                   <button 
                     onClick={() => removeYear(idx)}
                     disabled={cashFlows.length <= 1}
-                    className="p-2 text-slate-400 hover:text-rose-500 disabled:opacity-30 transition-colors"
+                    className="p-2 text-fg-3 hover:text-neg disabled:opacity-30 transition-colors"
                   >
                     <Trash2 size={16} />
                   </button>

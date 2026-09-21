@@ -1,244 +1,82 @@
-# محور — Mahwar Financial Intelligence Terminal
+# Mahwar (محور) — Finance & Supply Chain Intelligence Terminal
 
-> **Developed by Muhammad Sarmad Nadeem | Supply Chain Planning Professional**
->
-> **طُوِّر بواسطة محمد سرمد نديم | متخصص في تخطيط سلاسل الإمداد**
+> Built by **Muhammad Sarmad Nadeem** · طُوِّر بواسطة محمد سرمد نديم
 
----
+Mahwar is a bilingual (EN / AR, full RTL) Bloomberg-style terminal for GCC markets. It joins **13 financial engines** (DCF, LBO, DDM, WACC, Monte Carlo, M&A, 3-statement, …) with **11 supply-chain engines** (EOQ, safety stock, ABC/XYZ, demand forecasting, S&OP, landed cost, TCO, supplier scorecard, gravity location, cash-conversion cycle, working-capital financing) behind one command line.
 
-## 🌐 Overview | نظرة عامة
+Everything computes in the browser. No account, no backend state.
 
-**EN:** Mahwar (محور — meaning "Axis" or "Pivot") is a Bloomberg-grade, bilingual (English/Arabic) financial intelligence terminal purpose-built for GCC capital markets. It combines institutional-level financial modelling, AI-powered equity research, real-time market data, and Shariah-compliance screening — all within a single, dark-luxury web application.
+## v3 — what changed
 
-**AR:** محور هو منصة استخباراتية مالية متكاملة على مستوى بلومبرج، تدعم اللغتين العربية والإنجليزية، وصُممت خصيصاً لأسواق رأس المال في منطقة الخليج العربي. تجمع المنصة بين النمذجة المالية المؤسسية، والبحث في الأسهم المدعوم بالذكاء الاصطناعي، وبيانات السوق الآنية، وفحص الامتثال الشرعي — كل ذلك ضمن تطبيق ويب فاخر وموحد.
+**Design.** Full move to the "Obsidian & Emerald" dark terminal theme: every colour is a CSS token in `app/globals.css`, mirrored in `tailwind.config.js`. No component carries a raw hex value. Brand fonts restored: Cormorant Garamond (display), DM Sans (UI), IBM Plex Mono (data), Cairo (Arabic).
 
----
+**Landing page.** Cinematic hero with a canvas "capital + goods" flow network, anime.js headline choreography, and a live terminal window that runs the real EOQ / CCC / safety-stock / IRR engines — no fake KPIs. Function-code tape, Finance × Supply-chain thesis section, registry-driven module rail with computed previews, self-contained animated GCC corridor network (no external map fetch), commitments, live wire, CTA.
 
-## 👨‍💻 Developer | المطوّر
+**Terminal.** `GO` command line in the top bar (type `EOQ` + Enter, Tab to complete, `/` to focus, `⌘K` palette), boot sequence shown once per session, registry-driven sidebar with session dots, session board on the hub, status bar with Riyadh clock and recent modules, deep links (`/dashboard?panel=eoq`) synced to the URL, and session persistence across refreshes (localStorage).
 
-| Field | Details |
-|-------|---------|
-| **Name** | Muhammad Sarmad Nadeem |
-| **الاسم** | محمد سرمد نديم |
-| **Role** | Supply Chain Planning Professional |
-| **الدور** | متخصص في تخطيط سلاسل الإمداد |
+**One registry.** `lib/registry.ts` is the single list of modules (id, code, names, descriptions, icons, keywords, session key). Sidebar, palette, hubs, top bar, landing showcase and footer all read from it.
 
----
+**Hardcoded data removed.** Mock news articles, fake hero numbers, synthetic comps / 52-week bands in the football-field chart, the TornadoChart bug that ignored live DCF inputs, duplicate tool lists, unused constants, 12 MB of stray media, `react-simple-maps` runtime fetch, dead dependencies.
 
-## 🏗️ Tech Stack
+**Build.** `next.config.mjs` now enforces type checking (`tsc --noEmit` is clean), `target: es2020`, package-import optimisation, no `three` transpile.
 
-| Layer | Technology |
-|-------|-----------|
-| Framework | Next.js 14 (App Router) |
-| Language | TypeScript |
-| Styling | Tailwind CSS + Custom CSS Variables |
-| Animations | Framer Motion |
-| Charts | Recharts |
-| AI Engine | Google Gemini 2.0 Flash API |
-| Market Data | EODHD Financial Data API |
-| State | Zustand (`useTerminalStore`) |
-| i18n | Custom EN/AR translation layer with RTL |
-| Fonts | Cormorant Garamond · DM Sans · IBM Plex Mono · Cairo |
-
----
-
-## ✨ Features | المميزات
-
-### 🌍 Landing Page (Home)
-
-The public-facing marketing site, built with scroll-triggered Framer Motion animations and cinematic visuals.
-
-| Section | Description |
-|---------|-------------|
-| **Navigation** | Fixed, glassmorphism top bar with EN/AR language toggle and "Enter Platform" CTA |
-| **Hero Section** | Full-screen animated opener with headline, subtext, and primary call-to-action |
-| **Ticker Strip** | Auto-scrolling live market ticker strip displaying GCC/Tadawul symbols |
-| **Problem Section** | Narrative on the gap in institutional-grade tools for GCC investors |
-| **Shift Section** | Transitional section bridging problem to solution |
-| **Solution Section** | Feature highlights of the Mahwar terminal with visual callouts |
-| **Intelligence Section** | Deep-dive into AI research and analytical capabilities |
-| **GCC Section** | Regional context — Saudi Vision 2030, Gulf markets, IFRS/GAAP/Zakat |
-| **Technology Section** | Stack and infrastructure overview |
-| **Testimonials Section** | Institutional social proof |
-| **CTA Section** | Final conversion section with platform entry |
-| **Full RTL Support** | Entire page mirrors to right-to-left layout when Arabic is selected |
-
----
-
-### ⚙️ Terminal / Dashboard (`/dashboard`)
-
-A Bloomberg-style shell with a persistent sidebar, sticky top bar, and swappable full-screen panels.
-
-#### Shell Layout
-- **Sidebar (220px):** Logo, grouped navigation (Platform / Research / Models), live Tadawul status indicator
-- **Top Bar:** Panel title (bilingual), global ticker search (press Enter to load), live price/change for active ticker, TASI index pill, EN↔AR toggle
-
----
-
-#### 📊 Intelligence Hub (Default Panel)
-
-The command centre of the terminal, showing a complete market overview at a glance.
-
-- **Market Summary Cards** — 4 clickable cards for TASI Index, Saudi Aramco (2222.SR), Al Rajhi Bank (1120.SR), and SNB (1180.SR). Clicking a card sets the global active ticker across all panels.
-- **Performance Alpha Chart** — Animated 54-bar chart visualising the selected ticker's performance vs TASI benchmark. Supports 1D / 1W / 1M / 3Y time-frame tabs.
-- **Feature Portal Cards** — Quick-launch entry cards for DCF Engine, LBO Builder, and 3-Statement Model.
-- **Research Banners** — Clickable tiles linking to AI Research, Shariah Screening, and Market Screener panels.
-- **Institutional Order Flow Table** — Simulated live order tape showing BUY/SELL orders for the active ticker with price, quantity, total value, and Executed/Pending status badges.
-
----
-
-#### 🧮 DCF Engine
-
-> *Sovereign Discounted Cash Flow Model*
-
-A professional-grade DCF valuation tool designed for GCC equities.
-
-- Customisable revenue growth, EBITDA margins, and capex assumptions
-- Automated WACC calculation (cost of equity + cost of debt + capital structure)
-- Multi-year Free Cash Flow projection table
-- Terminal value computation (Gordon Growth Model)
-- Intrinsic value per share output with upside/downside vs current market price
-- Sensitivity analysis matrix (WACC vs Terminal Growth Rate)
-
----
-
-#### 🏦 LBO Builder
-
-> *Leveraged Buyout Analytics — Multi-Tranche*
-
-An institutional LBO model for private equity-style transaction analysis.
-
-- Entry assumptions: purchase price, entry EBITDA multiple
-- Multi-tranche debt structuring (Senior Secured, Mezzanine, PIK)
-- Hold period (3–7 year) exit scenario modelling
-- IRR and MOIC (Multiple on Invested Capital) computation
-- Equity waterfall and returns visualisation
-
----
-
-#### 📑 Three-Statement Model
-
-> *Integrated IS · Balance Sheet · Cash Flow — IFRS / GAAP / Saudi Zakat*
-
-A fully linked three-statement financial model with Saudi-specific accounting treatments.
-
-- Income Statement with revenue drivers, COGS, and operating expenses
-- Balance Sheet with working capital, fixed assets, and financing lines
-- Cash Flow Statement (Operating, Investing, Financing activities) auto-derived from IS and BS
-- Saudi GAAP / IFRS toggle
-- Zakat provision calculation built into the model
-- **Table / Charts toggle** — switch between spreadsheet view and interactive Recharts visualisations (Revenue, EBITDA, Net Income bar charts; FCF waterfall)
-
----
-
-#### 🤖 AI Research
-
-> *Gemini 2.0 Flash — Institutional Equity Memo Generator*
-
-- Enter any stock ticker and generate a full institutional-grade equity research report
-- Powered by Google Gemini 2.0 Flash API with streaming output
-- Report includes: company overview, financial summary, key risks, ESG notes, Vision 2030 relevance, and investment thesis
-- Bilingual output support (EN/AR)
-
----
-
-#### 🕌 Shariah Screening
-
-> *AAOIFI-Standard Compliance Engine*
-
-- Screens equities against AAOIFI (Accounting and Auditing Organisation for Islamic Financial Institutions) standards
-- Business activity screening (prohibited sectors: alcohol, tobacco, conventional banking, weapons)
-- Financial ratio screening: debt-to-assets, interest income ratio, receivables ratio
-- Purification income calculation for non-compliant revenue portions
-- Compliance verdict: Compliant / Non-Compliant / Under Review
-
----
-
-#### 📈 Market Screener
-
-> *Multi-Dimensional Tadawul Stock Filter*
-
-- Screens across ~30 Tadawul (Saudi Stock Exchange) listed symbols
-- Filters: sector, market cap, P/E ratio, dividend yield, 52-week range, momentum
-- Heatmap view — colour-coded grid showing relative performance
-- Sort and filter columns interactively
-- Bilingual column headers and labels
-
----
-
-#### 📡 Live KSA Market
-
-> *Auto-Refreshing Saudi Market Feed*
-
-- Live price feed for Saudi-listed equities via EODHD API
-- Auto-refreshes every 30 seconds
-- Displays: price, change, % change, volume, 52-week high/low
-- Colour-coded positive/negative indicators
-
----
-
-## 🌐 Bilingual Support | دعم ثنائي اللغة
-
-The entire platform — both the landing page and the terminal — supports full English and Arabic localisation:
-
-- Global language toggle (EN / AR) on both the navbar and the terminal top bar
-- Complete RTL (Right-to-Left) layout mirroring for Arabic mode
-- Arabic typography using Cairo font
-- All section headings, labels, buttons, table headers, and financial terms translated
-- Language state persisted via Zustand global store
-
----
-
-## 🚀 Getting Started
-
-### Required Environment Variables
-
-To run the terminal features and AI analysis, you must configure the following keys in a `.env` or `.env.local` file in the root directory:
-
-* `GOOGLE_API_KEY`: API key for Google Gemini (required for AI Research and memo generation). Obtain it from [Google AI Studio](https://aistudio.google.com/).
-* `EODHD_API_KEY`: API key for EODHD (required for live KSA market feeds and performance data). Obtain it from [EOD Historical Data](https://eodhistoricaldata.com/).
-
-### Installation & Run
+## Run
 
 ```bash
-# Install dependencies
+cp .env.example .env.local   # optional keys
 npm install
-
-# Start the development server
-npm run dev
-
-# Build for production
-npm run build
+npm run dev                  # http://localhost:3000
+npm run build && npm start
+npm run typecheck
 ```
 
----
+`next/font` fetches Google Fonts at build time — the build machine needs outbound HTTPS.
 
-## 📁 Project Structure
+## Environment
+
+| Key | Purpose |
+|---|---|
+| `MARKETAUX_API_KEY` | Optional premium GCC news feed. Falls back to a public RSS search; if neither is reachable the wire says so instead of showing canned headlines. |
+| `NEXT_PUBLIC_APP_URL` | Public URL for metadata. |
+| `NEXT_PUBLIC_HERO_VIDEO` | Path to hero footage (`/bg-video.mp4` ships in `public/`). Set empty to drop the video layer. |
+
+## Structure
 
 ```
-app/
-├── app/
-│   ├── page.tsx              # Landing page
-│   ├── dashboard/page.tsx    # Terminal shell + all panels
-│   └── api/                  # Backend API routes
-├── components/
-│   ├── features/             # AIResearch, LiveMarket, MarketScreener, ShariahScreening
-│   ├── models/               # DCFModel, LBOModel, ThreeStatementModel, StatementCharts
-│   ├── sections/             # Landing page sections
-│   ├── layout/               # Navigation, Footer
-│   └── ui/                   # TickerStrip, shared UI primitives
-├── hooks/                    # Custom React hooks (useTerminalData, etc.)
-├── lib/                      # motion.ts, i18n.ts, utils
-└── store/                    # Zustand store (useTerminalStore)
+app/                 layout, landing page, dashboard shell, /api/news, /api/dcf, /privacy, /terms
+components/
+  layout/            Navbar · Sidebar · TopBar (GO line) · StatusBar · Footer
+  sections/          Hero · LiveTerminal · ThesisSection (+EngineTape) · ToolShowcase · GCCMapSection · CapabilitiesBento · NewsPreviewWidget · CTASection
+  ui/                FlowField (canvas) · CommandPalette · LoadingScreen · MahwarLogo · FooterModal
+  features/ models/  financial engines UI
+  operations/        supply-chain engines UI
+lib/
+  registry.ts        THE module list
+  finance/ operations/ pure calculation libraries (audited formula traces)
+  chartTheme.ts motion.ts i18n.ts
+store/useTerminalStore.ts   zustand + persist
 ```
 
----
+## Adding a module
 
-## 📜 License
+1. Build the panel component.
+2. Add one entry to `TOOLS` in `lib/registry.ts` (pick a short `code`).
+3. Add the `PanelType` to the store union and the lazy import in `app/dashboard/page.tsx`.
 
-This project is proprietary software developed by **Muhammad Sarmad Nadeem**.
-All rights reserved © 2026.
+It then appears in the sidebar, palette, hubs, GO line, landing showcase and footer.
 
----
+## Suggested next features
 
-*Built with precision for the GCC institutional investor. محور — المحطة المالية الذكية.*
+- **Split workspace** — two panels side by side (e.g. EOQ next to WC financing) with linked inputs.
+- **Scenario compare** — save base / bull / bear per engine and diff them on the hub.
+- **Live market adapter** — pluggable price provider (Tadawul, DFM, ADX) feeding DCF current price and the football-field 52-week band.
+- **Control tower** — put the corridor network in the terminal with landed-cost and lead-time overlays per route.
+- **Alerts** — thresholds on CCC, safety stock, or upside that flag on the status bar.
+- **AI analyst** — a memo generator that reads the saved session (the store already holds structured inputs/outputs).
+- **Sukuk & Islamic finance engines** — sukuk pricing, murabaha cost of funds, profit-rate sensitivity.
+- **Shared sessions** — export/import a session as JSON, or sync via a lightweight backend.
+- **Excel add-in** — the engines in `lib/` are pure functions and can back an Office add-in directly.
+
+## License
+
+Proprietary. © Muhammad Sarmad Nadeem. All rights reserved.

@@ -3,84 +3,76 @@
 import React, { useEffect, useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import MahwarLogo from "./MahwarLogo";
-import { useTerminalStore } from "@/store/useTerminalStore";
+import { APP, TOOLS, toolsBySuite } from "@/lib/registry";
 
-const LoadingScreen = () => {
-  const [isLoading, setIsLoading] = useState(true);
-  const { language } = useTerminalStore();
-  const isAr = language === "ar";
+const BOOT_KEY = "mahwar-booted";
+
+/**
+ * Terminal boot sequence. Runs once per browser session (sessionStorage),
+ * lasts ~1.4s, and prints real facts about the build rather than fake
+ * "connecting to satellites" theatre.
+ */
+export default function LoadingScreen() {
+  const [show, setShow] = useState(true);
+  const [lines, setLines] = useState<string[]>([]);
 
   useEffect(() => {
-    // Simulate initial platform handshake
-    const timer = setTimeout(() => {
-      setIsLoading(false);
-    }, 2800);
-    return () => clearTimeout(timer);
+    if (sessionStorage.getItem(BOOT_KEY)) {
+      setShow(false);
+      return;
+    }
+    const reduced = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+    const script = [
+      `mahwar terminal v${APP.version}`,
+      `engines ........ ${TOOLS.length} (${toolsBySuite("finance").length} finance / ${toolsBySuite("operations").length} operations)`,
+      "locale ......... en · ar (rtl)",
+      "session ........ restored from local storage",
+      "ready",
+    ];
+    const timers: number[] = [];
+    const step = reduced ? 0 : 180;
+    script.forEach((l, i) => timers.push(window.setTimeout(() => setLines((p) => [...p, l]), 300 + i * step)));
+    timers.push(
+      window.setTimeout(() => {
+        sessionStorage.setItem(BOOT_KEY, "1");
+        setShow(false);
+      }, 300 + script.length * step + (reduced ? 100 : 700))
+    );
+    return () => timers.forEach(clearTimeout);
   }, []);
 
   return (
     <AnimatePresence>
-      {isLoading && (
+      {show && (
         <motion.div
-          initial={{ opacity: 1 }}
-          exit={{ opacity: 0, scale: 1.1, filter: "blur(20px)" }}
-          transition={{ duration: 1, ease: [0.22, 1, 0.36, 1] }}
-          className="fixed inset-0 z-[9999] bg-[var(--void)] flex flex-col items-center justify-center overflow-hidden"
+          key="boot"
+          exit={{ opacity: 0, filter: "blur(10px)", scale: 1.02 }}
+          transition={{ duration: 0.6, ease: [0.16, 1, 0.3, 1] }}
+          className="fixed inset-0 z-[9999] bg-ink-0 grain flex items-center justify-center"
+          role="status"
+          aria-live="polite"
         >
-          {/* Background Grid - Blueprint Style */}
-          <div className="absolute inset-0 opacity-[0.05]" style={{ backgroundImage: "radial-gradient(var(--emerald) 0.5px, transparent 0.5px)", backgroundSize: "30px 30px" }} />
-          <div className="absolute inset-0 opacity-[0.03]" style={{ backgroundImage: "linear-gradient(var(--emerald) 0.5px, transparent 0.5px), linear-gradient(90deg, var(--emerald) 0.5px, transparent 0.5px)", backgroundSize: "120px 120px" }} />
-
-          {/* Logo Animation */}
-          <motion.div
-            initial={{ scale: 0.8, opacity: 0 }}
-            animate={{ scale: 1, opacity: 1 }}
-            transition={{ duration: 1.2, ease: "easeOut" }}
-            className="relative"
-          >
-            <MahwarLogo size={180} />
-            
-            {/* Soft Professional Aura */}
-            <motion.div
-              animate={{ scale: [1, 1.3, 1], opacity: [0.1, 0.2, 0.1] }}
-              transition={{ duration: 5, repeat: Infinity }}
-              className="absolute inset-0 bg-[var(--emerald)] blur-[80px] rounded-full -z-10"
-            />
-          </motion.div>
-
-          {/* Branding */}
-          <motion.div
-            initial={{ y: 20, opacity: 0 }}
-            animate={{ y: 0, opacity: 1 }}
-            transition={{ delay: 0.8, duration: 1 }}
-            className="mt-12 text-center"
-          >
-            <h1 className="font-cormorant text-6xl font-bold tracking-[0.25em] text-[var(--text1)] uppercase mb-4">
-              Mahwar
-            </h1>
-            <div className="flex items-center justify-center gap-6">
-              <div className="w-12 h-[1px] bg-[var(--emerald)] opacity-20" />
-              <span className="font-ibm-plex-mono text-[10px] font-bold text-[var(--emerald)] tracking-[0.4em] uppercase">
-                {isAr ? "محور الذكاء المالي" : "THE AXIS OF INTELLIGENCE"}
-              </span>
-              <div className="w-12 h-[1px] bg-[var(--emerald)] opacity-20" />
+          <div className="absolute inset-0 grid-bg opacity-30 [mask-image:radial-gradient(ellipse_50%_50%_at_50%_50%,#000,transparent)]" />
+          <div className="relative w-[min(92vw,460px)]">
+            <div className="flex items-center gap-4">
+              <MahwarLogo size={56} />
+              <div>
+                <div className="font-serif text-3xl text-fg leading-none">{APP.name}</div>
+                <div className="font-mono text-[10px] tracking-[0.3em] text-emerald-light mt-2">{APP.nameAr} · TERMINAL</div>
+              </div>
             </div>
-          </motion.div>
-
-          {/* Progress Indicator */}
-          <div className="absolute bottom-24 w-60 h-[1.5px] bg-[var(--emerald)]/10 overflow-hidden rounded-full">
-            <motion.div
-              initial={{ x: "-100%" }}
-              animate={{ x: "0%" }}
-              transition={{ duration: 2.5, ease: "easeInOut" }}
-              className="w-full h-full bg-[var(--emerald)] shadow-[0_0_20px_rgba(16,185,129,0.4)]"
-            />
+            <div className="mt-8 font-mono text-[12px] leading-relaxed text-fg-2 min-h-[120px]" dir="ltr">
+              {lines.map((l, i) => (
+                <div key={i} className={i === lines.length - 1 ? "text-fg" : ""}>
+                  <span className="text-emerald-light mr-2">{">"}</span>
+                  {l}
+                </div>
+              ))}
+              <span className="inline-block w-[7px] h-[13px] bg-emerald-light animate-blink align-middle ml-4" />
+            </div>
           </div>
-
         </motion.div>
       )}
     </AnimatePresence>
   );
-};
-
-export default LoadingScreen;
+}
