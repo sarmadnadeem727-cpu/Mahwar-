@@ -33,3 +33,4 @@ export const formatYahooFundamentalsToModel = (fundamentals: any) => {
     currentPrice: financialData?.currentPrice || 0,
   };
 };
+

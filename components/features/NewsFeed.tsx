@@ -1,163 +1,177 @@
 "use client";
 
-import React, { useState, useEffect } from "react";
+import React, { useEffect, useMemo, useState } from "react";
 import { motion } from "framer-motion";
-import { Newspaper, ExternalLink, RefreshCw, AlertCircle, Radio } from "lucide-react";
+import { ExternalLink, RefreshCw, Radio, Ship, Landmark } from "lucide-react";
 import { useTerminalStore } from "@/store/useTerminalStore";
 import { panelReveal } from "@/lib/motion";
-import { NewsArticle } from "@/app/api/news/route";
+import type { NewsArticle, NewsCategory, NewsLane } from "@/app/api/news/route";
+
+type Filter = "ALL" | NewsLane | NewsCategory;
+
+const LANES: { id: Filter; en: string; ar: string; icon?: React.ComponentType<{ size?: number; className?: string }> }[] = [
+  { id: "ALL", en: "All", ar: "الكل" },
+  { id: "finance", en: "Finance", ar: "المالية", icon: Landmark },
+  { id: "supply_chain", en: "Supply chain", ar: "سلاسل الإمداد", icon: Ship },
+];
+
+const CATEGORIES: Record<NewsLane, { id: NewsCategory; en: string; ar: string }[]> = {
+  finance: [
+    { id: "SAUDI", en: "Saudi", ar: "السعودية" },
+    { id: "GCC", en: "GCC", ar: "الخليج" },
+    { id: "ISLAMIC_FINANCE", en: "Islamic finance", ar: "التمويل الإسلامي" },
+    { id: "MACRO", en: "Macro & energy", ar: "الاقتصاد الكلي" },
+  ],
+  supply_chain: [
+    { id: "PORTS_SHIPPING", en: "Ports & shipping", ar: "الموانئ والشحن" },
+    { id: "LOGISTICS", en: "Logistics", ar: "اللوجستيات" },
+    { id: "PROCUREMENT", en: "Procurement", ar: "المشتريات" },
+    { id: "INDUSTRY", en: "Industry", ar: "الصناعة" },
+  ],
+};
+
+function timeAgo(iso: string, isAr: boolean) {
+  const mins = Math.max(1, Math.round((Date.now() - new Date(iso).getTime()) / 60000));
+  if (mins < 60) return isAr ? `قبل ${mins} د` : `${mins}m`;
+  const hrs = Math.round(mins / 60);
+  if (hrs < 24) return isAr ? `قبل ${hrs} س` : `${hrs}h`;
+  return isAr ? `قبل ${Math.round(hrs / 24)} ي` : `${Math.round(hrs / 24)}d`;
+}
 
 export default function NewsFeed() {
   const { language } = useTerminalStore();
-  const isAr = language === 'ar';
-
+  const isAr = language === "ar";
   const [articles, setArticles] = useState<NewsArticle[]>([]);
-  const [provider, setProvider] = useState<string>("");
-  const [loading, setLoading] = useState<boolean>(true);
-  const [activeTab, setActiveTab] = useState<"ALL" | "GCC" | "SAUDI" | "ISLAMIC_FINANCE">("ALL");
+  const [provider, setProvider] = useState<string | null>(null);
+  const [error, setError] = useState<string | null>(null);
+  const [loading, setLoading] = useState(true);
+  const [lane, setLane] = useState<Filter>("ALL");
+  const [category, setCategory] = useState<NewsCategory | null>(null);
+  const [updatedAt, setUpdatedAt] = useState<Date | null>(null);
 
-  const fetchNews = async () => {
+  const load = async () => {
     setLoading(true);
+    setError(null);
     try {
-      const res = await fetch("/api/news");
-      if (res.ok) {
-        const data = await res.json();
-        setArticles(data.articles || []);
-        setProvider(data.provider || "");
-      }
-    } catch (err) {
-      console.error("Failed to load news wire:", err);
+      const res = await fetch("/api/news", { cache: "no-store" });
+      const data = await res.json();
+      setArticles(data.articles ?? []);
+      setProvider(data.provider ?? null);
+      setError(data.error ?? null);
+      setUpdatedAt(new Date());
+    } catch {
+      setError(isAr ? "تعذر الوصول إلى خدمة الأخبار." : "The news service could not be reached.");
     } finally {
       setLoading(false);
     }
   };
 
   useEffect(() => {
-    fetchNews();
+    load();
+    const id = window.setInterval(load, 5 * 60 * 1000);
+    return () => window.clearInterval(id);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-  const filteredArticles = articles.filter(
-    (a) => activeTab === "ALL" || a.category === activeTab
+  const visible = useMemo(
+    () =>
+      articles.filter((a) => {
+        if (lane !== "ALL" && a.lane !== lane) return false;
+        if (category && a.category !== category) return false;
+        return true;
+      }),
+    [articles, lane, category]
+  );
+
+  const counts = useMemo(
+    () => ({
+      finance: articles.filter((a) => a.lane === "finance").length,
+      supply_chain: articles.filter((a) => a.lane === "supply_chain").length,
+    }),
+    [articles]
   );
 
   return (
-    <motion.div
-      variants={panelReveal}
-      initial="initial"
-      animate="animate"
-      exit="exit"
-      className="space-y-6 text-fg font-sans"
-      dir={isAr ? "rtl" : "ltr"}
-    >
-      {/* NEWS WIRE HEADER */}
-      <div className="panel-input p-6 flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
-        <div className="flex items-center gap-3">
-          <div className="p-2.5 rounded-lg bg-emerald/10 border border-emerald/30 text-emerald">
-            <Newspaper size={22} />
-          </div>
-          <div>
-            <div className="flex items-center gap-2">
-              <h2 className="font-serif text-xl font-bold text-fg">
-                {isAr ? "موجز الأخبار المالية لأسواق الخليج" : "GCC Financial Market Wire"}
-              </h2>
-              <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] font-mono font-bold text-emerald bg-emerald/10 border border-emerald/30">
-                <Radio size={10} className="animate-pulse" />
-                <span>{provider || "LIVE WIRE"}</span>
-              </span>
-            </div>
-            <p className="text-xs font-mono text-fg-3 mt-0.5">
-              {isAr ? "بث حي ومباشر عبر Marketaux GCC & Finlight Arabic" : "Real-time market intelligence powered by Marketaux & Finlight APIs"}
-            </p>
-          </div>
+    <motion.div variants={panelReveal} initial="initial" animate="animate" exit="exit" className="space-y-5" dir={isAr ? "rtl" : "ltr"}>
+      <div className="flex flex-col md:flex-row md:items-end justify-between gap-4 pb-5 border-b border-line">
+        <div>
+          <p className="font-mono text-[11px] tracking-[0.2em] text-emerald-light flex items-center gap-2">
+            <Radio size={12} className={!loading && !error ? "animate-pulse" : ""} /> WIRE
+          </p>
+          <h1 className={`mt-1 font-serif text-3xl text-fg ${isAr ? "font-cairo font-bold" : ""}`}>{isAr ? "الأخبار المباشرة" : "Market & supply-chain wire"}</h1>
+          <p className="mt-1 font-mono text-[11px] text-fg-3">
+            {provider ? `${provider} · ` : ""}
+            {counts.finance} {isAr ? "مالية" : "finance"} · {counts.supply_chain} {isAr ? "سلاسل إمداد" : "supply chain"}
+            {updatedAt && ` · ${isAr ? "آخر تحديث" : "updated"} ${updatedAt.toLocaleTimeString(isAr ? "ar-SA-u-nu-latn" : "en-GB", { hour: "2-digit", minute: "2-digit" })}`}
+          </p>
         </div>
-
-        <button
-          onClick={fetchNews}
-          disabled={loading}
-          className="flex items-center gap-2 px-4 py-2 bg-ink-3 border border-line hover:bg-ink-4 text-fg-2 font-mono text-xs font-bold rounded-lg cursor-pointer transition-colors"
-        >
-          <RefreshCw size={13} className={loading ? "animate-spin" : ""} />
-          <span>{isAr ? "تحديث البث" : "Refresh Wire"}</span>
+        <button onClick={load} disabled={loading} className="btn-secondary">
+          <RefreshCw size={13} className={loading ? "animate-spin" : ""} /> {isAr ? "تحديث" : "Refresh"}
         </button>
       </div>
 
-      {/* FILTER TABS */}
-      <div className="flex border-b border-line font-mono text-xs gap-2">
-        {[
-          { id: "ALL", label: isAr ? "جميع الأخبار" : "All GCC Wire" },
-          { id: "SAUDI", label: isAr ? "السوق السعودي" : "Tadawul & KSA" },
-          { id: "GCC", label: isAr ? "أسواق الخليج" : "GCC Bourses" },
-          { id: "ISLAMIC_FINANCE", label: isAr ? "التمويل الإسلامي" : "Sukuk & Islamic Fin" },
-        ].map((tab) => {
-          const active = activeTab === tab.id;
+      {/* Lane tabs */}
+      <div className="flex flex-wrap items-center gap-2">
+        {LANES.map((l) => {
+          const active = lane === l.id;
+          const Icon = l.icon;
           return (
             <button
-              key={tab.id}
-              onClick={() => setActiveTab(tab.id as any)}
-              className={`px-4 py-2.5 font-bold rounded-t-lg transition-all cursor-pointer ${
-                active
-                  ? "bg-emerald text-ink-0 border-t border-x border-line font-bold shadow-xs"
-                  : "text-fg-3 hover:text-fg bg-ink-3"
+              key={l.id}
+              onClick={() => { setLane(l.id); setCategory(null); }}
+              className={`inline-flex items-center gap-1.5 px-3 py-1.5 rounded border font-mono text-[11px] transition-colors ${
+                active ? "border-emerald/50 bg-emerald/10 text-emerald-light" : "border-line text-fg-2 hover:text-fg hover:border-line-strong"
               }`}
             >
-              {tab.label}
+              {Icon && <Icon size={12} />} {isAr ? l.ar : l.en}
             </button>
           );
         })}
+        {(lane === "finance" || lane === "supply_chain") && (
+          <span className="flex flex-wrap items-center gap-1.5 ms-2 ps-3 border-s border-line">
+            {CATEGORIES[lane].map((c) => (
+              <button
+                key={c.id}
+                onClick={() => setCategory(category === c.id ? null : c.id)}
+                className={`px-2 py-1 rounded font-mono text-[10px] transition-colors ${category === c.id ? "bg-gold/15 text-gold" : "text-fg-3 hover:text-fg"}`}
+              >
+                {isAr ? c.ar : c.en}
+              </button>
+            ))}
+          </span>
+        )}
       </div>
 
-      {/* ARTICLES GRID */}
-      {loading ? (
-        <div className="py-16 text-center font-mono text-xs text-fg-3 flex flex-col items-center gap-3">
-          <RefreshCw size={20} className="animate-spin text-emerald" />
-          <span>{isAr ? "جاري تحميل البث المباشر..." : "CONNECTING TO GCC NEWS WIRE..."}</span>
-        </div>
-      ) : filteredArticles.length === 0 ? (
-        <div className="p-12 text-center bg-ink-2 border border-line rounded-lg font-mono text-xs text-fg-3">
-          {isAr ? "لا توجد أخبار متاحة في هذا التصنيف حاليًا." : "No news items in selected category."}
-        </div>
-      ) : (
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-          {filteredArticles.map((article) => (
-            <div
-              key={article.id}
-              className="card-nav p-6 flex flex-col justify-between group"
-            >
-              <div>
-                <div className="flex justify-between items-center mb-3">
-                  <span className="px-2 py-0.5 rounded text-[10px] font-mono font-bold bg-ink-4 text-fg-2 uppercase border border-line">
-                    {article.category}
-                  </span>
-                  <span className="text-[10px] font-mono text-fg-3">
-                    {new Date(article.publishedAt).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
-                  </span>
-                </div>
-
-                <h3 className="font-serif text-base font-bold text-fg group-hover:text-emerald transition-colors leading-snug mb-2">
-                  {isAr && article.titleAr ? article.titleAr : article.title}
-                </h3>
-
-                <p className="text-xs text-fg-2 leading-relaxed font-sans line-clamp-3">
-                  {article.summary}
-                </p>
-              </div>
-
-              <div className="border-t border-line pt-3 mt-4 flex justify-between items-center text-xs font-mono">
-                <span className="text-fg-3 font-medium">{article.source}</span>
-                <a
-                  href={article.url}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="flex items-center gap-1 text-emerald hover:underline font-bold"
-                >
-                  <span>{isAr ? "قراءة التقرير" : "Full Story"}</span>
-                  <ExternalLink size={12} />
-                </a>
-              </div>
-            </div>
+      <div className="panel-data divide-y divide-line">
+        {loading && articles.length === 0 &&
+          Array.from({ length: 8 }).map((_, i) => (
+            <div key={i} className="p-4 flex gap-5 animate-pulse"><span className="h-3 w-10 bg-ink-4 rounded" /><span className="h-3 flex-1 bg-ink-4 rounded" /></div>
           ))}
-        </div>
-      )}
+
+        {!loading && visible.length === 0 && (
+          <div className="p-10 text-center">
+            <p className="text-fg-2">{error ?? (isAr ? "لا توجد عناوين في هذا التصنيف." : "No headlines in this lane right now.")}</p>
+            {error && <p className="mt-1 font-mono text-[11px] text-fg-3">{isAr ? "أضف MARKETAUX_API_KEY أو اسمح للخادم بالوصول إلى news.google.com" : "Set MARKETAUX_API_KEY or allow the server to reach news.google.com"}</p>}
+          </div>
+        )}
+
+        {visible.map((a) => (
+          <a key={a.id} href={a.url} target="_blank" rel="noreferrer" className="group p-4 grid grid-cols-[52px_1fr_auto] gap-4 items-start hover:bg-emerald/5 transition-colors">
+            <span className="font-mono text-[10px] text-fg-3 pt-0.5">{timeAgo(a.publishedAt, isAr)}</span>
+            <span>
+              <span className="block text-[14px] text-fg leading-snug group-hover:text-emerald-light transition-colors">{isAr && a.titleAr ? a.titleAr : a.title}</span>
+              <span className="mt-1 flex items-center gap-2 font-mono text-[10px] text-fg-3">
+                <span className={a.lane === "supply_chain" ? "text-gold" : "text-emerald-light"}>{a.lane === "supply_chain" ? "SC" : "FIN"}</span>
+                <span>{a.category.replace(/_/g, " ").toLowerCase()}</span>
+                <span>·</span>
+                <span>{a.source}</span>
+              </span>
+            </span>
+            <ExternalLink size={13} className="text-fg-4 group-hover:text-emerald-light mt-1" />
+          </a>
+        ))}
+      </div>
     </motion.div>
   );
 }
+

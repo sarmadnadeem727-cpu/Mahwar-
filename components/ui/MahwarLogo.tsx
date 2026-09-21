@@ -142,3 +142,4 @@ const MahwarLogo = ({ size = 120, animate = true, className = "" }: MahwarLogoPr
 };
 
 export default MahwarLogo;
+

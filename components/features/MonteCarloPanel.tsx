@@ -490,3 +490,4 @@ export default function MonteCarloPanel() {
     </motion.div>
   );
 }
+

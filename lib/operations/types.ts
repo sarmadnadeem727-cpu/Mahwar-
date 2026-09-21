@@ -300,3 +300,4 @@ export interface CandidateLocation {
   totalWeightedDistance?: number;
   rank?: number;
 }
+

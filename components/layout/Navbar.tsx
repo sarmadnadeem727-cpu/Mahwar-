@@ -2,7 +2,7 @@
 
 import React, { useEffect, useState } from "react";
 import Link from "next/link";
-import { AnimatePresence, motion } from "framer-motion";
+import { AnimatePresence, motion, useScroll, useSpring } from "framer-motion";
 import { Globe, Menu, X, ArrowRight } from "lucide-react";
 import { useTerminalStore } from "@/store/useTerminalStore";
 import MahwarLogo from "@/components/ui/MahwarLogo";
@@ -20,6 +20,8 @@ export default function Navbar() {
   const [open, setOpen] = useState(false);
   const { language, setLanguage } = useTerminalStore();
   const isAr = language === "ar";
+  const { scrollYProgress } = useScroll();
+  const progress = useSpring(scrollYProgress, { stiffness: 140, damping: 30, mass: 0.4 });
 
   useEffect(() => {
     const onScroll = () => setScrolled(window.scrollY > 24);
@@ -35,6 +37,7 @@ export default function Navbar() {
       }`}
       dir={isAr ? "rtl" : "ltr"}
     >
+      <motion.div style={{ scaleX: progress }} className="absolute bottom-0 left-0 right-0 h-px bg-emerald-light origin-left" aria-hidden="true" />
       <div className="max-w-7xl mx-auto px-6 flex items-center justify-between">
         <Link href="/" className="flex items-center gap-3 group">
           <MahwarLogo size={34} animate={false} />
@@ -110,3 +113,4 @@ export default function Navbar() {
     </nav>
   );
 }
+

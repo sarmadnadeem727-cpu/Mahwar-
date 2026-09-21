@@ -113,3 +113,4 @@ export function generateScorecardAudit(criteria: ScorecardCriterion[], rankings:
     ],
   };
 }
+

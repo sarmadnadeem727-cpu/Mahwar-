@@ -149,3 +149,4 @@ export default function CommandPalette({ isOpen, onClose, tools = TOOLS }: Comma
     </AnimatePresence>
   );
 }
+

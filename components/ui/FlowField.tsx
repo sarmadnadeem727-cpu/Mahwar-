@@ -278,3 +278,4 @@ export default function FlowField({ className = "", density = 1, fadeSide = "non
 
   return <canvas ref={canvasRef} className={`block w-full h-full ${className}`} aria-hidden="true" />;
 }
+

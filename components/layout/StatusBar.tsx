@@ -3,6 +3,7 @@
 import React, { useEffect, useState } from "react";
 import { useTerminalStore } from "@/store/useTerminalStore";
 import { getTool } from "@/lib/registry";
+import MarketClock from "@/components/ui/MarketClock";
 
 /** Bottom status strip: clock, session facts, recent modules and shortcut hints. */
 export default function StatusBar() {
@@ -35,6 +36,7 @@ export default function StatusBar() {
           {isAr ? "الرياض" : "Riyadh"} <span className="text-fg-2 num">{now}</span>
         </span>
         <span className="hidden sm:inline shrink-0">{currency}</span>
+        <MarketClock isAr={isAr} compact className="hidden xl:flex shrink-0" />
         <span className="hidden sm:inline shrink-0">
           {Object.keys(sessionAnalyses).length} {isAr ? "تحليلات محفوظة" : "analyses in session"}
         </span>
@@ -59,3 +61,4 @@ export default function StatusBar() {
     </footer>
   );
 }
+

@@ -21,3 +21,4 @@ export default function InlineError({ message, className = "", isAr = false }: I
     </div>
   );
 }
+

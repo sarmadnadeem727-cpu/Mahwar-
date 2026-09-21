@@ -173,3 +173,4 @@ export function generateSafetyStockAudit(inputs: SafetyStockInputs, outputs: Saf
     ],
   };
 }
+

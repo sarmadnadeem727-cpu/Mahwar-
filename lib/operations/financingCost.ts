@@ -65,3 +65,4 @@ export function generateWCFinancingAudit(inputs: WCFinancingInputs, outputs: WCF
     ],
   };
 }
+

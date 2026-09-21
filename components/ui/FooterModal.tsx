@@ -442,3 +442,4 @@ const FooterModal = ({ isOpen, onClose, type }: FooterModalProps) => {
 
 export default FooterModal;
 
+

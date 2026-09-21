@@ -10,7 +10,7 @@ import {
   Columns, Newspaper, ShieldCheck, BarChart3, Layers, FileSpreadsheet, FileText,
   Table, Dices, Calculator, FileCheck, Coins, Handshake, Activity, RefreshCw,
   DollarSign, PackageCheck, ShieldAlert, Grid3X3, TrendingUp, Ship, Award, MapPin,
-  LayoutDashboard, Sparkles,
+  LayoutDashboard, Sparkles, Map, Landmark, CalendarClock, Scale, Boxes, Waves, Route,
 } from "lucide-react";
 import type { PanelType, SessionAnalyses } from "@/store/useTerminalStore";
 
@@ -58,6 +58,7 @@ export const CLUSTERS: Record<string, Cluster> = {
   planning: { id: "planning", en: "Planning & forecasting", ar: "التخطيط والتنبؤ" },
   cost: { id: "cost", en: "Cost & sourcing", ar: "التكلفة والتوريد" },
   network: { id: "network", en: "Network logistics", ar: "شبكة اللوجستيات" },
+  debt: { id: "debt", en: "Debt & fixed income", ar: "الدين والدخل الثابت" },
 };
 
 export interface ToolDef {
@@ -180,6 +181,28 @@ export const TOOLS: ToolDef[] = [
     keywords: ["custom model", "spreadsheet", "formula", "excel", "نموذج"],
   },
 
+  {
+    id: "sukuk", code: "SUK", suite: "finance", cluster: "debt", icon: Landmark, tag: "ISLAMIC", sessionKey: "sukuk",
+    en: "Sukuk pricer", ar: "مسعّر الصكوك",
+    descEn: "Price, duration and convexity of a fixed-profit sukuk from its distribution schedule and market yield.",
+    descAr: "سعر ومدة وتحدب صك ثابت الربح من جدول توزيعاته وعائد السوق.",
+    keywords: ["sukuk", "bond", "yield", "duration", "convexity", "fixed income", "صكوك"],
+  },
+  {
+    id: "debt_schedule", code: "AMORT", suite: "finance", cluster: "debt", icon: CalendarClock, tag: "FACILITY", sessionKey: "debtSchedule",
+    en: "Debt & murabaha schedule", ar: "جدول سداد التمويل",
+    descEn: "Annuity, equal-principal or bullet repayment schedules with grace periods and all-in APR including fees.",
+    descAr: "جداول سداد بقسط ثابت أو أصل متساوٍ أو دفعة واحدة مع فترات سماح والتكلفة الشاملة.",
+    keywords: ["amortization", "loan", "murabaha", "schedule", "apr", "repayment", "تمويل"],
+  },
+  {
+    id: "breakeven", code: "CVP", suite: "finance", cluster: "statements", icon: Scale, tag: "CVP", sessionKey: "breakeven",
+    en: "Break-even & operating leverage", ar: "نقطة التعادل والرفع التشغيلي",
+    descEn: "Cost-volume-profit: break-even units, margin of safety, degree of operating leverage and target-profit volume.",
+    descAr: "تحليل التكلفة والحجم والربح: وحدات التعادل وهامش الأمان ودرجة الرفع التشغيلي.",
+    keywords: ["break even", "breakeven", "cvp", "contribution", "leverage", "تعادل"],
+  },
+
   // ---------------- Operations ----------------
   {
     id: "ccc", code: "CCC", suite: "operations", cluster: "working_capital", icon: RefreshCw, tag: "WORKING CAP", sessionKey: "ccc",
@@ -259,6 +282,35 @@ export const TOOLS: ToolDef[] = [
     keywords: ["facility", "location", "gravity", "hub", "distribution", "موقع"],
   },
 
+  {
+    id: "newsvendor", code: "NV", suite: "operations", cluster: "inventory", icon: Boxes, tag: "SINGLE PERIOD", sessionKey: "newsvendor",
+    en: "Newsvendor order model", ar: "نموذج بائع الصحف",
+    descEn: "Optimal one-shot order under uncertain demand via the critical ratio, with expected profit and fill rate.",
+    descAr: "الكمية المثلى لطلب واحد تحت طلب غير مؤكد عبر النسبة الحرجة مع الربح المتوقع.",
+    keywords: ["newsvendor", "critical ratio", "seasonal", "perishable", "single period", "بائع الصحف"],
+  },
+  {
+    id: "bullwhip", code: "WHIP", suite: "operations", cluster: "planning", icon: Waves, tag: "SIMULATION", sessionKey: "bullwhip",
+    en: "Bullwhip effect simulator", ar: "محاكي تأثير السوط",
+    descEn: "Order-variance amplification across up to six tiers under order-up-to policies and moving-average forecasts.",
+    descAr: "تضخيم تباين الطلبات عبر ستة مستويات تحت سياسات الطلب حتى المستوى.",
+    keywords: ["bullwhip", "variance", "amplification", "tiers", "beer game", "السوط"],
+  },
+  {
+    id: "transport_mode", code: "MODE", suite: "operations", cluster: "network", icon: Route, tag: "SEA · AIR · RAIL", sessionKey: "transportMode",
+    en: "Transport mode comparison", ar: "مقارنة وسائل النقل",
+    descEn: "Total logistics cost by mode: freight, in-transit carrying, transit-driven safety stock and carbon.",
+    descAr: "التكلفة اللوجستية الكلية لكل وسيلة: الشحن وحمل المخزون في الطريق ومخزون الأمان والكربون.",
+    keywords: ["transport", "mode", "sea", "air", "rail", "freight", "carbon", "نقل"],
+  },
+  {
+    id: "network_map", code: "MAP", suite: "operations", cluster: "network", icon: Map, tag: "CONTROL TOWER", sessionKey: "corridor",
+    en: "Corridor planner", ar: "مخطط الممرات",
+    descEn: "Real Gulf map: pick two hubs and a mode to get distance, door-to-door days, freight plus in-transit carrying cost, and CO₂.",
+    descAr: "خريطة خليجية حقيقية: اختر مركزين ووسيلة لتحصل على المسافة والأيام والتكلفة والانبعاثات.",
+    keywords: ["map", "corridor", "route", "control tower", "transit", "freight", "خريطة", "ممر"],
+  },
+
   // ---------------- Research ----------------
   {
     id: "shariah", code: "AAOIFI", suite: "research", icon: ShieldCheck, tag: "COMPLIANCE", sessionKey: "shariah",
@@ -303,3 +355,4 @@ export function isPanelType(value: string | null | undefined): value is PanelTyp
 }
 
 export const FEATURE_ICON = Sparkles;
+

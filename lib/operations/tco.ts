@@ -74,3 +74,4 @@ export function generateTcoAudit(option: TcoOption, calc: TcoCalculation): Audit
     ],
   };
 }
+

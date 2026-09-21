@@ -64,7 +64,7 @@ export default function Sidebar() {
               {items.map((tool) => {
                 const Icon = tool.icon;
                 const active = activePanel === tool.id;
-                const showCluster = expanded && tool.cluster && tool.cluster !== lastCluster && suite.id === "operations";
+                const showCluster = expanded && tool.cluster && tool.cluster !== lastCluster && suite.id !== "platform";
                 lastCluster = tool.cluster;
                 return (
                   <React.Fragment key={tool.id}>
@@ -165,3 +165,4 @@ export default function Sidebar() {
     </>
   );
 }
+

@@ -399,3 +399,4 @@ export type TranslationKey = keyof typeof translations.en;
 export function t(key: TranslationKey, lang: Language = 'en'): string {
   return translations[lang]?.[key] || translations['en'][key] || key;
 }
+

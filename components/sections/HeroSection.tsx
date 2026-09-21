@@ -2,7 +2,7 @@
 
 import React, { useEffect, useRef } from "react";
 import Link from "next/link";
-import { motion, useScroll, useTransform } from "framer-motion";
+import { motion, useScroll, useTransform, useMotionValue, useSpring } from "framer-motion";
 import { animate, stagger } from "animejs";
 import { ArrowRight, ChevronDown } from "lucide-react";
 import FlowField from "@/components/ui/FlowField";
@@ -20,6 +20,17 @@ export default function HeroSection() {
   const { scrollY } = useScroll();
   const bgY = useTransform(scrollY, [0, 800], [0, 120]);
   const copyOpacity = useTransform(scrollY, [0, 500], [1, 0]);
+
+  // Pointer parallax for the terminal card and the compass behind it.
+  const mx = useMotionValue(0);
+  const my = useMotionValue(0);
+  const rx = useSpring(useTransform(my, [-0.5, 0.5], [6, -6]), { stiffness: 120, damping: 20 });
+  const ry = useSpring(useTransform(mx, [-0.5, 0.5], [-8, 8]), { stiffness: 120, damping: 20 });
+  const onPointer = (e: React.PointerEvent<HTMLElement>) => {
+    const r = e.currentTarget.getBoundingClientRect();
+    mx.set((e.clientX - r.left) / r.width - 0.5);
+    my.set((e.clientY - r.top) / r.height - 0.5);
+  };
 
   const financeCount = toolsBySuite("finance").length;
   const opsCount = toolsBySuite("operations").length;
@@ -59,6 +70,7 @@ export default function HeroSection() {
     <section
       className="relative min-h-[100svh] flex flex-col justify-end overflow-hidden bg-ink-1 grain"
       dir={isAr ? "rtl" : "ltr"}
+      onPointerMove={onPointer}
     >
       {/* Layer 0 — optional footage, kept very dark so it reads as atmosphere */}
       <motion.div style={{ y: bgY }} className="absolute inset-0 pointer-events-none">
@@ -139,8 +151,19 @@ export default function HeroSection() {
             </dl>
           </div>
 
-          <div data-hero-rest className="opacity-0 lg:col-span-5 lg:pb-2">
-            <LiveTerminal />
+          <div data-hero-rest className="opacity-0 lg:col-span-5 lg:pb-2 relative" style={{ perspective: 1200 }}>
+            {/* Compass rose — a nod to Gulf navigation, turning very slowly behind the card */}
+            <svg viewBox="0 0 400 400" className="absolute -inset-16 w-[calc(100%+8rem)] h-auto pointer-events-none opacity-[0.28] animate-[spin_180s_linear_infinite]" aria-hidden="true">
+              <circle cx="200" cy="200" r="190" fill="none" stroke="var(--emerald)" strokeWidth="0.5" strokeDasharray="2 6" />
+              <circle cx="200" cy="200" r="150" fill="none" stroke="var(--gold)" strokeWidth="0.5" strokeDasharray="1 9" />
+              {Array.from({ length: 32 }).map((_, k) => (
+                <line key={k} x1="200" y1="10" x2="200" y2={k % 8 === 0 ? 34 : k % 4 === 0 ? 24 : 16} stroke={k % 8 === 0 ? "var(--gold)" : "var(--emerald)"} strokeWidth={k % 8 === 0 ? 1.2 : 0.6} transform={`rotate(${k * 11.25} 200 200)`} />
+              ))}
+              <path d="M200,40 L212,200 L200,360 L188,200 Z M40,200 L200,188 L360,200 L200,212 Z" fill="none" stroke="var(--emerald)" strokeWidth="0.6" />
+            </svg>
+            <motion.div style={{ rotateX: rx, rotateY: ry, transformStyle: "preserve-3d" }}>
+              <LiveTerminal />
+            </motion.div>
           </div>
         </motion.div>
       </div>
@@ -155,3 +178,4 @@ export default function HeroSection() {
     </section>
   );
 }
+

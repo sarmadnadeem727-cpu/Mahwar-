@@ -31,7 +31,15 @@ export type PanelType =
   | "landed_cost"
   | "tco"
   | "supplier_scorecard"
-  | "facility_location";
+  | "facility_location"
+  // v3.1 engines
+  | "sukuk"
+  | "debt_schedule"
+  | "breakeven"
+  | "newsvendor"
+  | "bullwhip"
+  | "transport_mode"
+  | "network_map";
 
 export interface CustomModelRow {
   id: string;
@@ -70,6 +78,14 @@ export interface SessionAnalyses {
   tco?: { inputs: any; outputs: any; computedAt: string };
   supplierScorecard?: { inputs: any; outputs: any; computedAt: string };
   facilityLocation?: { inputs: any; outputs: any; computedAt: string };
+  // v3.1 engines
+  sukuk?: { inputs: any; outputs: any; computedAt: string };
+  debtSchedule?: { inputs: any; outputs: any; computedAt: string };
+  breakeven?: { inputs: any; outputs: any; computedAt: string };
+  newsvendor?: { inputs: any; outputs: any; computedAt: string };
+  bullwhip?: { inputs: any; outputs: any; computedAt: string };
+  transportMode?: { inputs: any; outputs: any; computedAt: string };
+  corridor?: { inputs: any; outputs: any; computedAt: string };
 }
 
 interface TerminalState {
@@ -153,4 +169,5 @@ export const useTerminalStore = create<TerminalState>()(
     }
   )
 );
+
 

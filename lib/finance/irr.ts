@@ -66,3 +66,4 @@ export function computeIrr(cfs: number[]): { irr: number | null; warning?: strin
       : undefined,
   };
 }
+

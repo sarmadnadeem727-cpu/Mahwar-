@@ -1,4 +1,18 @@
-import { NextResponse } from "next/server";
+import { NextRequest, NextResponse } from "next/server";
+
+/**
+ * /api/news — two lanes, one wire.
+ *   finance      : GCC capital markets, Tadawul, sukuk, central banks
+ *   supply_chain : ports, shipping, logistics, freight, NEOM, Etihad Rail, procurement
+ *
+ * Provider order: Marketaux (if MARKETAUX_API_KEY) → Google News RSS → honest empty.
+ * Every article is tagged with a lane and a finer category derived from its title.
+ */
+
+export type NewsLane = "finance" | "supply_chain";
+export type NewsCategory =
+  | "GCC" | "SAUDI" | "MACRO" | "ISLAMIC_FINANCE"
+  | "PORTS_SHIPPING" | "LOGISTICS" | "PROCUREMENT" | "INDUSTRY";
 
 export interface NewsArticle {
   id: string;
@@ -8,105 +22,150 @@ export interface NewsArticle {
   source: string;
   url: string;
   publishedAt: string;
-  category: "GCC" | "SAUDI" | "MACRO" | "ISLAMIC_FINANCE";
+  lane: NewsLane;
+  category: NewsCategory;
 }
 
-function parseRssXml(xml: string): NewsArticle[] {
-  const articles: NewsArticle[] = [];
-  const itemMatches = xml.match(/<item>[\s\S]*?<\/item>/gi) || [];
+/** Several searches per lane, merged and de-duplicated, for breadth. */
+const RSS_QUERIES: Record<NewsLane, string[]> = {
+  finance: [
+    "Saudi Tadawul OR GCC capital markets OR Gulf stocks",
+    "sukuk OR Islamic finance OR SAMA OR Gulf central bank",
+    "DFM OR ADX OR Qatar Stock Exchange OR Boursa Kuwait IPO",
+  ],
+  supply_chain: [
+    "GCC supply chain OR Saudi logistics OR Middle East logistics",
+    "Jebel Ali OR DP World OR Mawani OR Hamad Port OR Gulf shipping freight",
+    "Red Sea shipping OR Suez Canal OR Strait of Hormuz tanker container",
+    "Etihad Rail OR Saudi Landbridge OR NEOM Oxagon OR Gulf warehousing procurement",
+  ],
+};
 
-  itemMatches.slice(0, 12).forEach((itemXml, idx) => {
-    const titleMatch = itemXml.match(/<title>(.*?)<\/title>/i);
-    const linkMatch = itemXml.match(/<link>(.*?)<\/link>/i);
-    const pubDateMatch = itemXml.match(/<pubDate>(.*?)<\/pubDate>/i);
-    const sourceMatch = itemXml.match(/<source[^>]*>(.*?)<\/source>/i);
+const FINANCE_RULES: [RegExp, NewsCategory][] = [
+  [/sukuk|islamic|shariah|takaful|murabaha/i, "ISLAMIC_FINANCE"],
+  [/saudi|tadawul|aramco|riyadh|pif\b|sama\b/i, "SAUDI"],
+  [/oil|opec|brent|energy|inflation|gdp|central bank|rate/i, "MACRO"],
+];
+const SUPPLY_RULES: [RegExp, NewsCategory][] = [
+  [/port|shipping|vessel|container|jebel ali|hormuz|red sea|suez|maritime|tanker/i, "PORTS_SHIPPING"],
+  [/procure|tender|supplier|sourcing|contract award/i, "PROCUREMENT"],
+  [/factory|manufactur|industrial|plant|neom|oxagon|mining/i, "INDUSTRY"],
+];
 
-    const rawTitle = titleMatch ? titleMatch[1].replace(/<!\[CDATA\[(.*?)\]\]>/gi, "$1") : "GCC Financial Update";
-    const link = linkMatch ? linkMatch[1] : "https://news.google.com";
-    const pubDate = pubDateMatch ? new Date(pubDateMatch[1]).toISOString() : new Date().toISOString();
-    const source = sourceMatch ? sourceMatch[1] : "Google News GCC";
+function categorise(title: string, lane: NewsLane): NewsCategory {
+  const rules = lane === "finance" ? FINANCE_RULES : SUPPLY_RULES;
+  const hit = rules.find(([re]) => re.test(title));
+  return hit ? hit[1] : lane === "finance" ? "GCC" : "LOGISTICS";
+}
 
-    // Clean title & source
-    const cleanTitle = rawTitle.replace(/ - [^-]+$/, "").trim();
+function decode(s: string) {
+  return s
+    .replace(/<!\[CDATA\[(.*?)\]\]>/gis, "$1")
+    .replace(/&amp;/g, "&").replace(/&#39;|&apos;/g, "'").replace(/&quot;/g, '"').replace(/&lt;/g, "<").replace(/&gt;/g, ">")
+    .trim();
+}
 
-    let cat: "GCC" | "SAUDI" | "MACRO" | "ISLAMIC_FINANCE" = "GCC";
-    if (cleanTitle.toLowerCase().includes("saudi") || cleanTitle.toLowerCase().includes("tadawul") || cleanTitle.toLowerCase().includes("aramco")) {
-      cat = "SAUDI";
-    } else if (cleanTitle.toLowerCase().includes("sukuk") || cleanTitle.toLowerCase().includes("islamic")) {
-      cat = "ISLAMIC_FINANCE";
-    } else if (cleanTitle.toLowerCase().includes("energy") || cleanTitle.toLowerCase().includes("oil")) {
-      cat = "MACRO";
-    }
-
-    articles.push({
-      id: `rss-${idx}-${Date.now()}`,
-      title: cleanTitle,
-      summary: cleanTitle,
-      source: source,
+function parseRss(xml: string, lane: NewsLane): NewsArticle[] {
+  const items = xml.match(/<item>[\s\S]*?<\/item>/gi) || [];
+  return items.slice(0, 15).map((item, idx) => {
+    const title = decode(item.match(/<title>([\s\S]*?)<\/title>/i)?.[1] ?? "");
+    const link = decode(item.match(/<link>([\s\S]*?)<\/link>/i)?.[1] ?? "");
+    const pub = item.match(/<pubDate>([\s\S]*?)<\/pubDate>/i)?.[1];
+    const source = decode(item.match(/<source[^>]*>([\s\S]*?)<\/source>/i)?.[1] ?? "Google News");
+    const clean = title.replace(/ - [^-]+$/, "").trim();
+    return {
+      id: `${lane}-${idx}-${Buffer.from(link).toString("base64url").slice(0, 12)}`,
+      title: clean,
+      summary: clean,
+      source,
       url: link,
-      publishedAt: pubDate,
-      category: cat,
-    });
-  });
+      publishedAt: pub ? new Date(pub).toISOString() : new Date().toISOString(),
+      lane,
+      category: categorise(clean, lane),
+    };
+  }).filter((a) => a.title && a.url);
+}
 
-  return articles;
+async function fromMarketaux(key: string, lane: NewsLane): Promise<NewsArticle[]> {
+  const params = new URLSearchParams({
+    api_token: key,
+    countries: "sa,ae,qa,kw,bh,om",
+    language: "en",
+    limit: "12",
+    filter_entities: "true",
+  });
+  if (lane === "supply_chain") params.set("search", "port | shipping | logistics | freight | supply chain");
+  const res = await fetch(`https://api.marketaux.com/v1/news/all?${params}`, { next: { revalidate: 300 } });
+  if (!res.ok) return [];
+  const data = await res.json();
+  return (data?.data ?? []).map((it: any, i: number) => ({
+    id: it.uuid || `mx-${lane}-${i}`,
+    title: it.title || "",
+    summary: it.description || it.snippet || "",
+    source: it.source || "Marketaux",
+    url: it.url || "",
+    publishedAt: it.published_at || new Date().toISOString(),
+    lane,
+    category: categorise(it.title || "", lane),
+  })).filter((a: NewsArticle) => a.title && a.url);
+}
+
+async function fromRss(lane: NewsLane): Promise<NewsArticle[]> {
+  const batches = await Promise.all(
+    RSS_QUERIES[lane].map(async (query) => {
+      try {
+        const res = await fetch(`https://news.google.com/rss/search?q=${encodeURIComponent(query)}&hl=en-US&gl=US&ceid=US:en`, { next: { revalidate: 300 } });
+        return res.ok ? parseRss(await res.text(), lane) : [];
+      } catch {
+        return [];
+      }
+    })
+  );
+  const seen = new Set<string>();
+  return batches.flat().filter((a) => {
+    const k = a.title.toLowerCase().replace(/[^a-z0-9]+/g, " ").trim();
+    if (seen.has(k)) return false;
+    seen.add(k);
+    return true;
+  });
+}
+
+async function loadLane(lane: NewsLane, key?: string): Promise<{ articles: NewsArticle[]; provider: string | null }> {
+  if (key) {
+    try {
+      const list = await fromMarketaux(key, lane);
+      if (list.length) return { articles: list, provider: "Marketaux" };
+    } catch (e) {
+      console.warn(`[news] marketaux ${lane} failed`, e);
+    }
+  }
+  try {
+    const list = await fromRss(lane);
+    if (list.length) return { articles: list, provider: "Google News RSS" };
+  } catch (e) {
+    console.warn(`[news] rss ${lane} failed`, e);
+  }
+  return { articles: [], provider: null };
 }
 
 export const revalidate = 300;
 
-export async function GET() {
-  const marketauxKey = process.env.MARKETAUX_API_KEY;
+export async function GET(req: NextRequest) {
+  const laneParam = req.nextUrl.searchParams.get("lane");
+  const lanes: NewsLane[] = laneParam === "finance" || laneParam === "supply_chain" ? [laneParam] : ["finance", "supply_chain"];
+  const key = process.env.MARKETAUX_API_KEY || undefined;
 
-  if (marketauxKey) {
-    try {
-      const res = await fetch(
-        `https://api.marketaux.com/v1/news/all?countries=sa,ae,qa,kw,bh,om&filter_entities=true&limit=12&api_token=${marketauxKey}`,
-        { next: { revalidate: 300 } }
-      );
-      if (res.ok) {
-        const data = await res.json();
-        if (data?.data && Array.isArray(data.data) && data.data.length > 0) {
-          const articles: NewsArticle[] = data.data.map((item: any, i: number) => ({
-            id: item.uuid || `m-${i}`,
-            title: item.title || "GCC Market Update",
-            summary: item.description || item.snippet || "GCC financial news coverage.",
-            source: item.source || "Marketaux GCC",
-            url: item.url || "#",
-            publishedAt: item.published_at || new Date().toISOString(),
-            category: "GCC",
-          }));
-          return NextResponse.json({ articles, provider: "Marketaux GCC Wire" });
-        }
-      }
-    } catch (err) {
-      console.warn("Marketaux API error, falling back to RSS wire:", err);
-    }
-  }
+  const results = await Promise.all(lanes.map((l) => loadLane(l, key)));
+  const articles = results
+    .flatMap((r) => r.articles)
+    .sort((a, b) => new Date(b.publishedAt).getTime() - new Date(a.publishedAt).getTime());
+  const providers = Array.from(new Set(results.map((r) => r.provider).filter(Boolean))) as string[];
 
-  // Live Google News RSS Wire for GCC & Tadawul capital markets
-  try {
-    const rssRes = await fetch(
-      "https://news.google.com/rss/search?q=Saudi+Tadawul+GCC+capital+markets&hl=en-US&gl=US&ceid=US:en",
-      { next: { revalidate: 300 } }
-    );
-
-    if (rssRes.ok) {
-      const xmlText = await rssRes.text();
-      const articles = parseRssXml(xmlText);
-      if (articles.length > 0) {
-        return NextResponse.json({
-          articles,
-          provider: "Live GCC Capital Markets Wire",
-        });
-      }
-    }
-  } catch (err) {
-    console.warn("Failed to fetch RSS wire:", err);
-  }
-
-  // No provider reachable: say so honestly instead of serving canned headlines.
-  return NextResponse.json(
-    { articles: [], provider: null, error: "No news provider reachable. Set MARKETAUX_API_KEY or allow outbound access to news.google.com." },
-    { status: 200 }
-  );
+  return NextResponse.json({
+    articles,
+    provider: providers.length ? providers.join(" + ") : null,
+    lanes: Object.fromEntries(lanes.map((l, i) => [l, results[i].articles.length])),
+    error: articles.length ? null : "No news provider reachable. Set MARKETAUX_API_KEY or allow outbound access to news.google.com.",
+  });
 }
+

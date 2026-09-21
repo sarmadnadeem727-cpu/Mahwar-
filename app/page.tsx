@@ -6,6 +6,7 @@ import HeroSection from "@/components/sections/HeroSection";
 import ThesisSection, { EngineTape } from "@/components/sections/ThesisSection";
 import ToolShowcase from "@/components/sections/ToolShowcase";
 import GCCMapSection from "@/components/sections/GCCMapSection";
+import GulfSceneSection from "@/components/sections/GulfSceneSection";
 import CapabilitiesBento from "@/components/sections/CapabilitiesBento";
 import NewsPreviewWidget from "@/components/sections/NewsPreviewWidget";
 import CTASection from "@/components/sections/CTASection";
@@ -21,6 +22,7 @@ export default function LandingPage() {
         <HeroSection />
         <EngineTape />
         <ThesisSection />
+        <GulfSceneSection />
         <ToolShowcase />
         <GCCMapSection />
         <CapabilitiesBento />
@@ -31,3 +33,4 @@ export default function LandingPage() {
     </div>
   );
 }
+

@@ -56,3 +56,4 @@ export const TERMINAL_CHART_THEME = {
   tooltipLabelStyle: { color: "#a7b9b2", marginBottom: 4 },
   tooltipItemStyle: { color: "#e8f1ed" },
 };
+

@@ -179,3 +179,4 @@ export default function DDMModel() {
     </motion.div>
   );
 }
+

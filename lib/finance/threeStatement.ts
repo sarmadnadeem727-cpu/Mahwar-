@@ -229,3 +229,4 @@ export function validateThreeStatement(is: IncomeStatement, bs: BalanceSheet, cf
     ratios,
   };
 }
+

@@ -383,3 +383,4 @@ export default function EconomicOrderQuantity() {
     </motion.div>
   );
 }
+

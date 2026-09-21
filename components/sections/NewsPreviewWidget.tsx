@@ -80,7 +80,7 @@ export default function NewsPreviewWidget() {
                 <span className="font-mono text-[10px] text-fg-3 w-16">{timeAgo(a.publishedAt, isAr)}</span>
                 <span className="text-[15px] text-fg leading-snug group-hover:text-emerald-light transition-colors">
                   {isAr && a.titleAr ? a.titleAr : a.title}
-                  <span className="block mt-1 font-mono text-[10px] text-fg-3">{a.source} · {a.category}</span>
+                  <span className="block mt-1 font-mono text-[10px] text-fg-3">{a.source} · {a.lane === "supply_chain" ? "supply chain" : "finance"}</span>
                 </span>
                 <ExternalLink size={13} className="text-fg-4 group-hover:text-emerald-light" />
               </a>
@@ -104,3 +104,4 @@ export default function NewsPreviewWidget() {
     </section>
   );
 }
+

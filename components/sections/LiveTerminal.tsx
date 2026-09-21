@@ -5,6 +5,8 @@ import { computeEOQ } from "@/lib/operations/eoq";
 import { computePeriodCCC } from "@/lib/operations/ccc";
 import { computeSafetyStock } from "@/lib/operations/safetyStock";
 import { computeIrr } from "@/lib/finance/irr";
+import { priceSukuk } from "@/lib/finance/sukuk";
+import { computeNewsvendor } from "@/lib/operations/newsvendor";
 import { useTerminalStore } from "@/store/useTerminalStore";
 
 /**
@@ -49,8 +51,19 @@ function buildScripts(): Script[] {
   });
 
   const irr = computeIrr([-1_850, 410, 470, 540, 610, 980]);
+  const suk = priceSukuk({ faceValue: 1000, profitRatePct: 5.25, yearsToMaturity: 5, frequency: 2, marketYieldPct: 5.9 });
+  const nv = computeNewsvendor({ unitCost: 38, sellingPrice: 65, salvageValue: 12, shortageCost: 8, meanDemand: 2400, demandStdDev: 520 });
 
   return [
+    {
+      cmd: "SUK GO",
+      lines: [
+        `face 1,000  profit 5.25% s/a  5y   yield 5.90%`,
+        `price ......... ${suk.price.toFixed(2)}  (${suk.pricePct.toFixed(2)}% of par)`,
+        `mod duration .. ${suk.modifiedDuration.toFixed(3)}   convexity ${suk.convexity.toFixed(2)}`,
+        `current yield . ${suk.currentYieldPct.toFixed(2)}%`,
+      ],
+    },
     {
       cmd: "EOQ GO",
       lines: [
@@ -76,6 +89,15 @@ function buildScripts(): Script[] {
         `z ............. ${ss.zScore.toFixed(3)}`,
         `safety stock .. ${fmt(ss.safetyStock)} units`,
         `reorder point . ${fmt(ss.reorderPoint)} units`,
+      ],
+    },
+    {
+      cmd: "NV GO",
+      lines: [
+        `c 38  p 65  salvage 12  penalty 8   μ 2,400 σ 520`,
+        `critical ratio  ${nv.criticalRatio.toFixed(3)}   z ${nv.z.toFixed(3)}`,
+        `order Q* ...... ${fmt(nv.optimalQty)} units`,
+        `E[profit] ..... ${fmt(nv.expectedProfit)}   fill ${nv.fillRatePct.toFixed(1)}%`,
       ],
     },
     {
@@ -175,3 +197,4 @@ export default function LiveTerminal({ className = "" }: { className?: string })
     </div>
   );
 }
+

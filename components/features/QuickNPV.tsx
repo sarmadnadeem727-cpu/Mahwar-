@@ -193,3 +193,4 @@ export default function QuickNPV() {
     </motion.div>
   );
 }
+

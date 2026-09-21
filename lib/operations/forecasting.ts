@@ -227,3 +227,4 @@ export function generateForecastAudit(method: ForecastMethod, outputs: ForecastO
     ],
   };
 }
+

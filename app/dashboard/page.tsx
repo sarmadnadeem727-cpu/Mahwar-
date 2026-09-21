@@ -57,6 +57,13 @@ const PANELS: Record<PanelType, React.ComponentType> = {
   tco: lazy(() => import("@/components/operations/TcoCalculator")),
   supplier_scorecard: lazy(() => import("@/components/operations/SupplierScorecard")),
   facility_location: lazy(() => import("@/components/operations/FacilityLocation")),
+  sukuk: lazy(() => import("@/components/engines/SukukPricer")),
+  debt_schedule: lazy(() => import("@/components/engines/DebtSchedule")),
+  breakeven: lazy(() => import("@/components/engines/BreakevenAnalysis")),
+  newsvendor: lazy(() => import("@/components/engines/NewsvendorModel")),
+  bullwhip: lazy(() => import("@/components/engines/BullwhipSimulator")),
+  transport_mode: lazy(() => import("@/components/engines/TransportModeCompare")),
+  network_map: lazy(() => import("@/components/engines/CorridorPlanner")),
 };
 
 function PanelContent() {
@@ -120,3 +127,4 @@ export default function DashboardPage() {
     </div>
   );
 }
+
