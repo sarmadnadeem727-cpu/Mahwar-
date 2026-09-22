@@ -8,6 +8,8 @@ import { useTerminalStore, CustomModelSaved, CustomModelRow } from "@/store/useT
 import { panelReveal } from "@/lib/motion";
 import NumberCounter from "@/components/ui/NumberCounter";
 
+import { TERMINAL_CHART_THEME as T } from "@/lib/chartTheme";
+
 const DEFAULT_INITIAL_MODEL: CustomModelSaved = {
   id: "model-default",
   name: "GCC Commercial Real Estate Model",
@@ -474,12 +476,12 @@ export default function CustomModelBuilder() {
             <ResponsiveContainer width="100%" height="100%">
               <ReLineChart data={chartData}>
                 <CartesianGrid strokeDasharray="3 3" stroke="rgba(158,190,180,0.14)" />
-                <XAxis dataKey="year" stroke="#a7b9b2" fontSize={10} tickLine={false} />
-                <YAxis stroke="#a7b9b2" fontSize={10} tickLine={false} />
+                <XAxis dataKey="year" stroke={T.colors.slate} fontSize={10} tickLine={false} />
+                <YAxis stroke={T.colors.slate} fontSize={10} tickLine={false} />
                 <Tooltip
-                  contentStyle={{ backgroundColor: "#0e161a", borderColor: "rgba(158,190,180,0.14)", borderRadius: "8px", fontSize: "12px", fontFamily: "var(--font-mono)" }}
+                  contentStyle={{ backgroundColor: T.colors.surface, borderColor: "rgba(158,190,180,0.14)", borderRadius: "8px", fontSize: "12px", fontFamily: "var(--font-mono)" }}
                 />
-                <Line type="monotone" dataKey="value" stroke="#17a88a" strokeWidth={3} dot={{ fill: "#17a88a", r: 4 }} />
+                <Line type="monotone" dataKey="value" stroke={T.colors.emerald} strokeWidth={3} dot={{ fill: T.colors.emerald, r: 4 }} />
               </ReLineChart>
             </ResponsiveContainer>
           </div>

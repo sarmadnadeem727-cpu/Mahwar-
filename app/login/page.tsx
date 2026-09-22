@@ -1,13 +1,14 @@
 "use client";
 
-import React, { Suspense, useEffect, useState } from "react";
+import React, { Suspense, useEffect, useRef, useState } from "react";
 import Link from "next/link";
 import { useSearchParams } from "next/navigation";
-import { motion } from "framer-motion";
 import { signIn } from "next-auth/react";
-import { ArrowRight, ShieldCheck, Lock, Fingerprint } from "lucide-react";
+import { ArrowRight, ShieldCheck, Lock, Fingerprint, EyeOff } from "lucide-react";
 import FlowField from "@/components/ui/FlowField";
 import MahwarLogo from "@/components/ui/MahwarLogo";
+import AxisMark, { addAxisMark } from "@/components/ui/AxisMark";
+import { timeline, addRise, stagger, prefersReducedMotion, settle, DURATION } from "@/lib/anime";
 import { useUser } from "@/lib/auth/useUser";
 import { useTerminalStore } from "@/store/useTerminalStore";
 import { APP, TOOLS } from "@/lib/registry";
@@ -34,7 +35,8 @@ const BOOT = [
   "auth ........... google oauth 2.0 / openid connect",
   "session ........ signed jwt · httpOnly · sameSite=lax",
   "transport ...... tls · hsts · csp strict",
-  "state .......... analyses stay in your browser",
+  "state .......... encrypted in this browser · never uploaded",
+  "telemetry ...... none",
 ];
 
 function LoginInner() {
@@ -45,14 +47,26 @@ function LoginInner() {
   const errorKey = params.get("error");
   const { loading, configured, user } = useUser();
   const [busy, setBusy] = useState(false);
-  const [lines, setLines] = useState<string[]>([]);
+  const rootRef = useRef<HTMLDivElement>(null);
 
+  // One timeline: the gate rises, the mark draws itself, the boot log prints,
+  // then the sign-in control and footer settle. Same vocabulary as the hero.
   useEffect(() => {
-    const reduced = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
-    if (reduced) { setLines(BOOT); return; }
-    const ids = BOOT.map((l, i) => window.setTimeout(() => setLines((p) => [...p, l]), 500 + i * 260));
-    return () => ids.forEach(clearTimeout);
-  }, []);
+    const root = rootRef.current;
+    if (!root) return;
+    if (prefersReducedMotion()) {
+      settle(root, ["[data-gate-panel]", "[data-boot-line]", "[data-gate-rest]", "[data-mark-node]"]);
+      return;
+    }
+    const tl = timeline();
+    tl.add(root.querySelectorAll("[data-gate-panel]"), { opacity: [0, 1], translateY: [28, 0], filter: ["blur(10px)", "blur(0px)"], duration: DURATION.slow }, 0);
+    addAxisMark(tl, root, "-=1000");
+    addRise(tl, root.querySelectorAll("[data-gate-head]"), { y: 14, each: 110, position: "-=1100" });
+    tl.add(root.querySelectorAll("[data-boot-line]"), { opacity: [0, 1], translateX: [isAr ? 8 : -8, 0], delay: stagger(170), duration: DURATION.fast, ease: "outQuad" }, "-=500");
+    tl.add(root.querySelectorAll("[data-boot-caret]"), { opacity: [0, 1], duration: 200 }, "-=100");
+    addRise(tl, root.querySelectorAll("[data-gate-rest]"), { y: 12, each: 90, position: "-=200" });
+    return () => { tl.cancel(); };
+  }, [isAr]);
 
   const callbackUrl = next && next.startsWith("/") && !next.startsWith("//") ? next : "/dashboard";
   const error = errorKey ? ERRORS[errorKey] ?? ERRORS.Default : null;
@@ -63,13 +77,8 @@ function LoginInner() {
       <div className="absolute inset-0 vignette pointer-events-none" />
       <div className="aurora absolute -top-1/3 left-1/2 -translate-x-1/2 w-[120vw] h-[80vh] pointer-events-none" aria-hidden="true" />
 
-      <motion.div
-        initial={{ opacity: 0, y: 24, filter: "blur(10px)" }}
-        animate={{ opacity: 1, y: 0, filter: "blur(0px)" }}
-        transition={{ duration: 0.9, ease: [0.16, 1, 0.3, 1] }}
-        className="relative w-full max-w-[440px]"
-      >
-        <div className="glass-panel rounded-[var(--radius-modal)] overflow-hidden shadow-[var(--shadow-modal)]">
+      <div ref={rootRef} className="relative w-full max-w-[440px]">
+        <div data-gate-panel className="opacity-0 glass-panel rounded-[var(--radius-modal)] overflow-hidden shadow-[var(--shadow-modal)]">
           <div className="h-10 px-4 flex items-center justify-between border-b border-line bg-ink-3/70 font-mono text-[10px] text-fg-3">
             <span className="flex items-center gap-2">
               <span className="w-2 h-2 rounded-full bg-emerald" /><span className="w-2 h-2 rounded-full bg-gold/70" /><span className="w-2 h-2 rounded-full bg-ink-5" />
@@ -79,34 +88,38 @@ function LoginInner() {
           </div>
 
           <div className="p-7 sm:p-8">
-            <Link href="/" className="flex items-center gap-3">
-              <MahwarLogo size={44} />
-              <div className="leading-none">
-                <div className="font-serif text-2xl text-fg">{APP.name}</div>
-                <div className="font-mono text-[9.5px] tracking-[0.3em] text-emerald-light mt-1.5">{APP.nameAr} · TERMINAL</div>
-              </div>
-            </Link>
+            <div className="flex items-start justify-between gap-4">
+              <Link href="/" data-gate-head className="opacity-0 flex items-center gap-3">
+                <MahwarLogo size={44} />
+                <div className="leading-none">
+                  <div className="font-serif text-2xl text-fg">{APP.name}</div>
+                  <div className="font-mono text-[9.5px] tracking-[0.3em] text-emerald-light mt-1.5">{APP.nameAr} · TERMINAL</div>
+                </div>
+              </Link>
+              <AxisMark size={56} className="shrink-0 -me-1" />
+            </div>
 
-            <h1 className={`mt-7 font-serif text-[28px] leading-tight text-fg ${isAr ? "font-cairo font-bold" : ""}`}>
+            <h1 data-gate-head className={`opacity-0 mt-7 font-serif text-[28px] leading-tight text-fg ${isAr ? "font-cairo font-bold" : ""}`}>
               {isAr ? "ادخل إلى المحطة" : "Sign in to the terminal"}
             </h1>
-            <p className="mt-2 text-[13px] text-fg-2 leading-relaxed">
+            <p data-gate-head className="opacity-0 mt-2 text-[13px] text-fg-2 leading-relaxed">
               {isAr
                 ? `حساب Google واحد يفتح ${TOOLS.length} محركاً للتمويل وسلاسل الإمداد. تحليلاتك تبقى في متصفحك.`
                 : `One Google account unlocks ${TOOLS.length} finance and supply-chain engines. Your analyses never leave your browser.`}
             </p>
 
-            <div className="mt-6 font-mono text-[11px] leading-relaxed text-fg-3 min-h-[88px]" dir="ltr">
-              {lines.map((l, i) => (
-                <div key={i} className={i === lines.length - 1 ? "text-fg-2" : ""}><span className="text-emerald-light me-2">{">"}</span>{l}</div>
+            <div className="mt-6 font-mono text-[11px] leading-relaxed text-fg-3" dir="ltr" aria-live="polite">
+              {BOOT.map((l, i) => (
+                <div key={i} data-boot-line className={`opacity-0 ${i === BOOT.length - 1 ? "text-fg-2" : ""}`}><span className="text-emerald-light me-2">{">"}</span>{l}</div>
               ))}
+              <span data-boot-caret className="opacity-0 inline-block ms-4 align-middle"><span className="block w-[6px] h-[11px] bg-emerald-light animate-blink" /></span>
             </div>
 
             {error && (
               <div className="mt-4 rounded border border-neg/40 bg-neg/10 px-3 py-2 text-[12px] text-neg" role="alert">{isAr ? error.ar : error.en}</div>
             )}
 
-            <div className="mt-6 space-y-3">
+            <div data-gate-rest className="opacity-0 mt-6 space-y-3">
               {loading ? (
                 <div className="h-12 rounded panel-data animate-pulse" />
               ) : configured ? (
@@ -138,11 +151,12 @@ function LoginInner() {
               )}
             </div>
 
-            <ul className="mt-7 grid grid-cols-3 gap-2 text-[10.5px] text-fg-3">
+            <ul data-gate-rest className="opacity-0 mt-7 grid grid-cols-2 sm:grid-cols-4 gap-2 text-[10.5px] text-fg-3">
               {[
                 { icon: Lock, en: "No passwords stored", ar: "لا كلمات مرور مخزنة" },
                 { icon: ShieldCheck, en: "Strict CSP + HSTS", ar: "سياسة أمان صارمة" },
                 { icon: Fingerprint, en: "7-day signed session", ar: "جلسة موقعة 7 أيام" },
+                { icon: EyeOff, en: "No analytics, ever", ar: "بلا تتبّع إطلاقاً" },
               ].map((f) => (
                 <li key={f.en} className="flex flex-col items-start gap-1.5 rounded border border-line bg-ink-2/60 p-2.5">
                   <f.icon size={13} className="text-emerald-light" />
@@ -153,10 +167,10 @@ function LoginInner() {
           </div>
         </div>
 
-        <p className="mt-5 text-center text-[11px] text-fg-4">
+        <p data-gate-rest className="opacity-0 mt-5 text-center text-[11px] text-fg-4">
           <Link href="/terms" className="hover:text-fg-2">{isAr ? "الشروط" : "Terms"}</Link> · <Link href="/privacy" className="hover:text-fg-2">{isAr ? "الخصوصية" : "Privacy"}</Link> · © {APP.author}
         </p>
-      </motion.div>
+      </div>
     </main>
   );
 }

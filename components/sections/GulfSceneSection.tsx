@@ -1,24 +1,27 @@
 "use client";
 
-import React, { useRef } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { motion, useScroll, useTransform } from "framer-motion";
 import { useTerminalStore } from "@/store/useTerminalStore";
 import { reveal, viewportOnce } from "@/lib/motion";
+import { timeline, addDraw, stagger, prefersReducedMotion, onceInView, DURATION } from "@/lib/anime";
 
 /**
  * GulfSceneSection — a parallax illustration of the Gulf economy: dunes,
  * a port with cranes, a container ship and tanker moving through, and a
- * skyline of abstract towers. Every layer moves at its own speed on scroll.
- * Pure SVG + CSS, no images.
+ * skyline of abstract towers. Every layer moves at its own speed on scroll
+ * (Framer Motion), and the first time the scene is visible it builds itself:
+ * towers rise from the ground line, the cranes draw on stroke by stroke, the
+ * dunes settle and the windows flicker awake (anime.js). Pure SVG + CSS.
  */
 
 const Tower = ({ x, w, h, cap = false }: { x: number; w: number; h: number; cap?: boolean }) => (
-  <g>
+  <g data-tower style={{ transformOrigin: `${x + w / 2}px 420px` }}>
     <rect x={x} y={420 - h} width={w} height={h} fill="url(#towerGrad)" stroke="rgba(158,190,180,0.25)" strokeWidth="0.6" />
     {cap && <path d={`M${x},${420 - h} L${x + w / 2},${420 - h - w * 0.9} L${x + w},${420 - h} Z`} fill="var(--ink-4)" stroke="rgba(158,190,180,0.25)" strokeWidth="0.6" />}
     {Array.from({ length: Math.floor(h / 18) }).map((_, r) =>
       Array.from({ length: Math.max(1, Math.floor(w / 9)) }).map((__, c) => (
-        <rect key={`${r}-${c}`} x={x + 3 + c * 9} y={420 - h + 6 + r * 18} width={3} height={6} fill="var(--gold)" opacity={((r * 7 + c * 13 + x) % 5 === 0) ? 0.55 : 0.08} />
+        <rect key={`${r}-${c}`} data-window={((r * 7 + c * 13 + x) % 5 === 0) ? "lit" : "dark"} x={x + 3 + c * 9} y={420 - h + 6 + r * 18} width={3} height={6} fill="var(--gold)" opacity={((r * 7 + c * 13 + x) % 5 === 0) ? 0.55 : 0.08} />
       ))
     )}
   </g>
@@ -26,10 +29,12 @@ const Tower = ({ x, w, h, cap = false }: { x: number; w: number; h: number; cap?
 
 const Crane = ({ x }: { x: number }) => (
   <g stroke="rgba(158,190,180,0.6)" strokeWidth="1.4" fill="none">
-    <path d={`M${x},430 L${x},330 M${x + 22},430 L${x + 22},330 M${x - 40},336 L${x + 70},336 M${x - 40},336 L${x + 6},300 L${x + 70},336`} />
-    <path d={`M${x},350 L${x + 22},370 M${x + 22},350 L${x},370 M${x},390 L${x + 22},410 M${x + 22},390 L${x},410`} strokeWidth="0.8" />
-    <path d={`M${x + 50},336 L${x + 50},395`} strokeDasharray="2 3" />
-    <rect x={x + 42} y={395} width={16} height={10} fill="var(--gold)" opacity="0.8" stroke="none" />
+    <path data-crane d={`M${x},430 L${x},330 M${x + 22},430 L${x + 22},330`} />
+    <path data-crane d={`M${x - 40},336 L${x + 70},336`} />
+    <path data-crane d={`M${x - 40},336 L${x + 6},300 L${x + 70},336`} />
+    <path data-crane d={`M${x},350 L${x + 22},370 M${x + 22},350 L${x},370 M${x},390 L${x + 22},410 M${x + 22},390 L${x},410`} strokeWidth="0.8" />
+    <path data-crane-cable d={`M${x + 50},336 L${x + 50},395`} strokeDasharray="2 3" />
+    <rect data-crane-load x={x + 42} y={395} width={16} height={10} fill="var(--gold)" opacity="0.8" stroke="none" />
   </g>
 );
 
@@ -43,6 +48,26 @@ export default function GulfSceneSection() {
   const mid = useTransform(scrollYProgress, [0, 1], [70, -70]);
   const near = useTransform(scrollYProgress, [0, 1], [110, -110]);
   const sun = useTransform(scrollYProgress, [0, 1], [60, -140]);
+  const [built, setBuilt] = useState(() => prefersReducedMotion());
+
+  // Build the scene once, the first time it is on screen.
+  useEffect(() => {
+    const root = ref.current;
+    if (!root || prefersReducedMotion()) return;
+    let tl: ReturnType<typeof timeline> | null = null;
+    const stop = onceInView(root, () => {
+      tl = timeline();
+      tl.add(root.querySelectorAll("[data-dune]"), { opacity: [0, 1], translateY: [40, 0], delay: stagger(160), duration: DURATION.slow }, 0);
+      tl.add(root.querySelectorAll("[data-tower]"), { scaleY: [0, 1], opacity: [0, 1], delay: stagger(60, { from: "center" }), duration: DURATION.slow }, "-=1000");
+      tl.add(root.querySelectorAll("[data-window='lit']"), { opacity: [0, 0.55], delay: stagger(12, { from: "random" }), duration: DURATION.fast }, "-=800");
+      addDraw(tl, root, "[data-crane]", { duration: 1200, each: 90, position: "-=900" });
+      tl.add(root.querySelectorAll("[data-crane-cable]"), { opacity: [0, 1], duration: DURATION.fast }, "-=300");
+      tl.add(root.querySelectorAll("[data-crane-load]"), { opacity: [0, 0.8], translateY: [-40, 0], delay: stagger(140), duration: DURATION.base, ease: "outBounce" }, "-=200");
+      tl.add(root.querySelectorAll("[data-quay]"), { opacity: [0, 1], duration: DURATION.base }, "-=900");
+      tl.then(() => setBuilt(true));
+    }, "-25% 0px");
+    return () => { stop(); tl?.cancel(); };
+  }, []);
 
   const facts = [
     { v: "6", en: "member states, one common tariff", ar: "دول أعضاء وتعرفة موحدة" },
@@ -60,7 +85,7 @@ export default function GulfSceneSection() {
         <motion.div style={{ y: sun }} className="absolute left-[64%] top-[30%] w-16 h-16 rounded-full border border-gold/50" />
 
         {/* Far: skyline */}
-        <motion.svg style={{ y: far }} viewBox="0 0 1400 440" preserveAspectRatio="xMidYMax slice" className="absolute inset-x-0 bottom-0 w-full h-[75%] opacity-70">
+        <motion.svg style={{ y: far }} viewBox="0 0 1400 440" preserveAspectRatio="xMidYMax slice" className={`absolute inset-x-0 bottom-0 w-full h-[75%] opacity-70 ${built ? "" : "[&_[data-tower]]:opacity-0"}`}>
           <defs>
             <linearGradient id="towerGrad" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stopColor="var(--ink-3)" /><stop offset="100%" stopColor="var(--ink-1)" /></linearGradient>
           </defs>
@@ -72,15 +97,17 @@ export default function GulfSceneSection() {
 
         {/* Mid: dunes + port */}
         <motion.svg style={{ y: mid }} viewBox="0 0 1400 440" preserveAspectRatio="xMidYMax slice" className="absolute inset-x-0 bottom-0 w-full h-[70%]">
-          <path d="M0,300 C200,240 380,340 560,300 C720,265 860,330 1020,290 C1180,250 1300,320 1400,290 L1400,440 L0,440 Z" fill="var(--ink-2)" />
-          <path d="M0,340 C180,300 320,370 520,340 C700,312 840,372 1040,335 C1220,300 1320,355 1400,330 L1400,440 L0,440 Z" fill="var(--ink-3)" />
-          <Crane x={620} /><Crane x={720} /><Crane x={820} />
-          <rect x="560" y="430" width="340" height="10" fill="var(--ink-4)" />
+          <path data-dune d="M0,300 C200,240 380,340 560,300 C720,265 860,330 1020,290 C1180,250 1300,320 1400,290 L1400,440 L0,440 Z" fill="var(--ink-2)" style={{ opacity: built ? 1 : 0 }} />
+          <path data-dune d="M0,340 C180,300 320,370 520,340 C700,312 840,372 1040,335 C1220,300 1320,355 1400,330 L1400,440 L0,440 Z" fill="var(--ink-3)" style={{ opacity: built ? 1 : 0 }} />
+          <g style={{ opacity: built ? 1 : undefined }} className={built ? "" : "[&_[data-crane-cable]]:opacity-0 [&_[data-crane-load]]:opacity-0"}>
+            <Crane x={620} /><Crane x={720} /><Crane x={820} />
+          </g>
+          <rect data-quay x="560" y="430" width="340" height="10" fill="var(--ink-4)" style={{ opacity: built ? 1 : 0 }} />
         </motion.svg>
 
         {/* Near: water + vessels */}
         <motion.div style={{ y: near }} className="absolute inset-x-0 bottom-0 h-[26%]">
-          <div className="absolute inset-0 bg-gradient-to-b from-ink-2 via-[#0b1a1f] to-ink-1" />
+          <div className="absolute inset-0 bg-gradient-to-b from-ink-2 via-[var(--navy)] to-ink-1" />
           <div className="absolute inset-0 opacity-40 bg-[repeating-linear-gradient(180deg,transparent_0_6px,rgba(61,219,180,0.05)_6px_7px)]" />
           {/* Container ship */}
           <motion.svg animate={{ x: ["-30%", "130%"], y: [0, -3, 0] }} transition={{ x: { duration: 55, repeat: Infinity, ease: "linear" }, y: { duration: 4, repeat: Infinity, ease: "easeInOut" } }} viewBox="0 0 220 60" className="absolute top-[10%] w-[220px] h-[60px]">

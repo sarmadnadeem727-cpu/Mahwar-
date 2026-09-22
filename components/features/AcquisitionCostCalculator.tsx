@@ -11,6 +11,8 @@ import html2canvas from "html2canvas";
 import { useTerminalStore } from "@/store/useTerminalStore";
 import { panelReveal } from "@/lib/motion";
 
+import { TERMINAL_CHART_THEME as T } from "@/lib/chartTheme";
+
 export default function AcquisitionCostCalculator() {
   const { language, updateSessionAnalysis } = useTerminalStore();
   const isAr = language === "ar";
@@ -35,12 +37,12 @@ export default function AcquisitionCostCalculator() {
 
   // Waterfall Chart Data
   const waterfallData = [
-    { name: isAr ? "سعر الشراء" : "Purchase Price", amount: purchasePrice, fill: "#17a88a" },
-    { name: isAr ? "الديون المحولة" : "Assumed Debt", amount: assumedDebt, fill: "#22C55E" },
-    { name: isAr ? "أتعاب الاستشارة" : "Advisory Fees", amount: advisoryFeesAmount, fill: "#3B82F6" },
-    { name: isAr ? "تكاليف الدمج" : "Integration", amount: integrationCosts, fill: "#F59E0B" },
-    { name: isAr ? "تسوية رأس المال" : "NWC Adj.", amount: workingCapAdj, fill: "#8B5CF6" },
-    { name: isAr ? "المكافآت المؤجلة" : "Earn-outs", amount: earnOuts, fill: "#EC4899" },
+    { name: isAr ? "سعر الشراء" : "Purchase Price", amount: purchasePrice, fill: T.series[0] },
+    { name: isAr ? "الديون المحولة" : "Assumed Debt", amount: assumedDebt, fill: T.series[4] },
+    { name: isAr ? "أتعاب الاستشارة" : "Advisory Fees", amount: advisoryFeesAmount, fill: T.series[2] },
+    { name: isAr ? "تكاليف الدمج" : "Integration", amount: integrationCosts, fill: T.series[1] },
+    { name: isAr ? "تسوية رأس المال" : "NWC Adj.", amount: workingCapAdj, fill: T.series[3] },
+    { name: isAr ? "المكافآت المؤجلة" : "Earn-outs", amount: earnOuts, fill: T.series[4] },
   ];
 
   useEffect(() => {
@@ -56,7 +58,7 @@ export default function AcquisitionCostCalculator() {
     if (!el) return;
     setExporting(true);
     try {
-      const canvas = await html2canvas(el, { scale: 1.8, backgroundColor: "#0e161a" });
+      const canvas = await html2canvas(el, { scale: 1.8, backgroundColor: T.colors.surface });
       const imgData = canvas.toDataURL("image/png");
       const pdf = new jsPDF("p", "mm", "a4");
       pdf.addImage(imgData, "PNG", 0, 0, 210, (canvas.height * 210) / canvas.width);
@@ -227,10 +229,10 @@ export default function AcquisitionCostCalculator() {
               <ResponsiveContainer width="100%" height="100%">
                 <BarChart data={waterfallData} margin={{ top: 10, right: 10, left: -10, bottom: 0 }}>
                   <CartesianGrid strokeDasharray="3 3" stroke="rgba(158,190,180,0.14)" vertical={false} />
-                  <XAxis dataKey="name" stroke="#a7b9b2" fontSize={10} fontFamily="monospace" />
-                  <YAxis stroke="#a7b9b2" fontSize={10} fontFamily="monospace" />
+                  <XAxis dataKey="name" stroke={T.colors.slate} fontSize={10} fontFamily="monospace" />
+                  <YAxis stroke={T.colors.slate} fontSize={10} fontFamily="monospace" />
                   <Tooltip
-                    contentStyle={{ backgroundColor: "#0e161a", borderColor: "rgba(158,190,180,0.14)", borderRadius: "8px", fontSize: "11px" }}
+                    contentStyle={{ backgroundColor: T.colors.surface, borderColor: "rgba(158,190,180,0.14)", borderRadius: "8px", fontSize: "11px" }}
                     formatter={(val: any) => [`SAR ${val}M`, "Amount"]}
                   />
                   <Bar dataKey="amount" radius={[4, 4, 0, 0]}>

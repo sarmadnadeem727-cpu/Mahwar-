@@ -1,16 +1,30 @@
 /**
  * Unified Recharts theme for the dark terminal. Values mirror the CSS tokens
  * in app/globals.css (Recharts needs literal colours for SVG fills).
+ *
+ * This is the ONLY file in components/** and lib/** allowed to carry brand
+ * hex values. Every chart imports `TERMINAL_CHART_THEME as T` and reads
+ * `T.colors.*` for semantic roles or `T.series[i]` for categorical stacks.
+ * The categorical palette deliberately contains no red: "negative" is a
+ * meaning, not a category.
  */
 export const TERMINAL_CHART_THEME = {
   colors: {
     emerald: "#17a88a",
     emeraldLight: "#3ddbb4",
+    emeraldDeep: "#0e7c69",
     emeraldDim: "rgba(23, 168, 138, 0.18)",
     emeraldGlow: "rgba(23, 168, 138, 0.35)",
     gold: "#d9b36e",
     goldDim: "rgba(217, 179, 110, 0.2)",
 
+    /** Surfaces — for tooltip backgrounds, chart cursors and html2canvas exports. */
+    canvas: "#090f12",
+    surface: "#0e161a",
+    surfaceRaised: "#131e23",
+
+    /** Foreground text, brightest to dimmest. */
+    fg: "#e8f1ed",
     charcoal: "#e8f1ed",
     charcoalLight: "#a7b9b2",
 
@@ -29,8 +43,8 @@ export const TERMINAL_CHART_THEME = {
     management: "#d9b36e",
     debt: "#ff6b6b",
   },
-  /** Ordered series palette for multi-line charts. */
-  series: ["#17a88a", "#d9b36e", "#5ec8ff", "#c792ea", "#ff6b6b", "#3ddbb4"],
+  /** Ordered categorical palette: emerald, gold, sky, lilac, emerald-light, slate. */
+  series: ["#17a88a", "#d9b36e", "#5ec8ff", "#c792ea", "#3ddbb4", "#a7b9b2"],
   axis: {
     stroke: "#6d817a",
     fontSize: 10,
@@ -57,3 +71,5 @@ export const TERMINAL_CHART_THEME = {
   tooltipItemStyle: { color: "#e8f1ed" },
 };
 
+/** Cycle the categorical palette for any number of series. */
+export const seriesColor = (i: number) => TERMINAL_CHART_THEME.series[i % TERMINAL_CHART_THEME.series.length];

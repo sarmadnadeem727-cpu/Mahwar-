@@ -14,6 +14,8 @@ import FormulaAuditModal from "./shared/FormulaAuditModal";
 import InlineError from "./shared/InlineError";
 import { exportToExcel, exportToPdf } from "./shared/exportOperations";
 
+import { TERMINAL_CHART_THEME as T } from "@/lib/chartTheme";
+
 const INITIAL_OPTIONS: TcoOption[] = [
   {
     id: "opt-1",
@@ -423,16 +425,16 @@ export default function TcoCalculator() {
               <ResponsiveContainer width="100%" height="100%">
                 <BarChart data={comparisonChartData} margin={{ top: 10, right: 15, left: 10, bottom: 0 }}>
                   <CartesianGrid strokeDasharray="3 3" stroke="rgba(158,190,180,0.14)" vertical={false} />
-                  <XAxis dataKey="name" stroke="#a7b9b2" fontSize={10} fontFamily="monospace" />
-                  <YAxis stroke="#a7b9b2" fontSize={10} fontFamily="monospace" />
+                  <XAxis dataKey="name" stroke={T.colors.slate} fontSize={10} fontFamily="monospace" />
+                  <YAxis stroke={T.colors.slate} fontSize={10} fontFamily="monospace" />
                   <Tooltip
-                    contentStyle={{ backgroundColor: "#0e161a", borderColor: "rgba(158,190,180,0.14)", borderRadius: "8px", fontSize: "11px" }}
+                    contentStyle={{ backgroundColor: T.colors.surface, borderColor: "rgba(158,190,180,0.14)", borderRadius: "8px", fontSize: "11px" }}
                   />
                   <Legend wrapperStyle={{ fontSize: "11px", fontFamily: "monospace" }} />
-                  <Bar dataKey="Purchase Price" stackId="a" fill="#17a88a" />
-                  <Bar dataKey="Installation" stackId="a" fill="#3B82F6" />
-                  <Bar dataKey="PV Operating" stackId="a" fill="#F59E0B" />
-                  <Bar dataKey="PV Maintenance" stackId="a" fill="#8B5CF6" />
+                  <Bar dataKey="Purchase Price" stackId="a" fill={T.colors.emerald} />
+                  <Bar dataKey="Installation" stackId="a" fill={T.series[2]} />
+                  <Bar dataKey="PV Operating" stackId="a" fill={T.series[1]} />
+                  <Bar dataKey="PV Maintenance" stackId="a" fill={T.series[3]} />
                 </BarChart>
               </ResponsiveContainer>
             </div>

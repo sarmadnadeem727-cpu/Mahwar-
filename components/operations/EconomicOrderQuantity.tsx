@@ -16,6 +16,8 @@ import FormulaAuditModal from "./shared/FormulaAuditModal";
 import InlineError from "./shared/InlineError";
 import { exportToExcel, exportToPdf } from "./shared/exportOperations";
 
+import { TERMINAL_CHART_THEME as T } from "@/lib/chartTheme";
+
 export default function EconomicOrderQuantity() {
   const { language, currency, updateSessionAnalysis } = useTerminalStore();
   const isAr = language === "ar";
@@ -327,27 +329,27 @@ export default function EconomicOrderQuantity() {
                   <CartesianGrid strokeDasharray="3 3" stroke="rgba(158,190,180,0.14)" vertical={false} />
                   <XAxis
                     dataKey="q"
-                    stroke="#a7b9b2"
+                    stroke={T.colors.slate}
                     fontSize={10}
                     fontFamily="monospace"
                     label={{ value: "Order Batch Size (Q)", position: "insideBottom", offset: -2, fontSize: 10 }}
                   />
-                  <YAxis stroke="#a7b9b2" fontSize={10} fontFamily="monospace" />
+                  <YAxis stroke={T.colors.slate} fontSize={10} fontFamily="monospace" />
                   <Tooltip
-                    contentStyle={{ backgroundColor: "#0e161a", borderColor: "rgba(158,190,180,0.14)", borderRadius: "8px", fontSize: "11px" }}
+                    contentStyle={{ backgroundColor: T.colors.surface, borderColor: "rgba(158,190,180,0.14)", borderRadius: "8px", fontSize: "11px" }}
                     formatter={(val: any) => [`${currency} ${val.toLocaleString()}`, ""]}
                   />
                   <Legend wrapperStyle={{ fontSize: "11px", fontFamily: "monospace" }} />
-                  <Line type="monotone" dataKey="orderingCost" name="Ordering Cost" stroke="#3B82F6" strokeWidth={2} dot={false} />
-                  <Line type="monotone" dataKey="holdingCost" name="Holding Cost" stroke="#F59E0B" strokeWidth={2} dot={false} />
-                  <Line type="monotone" dataKey="totalCost" name="Total Inventory Cost" stroke="#17a88a" strokeWidth={3} dot={false} />
+                  <Line type="monotone" dataKey="orderingCost" name="Ordering Cost" stroke={T.series[2]} strokeWidth={2} dot={false} />
+                  <Line type="monotone" dataKey="holdingCost" name="Holding Cost" stroke={T.series[1]} strokeWidth={2} dot={false} />
+                  <Line type="monotone" dataKey="totalCost" name="Total Inventory Cost" stroke={T.colors.emerald} strokeWidth={3} dot={false} />
                   {/* Mark the optimal EOQ dot */}
                   <ReferenceDot
                     x={outputs.eoq}
                     y={outputs.annualInventoryCost}
                     r={6}
-                    fill="#17a88a"
-                    stroke="#0e161a"
+                    fill={T.colors.emerald}
+                    stroke={T.colors.surface}
                     strokeWidth={2}
                   />
                 </LineChart>

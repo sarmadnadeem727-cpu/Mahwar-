@@ -68,6 +68,7 @@ const PANELS: Record<PanelType, React.ComponentType> = {
   network_map: lazy(() => import("@/components/engines/CorridorPlanner")),
   // v5
   console: lazy(() => import("@/components/engines/ConsolePanel")),
+  privacy: lazy(() => import("@/components/privacy/PrivacyPanel")),
   comps: lazy(() => import("@/components/engines/CompsAnalysis")),
   zscore: lazy(() => import("@/components/engines/AltmanZScore")),
   ratios: lazy(() => import("@/components/engines/RatioAnalysis")),

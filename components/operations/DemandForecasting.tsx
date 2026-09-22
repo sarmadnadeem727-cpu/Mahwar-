@@ -16,6 +16,8 @@ import FormulaAuditModal from "./shared/FormulaAuditModal";
 import InlineError from "./shared/InlineError";
 import { exportToExcel, exportToPdf } from "./shared/exportOperations";
 
+import { TERMINAL_CHART_THEME as T } from "@/lib/chartTheme";
+
 export default function DemandForecasting() {
   const { language, updateSessionAnalysis } = useTerminalStore();
   const isAr = language === "ar";
@@ -378,18 +380,18 @@ export default function DemandForecasting() {
               <ResponsiveContainer width="100%" height="100%">
                 <LineChart data={outputs.chartData} margin={{ top: 10, right: 15, left: -10, bottom: 0 }}>
                   <CartesianGrid strokeDasharray="3 3" stroke="rgba(158,190,180,0.14)" vertical={false} />
-                  <XAxis dataKey="label" stroke="#a7b9b2" fontSize={10} fontFamily="monospace" />
-                  <YAxis stroke="#a7b9b2" fontSize={10} fontFamily="monospace" />
+                  <XAxis dataKey="label" stroke={T.colors.slate} fontSize={10} fontFamily="monospace" />
+                  <YAxis stroke={T.colors.slate} fontSize={10} fontFamily="monospace" />
                   <Tooltip
-                    contentStyle={{ backgroundColor: "#0e161a", borderColor: "rgba(158,190,180,0.14)", borderRadius: "8px", fontSize: "11px" }}
+                    contentStyle={{ backgroundColor: T.colors.surface, borderColor: "rgba(158,190,180,0.14)", borderRadius: "8px", fontSize: "11px" }}
                   />
                   <Legend wrapperStyle={{ fontSize: "11px", fontFamily: "monospace" }} />
-                  <Line type="monotone" dataKey="actual" name="Actual Demand" stroke="#e8f1ed" strokeWidth={2.5} dot={{ r: 3 }} />
+                  <Line type="monotone" dataKey="actual" name="Actual Demand" stroke={T.colors.fg} strokeWidth={2.5} dot={{ r: 3 }} />
                   <Line
                     type="monotone"
                     dataKey="fitted"
                     name={`${method} Fit & Forecast`}
-                    stroke="#17a88a"
+                    stroke={T.colors.emerald}
                     strokeWidth={2.5}
                     strokeDasharray="4 4"
                     dot={{ r: 3 }}

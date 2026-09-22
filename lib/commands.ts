@@ -40,6 +40,7 @@ export const COMMANDS: { verb: string; args?: string; en: string; ar: string }[]
   { verb: "RESET", args: "CONFIRM", en: "Clear every saved analysis", ar: "مسح كل التحليلات المحفوظة" },
   { verb: "CLEAR", en: "Clear the console transcript", ar: "مسح سجل وحدة التحكم" },
   { verb: "WHOAMI", en: "Show the signed-in account", ar: "عرض الحساب الحالي" },
+  { verb: "PRIV", en: "Privacy centre — inventory, export, wipe", ar: "مركز الخصوصية — الجرد والتصدير والمسح" },
   { verb: "VER", en: "Build and engine count", ar: "الإصدار وعدد المحركات" },
   { verb: "EXIT", en: "Sign out", ar: "تسجيل الخروج" },
 ];

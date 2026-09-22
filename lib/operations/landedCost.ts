@@ -1,6 +1,8 @@
 // lib/operations/landedCost.ts
 import { SourcingScenario, LandedCostCalculation, AuditData } from './types';
 
+import { TERMINAL_CHART_THEME as T } from "@/lib/chartTheme";
+
 export function computeLandedCost(scenario: SourcingScenario): LandedCostCalculation {
   const units = Math.max(1, scenario.units);
   const productCostTotal = units * scenario.unitCostFob;
@@ -18,11 +20,11 @@ export function computeLandedCost(scenario: SourcingScenario): LandedCostCalcula
   const effectiveMarkupPct = productCostTotal > 0 ? ((totalLandedCost - productCostTotal) / productCostTotal) * 100 : 0;
 
   const breakdown = [
-    { name: "FOB Product Cost", amount: Number(productCostTotal.toFixed(2)), pct: (productCostTotal / totalLandedCost) * 100, color: "#0E7C69" },
-    { name: "Freight Cost", amount: Number(freightTotal.toFixed(2)), pct: (freightTotal / totalLandedCost) * 100, color: "#3B82F6" },
-    { name: "Cargo Insurance", amount: Number(insuranceTotal.toFixed(2)), pct: (insuranceTotal / totalLandedCost) * 100, color: "#8B5CF6" },
-    { name: "Customs Duty", amount: Number(customsDutyTotal.toFixed(2)), pct: (customsDutyTotal / totalLandedCost) * 100, color: "#F59E0B" },
-    { name: "Port & Clearance Fees", amount: Number(otherFeesTotal.toFixed(2)), pct: (otherFeesTotal / totalLandedCost) * 100, color: "#EC4899" },
+    { name: "FOB Product Cost", amount: Number(productCostTotal.toFixed(2)), pct: (productCostTotal / totalLandedCost) * 100, color: T.colors.emeraldDeep },
+    { name: "Freight Cost", amount: Number(freightTotal.toFixed(2)), pct: (freightTotal / totalLandedCost) * 100, color: T.series[2] },
+    { name: "Cargo Insurance", amount: Number(insuranceTotal.toFixed(2)), pct: (insuranceTotal / totalLandedCost) * 100, color: T.series[3] },
+    { name: "Customs Duty", amount: Number(customsDutyTotal.toFixed(2)), pct: (customsDutyTotal / totalLandedCost) * 100, color: T.series[1] },
+    { name: "Port & Clearance Fees", amount: Number(otherFeesTotal.toFixed(2)), pct: (otherFeesTotal / totalLandedCost) * 100, color: T.series[4] },
   ];
 
   return {

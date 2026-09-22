@@ -9,6 +9,8 @@ import ChartWrapper from "@/components/shared/ChartWrapper";
 import { panelReveal } from "@/lib/motion";
 import { PieChart as RePieChart, Pie, Cell, ResponsiveContainer, Tooltip as ReTooltip, Legend } from "recharts";
 
+import { TERMINAL_CHART_THEME as T } from "@/lib/chartTheme";
+
 export default function WACCBuilder() {
   const { language } = useTerminalStore();
   const isAr = language === "ar";
@@ -40,8 +42,8 @@ export default function WACCBuilder() {
   }, [riskFreeRate, equityBeta, erp, costOfDebt, taxRate, equityWeight, debtWeight]);
 
   const pieData = [
-    { name: isAr ? "الملكية (الأسهم)" : "Equity", value: equityWeight, color: "#17a88a" },
-    { name: isAr ? "الدين" : "Debt", value: debtWeight, color: "#6d817a" }
+    { name: isAr ? "الملكية (الأسهم)" : "Equity", value: equityWeight, color: T.colors.emerald },
+    { name: isAr ? "الدين" : "Debt", value: debtWeight, color: T.colors.neutral }
   ];
 
   return (

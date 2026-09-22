@@ -16,6 +16,8 @@ import FormulaAuditModal from "./shared/FormulaAuditModal";
 import InlineError from "./shared/InlineError";
 import { exportToExcel, exportToPdf } from "./shared/exportOperations";
 
+import { TERMINAL_CHART_THEME as T } from "@/lib/chartTheme";
+
 const INITIAL_PERIODS: CCCPeriodInput[] = [
   {
     periodId: "p1",
@@ -515,17 +517,17 @@ export default function CashConversionCycle() {
                   margin={{ top: 10, right: 15, left: -10, bottom: 0 }}
                 >
                   <CartesianGrid strokeDasharray="3 3" stroke="rgba(158,190,180,0.14)" vertical={false} />
-                  <XAxis dataKey="period" stroke="#a7b9b2" fontSize={10} fontFamily="monospace" />
-                  <YAxis stroke="#a7b9b2" fontSize={10} fontFamily="monospace" />
+                  <XAxis dataKey="period" stroke={T.colors.slate} fontSize={10} fontFamily="monospace" />
+                  <YAxis stroke={T.colors.slate} fontSize={10} fontFamily="monospace" />
                   <Tooltip
-                    contentStyle={{ backgroundColor: "#0e161a", borderColor: "rgba(158,190,180,0.14)", borderRadius: "8px", fontSize: "11px" }}
+                    contentStyle={{ backgroundColor: T.colors.surface, borderColor: "rgba(158,190,180,0.14)", borderRadius: "8px", fontSize: "11px" }}
                     formatter={(val: any) => [`${val} Days`, ""]}
                   />
                   <Legend wrapperStyle={{ fontSize: "11px", fontFamily: "monospace" }} />
-                  <Line type="monotone" dataKey="DIO" stroke="#F59E0B" strokeWidth={2} dot={{ r: 3 }} />
-                  <Line type="monotone" dataKey="DSO" stroke="#3B82F6" strokeWidth={2} dot={{ r: 3 }} />
-                  <Line type="monotone" dataKey="DPO" stroke="#8B5CF6" strokeWidth={2} dot={{ r: 3 }} />
-                  <Line type="monotone" dataKey="CCC" stroke="#17a88a" strokeWidth={3} dot={{ r: 4 }} />
+                  <Line type="monotone" dataKey="DIO" stroke={T.series[1]} strokeWidth={2} dot={{ r: 3 }} />
+                  <Line type="monotone" dataKey="DSO" stroke={T.series[2]} strokeWidth={2} dot={{ r: 3 }} />
+                  <Line type="monotone" dataKey="DPO" stroke={T.series[3]} strokeWidth={2} dot={{ r: 3 }} />
+                  <Line type="monotone" dataKey="CCC" stroke={T.colors.emerald} strokeWidth={3} dot={{ r: 4 }} />
                 </LineChart>
               </ResponsiveContainer>
             </div>

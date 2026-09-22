@@ -3,9 +3,10 @@
 import React, { useEffect, useRef } from "react";
 import Link from "next/link";
 import { motion, useScroll, useTransform, useMotionValue, useSpring } from "framer-motion";
-import { animate, stagger } from "animejs";
 import { ArrowRight, ChevronDown } from "lucide-react";
+import { timeline, addDraw, addRise, stagger, svg, animate, prefersReducedMotion, settle, DURATION } from "@/lib/anime";
 import FlowField from "@/components/ui/FlowField";
+import FlowTraces from "@/components/ui/FlowTraces";
 import LiveTerminal from "@/components/sections/LiveTerminal";
 import { useTerminalStore } from "@/store/useTerminalStore";
 import { APP, TOOLS, toolsBySuite } from "@/lib/registry";
@@ -17,6 +18,7 @@ export default function HeroSection() {
   const { language } = useTerminalStore();
   const isAr = language === "ar";
   const rootRef = useRef<HTMLDivElement>(null);
+  const tracesRef = useRef<SVGSVGElement>(null);
   const { scrollY } = useScroll();
   const bgY = useTransform(scrollY, [0, 800], [0, 120]);
   const copyOpacity = useTransform(scrollY, [0, 500], [1, 0]);
@@ -35,33 +37,59 @@ export default function HeroSection() {
   const financeCount = toolsBySuite("finance").length;
   const opsCount = toolsBySuite("operations").length;
 
-  // One orchestrated entrance: lines rise, then the terminal window slides in.
+  // One orchestrated entrance, as a single anime.js timeline:
+  //   1. the axis and its ticks draw on
+  //   2. the headline lines rise out of a blur
+  //   3. capital / goods traces draw in from both edges toward the axis
+  //   4. the supporting copy, the buttons and the terminal card follow
+  //   5. the terminal nodes light up, the centre node starts to morph coin ↔ container
   useEffect(() => {
     const root = rootRef.current;
+    const traces = tracesRef.current;
     if (!root) return;
-    const reduced = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
-    const lines = root.querySelectorAll<HTMLElement>("[data-hero-line]");
-    const rest = root.querySelectorAll<HTMLElement>("[data-hero-rest]");
-    if (reduced) {
-      lines.forEach((el) => (el.style.opacity = "1"));
-      rest.forEach((el) => (el.style.opacity = "1"));
+
+    if (prefersReducedMotion()) {
+      settle(root, ["[data-hero-line]", "[data-hero-rest]"]);
+      if (traces) settle(traces, ["[data-trace-node]", "[data-trace-center]", "[data-trace-core]"]);
       return;
     }
-    animate(lines, {
-      opacity: [0, 1],
-      translateY: [36, 0],
-      filter: ["blur(8px)", "blur(0px)"],
-      delay: stagger(140, { start: 250 }),
-      duration: 1100,
-      ease: "outExpo",
+
+    const tl = timeline();
+    const lines = root.querySelectorAll<HTMLElement>("[data-hero-line]");
+    const rest = root.querySelectorAll<HTMLElement>("[data-hero-rest]");
+
+    if (traces) addDraw(tl, traces, "[data-trace-axis]", { duration: DURATION.base, position: 0 });
+    if (traces) addDraw(tl, traces, "[data-trace-tick]", { duration: DURATION.fast, each: 30, position: "-=600" });
+
+    tl.add(
+      lines,
+      { opacity: [0, 1], translateY: [36, 0], filter: ["blur(8px)", "blur(0px)"], delay: stagger(140), duration: 1100 },
+      "-=500"
+    );
+
+    if (traces) addDraw(tl, traces, "[data-trace-path]", { duration: DURATION.draw, each: 70, from: "center", position: "-=900" });
+
+    addRise(tl, rest, { y: 18, each: 90, position: "-=1400" });
+
+    if (traces) {
+      tl.add(traces.querySelectorAll("[data-trace-node]"), { opacity: [0, 1], scale: [0, 1], delay: stagger(40), duration: DURATION.fast }, "-=700");
+      tl.add(traces.querySelectorAll("[data-trace-center], [data-trace-core]"), { opacity: [0, 1], duration: DURATION.fast }, "-=300");
+    }
+
+    // After the entrance: the centre node breathes between a coin and a container.
+    let morph: ReturnType<typeof animate> | undefined;
+    let pulse: ReturnType<typeof animate> | undefined;
+    tl.then(() => {
+      if (!traces) return;
+      const center = traces.querySelector<SVGPathElement>("[data-trace-center]");
+      const target = traces.querySelector<SVGPathElement>("[data-trace-center-target]");
+      if (center && target) {
+        morph = animate(center, { d: svg.morphTo(target, 0.6), duration: 1400, ease: "inOutQuad", delay: 2200, loop: true, alternate: true, loopDelay: 2600 });
+      }
+      pulse = animate(traces.querySelectorAll("[data-trace-node]"), { opacity: [1, 0.35, 1], delay: stagger(120, { from: "center" }), duration: 2400, ease: "inOutSine", loop: true });
     });
-    animate(rest, {
-      opacity: [0, 1],
-      translateY: [18, 0],
-      delay: stagger(90, { start: 750 }),
-      duration: 900,
-      ease: "outExpo",
-    });
+
+    return () => { tl.cancel(); morph?.cancel(); pulse?.cancel(); };
   }, [language]);
 
   const headline = isAr ? HEADLINE_AR : HEADLINE_EN;
@@ -91,6 +119,10 @@ export default function HeroSection() {
       {/* Layer 1 — the flow network */}
       <div className="absolute inset-0">
         <FlowField density={1} fadeSide={isAr ? "right" : "left"} />
+      </div>
+      {/* Layer 1b — brand line-art: capital and goods converging on one axis */}
+      <div className="absolute inset-x-0 top-[9%] h-[46%] hidden lg:block pointer-events-none opacity-[0.55] [mask-image:linear-gradient(180deg,transparent_0%,#000_18%,#000_78%,transparent_100%)]" aria-hidden="true">
+        <FlowTraces ref={tracesRef} className="w-full h-full" />
       </div>
       <div className="aurora absolute -top-[30%] left-1/2 -translate-x-1/2 w-[130vw] h-[90vh] pointer-events-none opacity-40" aria-hidden="true" />
       <div className="absolute inset-0 vignette pointer-events-none" />

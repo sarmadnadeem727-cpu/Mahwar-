@@ -33,10 +33,10 @@ const COLORS = {
   emeraldDim: TERMINAL_CHART_THEME.colors.emeraldDim,
   positive: TERMINAL_CHART_THEME.colors.positive,
   negative: TERMINAL_CHART_THEME.colors.negative,
-  text2: "#737373",
+  text2: TERMINAL_CHART_THEME.colors.slateLight,
   grid: TERMINAL_CHART_THEME.grid.stroke,
-  gold: TERMINAL_CHART_THEME.colors.emerald,
-  goldDim: TERMINAL_CHART_THEME.colors.emeraldDim,
+  gold: TERMINAL_CHART_THEME.colors.gold,
+  goldDim: TERMINAL_CHART_THEME.colors.goldDim,
 };
 
 

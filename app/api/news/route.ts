@@ -27,6 +27,17 @@ export interface NewsArticle {
   category: NewsCategory;
 }
 
+/**
+ * Upstream requests carry nothing from the visitor: a fixed User-Agent, no
+ * referrer, no cookies, no forwarded IP. The server is the only client the
+ * news providers ever see.
+ */
+const UPSTREAM: RequestInit = {
+  headers: { "User-Agent": "mahwar-terminal/5 (+news-wire)", Accept: "application/rss+xml, application/json;q=0.9, */*;q=0.5" },
+  referrerPolicy: "no-referrer",
+  credentials: "omit",
+};
+
 /** Several searches per lane, merged and de-duplicated, for breadth. */
 const RSS_QUERIES: Record<NewsLane, string[]> = {
   finance: [
@@ -96,7 +107,7 @@ async function fromMarketaux(key: string, lane: NewsLane): Promise<NewsArticle[]
     filter_entities: "true",
   });
   if (lane === "supply_chain") params.set("search", "port | shipping | logistics | freight | supply chain");
-  const res = await fetch(`https://api.marketaux.com/v1/news/all?${params}`, { next: { revalidate: 300 } });
+  const res = await fetch(`https://api.marketaux.com/v1/news/all?${params}`, { ...UPSTREAM, next: { revalidate: 300 } });
   if (!res.ok) return [];
   const data = await res.json();
   return (data?.data ?? []).map((it: any, i: number) => ({
@@ -115,7 +126,7 @@ async function fromRss(lane: NewsLane): Promise<NewsArticle[]> {
   const batches = await Promise.all(
     RSS_QUERIES[lane].map(async (query) => {
       try {
-        const res = await fetch(`https://news.google.com/rss/search?q=${encodeURIComponent(query)}&hl=en-US&gl=US&ceid=US:en`, { next: { revalidate: 300 } });
+        const res = await fetch(`https://news.google.com/rss/search?q=${encodeURIComponent(query)}&hl=en-US&gl=US&ceid=US:en`, { ...UPSTREAM, next: { revalidate: 300 } });
         return res.ok ? parseRss(await res.text(), lane) : [];
       } catch {
         return [];

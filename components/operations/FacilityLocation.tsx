@@ -14,6 +14,8 @@ import FormulaAuditModal from "./shared/FormulaAuditModal";
 import InlineError from "./shared/InlineError";
 import { exportToExcel, exportToPdf } from "./shared/exportOperations";
 
+import { TERMINAL_CHART_THEME as T } from "@/lib/chartTheme";
+
 const INITIAL_CANDIDATES: CandidateLocation[] = [
   { id: "cand-1", name: "Al-Kharj Industrial Park", x: 47.30, y: 24.15 },
   { id: "cand-2", name: "King Abdullah Port (KAEC)", x: 39.10, y: 22.45 },
@@ -343,7 +345,7 @@ export default function FacilityLocation() {
                     type="number"
                     dataKey="x"
                     name="X (Lon)"
-                    stroke="#a7b9b2"
+                    stroke={T.colors.slate}
                     fontSize={10}
                     fontFamily="monospace"
                     domain={['auto', 'auto']}
@@ -352,7 +354,7 @@ export default function FacilityLocation() {
                     type="number"
                     dataKey="y"
                     name="Y (Lat)"
-                    stroke="#a7b9b2"
+                    stroke={T.colors.slate}
                     fontSize={10}
                     fontFamily="monospace"
                     domain={['auto', 'auto']}
@@ -360,15 +362,15 @@ export default function FacilityLocation() {
                   <ZAxis type="number" dataKey="volume" range={[60, 450]} />
                   <Tooltip
                     cursor={{ strokeDasharray: '3 3' }}
-                    contentStyle={{ backgroundColor: "#0e161a", borderColor: "rgba(158,190,180,0.14)", borderRadius: "8px", fontSize: "11px" }}
+                    contentStyle={{ backgroundColor: T.colors.surface, borderColor: "rgba(158,190,180,0.14)", borderRadius: "8px", fontSize: "11px" }}
                     formatter={(val: any, name: any) => [val, name]}
                   />
-                  <Scatter name="Demand Nodes" data={demandPoints} fill="#3B82F6" opacity={0.7} />
+                  <Scatter name="Demand Nodes" data={demandPoints} fill={T.series[2]} opacity={0.7} />
                   {/* Mark the Center of Gravity as a distinct scatter point */}
                   <Scatter
                     name="Optimal Center of Gravity"
                     data={[{ name: "Optimal Hub", x: cgX, y: cgY, volume: 300 }]}
-                    fill="#17a88a"
+                    fill={T.colors.emerald}
                     shape="cross"
                   />
                   {/* Candidate sites */}
@@ -376,7 +378,7 @@ export default function FacilityLocation() {
                     <Scatter
                       name="Candidate Sites"
                       data={candidates}
-                      fill="#F59E0B"
+                      fill={T.series[1]}
                       shape="diamond"
                     />
                   )}

@@ -16,6 +16,8 @@ import FormulaAuditModal from "./shared/FormulaAuditModal";
 import InlineError from "./shared/InlineError";
 import { exportToExcel, exportToPdf } from "./shared/exportOperations";
 
+import { TERMINAL_CHART_THEME as T } from "@/lib/chartTheme";
+
 export default function WorkingCapitalFinancing() {
   const { language, currency, sessionAnalyses, updateSessionAnalysis } = useTerminalStore();
   const isAr = language === "ar";
@@ -99,13 +101,13 @@ export default function WorkingCapitalFinancing() {
       name: isAr ? "رأس المال العامل التشغيلي (NOWC)" : "Operating NOWC Balance",
       cost: outputs.annualFinancingCostOperating,
       capital: outputs.netWorkingCapital,
-      fill: "#17a88a",
+      fill: T.colors.emerald,
     },
     {
       name: isAr ? "دورة التحويل النقدي (CCC)" : "CCC Operational Tie-Up",
       cost: outputs.annualFinancingCostCCC,
       capital: outputs.cashTiedUpCCC,
-      fill: "#3B82F6",
+      fill: T.series[2],
     },
   ];
 
@@ -417,10 +419,10 @@ export default function WorkingCapitalFinancing() {
               <ResponsiveContainer width="100%" height="100%">
                 <BarChart data={comparisonChartData} margin={{ top: 10, right: 15, left: -10, bottom: 0 }}>
                   <CartesianGrid strokeDasharray="3 3" stroke="rgba(158,190,180,0.14)" vertical={false} />
-                  <XAxis dataKey="name" stroke="#a7b9b2" fontSize={10} fontFamily="monospace" />
-                  <YAxis stroke="#a7b9b2" fontSize={10} fontFamily="monospace" />
+                  <XAxis dataKey="name" stroke={T.colors.slate} fontSize={10} fontFamily="monospace" />
+                  <YAxis stroke={T.colors.slate} fontSize={10} fontFamily="monospace" />
                   <Tooltip
-                    contentStyle={{ backgroundColor: "#0e161a", borderColor: "rgba(158,190,180,0.14)", borderRadius: "8px", fontSize: "11px" }}
+                    contentStyle={{ backgroundColor: T.colors.surface, borderColor: "rgba(158,190,180,0.14)", borderRadius: "8px", fontSize: "11px" }}
                     formatter={(val: any) => [`${currency} ${val.toLocaleString()}`, "Cost"]}
                   />
                   <Bar dataKey="cost" radius={[4, 4, 0, 0]}>

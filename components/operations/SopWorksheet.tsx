@@ -14,6 +14,8 @@ import FormulaAuditModal from "./shared/FormulaAuditModal";
 import InlineError from "./shared/InlineError";
 import { exportToExcel, exportToPdf } from "./shared/exportOperations";
 
+import { TERMINAL_CHART_THEME as T } from "@/lib/chartTheme";
+
 const INITIAL_PLANS = [
   { period: 1, label: "M1", plannedSupply: 450, demand: 420, targetSafetyStock: 150 },
   { period: 2, label: "M2", plannedSupply: 450, demand: 440, targetSafetyStock: 150 },
@@ -239,16 +241,16 @@ export default function SopWorksheet() {
           <ResponsiveContainer width="100%" height="100%">
             <ComposedChart data={chartData} margin={{ top: 10, right: 15, left: -10, bottom: 0 }}>
               <CartesianGrid strokeDasharray="3 3" stroke="rgba(158,190,180,0.14)" vertical={false} />
-              <XAxis dataKey="name" stroke="#a7b9b2" fontSize={10} fontFamily="monospace" />
-              <YAxis stroke="#a7b9b2" fontSize={10} fontFamily="monospace" />
+              <XAxis dataKey="name" stroke={T.colors.slate} fontSize={10} fontFamily="monospace" />
+              <YAxis stroke={T.colors.slate} fontSize={10} fontFamily="monospace" />
               <Tooltip
-                contentStyle={{ backgroundColor: "#0e161a", borderColor: "rgba(158,190,180,0.14)", borderRadius: "8px", fontSize: "11px" }}
+                contentStyle={{ backgroundColor: T.colors.surface, borderColor: "rgba(158,190,180,0.14)", borderRadius: "8px", fontSize: "11px" }}
               />
               <Legend wrapperStyle={{ fontSize: "11px", fontFamily: "monospace" }} />
-              <Bar dataKey="Supply" name="Planned Supply" fill="#6d817a" radius={[3, 3, 0, 0]} />
-              <Bar dataKey="Demand" name="Forecast Demand" fill="#6d817a" radius={[3, 3, 0, 0]} />
-              <Line type="monotone" dataKey="EndingInventory" name="Ending Inventory" stroke="#17a88a" strokeWidth={3} dot={{ r: 3 }} />
-              <Line type="step" dataKey="TargetSafetyStock" name="Target Safety Buffer" stroke="#F59E0B" strokeWidth={2} strokeDasharray="4 4" dot={false} />
+              <Bar dataKey="Supply" name="Planned Supply" fill={T.colors.neutral} radius={[3, 3, 0, 0]} />
+              <Bar dataKey="Demand" name="Forecast Demand" fill={T.colors.neutral} radius={[3, 3, 0, 0]} />
+              <Line type="monotone" dataKey="EndingInventory" name="Ending Inventory" stroke={T.colors.emerald} strokeWidth={3} dot={{ r: 3 }} />
+              <Line type="step" dataKey="TargetSafetyStock" name="Target Safety Buffer" stroke={T.series[1]} strokeWidth={2} strokeDasharray="4 4" dot={false} />
             </ComposedChart>
           </ResponsiveContainer>
         </div>

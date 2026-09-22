@@ -1,10 +1,11 @@
 "use client";
 
-import React, { useId, useMemo } from "react";
+import React, { useEffect, useId, useMemo, useRef, useState } from "react";
 import { geoMercator, geoPath, geoGraticule10 } from "d3-geo";
 import type { FeatureCollection, Feature, Geometry } from "geojson";
 import gulf from "@/lib/geo/gulf.json";
 import { HUBS, HUB_MAP, ROUTES, type Route } from "@/lib/geo/hubs";
+import { timeline, addDraw, stagger, prefersReducedMotion, onceInView, releaseDrawable, DURATION } from "@/lib/anime";
 
 /**
  * GulfMap — a real map. Coastlines come from Natural Earth (lib/geo/gulf.json,
@@ -12,7 +13,27 @@ import { HUBS, HUB_MAP, ROUTES, type Route } from "@/lib/geo/hubs";
  * SVG. GCC states are lit; neighbours sit in the dark. Corridors are bezier
  * paths between real hub coordinates, and small vehicles ride them with
  * SVG animateMotion (no JS per frame).
+ *
+ * Entrance (anime.js, once, when the map scrolls into view): neighbouring
+ * land fades up, the six GCC coastlines draw on west → east, their fill
+ * lights, corridors draw by kind (road, sea, capital), hubs pop west → east
+ * and labels settle last. Only then do the dashed flows and vehicles start.
  */
+
+/** Draw order for the coastlines — Saudi first, then clockwise round the Gulf. */
+const GCC_ORDER: Record<string, number> = { "Saudi Arabia": 0, Kuwait: 1, Bahrain: 2, Qatar: 3, "United Arab Emirates": 4, Oman: 5 };
+
+/**
+ * Hub label placement. Most labels sit to the right of western hubs and to the
+ * left of eastern ones; the exceptions below keep Dammam / Manama (8 px apart
+ * on this projection) and the Abu Dhabi / Dubai pair from colliding.
+ */
+const LABEL_POS: Record<string, { dx: number; dy: number; anchor: "start" | "end" | "middle" }> = {
+  dmm: { dx: -13, dy: -6, anchor: "end" },
+  bah: { dx: 13, dy: 10, anchor: "start" },
+  auh: { dx: -13, dy: 12, anchor: "end" },
+  dxb: { dx: 13, dy: -4, anchor: "start" },
+};
 
 const W = 1000;
 const H = 620;
@@ -69,12 +90,47 @@ interface GulfMapProps {
   highlight?: { a: string; b: string } | null;
   showVehicles?: boolean;
   showLabels?: boolean;
+  /** Play the draw-on entrance the first time the map is visible (default true). */
+  animateIn?: boolean;
   className?: string;
 }
 
-export default function GulfMap({ isAr, hover = null, onHover, onSelect, highlight = null, showVehicles = true, showLabels = true, className = "" }: GulfMapProps) {
+export default function GulfMap({ isAr, hover = null, onHover, onSelect, highlight = null, showVehicles = true, showLabels = true, animateIn = true, className = "" }: GulfMapProps) {
   const uid = useId().replace(/:/g, "");
   const fc = gulf as unknown as FeatureCollection;
+  const svgRef = useRef<SVGSVGElement>(null);
+  // "drawn" flips once the entrance has finished (or immediately when it is skipped);
+  // flows, vehicles and hover glow only exist after that.
+  const [drawn, setDrawn] = useState(() => !animateIn || prefersReducedMotion());
+
+  useEffect(() => {
+    const el = svgRef.current;
+    if (!el || !animateIn || prefersReducedMotion()) return;
+    let tl: ReturnType<typeof timeline> | null = null;
+    const stop = onceInView(el, () => {
+      tl = timeline();
+      tl.add(el.querySelectorAll("[data-land]"), { opacity: [0, 1], duration: DURATION.base }, 0);
+      addDraw(tl, el, "[data-gcc]", { duration: 1500, each: 220, position: "-=500" });
+      tl.add(el.querySelectorAll("[data-gcc]"), { fillOpacity: [0, 1], duration: DURATION.slow }, "-=900");
+      tl.add(el.querySelectorAll("[data-country-label]"), { opacity: [0, 1], delay: stagger(80), duration: DURATION.base }, "-=1100");
+      addDraw(tl, el, "[data-corridor='road']", { duration: 1100, each: 90, position: "-=1000" });
+      addDraw(tl, el, "[data-corridor='sea']", { duration: 1300, each: 110, position: "-=700" });
+      addDraw(tl, el, "[data-corridor='capital']", { duration: 900, each: 120, position: "-=800" });
+      tl.add(el.querySelectorAll("[data-hub-halo]"), { r: [0, 12], opacity: [0, 0.1], delay: stagger(70), duration: DURATION.base, ease: "outBack" }, "-=1000");
+      tl.add(el.querySelectorAll("[data-hub-dot='port']"), { r: [0, 4.5], delay: stagger(140), duration: DURATION.fast, ease: "outBack" }, "<");
+      tl.add(el.querySelectorAll("[data-hub-dot='city']"), { r: [0, 3.6], delay: stagger(140), duration: DURATION.fast, ease: "outBack" }, "<");
+      tl.add(el.querySelectorAll("[data-hub-ring]"), { r: [0, 8], opacity: [0, 1], delay: stagger(70), duration: DURATION.base }, "<+=80");
+      tl.add(el.querySelectorAll("[data-hub-label]"), { opacity: [0, 1], translateX: [isAr ? 6 : -6, 0], delay: stagger(60), duration: DURATION.base }, "-=600");
+      tl.add(el.querySelectorAll("[data-scalebar]"), { opacity: [0, 1], duration: DURATION.base }, "-=400");
+      tl.then(() => {
+        // Hand the corridors back to CSS: the dashed flow needs its own dasharray.
+        releaseDrawable(el, "[data-corridor]");
+        setDrawn(true);
+      });
+    });
+    return () => { stop(); tl?.cancel(); };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [animateIn]);
 
   const land = useMemo(() => fc.features.map((f) => ({ name: f.properties?.name as string, gcc: !!f.properties?.gcc, d: path(f) ?? "" })), [fc]);
   const gratD = useMemo(() => path(graticule) ?? "", []);
@@ -89,23 +145,23 @@ export default function GulfMap({ isAr, hover = null, onHover, onSelect, highlig
   const labelsFor = land.filter((l) => l.gcc);
 
   return (
-    <svg viewBox={`0 0 ${W} ${H}`} className={`w-full h-auto ${className}`} role="img" aria-label={isAr ? "خريطة الخليج" : "Gulf map"}>
+    <svg ref={svgRef} viewBox={`0 0 ${W} ${H}`} className={`w-full h-auto ${className}`} role="img" aria-label={isAr ? "خريطة الخليج" : "Gulf map"} data-drawn={drawn ? "1" : "0"}>
       <defs>
         <radialGradient id={`sea-${uid}`} cx="55%" cy="45%" r="75%">
-          <stop offset="0%" stopColor="#0d2530" />
-          <stop offset="60%" stopColor="#09161c" />
-          <stop offset="100%" stopColor="#060d11" />
+          <stop offset="0%" style={{ stopColor: "var(--sea-0)" }} />
+          <stop offset="60%" style={{ stopColor: "var(--sea-1)" }} />
+          <stop offset="100%" style={{ stopColor: "var(--sea-2)" }} />
         </radialGradient>
         <linearGradient id={`gcc-${uid}`} x1="0" y1="0" x2="1" y2="1">
-          <stop offset="0%" stopColor="#173a34" />
-          <stop offset="100%" stopColor="#0f2924" />
+          <stop offset="0%" style={{ stopColor: "var(--land-lit-0)" }} />
+          <stop offset="100%" style={{ stopColor: "var(--land-lit-1)" }} />
         </linearGradient>
         <filter id={`glow-${uid}`} x="-20%" y="-20%" width="140%" height="140%">
           <feGaussianBlur stdDeviation="6" result="b" />
           <feMerge><feMergeNode in="b" /><feMergeNode in="SourceGraphic" /></feMerge>
         </filter>
         <filter id={`shadow-${uid}`} x="-10%" y="-10%" width="120%" height="120%">
-          <feDropShadow dx="0" dy="2" stdDeviation="3" floodColor="#000" floodOpacity="0.6" />
+          <feDropShadow dx="0" dy="2" stdDeviation="3" floodColor="var(--ink-0)" floodOpacity="0.6" />
         </filter>
         <pattern id={`hatch-${uid}`} width="6" height="6" patternUnits="userSpaceOnUse" patternTransform="rotate(45)">
           <line x1="0" y1="0" x2="0" y2="6" stroke="rgba(158,190,180,0.06)" strokeWidth="1" />
@@ -124,13 +180,13 @@ export default function GulfMap({ isAr, hover = null, onHover, onSelect, highlig
 
       {/* Neighbouring land */}
       {land.filter((l) => !l.gcc).map((l) => (
-        <path key={l.name} d={l.d} fill="#101a1f" stroke="rgba(158,190,180,0.14)" strokeWidth="0.6" />
+        <path key={l.name} data-land d={l.d} fill="var(--ink-3)" stroke="rgba(158,190,180,0.14)" strokeWidth="0.6" style={{ opacity: drawn ? 1 : 0 }} />
       ))}
 
       {/* GCC states — lit */}
       <g filter={`url(#shadow-${uid})`}>
-        {land.filter((l) => l.gcc).map((l) => (
-          <path key={l.name} d={l.d} fill={`url(#gcc-${uid})`} stroke="var(--emerald)" strokeWidth="0.9" strokeOpacity="0.7" />
+        {land.filter((l) => l.gcc).sort((a, b) => (GCC_ORDER[a.name] ?? 9) - (GCC_ORDER[b.name] ?? 9)).map((l) => (
+          <path key={l.name} data-gcc d={l.d} fill={`url(#gcc-${uid})`} stroke="var(--emerald)" strokeWidth="0.9" strokeOpacity="0.7" style={{ fillOpacity: drawn ? 1 : 0 }} />
         ))}
       </g>
 
@@ -146,7 +202,7 @@ export default function GulfMap({ isAr, hover = null, onHover, onSelect, highlig
         if (!lab[0]) return null;
         const dy = l.name === "Saudi Arabia" ? 30 : l.name === "Oman" ? 10 : 0;
         return (
-          <text key={l.name} x={cx} y={cy + dy} textAnchor="middle" fontSize={l.name === "Saudi Arabia" ? 22 : 11} fontFamily="var(--font-mono)" letterSpacing="0.2em" fill="rgba(158,190,180,0.28)">
+          <text key={l.name} data-country-label x={cx} y={cy + dy} textAnchor="middle" fontSize={l.name === "Saudi Arabia" ? 22 : 11} fontFamily="var(--font-mono)" letterSpacing="0.2em" fill="rgba(158,190,180,0.28)" style={{ opacity: drawn ? 1 : 0 }}>
             {isAr ? lab[1] : lab[0]}
           </text>
         );
@@ -159,22 +215,23 @@ export default function GulfMap({ isAr, hover = null, onHover, onSelect, highlig
         const opacity = lit === null ? (r.kind === "road" ? 0.55 : 0.9) : lit ? 1 : 0.12;
         return (
           <path
-            key={key}
+            key={`${key}-${drawn ? "live" : "draw"}`}
+            data-corridor={r.kind}
             d={d}
             fill="none"
             stroke={s.stroke}
             strokeWidth={lit ? s.width + 1.2 : s.width}
-            strokeDasharray={s.dash}
+            strokeDasharray={drawn ? s.dash : undefined}
             opacity={opacity}
-            className={r.kind === "road" ? "" : `flow-${uid}`}
-            style={{ ["--dur" as string]: s.dur, transition: "opacity 0.3s, stroke-width 0.3s" }}
-            filter={lit ? `url(#glow-${uid})` : undefined}
+            className={r.kind === "road" || !drawn ? "" : `flow-${uid}`}
+            style={{ ["--dur" as string]: s.dur, transition: drawn ? "opacity 0.3s, stroke-width 0.3s" : undefined }}
+            filter={lit && drawn ? `url(#glow-${uid})` : undefined}
           />
         );
       })}
 
       {/* Vehicles */}
-      {showVehicles && routes.map(({ r, key }, i) => {
+      {showVehicles && drawn && routes.map(({ r, key }, i) => {
         if (r.kind === "capital" && i % 2) return null;
         const lit = isLit(r);
         if (lit === false) return null;
@@ -195,15 +252,16 @@ export default function GulfMap({ isAr, hover = null, onHover, onSelect, highlig
       {HUBS.map((h) => {
         const [x, y] = project(h.lon, h.lat);
         const active = hover === h.id || highlight?.a === h.id || highlight?.b === h.id;
-        const right = h.lon < 52 || h.id === "mct";
         const port = h.kind === "port";
+        const lp = LABEL_POS[h.id] ?? (h.lon < 52 || h.id === "mct" ? { dx: 13, dy: 4, anchor: "start" as const } : { dx: -13, dy: 4, anchor: "end" as const });
+        const r = port ? 4.5 : 3.6;
         return (
           <g key={h.id} onMouseEnter={() => onHover?.(h.id)} onMouseLeave={() => onHover?.(null)} onClick={() => onSelect?.(h.id)} className={onSelect ? "cursor-pointer" : ""}>
-            <circle cx={x} cy={y} r={active ? 22 : 12} fill={port ? "var(--gold)" : "var(--emerald-light)"} opacity={active ? 0.22 : 0.1} style={{ transition: "r 0.3s, opacity 0.3s" }} />
-            <circle cx={x} cy={y} r={port ? 4.5 : 3.6} fill={port ? "var(--gold)" : "var(--emerald-light)"} />
-            <circle cx={x} cy={y} r={8} fill="none" stroke={port ? "rgba(217,179,110,0.5)" : "var(--emerald-border)"} strokeWidth="1" />
+            <circle data-hub-halo cx={x} cy={y} r={drawn ? (active ? 22 : 12) : 0} fill={port ? "var(--gold)" : "var(--emerald-light)"} style={{ opacity: drawn ? (active ? 0.22 : 0.1) : 0, transition: drawn ? "r 0.3s, opacity 0.3s" : undefined }} />
+            <circle data-hub-dot={port ? "port" : "city"} cx={x} cy={y} r={drawn ? r : 0} fill={port ? "var(--gold)" : "var(--emerald-light)"} />
+            <circle data-hub-ring cx={x} cy={y} r={drawn ? 8 : 0} fill="none" stroke={port ? "rgba(217,179,110,0.5)" : "var(--emerald-border)"} strokeWidth="1" style={{ opacity: drawn ? 1 : 0 }} />
             {showLabels && (
-              <text x={x + (right ? 13 : -13)} y={y + 4} textAnchor={right ? "start" : "end"} fontSize="11.5" fontFamily="var(--font-mono)" fill={active ? "var(--fg-1)" : "var(--fg-2)"} style={{ paintOrder: "stroke", stroke: "rgba(6,13,17,0.85)", strokeWidth: 3 }}>
+              <text data-hub-label x={x + lp.dx} y={y + lp.dy} textAnchor={lp.anchor} fontSize="11.5" fontFamily="var(--font-mono)" fill={active ? "var(--fg-1)" : "var(--fg-2)"} style={{ paintOrder: "stroke", stroke: "rgba(6,13,17,0.85)", strokeWidth: 3, opacity: drawn ? 1 : 0 }}>
                 {isAr ? h.ar : h.en}
               </text>
             )}
@@ -216,7 +274,7 @@ export default function GulfMap({ isAr, hover = null, onHover, onSelect, highlig
         const [x0, y0] = project(56, 14.2);
         const [x1] = project(56 + 500 / (111.32 * Math.cos((14.2 * Math.PI) / 180)), 14.2);
         return (
-          <g fontFamily="var(--font-mono)" fontSize="9" fill="var(--fg-3)">
+          <g data-scalebar fontFamily="var(--font-mono)" fontSize="9" fill="var(--fg-3)" style={{ opacity: drawn ? 1 : 0 }}>
             <line x1={x0} y1={y0} x2={x1} y2={y0} stroke="var(--fg-3)" strokeWidth="1" />
             <line x1={x0} y1={y0 - 4} x2={x0} y2={y0 + 4} stroke="var(--fg-3)" />
             <line x1={x1} y1={y0 - 4} x2={x1} y2={y0 + 4} stroke="var(--fg-3)" />

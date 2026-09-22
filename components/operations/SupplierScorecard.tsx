@@ -16,6 +16,8 @@ import FormulaAuditModal from "./shared/FormulaAuditModal";
 import InlineError from "./shared/InlineError";
 import { exportToExcel, exportToPdf } from "./shared/exportOperations";
 
+import { TERMINAL_CHART_THEME as T } from "@/lib/chartTheme";
+
 export default function SupplierScorecard() {
   const { language, updateSessionAnalysis } = useTerminalStore();
   const isAr = language === "ar";
@@ -123,7 +125,7 @@ export default function SupplierScorecard() {
   const auditData: AuditData = generateScorecardAudit(criteria, rankings, scaleMax);
 
   // Radar chart colors
-  const RADAR_COLORS = ["#17a88a", "#3B82F6", "#F59E0B", "#8B5CF6", "#EC4899"];
+  const RADAR_COLORS = [T.colors.emerald, T.series[2], T.series[1], T.series[3], T.series[4]];
 
   return (
     <motion.div
@@ -319,10 +321,10 @@ export default function SupplierScorecard() {
               <ResponsiveContainer width="100%" height="100%">
                 <RadarChart data={radarData} outerRadius="75%">
                   <PolarGrid stroke="rgba(158,190,180,0.14)" />
-                  <PolarAngleAxis dataKey="criterion" stroke="#a7b9b2" fontSize={9} fontFamily="sans-serif" />
-                  <PolarRadiusAxis domain={[0, scaleMax]} stroke="#6d817a" fontSize={8} />
+                  <PolarAngleAxis dataKey="criterion" stroke={T.colors.slate} fontSize={9} fontFamily="sans-serif" />
+                  <PolarRadiusAxis domain={[0, scaleMax]} stroke={T.colors.neutral} fontSize={8} />
                   <Tooltip
-                    contentStyle={{ backgroundColor: "#0e161a", borderColor: "rgba(158,190,180,0.14)", borderRadius: "8px", fontSize: "11px" }}
+                    contentStyle={{ backgroundColor: T.colors.surface, borderColor: "rgba(158,190,180,0.14)", borderRadius: "8px", fontSize: "11px" }}
                   />
                   <Legend wrapperStyle={{ fontSize: "10px", fontFamily: "monospace" }} />
                   {suppliers.map((sup, idx) => (

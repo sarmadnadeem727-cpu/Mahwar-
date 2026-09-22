@@ -9,6 +9,8 @@ import { useTerminalStore } from "@/store/useTerminalStore";
 import { t } from "@/lib/i18n";
 import { panelReveal } from "@/lib/motion";
 
+import { TERMINAL_CHART_THEME as T } from "@/lib/chartTheme";
+
 export default function BIReportEngine() {
   const { sessionAnalyses, language } = useTerminalStore();
   const isAr = language === 'ar';
@@ -46,7 +48,7 @@ export default function BIReportEngine() {
 
     try {
       const canvas = await html2canvas(element, {
-        backgroundColor: "#0e161a",
+        backgroundColor: T.colors.surface,
         scale: 1.8,
         useCORS: true,
         logging: false

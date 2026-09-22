@@ -4,6 +4,8 @@ import React from "react";
 import { ResponsiveContainer, LineChart, Line, XAxis, YAxis, Tooltip, CartesianGrid } from "recharts";
 import { useTerminalStore } from "@/store/useTerminalStore";
 
+import { TERMINAL_CHART_THEME as T } from "@/lib/chartTheme";
+
 interface LboWaterfallChartProps {
   entryEv?: number;
   transactionFees?: number;
@@ -125,13 +127,13 @@ export default function LboWaterfallChart({
           <ResponsiveContainer width="100%" height="100%">
             <LineChart data={holdYearsData} margin={{ top: 10, right: 10, left: -20, bottom: 0 }}>
               <CartesianGrid strokeDasharray="3 3" stroke="rgba(158,190,180,0.14)" vertical={false} />
-              <XAxis dataKey="year" stroke="#a7b9b2" tickLine={false} tickFormatter={(y) => `Yr ${y}`} fontSize={10} />
-              <YAxis stroke="#a7b9b2" tickLine={false} unit="%" fontSize={10} />
+              <XAxis dataKey="year" stroke={T.colors.slate} tickLine={false} tickFormatter={(y) => `Yr ${y}`} fontSize={10} />
+              <YAxis stroke={T.colors.slate} tickLine={false} unit="%" fontSize={10} />
               <Tooltip
-                contentStyle={{ backgroundColor: "#0e161a", borderColor: "rgba(158,190,180,0.14)", borderRadius: "8px", color: "#e8f1ed", fontSize: "11px", boxShadow: "0 4px 12px rgba(158,190,180,0.1)" }}
+                contentStyle={{ backgroundColor: T.colors.surface, borderColor: "rgba(158,190,180,0.14)", borderRadius: "8px", color: T.colors.fg, fontSize: "11px", boxShadow: "0 4px 12px rgba(158,190,180,0.1)" }}
                 formatter={(val: any, name: any) => [name === "irr" ? `${val}%` : `${val}x`, name === "irr" ? "IRR (%)" : "MOIC (x)"]}
               />
-              <Line type="monotone" dataKey="irr" stroke="#17a88a" strokeWidth={3} dot={{ fill: "#17a88a", r: 4 }} activeDot={{ r: 6 }} />
+              <Line type="monotone" dataKey="irr" stroke={T.colors.emerald} strokeWidth={3} dot={{ fill: T.colors.emerald, r: 4 }} activeDot={{ r: 6 }} />
             </LineChart>
           </ResponsiveContainer>
         </div>

@@ -9,6 +9,8 @@ import { Dices, Play, RefreshCw, Sliders } from "lucide-react";
 import { useTerminalStore } from "@/store/useTerminalStore";
 import { panelReveal } from "@/lib/motion";
 
+import { TERMINAL_CHART_THEME as T } from "@/lib/chartTheme";
+
 interface DistributionStats {
   histogramData: { rangeLabel: string; count: number; minVal: number; maxVal: number }[];
   p10: number;
@@ -464,14 +466,14 @@ export default function MonteCarloPanel() {
                 <ResponsiveContainer width="100%" height="100%">
                   <BarChart data={stats.histogramData} margin={{ top: 10, right: 10, left: -20, bottom: 0 }}>
                     <CartesianGrid strokeDasharray="3 3" stroke="rgba(158,190,180,0.14)" vertical={false} />
-                    <XAxis dataKey="rangeLabel" stroke="#a7b9b2" fontSize={10} fontFamily="monospace" />
-                    <YAxis stroke="#a7b9b2" fontSize={10} fontFamily="monospace" />
+                    <XAxis dataKey="rangeLabel" stroke={T.colors.slate} fontSize={10} fontFamily="monospace" />
+                    <YAxis stroke={T.colors.slate} fontSize={10} fontFamily="monospace" />
                     <Tooltip
-                      contentStyle={{ backgroundColor: "#0e161a", borderColor: "rgba(158,190,180,0.14)", borderRadius: "8px", fontSize: "11px" }}
+                      contentStyle={{ backgroundColor: T.colors.surface, borderColor: "rgba(158,190,180,0.14)", borderRadius: "8px", fontSize: "11px" }}
                       formatter={(val: any) => [`${val} Runs`, "Frequency"]}
                     />
-                    <ReferenceLine x={`SAR ${stats.p50}`} stroke="#17a88a" strokeWidth={2} label={{ value: "P50 Median", fill: "#17a88a", fontSize: 10 }} />
-                    <Bar dataKey="count" fill="#17a88a" radius={[4, 4, 0, 0]} />
+                    <ReferenceLine x={`SAR ${stats.p50}`} stroke={T.colors.emerald} strokeWidth={2} label={{ value: "P50 Median", fill: T.colors.emerald, fontSize: 10 }} />
+                    <Bar dataKey="count" fill={T.colors.emerald} radius={[4, 4, 0, 0]} />
                   </BarChart>
                 </ResponsiveContainer>
               ) : (

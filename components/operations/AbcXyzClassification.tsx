@@ -14,6 +14,8 @@ import FormulaAuditModal from "./shared/FormulaAuditModal";
 import InlineError from "./shared/InlineError";
 import { exportToExcel, exportToPdf } from "./shared/exportOperations";
 
+import { TERMINAL_CHART_THEME as T } from "@/lib/chartTheme";
+
 export default function AbcXyzClassification() {
   const { language, currency, sessionAnalyses, updateSessionAnalysis } = useTerminalStore();
   const isAr = language === "ar";
@@ -320,14 +322,14 @@ export default function AbcXyzClassification() {
               <ResponsiveContainer width="100%" height="100%">
                 <ComposedChart data={paretoData} margin={{ top: 10, right: 10, left: -20, bottom: 25 }}>
                   <CartesianGrid strokeDasharray="3 3" stroke="rgba(158,190,180,0.14)" vertical={false} />
-                  <XAxis dataKey="name" stroke="#a7b9b2" fontSize={8} fontFamily="monospace" angle={-45} textAnchor="end" />
-                  <YAxis yAxisId="left" stroke="#a7b9b2" fontSize={9} fontFamily="monospace" />
-                  <YAxis yAxisId="right" orientation="right" stroke="#17a88a" domain={[0, 100]} fontSize={9} fontFamily="monospace" unit="%" />
+                  <XAxis dataKey="name" stroke={T.colors.slate} fontSize={8} fontFamily="monospace" angle={-45} textAnchor="end" />
+                  <YAxis yAxisId="left" stroke={T.colors.slate} fontSize={9} fontFamily="monospace" />
+                  <YAxis yAxisId="right" orientation="right" stroke={T.colors.emerald} domain={[0, 100]} fontSize={9} fontFamily="monospace" unit="%" />
                   <Tooltip
-                    contentStyle={{ backgroundColor: "#0e161a", borderColor: "rgba(158,190,180,0.14)", borderRadius: "8px", fontSize: "11px" }}
+                    contentStyle={{ backgroundColor: T.colors.surface, borderColor: "rgba(158,190,180,0.14)", borderRadius: "8px", fontSize: "11px" }}
                   />
-                  <Bar yAxisId="left" dataKey="value" name="Value (SAR)" fill="#6d817a" radius={[3, 3, 0, 0]} />
-                  <Line yAxisId="right" type="monotone" dataKey="cumulativePct" name="Cumulative %" stroke="#17a88a" strokeWidth={2.5} dot={{ r: 2 }} />
+                  <Bar yAxisId="left" dataKey="value" name="Value (SAR)" fill={T.colors.neutral} radius={[3, 3, 0, 0]} />
+                  <Line yAxisId="right" type="monotone" dataKey="cumulativePct" name="Cumulative %" stroke={T.colors.emerald} strokeWidth={2.5} dot={{ r: 2 }} />
                 </ComposedChart>
               </ResponsiveContainer>
             </div>

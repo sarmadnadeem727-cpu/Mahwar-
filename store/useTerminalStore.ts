@@ -1,5 +1,6 @@
 import { create } from "zustand";
 import { persist, createJSONStorage } from "zustand/middleware";
+import { vaultStorage } from "@/lib/privacy/vault";
 
 export type Currency = "SAR" | "AED" | "KWD" | "BHD" | "OMR" | "QAR" | "USD";
 export type Language = "en" | "ar";
@@ -7,6 +8,7 @@ export type PanelType =
   | "hub"
   | "news"
   | "console"
+  | "privacy"
   | "shariah"
   | "custom_model"
   | "monte_carlo"
@@ -244,7 +246,9 @@ export const useTerminalStore = create<TerminalState>()(
     }),
     {
       name: STORAGE_KEY,
-      storage: createJSONStorage(() => localStorage),
+      // Sealed at rest: AES-GCM with a non-extractable device key (lib/privacy/vault.ts).
+      // Persistent (localStorage) or ephemeral (sessionStorage) is the user's choice.
+      storage: createJSONStorage(() => vaultStorage),
       partialize: (state) => ({
         language: state.language,
         currency: state.currency,

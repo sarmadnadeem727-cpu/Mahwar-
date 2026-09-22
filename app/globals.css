@@ -55,6 +55,13 @@
     --border-emerald: var(--emerald-border);
     --navy: #0b2a33;
 
+    /* Cartography — the Gulf map's water and lit GCC land */
+    --sea-0: #0d2530;
+    --sea-1: #09161c;
+    --sea-2: #060d11;
+    --land-lit-0: #173a34;
+    --land-lit-1: #0f2924;
+
     --shadow-panel: 0 1px 0 rgba(255, 255, 255, 0.03) inset;
     --shadow-card: 0 1px 0 rgba(255, 255, 255, 0.04) inset, 0 12px 32px -18px rgba(0, 0, 0, 0.8);
     --shadow-elevated: 0 0 0 1px var(--emerald-border), 0 20px 50px -20px rgba(23, 168, 138, 0.35);

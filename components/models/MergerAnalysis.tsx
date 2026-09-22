@@ -9,6 +9,8 @@ import ChartWrapper from "@/components/shared/ChartWrapper";
 import { panelReveal } from "@/lib/motion";
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip as ReTooltip, ResponsiveContainer, Cell } from "recharts";
 
+import { TERMINAL_CHART_THEME as T } from "@/lib/chartTheme";
+
 export default function MergerAnalysis() {
   const { language, currency } = useTerminalStore();
   const isAr = language === "ar";
@@ -179,19 +181,19 @@ export default function MergerAnalysis() {
             <ResponsiveContainer width="100%" height={300}>
               <BarChart data={results.bridgeData} margin={{ top: 20, right: 30, left: 20, bottom: 5 }}>
                 <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="rgba(158,190,180,0.14)" />
-                <XAxis dataKey="name" axisLine={false} tickLine={false} tick={{ fontSize: 10, fill: '#a7b9b2', fontFamily: 'monospace' }} />
-                <YAxis axisLine={false} tickLine={false} tick={{ fontSize: 10, fill: '#a7b9b2', fontFamily: 'monospace' }} tickFormatter={(val) => `${currency} ${val.toFixed(2)}`} domain={['auto', 'auto']} />
+                <XAxis dataKey="name" axisLine={false} tickLine={false} tick={{ fontSize: 10, fill: T.colors.slate, fontFamily: 'monospace' }} />
+                <YAxis axisLine={false} tickLine={false} tick={{ fontSize: 10, fill: T.colors.slate, fontFamily: 'monospace' }} tickFormatter={(val) => `${currency} ${val.toFixed(2)}`} domain={['auto', 'auto']} />
                 <ReTooltip
-                  cursor={{ fill: '#131e23' }}
-                  contentStyle={{ fontFamily: 'monospace', fontSize: '12px', borderRadius: '8px', border: '1px solid #E2E8F0', boxShadow: '0 4px 6px -1px rgb(0 0 0 / 0.1)' }}
+                  cursor={{ fill: T.colors.surfaceRaised }}
+                  contentStyle={T.tooltipStyle}
                   formatter={(val: number) => [`${currency} ${val.toFixed(2)}`, "Impact/EPS"]}
                 />
                 <Bar dataKey="value" radius={[4, 4, 0, 0]} maxBarSize={50}>
                   {results.bridgeData.map((entry, index) => {
-                    let color = "#6d817a"; // default/base
-                    if (entry.type === "pos") color = "#17a88a";
-                    else if (entry.type === "neg") color = "#f43f5e";
-                    else if (entry.type === "total") color = "#e8f1ed";
+                    let color = T.colors.neutral; // default/base
+                    if (entry.type === "pos") color = T.colors.emerald;
+                    else if (entry.type === "neg") color = T.colors.negative;
+                    else if (entry.type === "total") color = T.colors.fg;
                     return <Cell key={`cell-${index}`} fill={color} />;
                   })}
                 </Bar>
