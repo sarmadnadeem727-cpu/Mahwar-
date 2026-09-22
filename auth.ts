@@ -20,6 +20,7 @@ const allowedDomains = (process.env.AUTH_ALLOWED_DOMAINS || "")
   .filter(Boolean);
 
 export const authConfig: NextAuthConfig = {
+  secret: process.env.AUTH_SECRET || "mahwar-terminal-auth-secret-key-32chars-fallback-guest",
   providers: isAuthConfigured()
     ? [
         Google({
