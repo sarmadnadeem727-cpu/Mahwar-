@@ -2,10 +2,7 @@
 
 import React from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { 
-  X, Globe, BarChart2, BookOpen, Shield, ScrollText, BadgeCheck, 
-  Sparkles, Layers, FileSpreadsheet, CheckCircle2, Lock, FileText, ChevronRight
-} from "lucide-react";
+import { X, Globe, BookOpen, Shield, ScrollText, BadgeCheck, CheckCircle2, Lock, ChevronRight } from "lucide-react";
 import { useTerminalStore, PanelType } from "@/store/useTerminalStore";
 
 interface FooterModalProps {

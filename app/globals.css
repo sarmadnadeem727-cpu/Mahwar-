@@ -361,3 +361,85 @@
   body { background: #fff; color: #111; }
 }
 
+
+/* =====================================================================
+   v5 — cinematic layer: aurora, cursor glow, mobile chrome
+   ===================================================================== */
+
+/* Aurora — slow conic drift of emerald and gold behind glass panels. */
+.aurora {
+  background:
+    radial-gradient(60% 50% at 30% 30%, rgba(23, 168, 138, 0.28), transparent 70%),
+    radial-gradient(45% 40% at 70% 60%, rgba(217, 179, 110, 0.16), transparent 70%),
+    radial-gradient(50% 45% at 55% 20%, rgba(61, 219, 180, 0.18), transparent 70%);
+  filter: blur(60px) saturate(1.2);
+  opacity: 0.85;
+  animation: aurora-drift 26s ease-in-out infinite alternate;
+  will-change: transform;
+}
+.aurora--dashboard {
+  position: absolute;
+  inset: -20% -10% auto -10%;
+  height: 70vh;
+  pointer-events: none;
+  opacity: 0.22;
+  z-index: 0;
+}
+@keyframes aurora-drift {
+  0%   { transform: translate3d(-4%, -2%, 0) rotate(-3deg) scale(1); }
+  50%  { transform: translate3d(3%, 4%, 0) rotate(2deg) scale(1.08); }
+  100% { transform: translate3d(-2%, 6%, 0) rotate(-1deg) scale(1.03); }
+}
+
+/* Cursor glow — desktop only, pure CSS variables set from a tiny listener. */
+@media (hover: hover) and (pointer: fine) {
+  .cursor-glow::before {
+    content: "";
+    position: fixed;
+    inset: 0;
+    pointer-events: none;
+    z-index: 1;
+    background: radial-gradient(360px circle at var(--mx, -999px) var(--my, -999px), rgba(61, 219, 180, 0.07), transparent 60%);
+    transition: opacity 0.4s ease;
+  }
+}
+
+/* Mobile bottom navigation */
+.mobile-nav {
+  position: fixed;
+  left: 0; right: 0; bottom: 0;
+  z-index: 30;
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+  padding-bottom: env(safe-area-inset-bottom);
+  background: color-mix(in srgb, var(--ink-2) 92%, transparent);
+  backdrop-filter: blur(18px);
+  -webkit-backdrop-filter: blur(18px);
+  border-top: 1px solid var(--line);
+}
+.mobile-nav__item {
+  display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 3px;
+  height: 3.75rem;
+  font-family: var(--font-mono), ui-monospace, monospace;
+  font-size: 10px; letter-spacing: 0.08em; text-transform: uppercase;
+  color: var(--fg-3);
+  transition: color 0.15s ease;
+  -webkit-tap-highlight-color: transparent;
+}
+.mobile-nav__item.is-active { color: var(--emerald-light); }
+.mobile-nav__item.is-active svg { filter: drop-shadow(0 0 8px rgba(61, 219, 180, 0.6)); }
+
+/* Touch targets & momentum on phones */
+@media (max-width: 767px) {
+  .terminal-table thead th, .terminal-table tbody td { padding-inline: 10px; }
+  .btn-primary, .btn-secondary { min-height: 40px; }
+  input[type="number"], input[type="text"], select { font-size: 16px; } /* stop iOS zoom */
+  .recharts-wrapper { touch-action: pan-y; }
+}
+.overflow-y-auto { -webkit-overflow-scrolling: touch; }
+
+/* Respect reduced motion for the ambient layers */
+@media (prefers-reduced-motion: reduce) {
+  .aurora { animation: none; }
+  .cursor-glow::before { display: none; }
+}

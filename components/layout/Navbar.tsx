@@ -3,7 +3,8 @@
 import React, { useEffect, useState } from "react";
 import Link from "next/link";
 import { AnimatePresence, motion, useScroll, useSpring } from "framer-motion";
-import { Globe, Menu, X, ArrowRight } from "lucide-react";
+import { Globe, Menu, X, ArrowRight, LogIn } from "lucide-react";
+import { useUser } from "@/lib/auth/useUser";
 import { useTerminalStore } from "@/store/useTerminalStore";
 import MahwarLogo from "@/components/ui/MahwarLogo";
 import { APP } from "@/lib/registry";
@@ -18,8 +19,11 @@ const LINKS = [
 export default function Navbar() {
   const [scrolled, setScrolled] = useState(false);
   const [open, setOpen] = useState(false);
-  const { language, setLanguage } = useTerminalStore();
+  const language = useTerminalStore((s) => s.language);
+  const setLanguage = useTerminalStore((s) => s.setLanguage);
+  const { user, configured } = useUser();
   const isAr = language === "ar";
+  const needsSignIn = configured && !user;
   const { scrollYProgress } = useScroll();
   const progress = useSpring(scrollYProgress, { stiffness: 140, damping: 30, mass: 0.4 });
 
@@ -62,8 +66,9 @@ export default function Navbar() {
             <Globe size={12} />
             <span>{isAr ? "English" : "العربية"}</span>
           </button>
-          <Link href="/dashboard" className="btn-primary py-2">
-            <span>{isAr ? "المحطة" : "Open terminal"}</span>
+          <Link href={needsSignIn ? "/login" : "/dashboard"} className="btn-primary py-2">
+            {needsSignIn ? <LogIn size={13} /> : null}
+            <span>{needsSignIn ? (isAr ? "تسجيل الدخول" : "Sign in") : user ? (isAr ? "المحطة" : "Open terminal") : (isAr ? "المحطة" : "Open terminal")}</span>
             <ArrowRight size={13} className={isAr ? "rotate-180" : ""} />
           </Link>
         </div>
@@ -103,8 +108,8 @@ export default function Navbar() {
                 <Globe size={13} />
                 <span>{isAr ? "English" : "العربية"}</span>
               </button>
-              <Link href="/dashboard" onClick={() => setOpen(false)} className="btn-primary w-full">
-                {isAr ? "ادخل إلى المحطة" : "Open terminal"}
+              <Link href={needsSignIn ? "/login" : "/dashboard"} onClick={() => setOpen(false)} className="btn-primary w-full">
+                {needsSignIn ? (isAr ? "تسجيل الدخول" : "Sign in with Google") : (isAr ? "ادخل إلى المحطة" : "Open terminal")}
               </Link>
             </div>
           </motion.div>

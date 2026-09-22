@@ -2,7 +2,7 @@
 
 import React, { useState, useEffect, useMemo } from "react";
 import { motion } from "framer-motion";
-import { BarChart3, Calculator, TrendingUp, TrendingDown, RefreshCw, Activity, PieChart, Sliders } from "lucide-react";
+import { BarChart3, Calculator, TrendingUp, TrendingDown, RefreshCw } from "lucide-react";
 import { useTerminalStore } from "@/store/useTerminalStore";
 import { t } from "@/lib/i18n";
 import { panelReveal } from "@/lib/motion";

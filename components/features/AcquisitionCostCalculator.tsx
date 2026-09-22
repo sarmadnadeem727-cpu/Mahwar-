@@ -5,11 +5,10 @@ import { motion } from "framer-motion";
 import { 
   ResponsiveContainer, BarChart, Bar, XAxis, YAxis, Tooltip, CartesianGrid, Cell 
 } from "recharts";
-import { Calculator, Download, CheckCircle2, DollarSign, Layers, ArrowUpRight, FileText } from "lucide-react";
+import { Calculator, Download, DollarSign } from "lucide-react";
 import jsPDF from "jspdf";
 import html2canvas from "html2canvas";
 import { useTerminalStore } from "@/store/useTerminalStore";
-import { t } from "@/lib/i18n";
 import { panelReveal } from "@/lib/motion";
 
 export default function AcquisitionCostCalculator() {

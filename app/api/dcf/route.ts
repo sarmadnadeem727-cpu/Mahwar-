@@ -1,38 +1,49 @@
-import { NextRequest, NextResponse } from 'next/server';
+import { NextRequest, NextResponse } from "next/server";
+import { z } from "zod";
+import { rateLimit, clientKey, tooMany } from "@/lib/security/rateLimit";
+
+const pct = z.coerce.number().finite().min(-100).max(1000);
+const DcfBody = z.object({
+  revGrowth: pct,
+  ebitdaMargin: pct,
+  capexRev: pct,
+  taxZakat: z.coerce.number().finite().min(0).max(100),
+  costEquity: pct,
+  costDebt: pct,
+  debtWeight: z.coerce.number().finite().min(0).max(100),
+  terminalGrowth: z.coerce.number().finite().min(-20).max(20),
+  currentPrice: z.coerce.number().finite().min(0).default(0),
+  baseRevenue: z.coerce.number().finite().positive(),
+  sharesOutstanding: z.coerce.number().finite().positive(),
+  netDebt: z.coerce.number().finite().default(0),
+});
+
+const EMPTY = {
+  wacc: 0, fcfProjections: [], terminalValue: 0, pvTerminalValue: 0, enterpriseValue: 0,
+  equityValue: 0, intrinsicValuePerShare: 0, upsidePct: 0, currentPrice: 0, sensitivityMatrix: [],
+};
 
 export async function POST(req: NextRequest) {
-  try {
-    const body = await req.json();
-    const {
-      revGrowth,
-      ebitdaMargin,
-      capexRev,
-      taxZakat,
-      costEquity,
-      costDebt,
-      debtWeight,
-      terminalGrowth,
-      currentPrice,
-      baseRevenue,
-      sharesOutstanding,
-      netDebt
-    } = body;
+  const rl = rateLimit(`dcf:${clientKey(req)}`, 60, 60_000);
+  if (!rl.ok) return tooMany(rl);
 
-    // Validate required inputs to prevent division by zero
-    if (!baseRevenue || baseRevenue <= 0 || !sharesOutstanding || sharesOutstanding <= 0) {
-      return NextResponse.json({
-        error: 'Base revenue and shares outstanding must be greater than zero',
-        wacc: 0,
-        fcfProjections: [],
-        terminalValue: 0,
-        pvTerminalValue: 0,
-        enterpriseValue: 0,
-        equityValue: 0,
-        intrinsicValuePerShare: 0,
-        upsidePct: 0,
-        currentPrice: currentPrice || 0,
-        sensitivityMatrix: []
-      });
+  try {
+    const raw = await req.json().catch(() => null);
+    const parsed = DcfBody.safeParse(raw);
+    if (!parsed.success) {
+      const first = parsed.error.issues[0];
+      return NextResponse.json(
+        { ...EMPTY, error: first ? `${first.path.join(".") || "body"}: ${first.message}` : "Invalid input" },
+        { status: 400 }
+      );
+    }
+    const {
+      revGrowth, ebitdaMargin, capexRev, taxZakat, costEquity, costDebt, debtWeight,
+      terminalGrowth, currentPrice, baseRevenue, sharesOutstanding, netDebt,
+    } = parsed.data;
+
+    if (costEquity / 100 * (100 - debtWeight) / 100 + (costDebt * (1 - taxZakat / 100)) / 100 * debtWeight / 100 <= terminalGrowth / 100) {
+      return NextResponse.json({ ...EMPTY, currentPrice, error: "Terminal growth must be below WACC for a Gordon-growth terminal value" }, { status: 400 });
     }
 
     // WACC computation
@@ -78,7 +89,7 @@ export async function POST(req: NextRequest) {
     const enterpriseValue = totalPVFCF + pvTerminalValue;
     const equityValue = enterpriseValue - netDebt;
     const intrinsicValuePerShare = equityValue / sharesOutstanding;
-    const upsidePct = ((intrinsicValuePerShare - currentPrice) / currentPrice) * 100;
+    const upsidePct = currentPrice > 0 ? ((intrinsicValuePerShare - currentPrice) / currentPrice) * 100 : 0;
 
     // 5x5 Sensitivity Matrix: WACC vs Terminal Growth
     const waccSteps = [wacc - 0.01, wacc - 0.005, wacc, wacc + 0.005, wacc + 0.01];
@@ -111,8 +122,9 @@ export async function POST(req: NextRequest) {
       currentPrice,
       sensitivityMatrix
     });
-  } catch (error: any) {
-    return NextResponse.json({ error: error.message || 'DCF calculation failed' }, { status: 500 });
+  } catch (error) {
+    const message = error instanceof Error ? error.message : "DCF calculation failed";
+    return NextResponse.json({ ...EMPTY, error: message }, { status: 500 });
   }
 }
 

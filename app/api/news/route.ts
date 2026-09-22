@@ -1,4 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
+import { rateLimit, clientKey, tooMany } from "@/lib/security/rateLimit";
 
 /**
  * /api/news — two lanes, one wire.
@@ -151,6 +152,8 @@ async function loadLane(lane: NewsLane, key?: string): Promise<{ articles: NewsA
 export const revalidate = 300;
 
 export async function GET(req: NextRequest) {
+  const rl = rateLimit(`news:${clientKey(req)}`, 30, 60_000);
+  if (!rl.ok) return tooMany(rl);
   const laneParam = req.nextUrl.searchParams.get("lane");
   const lanes: NewsLane[] = laneParam === "finance" || laneParam === "supply_chain" ? [laneParam] : ["finance", "supply_chain"];
   const key = process.env.MARKETAUX_API_KEY || undefined;

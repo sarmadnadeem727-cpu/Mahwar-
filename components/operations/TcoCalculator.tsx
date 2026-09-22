@@ -3,16 +3,11 @@
 
 import React, { useState, useEffect } from "react";
 import { motion } from "framer-motion";
-import { 
-  Coins, Award, DollarSign, Layers, Plus, Trash2, HelpCircle, 
-  ArrowRight, FileSpreadsheet, CheckCircle2, TrendingDown 
-} from "lucide-react";
-import { 
-  ResponsiveContainer, BarChart, Bar, XAxis, YAxis, Tooltip, CartesianGrid, Legend, Cell 
-} from "recharts";
+import { Coins, Award, Plus, Trash2 } from "lucide-react";
+import { ResponsiveContainer, BarChart, Bar, XAxis, YAxis, Tooltip, CartesianGrid, Legend } from "recharts";
 import { useTerminalStore } from "@/store/useTerminalStore";
 import { panelReveal } from "@/lib/motion";
-import { TcoOption, TcoCalculation, AuditData } from "@/lib/operations/types";
+import { TcoOption, AuditData } from "@/lib/operations/types";
 import { computeTco, generateTcoAudit } from "@/lib/operations/tco";
 import OperationsHeader from "./shared/OperationsHeader";
 import FormulaAuditModal from "./shared/FormulaAuditModal";

@@ -3,16 +3,11 @@
 
 import React, { useState, useEffect } from "react";
 import { motion } from "framer-motion";
-import { 
-  FileSpreadsheet, AlertTriangle, CheckCircle2, XCircle, ArrowUpRight, 
-  Layers, Plus, Trash2, Sliders, HelpCircle, Download 
-} from "lucide-react";
-import { 
-  ResponsiveContainer, ComposedChart, Line, Bar, XAxis, YAxis, Tooltip, CartesianGrid, Legend, ReferenceLine 
-} from "recharts";
+import { FileSpreadsheet, AlertTriangle, CheckCircle2, XCircle, ArrowUpRight } from "lucide-react";
+import { ResponsiveContainer, ComposedChart, Line, Bar, XAxis, YAxis, Tooltip, CartesianGrid, Legend } from "recharts";
 import { useTerminalStore } from "@/store/useTerminalStore";
 import { panelReveal } from "@/lib/motion";
-import { SopPeriodRow, AuditData } from "@/lib/operations/types";
+import { AuditData } from "@/lib/operations/types";
 import { computeSopWorksheet, generateSopAudit } from "@/lib/operations/sopWorksheet";
 import OperationsHeader from "./shared/OperationsHeader";
 import FormulaAuditModal from "./shared/FormulaAuditModal";

@@ -3,10 +3,7 @@
 
 import React, { useState, useEffect } from "react";
 import { motion } from "framer-motion";
-import { 
-  DollarSign, Sliders, TrendingDown, Layers, Link as LinkIcon, 
-  HelpCircle, ArrowRight, FileSpreadsheet, FileText, CheckCircle2 
-} from "lucide-react";
+import { DollarSign, Link as LinkIcon } from "lucide-react";
 import { 
   ResponsiveContainer, BarChart, Bar, XAxis, YAxis, Tooltip, CartesianGrid, Cell 
 } from "recharts";

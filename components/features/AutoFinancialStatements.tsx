@@ -2,11 +2,8 @@
 
 import React, { useState, useEffect } from "react";
 import { motion } from "framer-motion";
-import { 
-  FileCheck, ArrowRight, RefreshCw, CheckCircle2, Download, Layers, BarChart3, Sparkles, Sliders
-} from "lucide-react";
+import { FileCheck, ArrowRight, CheckCircle2, Sliders } from "lucide-react";
 import { useTerminalStore } from "@/store/useTerminalStore";
-import { t } from "@/lib/i18n";
 import { panelReveal } from "@/lib/motion";
 
 export default function AutoFinancialStatements() {

@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useState, useEffect } from "react";
-import { ResponsiveContainer, BarChart, Bar, XAxis, YAxis, Tooltip, CartesianGrid, ReferenceLine } from "recharts";
+import { ResponsiveContainer, BarChart, Bar, XAxis, YAxis, Tooltip, CartesianGrid } from "recharts";
 import { RefreshCw, Play, Sparkles } from "lucide-react";
 import { useTerminalStore } from "@/store/useTerminalStore";
 import { runDcf, DcfParams, DcfYear, EvBridge } from "@/lib/finance/dcf";

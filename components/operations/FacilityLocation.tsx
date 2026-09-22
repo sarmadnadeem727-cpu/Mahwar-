@@ -3,13 +3,8 @@
 
 import React, { useState, useEffect } from "react";
 import { motion } from "framer-motion";
-import { 
-  MapPin, Navigation, Compass, Layers, Plus, Trash2, HelpCircle, 
-  ArrowRight, FileSpreadsheet, CheckCircle2, RotateCcw, Crosshair 
-} from "lucide-react";
-import { 
-  ResponsiveContainer, ScatterChart, Scatter, XAxis, YAxis, ZAxis, Tooltip, CartesianGrid, Legend, Cell 
-} from "recharts";
+import { MapPin, Plus, Trash2 } from "lucide-react";
+import { ResponsiveContainer, ScatterChart, Scatter, XAxis, YAxis, ZAxis, Tooltip, CartesianGrid, Legend } from "recharts";
 import { useTerminalStore } from "@/store/useTerminalStore";
 import { panelReveal } from "@/lib/motion";
 import { DemandPoint, CandidateLocation, AuditData } from "@/lib/operations/types";

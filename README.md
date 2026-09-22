@@ -2,9 +2,25 @@
 
 > Built by **Muhammad Sarmad Nadeem** · طُوِّر بواسطة محمد سرمد نديم
 
-Mahwar is a bilingual (EN / AR, full RTL) Bloomberg-style terminal for GCC markets. It joins **16 financial engines** (DCF, LBO, DDM, WACC, Monte Carlo, M&A, 3-statement, sukuk, debt schedules, break-even, …) with **14 supply-chain engines** (EOQ, newsvendor, bullwhip, transport modes, safety stock, ABC/XYZ, demand forecasting, S&OP, landed cost, TCO, supplier scorecard, gravity location, cash-conversion cycle, working-capital financing) behind one command line.
+Mahwar is a bilingual (EN / AR, full RTL) Bloomberg-style terminal for GCC markets. It joins **22 financial engines** (DCF, LBO, DDM, WACC, Monte Carlo, M&A, 3-statement, sukuk, debt schedules, break-even, comps, Altman Z, ratio analysis, 13-week cash, FX hedging, capital rationing, …) with **21 supply-chain & operations engines** (EOQ, quantity discounts, newsvendor, bullwhip, transport modes, corridor planner, safety stock, ABC/XYZ, demand forecasting, S&OP, MRP, SCOR scorecard, flow / OEE, warehouse sizing, make-vs-buy, supplier risk, landed cost, TCO, supplier scorecard, gravity location, cash-conversion cycle, working-capital financing) behind one command line and one console.
 
-Everything computes in the browser. No account, no backend state.
+Every engine computes in the browser. Sessions persist locally and can be exported / imported as JSON. Google sign-in is optional — leave the auth keys empty and the terminal runs in guest mode.
+
+## v5 — what changed
+
+**Google sign-in + a protection layer.** Auth.js v5 (`auth.ts`, `app/api/auth/[...nextauth]`) with Google as the provider, JWT sessions, optional Workspace-domain allow-list, a cinematic `/login`. `middleware.ts` guards `/dashboard` and `/api/session` when auth is configured and applies a strict Content-Security-Policy, HSTS, `X-Frame-Options: DENY`, referrer and permissions policies to every response. `/api/dcf` validates its body with zod; `/api/dcf` and `/api/news` are rate-limited per client (`lib/security/rateLimit.ts`). Nothing about the terminal needs a database.
+
+**Thirteen new engines.** Finance: trading comps (`COMPS`), Altman Z-score (`Z`), 20-ratio analysis with DuPont and a health score (`RATIO`), 13-week cash forecast with revolver logic (`C13`), FX forward / money-market hedge (`FX`), capital rationing with exhaustive search (`CAPB`). Operations: MRP / BOM explosion (`MRP`), SCOR KPI scorecard (`KPI`), flow analytics — Little's law, takt, OEE (`FLOW`), warehouse sizing (`WHSE`), make-vs-buy (`MVB`), supplier concentration risk / HHI (`RISK`), quantity-discount EOQ (`QD`).
+
+**The terminal, properly.** A real command grammar (`lib/commands.ts`) shared by the GO line and the new full-screen console (`CLI`): `<CODE> [GO]`, `HELP`, `HOME`, `OPS`, `FIN`, `AR`/`EN`, `CUR SAR` or just `AED`, `SAVE`, `RPT`, `CLEAR`, `WHOAMI`, `VER`, `EXIT`, `RESET CONFIRM`. Autocomplete, ↑/↓ history (persisted), ok / error flashes, a transcript.
+
+**Session board.** Cross-engine signals (long CCC, Z in distress, unfunded cash gap, OEE < 60 %, concentrated supplier spend, bullwhip > 2×, idle capital budget, expensive hedges…) surface on the hub and link to the engine. Export / import the whole session as JSON; remove one analysis at a time.
+
+**Frontend fixes.** Every layout component now subscribes to store slices (`useShallow` / selectors) instead of the whole store, so typing in one engine no longer re-renders the sidebar, top bar and status bar. Engines write their session entry through a debounced hook (`lib/useSessionSave.ts`) instead of on every keystroke. Heavy panels, charts and PDF code load lazily. The new `exportRowsToPdf` produces a branded vector PDF (searchable, small) rather than a screenshot.
+
+**Mobile.** Engine inputs collapse into a drawer under `xl`, a bottom navigation bar (Hub / Finance / Ops / Wire / CLI), safe-area padding, 16 px inputs (no iOS zoom), scrollable tables, `100dvh` layout, icon-only header buttons on phones.
+
+**Cinematic pass.** Aurora layer on the hero, login and dashboard, grain, blur-in panel transitions, toasts, account menu with avatar, live boot lines that report the real engine count.
 
 ## v3.1 — what changed
 
@@ -54,10 +70,22 @@ npm run typecheck
 
 `next/font` fetches Google Fonts at build time — the build machine needs outbound HTTPS.
 
+### Google sign-in (optional)
+
+1. In [Google Cloud Console](https://console.cloud.google.com) → **APIs & Services → Credentials → Create credentials → OAuth client ID** (Web application).
+2. Add the authorised redirect URI `https://<your-domain>/api/auth/callback/google` (and `http://localhost:3000/api/auth/callback/google` for local work).
+3. `npx auth secret` to generate `AUTH_SECRET`, then fill `AUTH_GOOGLE_ID` and `AUTH_GOOGLE_SECRET` in `.env.local` (or the Vercel project settings).
+4. Optionally set `AUTH_ALLOWED_DOMAINS=yourcompany.com` to restrict access to a Workspace.
+
+With those set, `/dashboard` requires a signed-in Google account and the navbar shows **Sign in**. Without them the terminal stays fully usable in guest mode.
+
 ## Environment
 
 | Key | Purpose |
 |---|---|
+| `AUTH_SECRET` · `AUTH_GOOGLE_ID` · `AUTH_GOOGLE_SECRET` | Google sign-in. Leave empty for guest mode. |
+| `AUTH_ALLOWED_DOMAINS` | Optional comma-separated Workspace domains allowed to sign in. |
+| `AUTH_URL` | Canonical URL for Auth.js when not on Vercel. |
 | `MARKETAUX_API_KEY` | Optional premium GCC news feed. Falls back to a public RSS search; if neither is reachable the wire says so instead of showing canned headlines. |
 | `NEXT_PUBLIC_APP_URL` | Public URL for metadata. |
 | `NEXT_PUBLIC_HERO_VIDEO` | Path to hero footage (`/bg-video.mp4` ships in `public/`). Set empty to drop the video layer. |
@@ -65,18 +93,24 @@ npm run typecheck
 ## Structure
 
 ```
-app/                 layout, landing page, dashboard shell, /api/news, /api/dcf, /privacy, /terms
+app/                 layout, landing page, /login, dashboard shell, /api/{news,dcf,session,auth}, /privacy, /terms
+auth.ts              Auth.js v5 config (Google)
+middleware.ts        security headers + route protection
 components/
-  layout/            Navbar · Sidebar · TopBar (GO line) · StatusBar · Footer
+  layout/            Navbar · Sidebar · TopBar (GO line) · StatusBar · MobileNav · AccountMenu · Footer
   sections/          Hero · LiveTerminal · ThesisSection (+EngineTape) · ToolShowcase · GCCMapSection · CapabilitiesBento · NewsPreviewWidget · CTASection
-  ui/                FlowField (canvas) · CommandPalette · LoadingScreen · MahwarLogo · FooterModal
+  ui/                FlowField (canvas) · CommandPalette · Toasts · LoadingScreen · MahwarLogo · FooterModal
+  engines/           EngineShell + every engine built on it (incl. ConsolePanel)
   features/ models/  financial engines UI
   operations/        supply-chain engines UI
 lib/
   registry.ts        THE module list
+  commands.ts        the command grammar (GO line + console)
+  signals.ts         cross-engine flags for the session board
   finance/ operations/ pure calculation libraries (audited formula traces)
-  chartTheme.ts motion.ts i18n.ts
-store/useTerminalStore.ts   zustand + persist
+  auth/ security/    useUser hook · rate limiter · headers/CSP
+  chartTheme.ts motion.ts i18n.ts useSessionSave.ts session.ts
+store/useTerminalStore.ts   zustand + persist (v5 key, migrates v3)
 ```
 
 ## Adding a module
@@ -93,10 +127,8 @@ It then appears in the sidebar, palette, hubs, GO line, landing showcase and foo
 - **Scenario compare** — save base / bull / bear per engine and diff them on the hub.
 - **Live market adapter** — pluggable price provider (Tadawul, DFM, ADX) feeding DCF current price and the football-field 52-week band.
 - **Control tower** — put the corridor network in the terminal with landed-cost and lead-time overlays per route.
-- **Alerts** — thresholds on CCC, safety stock, or upside that flag on the status bar.
 - **AI analyst** — a memo generator that reads the saved session (the store already holds structured inputs/outputs).
-- **Sukuk & Islamic finance engines** — sukuk pricing, murabaha cost of funds, profit-rate sensitivity.
-- **Shared sessions** — export/import a session as JSON, or sync via a lightweight backend.
+- **Shared sessions** — sync the JSON session through a lightweight backend keyed on the Google account.
 - **Excel add-in** — the engines in `lib/` are pure functions and can back an Office add-in directly.
 
 ## License

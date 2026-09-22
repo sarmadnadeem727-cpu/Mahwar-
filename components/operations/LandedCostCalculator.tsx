@@ -3,16 +3,11 @@
 
 import React, { useState, useEffect } from "react";
 import { motion } from "framer-motion";
-import { 
-  Ship, Anchor, DollarSign, Layers, Plus, Trash2, HelpCircle, 
-  ArrowRight, FileSpreadsheet, CheckCircle2, Sliders, ArrowUpRight 
-} from "lucide-react";
-import { 
-  ResponsiveContainer, BarChart, Bar, XAxis, YAxis, Tooltip, CartesianGrid, Legend, Cell 
-} from "recharts";
+import { Ship, Plus, Trash2 } from "lucide-react";
+import { ResponsiveContainer, BarChart, Bar, XAxis, YAxis, Tooltip, CartesianGrid, Legend } from "recharts";
 import { useTerminalStore } from "@/store/useTerminalStore";
 import { panelReveal } from "@/lib/motion";
-import { SourcingScenario, LandedCostCalculation, AdditionalFee, AuditData } from "@/lib/operations/types";
+import { SourcingScenario, AdditionalFee, AuditData } from "@/lib/operations/types";
 import { computeLandedCost, generateLandedCostAudit } from "@/lib/operations/landedCost";
 import OperationsHeader from "./shared/OperationsHeader";
 import FormulaAuditModal from "./shared/FormulaAuditModal";

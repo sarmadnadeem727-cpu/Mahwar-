@@ -2,10 +2,7 @@
 
 import React, { useState, useEffect } from "react";
 import { motion } from "framer-motion";
-import { 
-  Table, Plus, Trash2, Save, Calculator, LineChart, 
-  BarChart2, HelpCircle, Check, FileSpreadsheet, FolderPlus
-} from "lucide-react";
+import { Plus, Trash2, Save, LineChart, FileSpreadsheet, FolderPlus } from "lucide-react";
 import { ResponsiveContainer, LineChart as ReLineChart, Line, XAxis, YAxis, Tooltip, CartesianGrid } from "recharts";
 import { useTerminalStore, CustomModelSaved, CustomModelRow } from "@/store/useTerminalStore";
 import { panelReveal } from "@/lib/motion";

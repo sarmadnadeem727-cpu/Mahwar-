@@ -3,10 +3,7 @@
 
 import React, { useState, useEffect } from "react";
 import { motion } from "framer-motion";
-import { 
-  Award, Trophy, Sliders, Plus, Trash2, HelpCircle, 
-  ArrowRight, FileSpreadsheet, CheckCircle2, AlertTriangle, Star 
-} from "lucide-react";
+import { Award, Trophy, Plus, Trash2 } from "lucide-react";
 import { 
   ResponsiveContainer, RadarChart, PolarGrid, PolarAngleAxis, PolarRadiusAxis, Radar, Legend, Tooltip 
 } from "recharts";

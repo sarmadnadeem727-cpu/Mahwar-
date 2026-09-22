@@ -8,12 +8,14 @@ import { computeIrr } from "@/lib/finance/irr";
 import { priceSukuk } from "@/lib/finance/sukuk";
 import { computeNewsvendor } from "@/lib/operations/newsvendor";
 import { useTerminalStore } from "@/store/useTerminalStore";
-
 /**
  * LiveTerminal — a terminal window on the landing page that actually runs
  * Mahwar's engines. Every number printed is computed on the client from the
  * same library code the dashboard uses; nothing is a canned screenshot.
  */
+
+import { computeZ } from "@/lib/finance/zscore";
+import { computeFlow } from "@/lib/operations/flow";
 
 type Script = { cmd: string; lines: string[] };
 
@@ -54,7 +56,28 @@ function buildScripts(): Script[] {
   const suk = priceSukuk({ faceValue: 1000, profitRatePct: 5.25, yearsToMaturity: 5, frequency: 2, marketYieldPct: 5.9 });
   const nv = computeNewsvendor({ unitCost: 38, sellingPrice: 65, salvageValue: 12, shortageCost: 8, meanDemand: 2400, demandStdDev: 520 });
 
+  const z = computeZ({ model: "public", workingCapital: 420, retainedEarnings: 1_180, ebit: 610, equityValue: 5_400, totalLiabilities: 2_900, sales: 4_200, totalAssets: 6_100 });
+  const flow = computeFlow({ wip: 180, throughputPerHour: 42, shiftMinutes: 480, plannedDowntimeMin: 40, unplannedDowntimeMin: 35, demandPerShift: 300, idealCycleSec: 68, totalPieces: 292, defectPieces: 9 });
+
   return [
+    {
+      cmd: "Z GO",
+      lines: [
+        `WC 420  RE 1,180  EBIT 610  MVE 5,400  TL 2,900  S 4,200  TA 6,100`,
+        `Z-score ....... ${z.z.toFixed(2)}   zone: ${z.zone}`,
+        `thresholds .... distress < ${z.thresholds.distress}  safe > ${z.thresholds.safe}`,
+        `implied 1y PD . ${(z.impliedPd * 100).toFixed(1)}%`,
+      ],
+    },
+    {
+      cmd: "FLOW GO",
+      lines: [
+        `WIP 180  TH 42/h  shift 480m  demand 300  ideal 68s`,
+        `lead time ..... ${flow.leadTimeHours.toFixed(2)} h  (Little's law)`,
+        `takt .......... ${flow.taktSec.toFixed(0)} s   utilisation ${flow.utilisationPct.toFixed(0)}%`,
+        `OEE ........... ${(flow.oee * 100).toFixed(1)}%`,
+      ],
+    },
     {
       cmd: "SUK GO",
       lines: [
@@ -113,8 +136,8 @@ function buildScripts(): Script[] {
 }
 
 export default function LiveTerminal({ className = "" }: { className?: string }) {
-  const scripts = useMemo(buildScripts, []);
-  const { language } = useTerminalStore();
+  const scripts = useMemo(() => buildScripts(), []);
+  const language = useTerminalStore((s) => s.language);
   const isAr = language === "ar";
 
   const [step, setStep] = useState(0);

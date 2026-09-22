@@ -5,9 +5,8 @@ import { motion } from "framer-motion";
 import { 
   ResponsiveContainer, BarChart, Bar, XAxis, YAxis, Tooltip, CartesianGrid, ReferenceLine 
 } from "recharts";
-import { Dices, Play, RefreshCw, Sparkles, Sliders, CheckCircle2, TrendingUp, Info } from "lucide-react";
+import { Dices, Play, RefreshCw, Sliders } from "lucide-react";
 import { useTerminalStore } from "@/store/useTerminalStore";
-import { t } from "@/lib/i18n";
 import { panelReveal } from "@/lib/motion";
 
 interface DistributionStats {

@@ -11,6 +11,8 @@ import {
   Table, Dices, Calculator, FileCheck, Coins, Handshake, Activity, RefreshCw,
   DollarSign, PackageCheck, ShieldAlert, Grid3X3, TrendingUp, Ship, Award, MapPin,
   LayoutDashboard, Sparkles, Map, Landmark, CalendarClock, Scale, Boxes, Waves, Route,
+  TerminalSquare, Gauge, HeartPulse, PieChart, CalendarRange, ArrowLeftRight, ListChecks,
+  Network, Target, Timer, Warehouse, GitFork, Radar, Percent,
 } from "lucide-react";
 import type { PanelType, SessionAnalyses } from "@/store/useTerminalStore";
 
@@ -19,7 +21,7 @@ export const APP = {
   nameAr: "محور",
   tagline: "The axis where capital meets logistics",
   taglineAr: "المحور الذي يلتقي فيه رأس المال بسلاسل الإمداد",
-  version: "3.0",
+  version: "5.0",
   url: process.env.NEXT_PUBLIC_APP_URL || "https://mahwar.vercel.app",
   author: "Muhammad Sarmad Nadeem",
   authorAr: "محمد سرمد نديم",
@@ -97,9 +99,16 @@ export const TOOLS: ToolDef[] = [
   {
     id: "operations_hub", code: "OPS", suite: "platform", icon: LayoutDashboard, tag: "SUITE",
     en: "Operations suite", ar: "مركز العمليات",
-    descEn: "Launcher for the eleven supply-chain engines.",
-    descAr: "مشغّل محركات سلاسل الإمداد الأحد عشر.",
+    descEn: "Launcher for every supply-chain and operations engine.",
+    descAr: "مشغّل جميع محركات سلاسل الإمداد والعمليات.",
     keywords: ["operations", "supply chain", "logistics", "عمليات", "سلاسل"],
+  },
+  {
+    id: "console", code: "CLI", suite: "platform", icon: TerminalSquare, tag: "CONSOLE",
+    en: "Command console", ar: "وحدة التحكم",
+    descEn: "Full-screen terminal: every verb and engine code, history and transcript.",
+    descAr: "طرفية بملء الشاشة: كل الأوامر والأكواد والسجل.",
+    keywords: ["console", "cli", "terminal", "command", "shell", "طرفية", "أوامر"],
   },
 
   // ---------------- Finance ----------------
@@ -201,6 +210,50 @@ export const TOOLS: ToolDef[] = [
     descEn: "Cost-volume-profit: break-even units, margin of safety, degree of operating leverage and target-profit volume.",
     descAr: "تحليل التكلفة والحجم والربح: وحدات التعادل وهامش الأمان ودرجة الرفع التشغيلي.",
     keywords: ["break even", "breakeven", "cvp", "contribution", "leverage", "تعادل"],
+  },
+
+  // ---------------- v5 finance ----------------
+  {
+    id: "comps", code: "COMPS", suite: "finance", cluster: "valuation", icon: Gauge, tag: "MULTIPLES", sessionKey: "comps",
+    en: "Trading comps valuation", ar: "تقييم الشركات المماثلة",
+    descEn: "Peer-multiple valuation: EV/EBITDA, EV/Sales and P/E with median, mean and quartile ranges → implied equity value per share.",
+    descAr: "تقييم بمضاعفات الشركات المماثلة: الوسيط والمتوسط والربيعيات ← قيمة السهم الضمنية.",
+    keywords: ["comps", "comparables", "multiples", "ev/ebitda", "peer", "relative valuation", "مماثلة", "مضاعفات"],
+  },
+  {
+    id: "zscore", code: "Z", suite: "finance", cluster: "statements", icon: HeartPulse, tag: "CREDIT", sessionKey: "zscore",
+    en: "Altman Z-score", ar: "مؤشر ألتمان Z",
+    descEn: "Bankruptcy-risk score for public, private and non-manufacturing firms with zone diagnosis and implied default probability.",
+    descAr: "درجة مخاطر الإفلاس للشركات المدرجة والخاصة وغير الصناعية مع تشخيص المنطقة واحتمال التعثر.",
+    keywords: ["altman", "z-score", "zscore", "bankruptcy", "credit", "distress", "ألتمان", "تعثر"],
+  },
+  {
+    id: "ratios", code: "RATIO", suite: "finance", cluster: "statements", icon: PieChart, tag: "20 RATIOS", sessionKey: "ratios",
+    en: "Ratio analysis & DuPont", ar: "تحليل النسب ودوبونت",
+    descEn: "Twenty liquidity, leverage, efficiency and profitability ratios with a three-step DuPont decomposition and health score.",
+    descAr: "عشرون نسبة للسيولة والرفع والكفاءة والربحية مع تحليل دوبونت الثلاثي ودرجة الصحة المالية.",
+    keywords: ["ratios", "dupont", "roe", "liquidity", "leverage", "profitability", "analysis", "نسب", "دوبونت"],
+  },
+  {
+    id: "cash13", code: "C13", suite: "finance", cluster: "working_capital", icon: CalendarRange, tag: "13-WEEK", sessionKey: "cash13",
+    en: "13-week cash forecast", ar: "توقع النقد لثلاثة عشر أسبوعاً",
+    descEn: "Direct-method weekly liquidity: receipts, disbursements, revolver draws and minimum-cash breaches.",
+    descAr: "سيولة أسبوعية بالطريقة المباشرة: المقبوضات والمدفوعات وسحب التسهيل وتنبيهات الحد الأدنى للنقد.",
+    keywords: ["13 week", "cash forecast", "liquidity", "treasury", "revolver", "weekly", "نقد", "سيولة"],
+  },
+  {
+    id: "fx_hedge", code: "FX", suite: "finance", cluster: "debt", icon: ArrowLeftRight, tag: "TREASURY", sessionKey: "fxHedge",
+    en: "FX forward & hedge", ar: "التحوط من العملات",
+    descEn: "Covered-interest forward, money-market hedge and unhedged scenarios for a future foreign-currency payable or receivable.",
+    descAr: "سعر آجل بتعادل الفائدة، تحوط سوق النقد وسيناريوهات بدون تحوط لالتزام أو مستحق بعملة أجنبية.",
+    keywords: ["fx", "forward", "hedge", "currency", "exposure", "money market", "تحوط", "عملات"],
+  },
+  {
+    id: "capital_rationing", code: "CAPB", suite: "finance", cluster: "valuation", icon: ListChecks, tag: "CAPEX", sessionKey: "capitalRationing",
+    en: "Capital budgeting & rationing", ar: "الموازنة الرأسمالية وتقنين رأس المال",
+    descEn: "Rank projects by NPV, IRR and profitability index and pick the best portfolio under a hard capital limit.",
+    descAr: "ترتيب المشاريع بصافي القيمة الحالية ومعدل العائد ومؤشر الربحية واختيار أفضل محفظة ضمن سقف رأس المال.",
+    keywords: ["capital budgeting", "rationing", "profitability index", "portfolio", "projects", "capex", "موازنة", "مشاريع"],
   },
 
   // ---------------- Operations ----------------
@@ -309,6 +362,57 @@ export const TOOLS: ToolDef[] = [
     descEn: "Real Gulf map: pick two hubs and a mode to get distance, door-to-door days, freight plus in-transit carrying cost, and CO₂.",
     descAr: "خريطة خليجية حقيقية: اختر مركزين ووسيلة لتحصل على المسافة والأيام والتكلفة والانبعاثات.",
     keywords: ["map", "corridor", "route", "control tower", "transit", "freight", "خريطة", "ممر"],
+  },
+
+  // ---------------- v5 operations ----------------
+  {
+    id: "mrp", code: "MRP", suite: "operations", cluster: "planning", icon: Network, tag: "BOM", sessionKey: "mrp",
+    en: "MRP planner", ar: "تخطيط الاحتياجات من المواد",
+    descEn: "Bill-of-materials explosion into time-phased gross / net requirements and planned order releases with lead-time offsets.",
+    descAr: "تفكيك قائمة المواد إلى احتياجات إجمالية وصافية مرحلية وأوامر مخططة مع إزاحة مدة التوريد.",
+    keywords: ["mrp", "bom", "bill of materials", "requirements", "planned orders", "تخطيط", "مواد"],
+  },
+  {
+    id: "scor_kpi", code: "KPI", suite: "operations", cluster: "planning", icon: Target, tag: "SCOR", sessionKey: "scorKpi",
+    en: "SCOR KPI scorecard", ar: "بطاقة مؤشرات SCOR",
+    descEn: "Perfect order, OTIF, cycle time, cost-to-serve and asset metrics scored against targets on a five-attribute scorecard.",
+    descAr: "الطلب المثالي وOTIF ودورة التنفيذ وتكلفة الخدمة ومقاييس الأصول مقارنة بالأهداف.",
+    keywords: ["scor", "kpi", "otif", "perfect order", "scorecard", "metrics", "مؤشرات"],
+  },
+  {
+    id: "flow", code: "FLOW", suite: "operations", cluster: "planning", icon: Timer, tag: "LEAN", sessionKey: "flow",
+    en: "Flow analytics (Little / Takt / OEE)", ar: "تحليل التدفق (ليتل / تاكت / OEE)",
+    descEn: "Little's law WIP, takt vs. cycle time, bottleneck utilisation and OEE decomposition for a production line.",
+    descAr: "قانون ليتل ووقت التاكت مقابل زمن الدورة واستغلال عنق الزجاجة وتفكيك OEE لخط إنتاج.",
+    keywords: ["flow", "little's law", "takt", "oee", "lean", "throughput", "bottleneck", "تدفق"],
+  },
+  {
+    id: "warehouse", code: "WHSE", suite: "operations", cluster: "network", icon: Warehouse, tag: "CAPACITY", sessionKey: "warehouse",
+    en: "Warehouse capacity planner", ar: "مخطط سعة المستودع",
+    descEn: "Pallet positions, aisle and honeycomb losses, storage utilisation and cost per pallet-month.",
+    descAr: "مواقع المنصات وفاقد الممرات والاستغلال وتكلفة المنصة شهرياً.",
+    keywords: ["warehouse", "pallet", "capacity", "storage", "racking", "utilisation", "مستودع"],
+  },
+  {
+    id: "make_buy", code: "MVB", suite: "operations", cluster: "cost", icon: GitFork, tag: "SOURCING", sessionKey: "makeBuy",
+    en: "Make vs. buy", ar: "التصنيع أم الشراء",
+    descEn: "Indifference volume between in-house production and outsourcing, with risk-adjusted totals and a strategic score.",
+    descAr: "حجم التعادل بين التصنيع الداخلي والتوريد الخارجي مع الإجماليات المعدلة بالمخاطر.",
+    keywords: ["make or buy", "make vs buy", "outsourcing", "insourcing", "sourcing", "تصنيع", "شراء"],
+  },
+  {
+    id: "supplier_risk", code: "RISK", suite: "operations", cluster: "cost", icon: Radar, tag: "HHI", sessionKey: "supplierRisk",
+    en: "Supplier risk & concentration", ar: "مخاطر الموردين والتركّز",
+    descEn: "Herfindahl concentration, single-source exposure and a probability × impact risk register with expected loss.",
+    descAr: "مؤشر هيرفندال والتعرض لمصدر واحد وسجل مخاطر الاحتمال × الأثر مع الخسارة المتوقعة.",
+    keywords: ["supplier risk", "concentration", "hhi", "single source", "resilience", "مخاطر", "موردين"],
+  },
+  {
+    id: "quantity_discount", code: "QD", suite: "operations", cluster: "inventory", icon: Percent, tag: "PRICE BREAKS", sessionKey: "quantityDiscount",
+    en: "Quantity-discount EOQ", ar: "حجم الطلب مع خصم الكمية",
+    descEn: "All-units and incremental price breaks: total annual cost at every feasible order size and the optimum.",
+    descAr: "خصومات لكل الوحدات أو تصاعدية: التكلفة السنوية الكلية عند كل حجم طلب ممكن والحل الأمثل.",
+    keywords: ["quantity discount", "price break", "eoq", "all units", "incremental", "خصم", "كمية"],
   },
 
   // ---------------- Research ----------------

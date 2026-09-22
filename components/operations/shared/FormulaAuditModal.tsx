@@ -3,7 +3,7 @@
 
 import React from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { X, CheckCircle, Calculator, ShieldCheck, ChevronRight } from "lucide-react";
+import { X, Calculator, ShieldCheck } from "lucide-react";
 import { AuditData } from "@/lib/operations/types";
 
 interface FormulaAuditModalProps {

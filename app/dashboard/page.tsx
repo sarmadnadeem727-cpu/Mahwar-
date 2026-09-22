@@ -7,7 +7,9 @@ import { useSearchParams } from "next/navigation";
 import Sidebar from "@/components/layout/Sidebar";
 import TopBar from "@/components/layout/TopBar";
 import StatusBar from "@/components/layout/StatusBar";
-import { useTerminalStore, type PanelType } from "@/store/useTerminalStore";
+import MobileNav from "@/components/layout/MobileNav";
+import Toasts from "@/components/ui/Toasts";
+import { useTerminalStore, type PanelType, selectLanguage, selectActivePanel, selectSetPanel } from "@/store/useTerminalStore";
 import { isPanelType } from "@/lib/registry";
 
 function PanelSkeleton() {
@@ -64,10 +66,26 @@ const PANELS: Record<PanelType, React.ComponentType> = {
   bullwhip: lazy(() => import("@/components/engines/BullwhipSimulator")),
   transport_mode: lazy(() => import("@/components/engines/TransportModeCompare")),
   network_map: lazy(() => import("@/components/engines/CorridorPlanner")),
+  // v5
+  console: lazy(() => import("@/components/engines/ConsolePanel")),
+  comps: lazy(() => import("@/components/engines/CompsAnalysis")),
+  zscore: lazy(() => import("@/components/engines/AltmanZScore")),
+  ratios: lazy(() => import("@/components/engines/RatioAnalysis")),
+  cash13: lazy(() => import("@/components/engines/Cash13Forecast")),
+  fx_hedge: lazy(() => import("@/components/engines/FxHedge")),
+  capital_rationing: lazy(() => import("@/components/engines/CapitalRationing")),
+  mrp: lazy(() => import("@/components/engines/MrpPlanner")),
+  scor_kpi: lazy(() => import("@/components/engines/ScorScorecard")),
+  flow: lazy(() => import("@/components/engines/FlowAnalytics")),
+  warehouse: lazy(() => import("@/components/engines/WarehousePlanner")),
+  make_buy: lazy(() => import("@/components/engines/MakeVsBuy")),
+  supplier_risk: lazy(() => import("@/components/engines/SupplierRisk")),
+  quantity_discount: lazy(() => import("@/components/engines/QuantityDiscount")),
 };
 
 function PanelContent() {
-  const { activePanel, setPanel } = useTerminalStore();
+  const activePanel = useTerminalStore(selectActivePanel);
+  const setPanel = useTerminalStore(selectSetPanel);
   const searchParams = useSearchParams();
 
   // Deep links: /dashboard?panel=eoq
@@ -104,7 +122,7 @@ function PanelContent() {
 }
 
 export default function DashboardPage() {
-  const { language } = useTerminalStore();
+  const language = useTerminalStore(selectLanguage);
   const isAr = language === "ar";
 
   return (
@@ -113,9 +131,10 @@ export default function DashboardPage() {
       dir={isAr ? "rtl" : "ltr"}
     >
       <Sidebar />
-      <div className="flex-1 flex flex-col min-w-0 overflow-hidden">
+      <div className="flex-1 flex flex-col min-w-0 overflow-hidden relative">
+        <div className="aurora aurora--dashboard" aria-hidden="true" />
         <TopBar />
-        <main className="flex-1 overflow-y-auto p-4 md:p-6 lg:p-8 bg-ink-1 grain relative">
+        <main className="flex-1 overflow-y-auto p-3 sm:p-4 md:p-6 lg:p-8 pb-[calc(4.5rem+env(safe-area-inset-bottom))] lg:pb-8 bg-ink-1/80 grain relative">
           <div className="relative max-w-[1600px] mx-auto">
             <Suspense fallback={<PanelSkeleton />}>
               <PanelContent />
@@ -123,7 +142,9 @@ export default function DashboardPage() {
           </div>
         </main>
         <StatusBar />
+        <MobileNav />
       </div>
+      <Toasts />
     </div>
   );
 }

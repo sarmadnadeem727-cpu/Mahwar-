@@ -1,13 +1,16 @@
 "use client";
 
 import React, { useEffect, useState } from "react";
+import { useShallow } from "zustand/react/shallow";
 import { useTerminalStore } from "@/store/useTerminalStore";
 import { getTool } from "@/lib/registry";
 import MarketClock from "@/components/ui/MarketClock";
 
 /** Bottom status strip: clock, session facts, recent modules and shortcut hints. */
 export default function StatusBar() {
-  const { language, currency, sessionAnalyses, recentPanels, setPanel, activePanel } = useTerminalStore();
+  const { language, currency, savedCount, recentPanels, setPanel, activePanel } = useTerminalStore(
+    useShallow((s) => ({ language: s.language, currency: s.currency, savedCount: Object.keys(s.sessionAnalyses).length, recentPanels: s.recentPanels, setPanel: s.setPanel, activePanel: s.activePanel }))
+  );
   const isAr = language === "ar";
   const [now, setNow] = useState<string>("");
 
@@ -27,7 +30,7 @@ export default function StatusBar() {
 
   return (
     <footer
-      className="h-7 min-h-7 border-t border-line bg-ink-2 flex items-center justify-between px-3 md:px-5 font-mono text-[10px] text-fg-3 no-print overflow-hidden"
+      className="hidden lg:flex h-7 min-h-7 border-t border-line bg-ink-2 items-center justify-between px-3 md:px-5 font-mono text-[10px] text-fg-3 no-print overflow-hidden"
       dir={isAr ? "rtl" : "ltr"}
     >
       <div className="flex items-center gap-4 min-w-0">
@@ -38,7 +41,7 @@ export default function StatusBar() {
         <span className="hidden sm:inline shrink-0">{currency}</span>
         <MarketClock isAr={isAr} compact className="hidden xl:flex shrink-0" />
         <span className="hidden sm:inline shrink-0">
-          {Object.keys(sessionAnalyses).length} {isAr ? "تحليلات محفوظة" : "analyses in session"}
+          {savedCount} {isAr ? "تحليلات محفوظة" : "analyses in session"}
         </span>
         {recent.length > 0 && (
           <span className="hidden md:flex items-center gap-2 min-w-0">

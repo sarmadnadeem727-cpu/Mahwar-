@@ -3,10 +3,7 @@
 
 import React, { useState, useEffect } from "react";
 import { motion } from "framer-motion";
-import { 
-  TrendingUp, Sliders, Layers, Plus, Trash2, HelpCircle, 
-  ArrowRight, FileSpreadsheet, CheckCircle2, AlertCircle, BarChart2 
-} from "lucide-react";
+import { TrendingUp, Plus, Trash2 } from "lucide-react";
 import { 
   ResponsiveContainer, LineChart, Line, XAxis, YAxis, Tooltip, CartesianGrid, Legend 
 } from "recharts";

@@ -2,6 +2,7 @@ import type { Metadata, Viewport } from "next";
 import { Cormorant_Garamond, DM_Sans, IBM_Plex_Mono, Cairo } from "next/font/google";
 import "./globals.css";
 import LoadingScreen from "@/components/ui/LoadingScreen";
+import CursorGlow from "@/components/ui/CursorGlow";
 import { APP } from "@/lib/registry";
 
 const cormorant = Cormorant_Garamond({
@@ -64,6 +65,7 @@ export default function RootLayout({ children }: Readonly<{ children: React.Reac
     >
       <body className="bg-ink-1 text-fg min-h-screen antialiased">
         <LoadingScreen />
+        <CursorGlow />
         {children}
       </body>
     </html>

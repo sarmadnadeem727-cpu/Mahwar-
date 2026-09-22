@@ -3,10 +3,7 @@
 
 import React, { useState, useEffect } from "react";
 import { motion } from "framer-motion";
-import { 
-  RefreshCw, TrendingDown, TrendingUp, HelpCircle, Layers, 
-  ArrowRight, Download, FileSpreadsheet, Plus, Trash2, ArrowUpRight 
-} from "lucide-react";
+import { RefreshCw, TrendingDown, TrendingUp, HelpCircle, Plus, Trash2, ArrowUpRight } from "lucide-react";
 import { 
   ResponsiveContainer, LineChart, Line, XAxis, YAxis, Tooltip, CartesianGrid, Legend 
 } from "recharts";

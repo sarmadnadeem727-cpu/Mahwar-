@@ -3,10 +3,7 @@
 
 import React, { useState, useEffect } from "react";
 import { motion } from "framer-motion";
-import { 
-  ShieldAlert, ShieldCheck, TrendingUp, HelpCircle, Layers, 
-  ArrowRight, Sliders, AlertCircle, BarChart3, CheckCircle2 
-} from "lucide-react";
+import { ShieldAlert } from "lucide-react";
 import { 
   ResponsiveContainer, BarChart, Bar, XAxis, YAxis, Tooltip, CartesianGrid, Cell 
 } from "recharts";

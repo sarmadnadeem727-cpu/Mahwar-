@@ -92,6 +92,7 @@ export default function HeroSection() {
       <div className="absolute inset-0">
         <FlowField density={1} fadeSide={isAr ? "right" : "left"} />
       </div>
+      <div className="aurora absolute -top-[30%] left-1/2 -translate-x-1/2 w-[130vw] h-[90vh] pointer-events-none opacity-40" aria-hidden="true" />
       <div className="absolute inset-0 vignette pointer-events-none" />
 
       {/* Layer 2 — copy */}
@@ -134,6 +135,9 @@ export default function HeroSection() {
               <a href="#modules" className="btn-secondary px-6 py-3.5 text-[12px]">
                 {isAr ? "استعرض الوحدات" : "Browse the modules"}
               </a>
+              <Link href="/login" className="btn-ghost px-2 py-3.5 text-[11px]">
+                {isAr ? "الدخول بحساب Google" : "Sign in with Google"}
+              </Link>
             </div>
 
             <dl data-hero-rest className="opacity-0 mt-12 grid grid-cols-2 sm:grid-cols-4 gap-6 max-w-2xl border-t border-line pt-6">

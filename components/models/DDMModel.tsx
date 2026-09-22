@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useState, useMemo } from "react";
-import { Calculator, Coins, TrendingUp } from "lucide-react";
+import { Coins } from "lucide-react";
 import { motion } from "framer-motion";
 import { useTerminalStore } from "@/store/useTerminalStore";
 import InputGroup from "@/components/shared/InputGroup";

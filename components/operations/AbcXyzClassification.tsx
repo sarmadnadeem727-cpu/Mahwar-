@@ -3,16 +3,11 @@
 
 import React, { useState, useEffect } from "react";
 import { motion } from "framer-motion";
-import { 
-  Grid3X3, Layers, Plus, Trash2, Sliders, Filter, HelpCircle, 
-  ArrowRight, Download, FileSpreadsheet, CheckCircle2, AlertCircle 
-} from "lucide-react";
-import { 
-  ResponsiveContainer, LineChart, Line, BarChart, Bar, XAxis, YAxis, Tooltip, CartesianGrid, Legend, ComposedChart 
-} from "recharts";
+import { Grid3X3, Plus, Trash2, CheckCircle2 } from "lucide-react";
+import { ResponsiveContainer, Line, Bar, XAxis, YAxis, Tooltip, CartesianGrid, ComposedChart } from "recharts";
 import { useTerminalStore } from "@/store/useTerminalStore";
 import { panelReveal } from "@/lib/motion";
-import { SkuItem, AbcXyzMatrixSummary, AuditData } from "@/lib/operations/types";
+import { AuditData } from "@/lib/operations/types";
 import { DEFAULT_SKUS, computeAbcXyz, generateAbcXyzAudit } from "@/lib/operations/abcXyz";
 import OperationsHeader from "./shared/OperationsHeader";
 import FormulaAuditModal from "./shared/FormulaAuditModal";

@@ -43,6 +43,9 @@ test_response.json
 *.log
 *.txt
 dist/
+Mahwar-v5/
+*.zip
+
 
 # API Keys and Secrets (General patterns)
 *key*
@@ -57,3 +60,9 @@ dist/
 !package.json
 !package-lock.json
 
+# Mahwar source files that the broad patterns above would otherwise hide.
+!auth.ts
+!lib/auth/
+!lib/auth/**
+!app/api/auth/
+!app/api/auth/**

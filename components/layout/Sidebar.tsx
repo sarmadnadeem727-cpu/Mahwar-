@@ -4,6 +4,7 @@ import React, { useMemo, useState } from "react";
 import Link from "next/link";
 import { motion, AnimatePresence } from "framer-motion";
 import { PanelLeftClose, PanelLeftOpen, X } from "lucide-react";
+import { useShallow } from "zustand/react/shallow";
 import { useTerminalStore } from "@/store/useTerminalStore";
 import MahwarLogo from "@/components/ui/MahwarLogo";
 import { APP, CLUSTERS, SUITES, TOOLS, type ToolDef } from "@/lib/registry";
@@ -12,7 +13,13 @@ const EXPANDED = 272;
 const COLLAPSED = 64;
 
 export default function Sidebar() {
-  const { activePanel, setPanel, language, isMobileMenuOpen, setMobileMenuOpen, sessionAnalyses } = useTerminalStore();
+  const { activePanel, setPanel, language, isMobileMenuOpen, setMobileMenuOpen, savedKeys } = useTerminalStore(
+    useShallow((s) => ({
+      activePanel: s.activePanel, setPanel: s.setPanel, language: s.language, isMobileMenuOpen: s.isMobileMenuOpen,
+      setMobileMenuOpen: s.setMobileMenuOpen, savedKeys: Object.keys(s.sessionAnalyses).join(","),
+    }))
+  );
+  const savedSet = useMemo(() => new Set(savedKeys.split(",").filter(Boolean)), [savedKeys]);
   const isAr = language === "ar";
   const [collapsed, setCollapsed] = useState(false);
   const expanded = !collapsed;
@@ -26,7 +33,7 @@ export default function Sidebar() {
     []
   );
 
-  const hasData = (tool: ToolDef) => !!(tool.sessionKey && sessionAnalyses[tool.sessionKey]);
+  const hasData = (tool: ToolDef) => !!(tool.sessionKey && savedSet.has(tool.sessionKey));
 
   const nav = (
     <>
@@ -116,7 +123,7 @@ export default function Sidebar() {
               <span className="w-1.5 h-1.5 rounded-full bg-emerald-light animate-pulse" />
               {isAr ? "المحرك يعمل محلياً" : "engines run locally"}
             </span>
-            <span>{Object.keys(sessionAnalyses).length} {isAr ? "محفوظ" : "saved"}</span>
+            <span>{savedSet.size} {isAr ? "محفوظ" : "saved"}</span>
           </div>
         ) : (
           <span className="block mx-auto w-1.5 h-1.5 rounded-full bg-emerald-light animate-pulse" />

@@ -2,10 +2,13 @@
 
 import React, { useMemo } from "react";
 import { motion } from "framer-motion";
-import { FileText, Trash2, ArrowRight, Clock } from "lucide-react";
+import { FileText, Trash2, ArrowRight, Clock, Download, Upload, X, AlertTriangle, AlertOctagon, Sparkles, TerminalSquare } from "lucide-react";
+import { useShallow } from "zustand/react/shallow";
 import { useTerminalStore } from "@/store/useTerminalStore";
 import { panelReveal, staggerContainer, staggerItem } from "@/lib/motion";
 import { APP, SUITES, TOOLS, getTool, toolsBySuite, type ToolDef } from "@/lib/registry";
+import { deriveSignals } from "@/lib/signals";
+import { downloadSession, pickSessionFile } from "@/lib/session";
 
 /** Pick up to three numeric headline outputs from a saved analysis, generically. */
 function headline(outputs: unknown): { k: string; v: string }[] {
@@ -28,8 +31,21 @@ function since(iso: string, isAr: boolean) {
 }
 
 export default function IntelligenceHub() {
-  const { sessionAnalyses, setPanel, language, currency, clearSessionAnalyses, recentPanels } = useTerminalStore();
+  const { sessionAnalyses, setPanel, language, currency, clearSessionAnalyses, recentPanels, removeSessionAnalysis, importSession, toast } = useTerminalStore(
+    useShallow((s) => ({
+      sessionAnalyses: s.sessionAnalyses, setPanel: s.setPanel, language: s.language, currency: s.currency, clearSessionAnalyses: s.clearSessionAnalyses,
+      recentPanels: s.recentPanels, removeSessionAnalysis: s.removeSessionAnalysis, importSession: s.importSession, toast: s.toast,
+    }))
+  );
   const isAr = language === "ar";
+  const signals = useMemo(() => deriveSignals(sessionAnalyses), [sessionAnalyses]);
+
+  const onImport = async () => {
+    const file = await pickSessionFile();
+    if (!file) return;
+    const count = importSession(file, "merge");
+    toast(count > 0 ? (isAr ? `تم استيراد ${count} تحليلاً` : `Imported ${count} analyses`) : (isAr ? "ملف جلسة غير صالح" : "Not a valid Mahwar session file"), count > 0 ? "ok" : "err");
+  };
 
   const saved = useMemo(
     () =>
@@ -59,7 +75,13 @@ export default function IntelligenceHub() {
               : `${saved.length} saved ${saved.length === 1 ? "analysis" : "analyses"} in ${currency}. Everything saved here lands in one report.`}
           </p>
         </div>
-        <div className="flex items-center gap-2">
+        <div className="flex flex-wrap items-center gap-2">
+          <button onClick={onImport} className="btn-secondary" title={isAr ? "استيراد جلسة JSON" : "Import a session JSON"}>
+            <Upload size={13} /> <span className="hidden sm:inline">{isAr ? "استيراد" : "Import"}</span>
+          </button>
+          <button onClick={() => { downloadSession(); toast(isAr ? "تم تنزيل الجلسة" : "Session downloaded"); }} className="btn-secondary" disabled={saved.length === 0} title={isAr ? "تنزيل الجلسة" : "Download session"}>
+            <Download size={13} /> <span className="hidden sm:inline">{isAr ? "تنزيل" : "Export"}</span>
+          </button>
           {saved.length > 0 && (
             <button
               onClick={() => {
@@ -67,7 +89,7 @@ export default function IntelligenceHub() {
               }}
               className="btn-secondary"
             >
-              <Trash2 size={13} /> {isAr ? "مسح الجلسة" : "Clear session"}
+              <Trash2 size={13} /> <span className="hidden sm:inline">{isAr ? "مسح" : "Clear"}</span>
             </button>
           )}
           <button onClick={() => setPanel("bi_report")} className="btn-primary" disabled={saved.length === 0}>
@@ -75,6 +97,31 @@ export default function IntelligenceHub() {
           </button>
         </div>
       </div>
+
+      {/* Signals */}
+      {signals.length > 0 && (
+        <section className="panel-data overflow-hidden">
+          <div className="px-4 md:px-5 py-3 border-b border-line flex items-center justify-between font-mono text-[10.5px] text-fg-3">
+            <span className="flex items-center gap-2"><Sparkles size={12} className="text-gold" /> {isAr ? "إشارات عبر المحركات" : "Cross-engine signals"}</span>
+            <span>{signals.filter((x) => x.tone === "neg").length} {isAr ? "حرجة" : "critical"} · {signals.filter((x) => x.tone === "warn").length} {isAr ? "تنبيه" : "watch"}</span>
+          </div>
+          <ul className="divide-y divide-line">
+            {signals.map((sig) => {
+              const Icon = sig.tone === "neg" ? AlertOctagon : sig.tone === "warn" ? AlertTriangle : Sparkles;
+              const color = sig.tone === "neg" ? "text-neg" : sig.tone === "warn" ? "text-warn" : "text-emerald-light";
+              return (
+                <li key={sig.id}>
+                  <button onClick={() => setPanel(sig.panel)} className="w-full flex items-start gap-3 px-4 md:px-5 py-2.5 text-start hover:bg-ink-3/60 transition-colors">
+                    <Icon size={14} className={`${color} shrink-0 mt-0.5`} />
+                    <span className={`font-mono text-[10.5px] tracking-wider w-12 shrink-0 ${color}`}>{sig.code}</span>
+                    <span className="text-[12.5px] text-fg-2 leading-snug">{isAr ? sig.ar : sig.en}</span>
+                  </button>
+                </li>
+              );
+            })}
+          </ul>
+        </section>
+      )}
 
       {/* Saved analyses */}
       <section className="panel-data">
@@ -88,18 +135,24 @@ export default function IntelligenceHub() {
             <p className="mt-1 text-[12px] text-fg-3">
               {isAr ? "افتح أي محرك أدناه، أدخل أرقامك، وسيظهر هنا تلقائياً." : "Open any engine below, enter your numbers, and it appears here automatically."}
             </p>
-            <button onClick={() => setPanel("ccc")} className="btn-ghost mt-4 text-[11px]">
-              {isAr ? "ابدأ بدورة التحويل النقدي" : "Start with the cash conversion cycle"} <ArrowRight size={12} className={isAr ? "rotate-180" : ""} />
-            </button>
+            <div className="mt-4 flex flex-wrap justify-center gap-2">
+              <button onClick={() => setPanel("ccc")} className="btn-ghost text-[11px]">
+                {isAr ? "ابدأ بدورة التحويل النقدي" : "Start with the cash conversion cycle"} <ArrowRight size={12} className={isAr ? "rotate-180" : ""} />
+              </button>
+              <button onClick={() => setPanel("console")} className="btn-ghost text-[11px]">
+                <TerminalSquare size={12} /> {isAr ? "أو افتح وحدة التحكم" : "or open the console"}
+              </button>
+            </div>
           </div>
         ) : (
-          <table className="terminal-table">
+          <div className="overflow-x-auto"><table className="terminal-table min-w-[560px]">
             <thead>
               <tr>
                 <th>{isAr ? "الكود" : "Code"}</th>
                 <th>{isAr ? "المحرك" : "Engine"}</th>
                 <th>{isAr ? "أبرز النتائج" : "Headline outputs"}</th>
                 <th className="text-end">{isAr ? "آخر حساب" : "Computed"}</th>
+                <th className="w-8" aria-label="Remove" />
               </tr>
             </thead>
             <tbody>
@@ -122,11 +175,20 @@ export default function IntelligenceHub() {
                     <td className="text-end text-fg-3">
                       <span className="inline-flex items-center gap-1"><Clock size={11} />{since(entry.computedAt, isAr)}</span>
                     </td>
+                    <td className="text-end">
+                      <button
+                        onClick={(e) => { e.stopPropagation(); removeSessionAnalysis(tool.sessionKey!); toast(isAr ? `أُزيل ${tool.code} من الجلسة` : `${tool.code} removed from session`, "warn"); }}
+                        className="p-1 rounded text-fg-4 hover:text-neg hover:bg-ink-4"
+                        aria-label={isAr ? "إزالة" : "Remove"}
+                      >
+                        <X size={12} />
+                      </button>
+                    </td>
                   </tr>
                 );
               })}
             </tbody>
-          </table>
+          </table></div>
         )}
       </section>
 

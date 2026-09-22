@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useState, useMemo } from "react";
-import { Handshake, Activity } from "lucide-react";
+import { Handshake } from "lucide-react";
 import { motion } from "framer-motion";
 import { useTerminalStore } from "@/store/useTerminalStore";
 import InputGroup from "@/components/shared/InputGroup";

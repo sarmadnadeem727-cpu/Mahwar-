@@ -4,7 +4,6 @@ import React, { useState, useEffect } from "react";
 import { motion } from "framer-motion";
 import { ShieldCheck, HelpCircle } from "lucide-react";
 import { useTerminalStore } from "@/store/useTerminalStore";
-import { t } from "@/lib/i18n";
 import { panelReveal } from "@/lib/motion";
 import NumberCounter from "@/components/ui/NumberCounter";
 
