@@ -12,7 +12,7 @@ import {
   DollarSign, PackageCheck, ShieldAlert, Grid3X3, TrendingUp, Ship, Award, MapPin,
   LayoutDashboard, Sparkles, Map, Landmark, CalendarClock, Scale, Boxes, Waves, Route,
   TerminalSquare, Gauge, HeartPulse, PieChart, CalendarRange, ArrowLeftRight, ListChecks,
-  Network, Target, Timer, Warehouse, GitFork, Radar, Percent, Fingerprint,
+  Network, Target, Timer, Warehouse, GitFork, Radar, Percent,
 } from "lucide-react";
 import type { PanelType, SessionAnalyses } from "@/store/useTerminalStore";
 
@@ -111,13 +111,6 @@ export const TOOLS: ToolDef[] = [
     descEn: "Full-screen terminal: every verb and engine code, history and transcript.",
     descAr: "طرفية بملء الشاشة: كل الأوامر والأكواد والسجل.",
     keywords: ["console", "cli", "terminal", "command", "shell", "طرفية", "أوامر"],
-  },
-  {
-    id: "privacy", code: "PRIV", suite: "platform", icon: Fingerprint, tag: "DATA",
-    en: "Privacy & data", ar: "الخصوصية والبيانات",
-    descEn: "What this device holds, sealed or not, and the controls to export or wipe it.",
-    descAr: "ما يحتفظ به هذا الجهاز، مختوماً أو لا، وأدوات التصدير أو المسح.",
-    keywords: ["privacy", "data", "wipe", "export", "gdpr", "pdpl", "خصوصية", "بيانات", "مسح"],
   },
 
   // ---------------- Finance ----------------

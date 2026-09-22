@@ -4,7 +4,7 @@ import Link from "next/link";
 import Image from "next/image";
 import { AnimatePresence, motion } from "framer-motion";
 import { signOut } from "next-auth/react";
-import { LogIn, LogOut, ShieldCheck, UserRound, Download, Upload, Fingerprint } from "lucide-react";
+import { LogIn, LogOut, ShieldCheck, UserRound, Download, Upload } from "lucide-react";
 import { useUser } from "@/lib/auth/useUser";
 import { useTerminalStore } from "@/store/useTerminalStore";
 import { downloadSession, pickSessionFile } from "@/lib/session";
@@ -68,7 +68,6 @@ export default function AccountMenu({ isAr }: { isAr: boolean }) {
             </div>
             <MenuItem icon={<Download size={13} />} onClick={() => { downloadSession(); setOpen(false); }}>{isAr ? "تنزيل الجلسة (JSON)" : "Download session (JSON)"}</MenuItem>
             <MenuItem icon={<Upload size={13} />} onClick={onImport}>{isAr ? "استيراد جلسة" : "Import session"}</MenuItem>
-            <MenuItem icon={<Fingerprint size={13} />} onClick={() => { setPanel("privacy"); setOpen(false); }}>{isAr ? "الخصوصية والبيانات" : "Privacy & data"}</MenuItem>
             {user ? (
               <MenuItem icon={<LogOut size={13} />} onClick={() => void signOut({ callbackUrl: "/login" })} tone="neg">{isAr ? "تسجيل الخروج" : "Sign out"}</MenuItem>
             ) : (
