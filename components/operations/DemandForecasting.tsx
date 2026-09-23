@@ -195,7 +195,7 @@ export default function DemandForecasting() {
             Tracking Bias
           </span>
           <div className="flex items-baseline gap-1.5">
-            <span className={`text-2xl font-extrabold ${outputs.bias > 0 ? "text-gold" : outputs.bias < 0 ? "text-sky-400" : "text-emerald"}`}>
+            <span className={`text-2xl font-extrabold ${outputs.bias > 0 ? "text-gold" : outputs.bias < 0 ? "text-neg" : "text-emerald"}`}>
               {outputs.bias > 0 ? `+${outputs.bias}` : outputs.bias}
             </span>
             <span className="text-xs font-bold text-fg-3">units</span>

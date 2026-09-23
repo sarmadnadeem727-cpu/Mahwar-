@@ -7,10 +7,13 @@ import { Anchor, Landmark, Building2, ArrowRight } from "lucide-react";
 import { useTerminalStore } from "@/store/useTerminalStore";
 import { reveal, viewportOnce } from "@/lib/motion";
 import GulfMap from "@/components/ui/GulfMap";
-import MarketClock from "@/components/ui/MarketClock";
-import { HUBS, HUB_MAP, ROUTES } from "@/lib/geo/hubs";
+import { HUBS, HUB_MAP, ROUTES, EXCHANGES } from "@/lib/geo/hubs";
 
-export default function GCCMapSection() {
+/**
+ * NETWORK — the Gulf map as its own chapter. Real Natural Earth coastlines,
+ * real hubs and corridors, hover for the facts. Nothing else shares this screen.
+ */
+export default function NetworkChapter() {
   const { language } = useTerminalStore();
   const isAr = language === "ar";
   const [hover, setHover] = useState<string | null>(null);
@@ -23,17 +26,17 @@ export default function GCCMapSection() {
   ];
 
   return (
-    <section id="network" className="relative py-28 bg-ink-1 overflow-hidden" dir={isAr ? "rtl" : "ltr"}>
-      <div className="max-w-7xl mx-auto px-6">
+    <section id="network" data-chapter="network" className="relative min-h-[100svh] flex items-center py-24 bg-ink-1 overflow-hidden border-t border-line" dir={isAr ? "rtl" : "ltr"}>
+      <div className="w-full max-w-7xl mx-auto px-6">
         <motion.div variants={reveal} initial="hidden" whileInView="show" viewport={viewportOnce} className="max-w-3xl">
-          <p className="font-mono text-[11px] tracking-[0.2em] text-emerald-light">{isAr ? "الشبكة" : "The network"}</p>
+          <p className="font-mono text-[11px] tracking-[0.2em] text-emerald-light">04 · {isAr ? "الشبكة" : "Network"}</p>
           <h2 className={`mt-4 font-serif text-display-lg text-fg ${isAr ? "font-cairo font-bold" : ""}`}>
             {isAr ? "مبنيّة للخليج: موانئه وعواصمه وأسواقه." : "Built for the Gulf: its ports, capitals and exchanges."}
           </h2>
           <p className="mt-5 text-fg-2 leading-relaxed max-w-2xl">
             {isAr
-              ? "خريطة حقيقية بسواحل من بيانات Natural Earth. السفن والشاحنات تتحرك على الممرات الفعلية، ومرّر فوق أي مركز لرؤية سوقه وعملته ومينائه."
-              : "A real map with Natural Earth coastlines. Ships and trucks ride the actual corridors; hover any hub for its exchange, currency and port."}
+              ? `${HUBS.length} مراكز و${ROUTES.length} ممراً و${EXCHANGES.length} أسواق على سواحل Natural Earth الحقيقية. مرّر فوق أي مركز لرؤية سوقه وعملته ومينائه.`
+              : `${HUBS.length} hubs, ${ROUTES.length} corridors and ${EXCHANGES.length} exchanges on real Natural Earth coastlines. Hover any hub for its exchange, currency and port.`}
           </p>
         </motion.div>
 
@@ -81,7 +84,17 @@ export default function GCCMapSection() {
                 </div>
               )}
             </div>
-            <MarketClock isAr={isAr} />
+            <div className="panel-data p-5 font-mono text-[11px] text-fg-3 leading-relaxed">
+              <div className="text-fg-4 tracking-[0.18em] uppercase text-[10px] mb-2">{isAr ? "الأسواق" : "Exchanges"}</div>
+              <ul className="space-y-1.5">
+                {EXCHANGES.map((ex) => (
+                  <li key={ex.id} className="flex justify-between gap-3">
+                    <span className="text-fg-2 truncate">{isAr ? ex.nameAr : ex.name}</span>
+                    <span className="shrink-0">{ex.open}–{ex.close}</span>
+                  </li>
+                ))}
+              </ul>
+            </div>
           </div>
         </motion.div>
       </div>

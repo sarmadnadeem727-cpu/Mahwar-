@@ -1,8 +1,15 @@
 import { create } from "zustand";
 import { persist, createJSONStorage } from "zustand/middleware";
 
-export type Currency = "SAR" | "AED" | "KWD" | "BHD" | "OMR" | "QAR" | "USD";
-export type Language = "en" | "ar";
+/** Reporting currencies the terminal can switch to — the ONE list (TopBar, CUR verb, landing stats all read it). */
+export const CURRENCIES = ["SAR", "AED", "KWD", "BHD", "OMR", "QAR", "USD"] as const;
+export type Currency = (typeof CURRENCIES)[number];
+/** Interface languages. `dir` is what the layout mirrors on. */
+export const LANGUAGES = [
+  { id: "en", label: "English", dir: "ltr" },
+  { id: "ar", label: "العربية", dir: "rtl" },
+] as const;
+export type Language = (typeof LANGUAGES)[number]["id"];
 export type PanelType =
   | "hub"
   | "news"

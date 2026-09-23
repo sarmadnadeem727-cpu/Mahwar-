@@ -38,7 +38,7 @@ export default function ScenarioToggle<T>({
     switch (type) {
       case "bull": return <TrendingUp size={14} className="text-emerald" />;
       case "bear": return <TrendingDown size={14} className="text-neg" />;
-      case "custom": return <Sliders size={14} className="text-sky-400" />;
+      case "custom": return <Sliders size={14} className="text-emerald-light" />;
       case "base": 
       default:
         return <Layers size={14} className="text-fg-3" />;

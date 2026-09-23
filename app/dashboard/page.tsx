@@ -1,6 +1,6 @@
 "use client";
 
-import React, { Suspense, useEffect } from "react";
+import React, { Suspense, useEffect, useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import dynamic from "next/dynamic";
 import { useSearchParams } from "next/navigation";
@@ -87,11 +87,16 @@ function PanelContent() {
   const activePanel = useTerminalStore(selectActivePanel);
   const setPanel = useTerminalStore(selectSetPanel);
   const searchParams = useSearchParams();
+  // The first panel is mounted only after the deep link has been applied. Mounting the
+  // hub and swapping it out mid-entrance left AnimatePresence (mode="wait") waiting for
+  // an exit that never finished, so /dashboard?panel=… showed an empty workspace.
+  const [ready, setReady] = useState(false);
 
   // Deep links: /dashboard?panel=eoq
   useEffect(() => {
     const param = searchParams.get("panel");
     if (isPanelType(param) && param !== activePanel) setPanel(param);
+    setReady(true);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [searchParams]);
 
@@ -105,9 +110,10 @@ function PanelContent() {
   }, [activePanel]);
 
   const Panel = PANELS[activePanel] ?? PANELS.hub;
+  if (!ready) return <PanelSkeleton />;
 
   return (
-    <AnimatePresence mode="wait">
+    <AnimatePresence mode="wait" initial={false}>
       <motion.div
         key={activePanel}
         initial={{ opacity: 0, y: 10, filter: "blur(4px)" }}

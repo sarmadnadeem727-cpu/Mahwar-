@@ -16,7 +16,8 @@ function timeAgo(iso: string, isAr: boolean) {
   return isAr ? `قبل ${Math.round(hrs / 24)} ي` : `${Math.round(hrs / 24)}d ago`;
 }
 
-export default function NewsPreviewWidget() {
+/** WIRE — a live preview of the market wire, linking to the full panel in the terminal. */
+export default function WireChapter() {
   const { language } = useTerminalStore();
   const isAr = language === "ar";
   const [articles, setArticles] = useState<NewsArticle[]>([]);
@@ -41,13 +42,13 @@ export default function NewsPreviewWidget() {
   }, []);
 
   return (
-    <section id="wire" className="py-24 bg-ink-1" dir={isAr ? "rtl" : "ltr"}>
+    <section id="wire" data-chapter="wire" className="py-24 lg:py-32 bg-ink-1 border-t border-line" dir={isAr ? "rtl" : "ltr"}>
       <div className="max-w-7xl mx-auto px-6">
         <motion.div variants={reveal} initial="hidden" whileInView="show" viewport={viewportOnce} className="flex flex-col md:flex-row md:items-end justify-between gap-6">
           <div>
             <p className="font-mono text-[11px] tracking-[0.2em] text-emerald-light flex items-center gap-2">
               <Radio size={12} className={state === "ok" ? "animate-pulse" : ""} />
-              {isAr ? "الأخبار" : "Wire"}
+              06 · {isAr ? "الأخبار" : "Wire"}
             </p>
             <h2 className={`mt-4 font-serif text-display-lg text-fg ${isAr ? "font-cairo font-bold" : ""}`}>
               {isAr ? "ما تقوله الأسواق الخليجية الآن." : "What the Gulf markets are saying now."}

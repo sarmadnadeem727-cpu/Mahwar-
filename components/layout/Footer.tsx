@@ -1,24 +1,24 @@
 "use client";
 
-import React, { useState } from "react";
+import React from "react";
 import Link from "next/link";
 import { useTerminalStore } from "@/store/useTerminalStore";
-import FooterModal from "@/components/ui/FooterModal";
 import MahwarLogo from "@/components/ui/MahwarLogo";
 import { APP, SUITES, toolsBySuite } from "@/lib/registry";
 
-const COMPANY = [
-  { en: "About", ar: "من نحن", modal: "about" },
-  { en: "Contact", ar: "اتصل بنا", modal: "contact" },
-  { en: "Privacy", ar: "سياسة الخصوصية", href: "/privacy" },
-  { en: "Terms", ar: "شروط الخدمة", href: "/terms" },
-  { en: "Licensing", ar: "التراخيص", modal: "licensing" },
-];
-
+/**
+ * Footer — only links that resolve to real pages with real content.
+ * Privacy and Terms are routes; the source link is external. No modals, no stubs.
+ */
 export default function Footer() {
   const { language } = useTerminalStore();
   const isAr = language === "ar";
-  const [modal, setModal] = useState<string | null>(null);
+
+  const company = [
+    { en: "Privacy", ar: "الخصوصية", href: "/privacy" },
+    { en: "Terms", ar: "الشروط", href: "/terms" },
+    { en: "Source on GitHub", ar: "الشيفرة على GitHub", href: APP.repo, external: true },
+  ];
 
   return (
     <footer className="bg-ink-1 border-t border-line pt-16 pb-8" dir={isAr ? "rtl" : "ltr"}>
@@ -53,23 +53,21 @@ export default function Footer() {
           ))}
 
           <div>
-            <h4 className="text-[12px] font-medium text-fg mb-3">{isAr ? "الشركة" : "Company"}</h4>
+            <h4 className="text-[12px] font-medium text-fg mb-3">{isAr ? "المشروع" : "Project"}</h4>
             <ul className="space-y-2">
-              {COMPANY.map((c) =>
-                c.href ? (
-                  <li key={c.en}>
+              {company.map((c) => (
+                <li key={c.en}>
+                  {c.external ? (
+                    <a href={c.href} target="_blank" rel="noreferrer" className="text-[12px] text-fg-3 hover:text-emerald-light transition-colors">
+                      {isAr ? c.ar : c.en}
+                    </a>
+                  ) : (
                     <Link href={c.href} className="text-[12px] text-fg-3 hover:text-emerald-light transition-colors">
                       {isAr ? c.ar : c.en}
                     </Link>
-                  </li>
-                ) : (
-                  <li key={c.en}>
-                    <button onClick={() => setModal(c.modal!)} className="text-[12px] text-fg-3 hover:text-emerald-light transition-colors">
-                      {isAr ? c.ar : c.en}
-                    </button>
-                  </li>
-                )
-              )}
+                  )}
+                </li>
+              ))}
             </ul>
           </div>
         </div>
@@ -79,9 +77,6 @@ export default function Footer() {
           <span>{isAr ? "أدوات تحليل، وليست نصيحة استثمارية." : "Analytical tooling, not investment advice."}</span>
         </div>
       </div>
-
-      <FooterModal isOpen={!!modal} onClose={() => setModal(null)} type={modal ?? ""} />
     </footer>
   );
 }
-

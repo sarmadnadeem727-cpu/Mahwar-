@@ -2,12 +2,12 @@
  * lib/security/headers.ts — the hardening layer applied to every response.
  *
  * Content-Security-Policy is deliberately strict: scripts and styles only from
- * self (plus the inline styles Next/Framer need), images from self + Google
- * avatars, connections to self + the news providers, frames from nowhere.
+ * self (plus the inline styles Next/Framer need), images from self, connections
+ * to self + the news providers, frames from nowhere. There is no auth, so no
+ * third-party identity origin is allowed anywhere.
  *
- * PRIVATE_HEADERS go on the terminal itself and on the session endpoint:
- * nothing about a signed-in user's screen may land in a shared cache or a
- * search index.
+ * PRIVATE_HEADERS go on the terminal itself: a visitor's working screen must
+ * never land in a shared cache or a search index.
  */
 const isProd = process.env.NODE_ENV === "production";
 
@@ -16,14 +16,14 @@ const csp = [
   `script-src 'self' 'unsafe-inline'${isProd ? "" : " 'unsafe-eval'"}`,
   "style-src 'self' 'unsafe-inline' https://fonts.googleapis.com",
   "font-src 'self' https://fonts.gstatic.com data:",
-  "img-src 'self' data: blob: https://lh3.googleusercontent.com https://*.googleusercontent.com",
+  "img-src 'self' data: blob:",
   "media-src 'self' blob:",
-  "connect-src 'self' https://accounts.google.com https://news.google.com https://api.marketaux.com",
-  "frame-src https://accounts.google.com",
+  "connect-src 'self' https://news.google.com https://api.marketaux.com",
+  "frame-src 'none'",
   "worker-src 'self' blob:",
   "object-src 'none'",
   "base-uri 'self'",
-  "form-action 'self' https://accounts.google.com",
+  "form-action 'self'",
   "frame-ancestors 'none'",
   "upgrade-insecure-requests",
 ].join("; ");
@@ -41,7 +41,7 @@ export const SECURITY_HEADERS: { key: string; value: string }[] = [
   ...(isProd ? [{ key: "Strict-Transport-Security", value: "max-age=63072000; includeSubDomains; preload" }] : []),
 ];
 
-/** Extra headers for /dashboard, /login and /api/session. */
+/** Extra headers for /dashboard. */
 export const PRIVATE_HEADERS: { key: string; value: string }[] = [
   { key: "Cache-Control", value: "private, no-store, max-age=0" },
   { key: "X-Robots-Tag", value: "noindex, nofollow, noarchive" },

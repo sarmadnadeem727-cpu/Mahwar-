@@ -40,7 +40,10 @@ const H = 620;
 const BBOX: Feature<Geometry> = {
   type: "Feature",
   properties: {},
-  geometry: { type: "Polygon", coordinates: [[[33.2, 12.4], [61.8, 12.4], [61.8, 32.6], [33.2, 32.6], [33.2, 12.4]]] },
+  // Ring is wound clockwise on purpose: d3-geo treats an anticlockwise ring as the
+  // *outside* of the box (the rest of the globe), which made fitExtent shrink the
+  // Gulf to a thumbnail.
+  geometry: { type: "Polygon", coordinates: [[[33.2, 12.4], [33.2, 32.6], [61.8, 32.6], [61.8, 12.4], [33.2, 12.4]]] },
 };
 
 const projection = geoMercator().fitExtent([[0, 0], [W, H]], BBOX);

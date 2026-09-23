@@ -1,22 +1,28 @@
 "use client";
 
-import React, { useMemo, useState } from "react";
+import React, { useEffect, useMemo, useState } from "react";
 import Link from "next/link";
 import { motion, AnimatePresence } from "framer-motion";
-import { PanelLeftClose, PanelLeftOpen, X } from "lucide-react";
+import { PanelLeftClose, PanelLeftOpen, X, ChevronDown, History } from "lucide-react";
 import { useShallow } from "zustand/react/shallow";
-import { useTerminalStore } from "@/store/useTerminalStore";
+import { useTerminalStore, type PanelType } from "@/store/useTerminalStore";
 import MahwarLogo from "@/components/ui/MahwarLogo";
-import { APP, CLUSTERS, SUITES, TOOLS, type ToolDef } from "@/lib/registry";
+import { APP, CLUSTERS, CLUSTER_ORDER, SUITES, TOOLS, getTool, type ToolDef } from "@/lib/registry";
 
 const EXPANDED = 272;
 const COLLAPSED = 64;
+const RECENT_MAX = 5;
 
+/**
+ * Sidebar — Recent (last panels opened, Zustand only) pinned on top, then each
+ * suite. Suites with clusters (finance, operations) render every cluster as a
+ * collapsible sub-group; only the group holding the open panel starts open.
+ */
 export default function Sidebar() {
-  const { activePanel, setPanel, language, isMobileMenuOpen, setMobileMenuOpen, savedKeys } = useTerminalStore(
+  const { activePanel, setPanel, language, isMobileMenuOpen, setMobileMenuOpen, savedKeys, recentPanels } = useTerminalStore(
     useShallow((s) => ({
       activePanel: s.activePanel, setPanel: s.setPanel, language: s.language, isMobileMenuOpen: s.isMobileMenuOpen,
-      setMobileMenuOpen: s.setMobileMenuOpen, savedKeys: Object.keys(s.sessionAnalyses).join(","),
+      setMobileMenuOpen: s.setMobileMenuOpen, savedKeys: Object.keys(s.sessionAnalyses).join(","), recentPanels: s.recentPanels,
     }))
   );
   const savedSet = useMemo(() => new Set(savedKeys.split(",").filter(Boolean)), [savedKeys]);
@@ -24,16 +30,68 @@ export default function Sidebar() {
   const [collapsed, setCollapsed] = useState(false);
   const expanded = !collapsed;
 
+  const activeCluster = getTool(activePanel)?.cluster ?? null;
+  const [open, setOpen] = useState<Record<string, boolean>>(() => (activeCluster ? { [activeCluster]: true } : {}));
+  // Opening a panel from the palette / GO line must reveal its group too.
+  useEffect(() => {
+    if (activeCluster) setOpen((o) => (o[activeCluster] ? o : { ...o, [activeCluster]: true }));
+  }, [activeCluster]);
+
   const groups = useMemo(
     () =>
-      SUITES.map((suite) => ({
-        suite,
-        items: TOOLS.filter((t) => t.suite === suite.id),
-      })),
+      SUITES.map((suite) => {
+        const items = TOOLS.filter((t) => t.suite === suite.id);
+        const clustered = suite.id === "finance" || suite.id === "operations";
+        const clusters = clustered
+          ? CLUSTER_ORDER.map((id) => ({ cluster: CLUSTERS[id], tools: items.filter((t) => t.cluster === id) })).filter((c) => c.tools.length > 0)
+          : [];
+        return { suite, items, clustered, clusters };
+      }),
     []
   );
 
+  const recent = useMemo(
+    () => recentPanels.filter((p) => p !== activePanel).map((p) => getTool(p)).filter((t): t is ToolDef => !!t).slice(0, RECENT_MAX),
+    [recentPanels, activePanel]
+  );
+
   const hasData = (tool: ToolDef) => !!(tool.sessionKey && savedSet.has(tool.sessionKey));
+  const pick = (id: PanelType) => { setPanel(id); setMobileMenuOpen(false); };
+
+  const renderItem = (tool: ToolDef, indent = false) => {
+    const Icon = tool.icon;
+    const active = activePanel === tool.id;
+    return (
+      <button
+        key={tool.id}
+        onClick={() => pick(tool.id)}
+        title={!expanded ? (isAr ? tool.ar : tool.en) : undefined}
+        aria-current={active ? "page" : undefined}
+        className={`relative w-full flex items-center gap-3 py-[7px] text-start transition-colors group ${
+          expanded ? (indent ? "ps-7 pe-3" : "px-3") : "justify-center px-3"
+        } ${active ? "text-fg" : "text-fg-2 hover:text-fg hover:bg-ink-3/70"}`}
+      >
+        {active && (
+          <motion.span
+            layoutId="sidebar-active"
+            className="absolute inset-y-1 start-0 w-[3px] rounded-full bg-emerald-light shadow-[0_0_12px_var(--emerald-light)]"
+            transition={{ type: "spring", stiffness: 380, damping: 32 }}
+          />
+        )}
+        {active && <span className="absolute inset-0 bg-emerald/10" />}
+        <Icon size={16} className={`relative shrink-0 ${active ? "text-emerald-light" : "text-fg-3 group-hover:text-fg-2"}`} />
+        {expanded && (
+          <span className="relative flex-1 flex items-center justify-between min-w-0 gap-2">
+            <span className="text-[13px] truncate">{isAr ? tool.ar : tool.en}</span>
+            <span className="flex items-center gap-1.5 shrink-0">
+              {hasData(tool) && <span className="w-1.5 h-1.5 rounded-full bg-emerald-light" title={isAr ? "محفوظ في الجلسة" : "Saved in session"} />}
+              <span className={`font-mono text-[9.5px] tracking-wider ${active ? "text-emerald-light" : "text-fg-4"}`}>{tool.code}</span>
+            </span>
+          </span>
+        )}
+      </button>
+    );
+  };
 
   const nav = (
     <>
@@ -57,63 +115,74 @@ export default function Sidebar() {
       </div>
 
       <nav className="flex-1 overflow-y-auto overflow-x-hidden py-3 scrollbar-thin" aria-label="Terminal modules">
-        {groups.map(({ suite, items }) => {
-          let lastCluster: string | undefined;
-          return (
-            <div key={suite.id} className="mb-4">
-              {expanded ? (
-                <div className="px-4 pb-1.5 font-mono text-[10px] tracking-[0.18em] text-fg-4 uppercase">
-                  {isAr ? suite.shortAr : suite.short}
-                </div>
-              ) : (
-                <div className="mx-auto my-2 w-5 h-px bg-line" />
-              )}
-              {items.map((tool) => {
-                const Icon = tool.icon;
-                const active = activePanel === tool.id;
-                const showCluster = expanded && tool.cluster && tool.cluster !== lastCluster && suite.id !== "platform";
-                lastCluster = tool.cluster;
-                return (
-                  <React.Fragment key={tool.id}>
-                    {showCluster && (
-                      <div className="px-4 pt-3 pb-1 text-[10px] text-fg-4">{isAr ? CLUSTERS[tool.cluster!].ar : CLUSTERS[tool.cluster!].en}</div>
-                    )}
-                    <button
-                      onClick={() => {
-                        setPanel(tool.id);
-                        setMobileMenuOpen(false);
-                      }}
-                      title={!expanded ? (isAr ? tool.ar : tool.en) : undefined}
-                      aria-current={active ? "page" : undefined}
-                      className={`relative w-full flex items-center gap-3 px-3 mx-0 py-[7px] text-start transition-colors group ${
-                        expanded ? "" : "justify-center"
-                      } ${active ? "text-fg" : "text-fg-2 hover:text-fg hover:bg-ink-3/70"}`}
-                    >
-                      {active && (
-                        <motion.span
-                          layoutId="sidebar-active"
-                          className={`absolute inset-y-1 ${isAr ? "right-0" : "left-0"} w-[3px] rounded-full bg-emerald-light shadow-[0_0_12px_var(--emerald-light)]`}
-                          transition={{ type: "spring", stiffness: 380, damping: 32 }}
-                        />
-                      )}
-                      {active && <span className="absolute inset-0 bg-emerald/10" />}
-                      <Icon size={16} className={`relative shrink-0 ${active ? "text-emerald-light" : "text-fg-3 group-hover:text-fg-2"}`} />
-                      {expanded && (
-                        <span className="relative flex-1 flex items-center justify-between min-w-0 gap-2">
-                          <span className="text-[13px] truncate">{isAr ? tool.ar : tool.en}</span>
-                          <span className="flex items-center gap-1.5 shrink-0">
-                            {hasData(tool) && <span className="w-1.5 h-1.5 rounded-full bg-emerald-light" title={isAr ? "محفوظ في الجلسة" : "Saved in session"} />}
-                            <span className={`font-mono text-[9.5px] tracking-wider ${active ? "text-emerald-light" : "text-fg-4"}`}>{tool.code}</span>
-                          </span>
-                        </span>
-                      )}
-                    </button>
-                  </React.Fragment>
-                );
-              })}
+        {/* Recent — Zustand state only, no backend */}
+        {expanded && recent.length > 0 && (
+          <div className="mb-4">
+            <div className="px-4 pb-1.5 font-mono text-[10px] tracking-[0.18em] text-fg-4 uppercase flex items-center gap-1.5">
+              <History size={10} /> {isAr ? "الأخيرة" : "Recent"}
             </div>
-          );
-        })}
+            {recent.map((tool) => (
+              <button
+                key={`recent-${tool.id}`}
+                onClick={() => pick(tool.id)}
+                className="w-full flex items-center gap-3 px-3 py-[6px] text-start text-fg-2 hover:text-fg hover:bg-ink-3/70 transition-colors"
+              >
+                <span className="font-mono text-[10px] tracking-wider text-emerald-light w-12 shrink-0">{tool.code}</span>
+                <span className="text-[12.5px] truncate">{isAr ? tool.ar : tool.en}</span>
+              </button>
+            ))}
+          </div>
+        )}
+
+        {groups.map(({ suite, items, clustered, clusters }) => (
+          <div key={suite.id} className="mb-4">
+            {expanded ? (
+              <div className="px-4 pb-1.5 font-mono text-[10px] tracking-[0.18em] text-fg-4 uppercase">
+                {isAr ? suite.shortAr : suite.short}
+              </div>
+            ) : (
+              <div className="mx-auto my-2 w-5 h-px bg-line" />
+            )}
+
+            {!expanded || !clustered
+              ? items.map((tool) => renderItem(tool))
+              : clusters.map(({ cluster, tools }) => {
+                  const isOpen = !!open[cluster.id];
+                  const holdsActive = tools.some((t) => t.id === activePanel);
+                  const savedCount = tools.filter(hasData).length;
+                  return (
+                    <div key={cluster.id}>
+                      <button
+                        onClick={() => setOpen((o) => ({ ...o, [cluster.id]: !isOpen }))}
+                        aria-expanded={isOpen}
+                        className={`w-full flex items-center gap-2 px-3 py-[6px] text-start transition-colors ${holdsActive ? "text-fg" : "text-fg-3 hover:text-fg-2"}`}
+                      >
+                        <ChevronDown size={12} className={`shrink-0 transition-transform ${isOpen ? "" : isAr ? "rotate-90" : "-rotate-90"}`} />
+                        <span className="flex-1 text-[11.5px] truncate">{isAr ? cluster.ar : cluster.en}</span>
+                        <span className="flex items-center gap-1.5 shrink-0 font-mono text-[9.5px] text-fg-4">
+                          {savedCount > 0 && <span className="w-1.5 h-1.5 rounded-full bg-emerald-light" />}
+                          {tools.length}
+                        </span>
+                      </button>
+                      <AnimatePresence initial={false}>
+                        {isOpen && (
+                          <motion.div
+                            key="body"
+                            initial={{ height: 0, opacity: 0 }}
+                            animate={{ height: "auto", opacity: 1 }}
+                            exit={{ height: 0, opacity: 0 }}
+                            transition={{ duration: 0.22, ease: [0.16, 1, 0.3, 1] }}
+                            className="overflow-hidden"
+                          >
+                            {tools.map((tool) => renderItem(tool, true))}
+                          </motion.div>
+                        )}
+                      </AnimatePresence>
+                    </div>
+                  );
+                })}
+          </div>
+        ))}
       </nav>
 
       <div className="border-t border-line p-3 font-mono text-[10px] text-fg-3">
@@ -121,7 +190,7 @@ export default function Sidebar() {
           <div className="flex items-center justify-between">
             <span className="flex items-center gap-2">
               <span className="w-1.5 h-1.5 rounded-full bg-emerald-light animate-pulse" />
-              {isAr ? "المحرك يعمل محلياً" : "engines run locally"}
+              {isAr ? "المحركات تعمل محلياً" : "engines run locally"}
             </span>
             <span>{savedSet.size} {isAr ? "محفوظ" : "saved"}</span>
           </div>
@@ -172,4 +241,3 @@ export default function Sidebar() {
     </>
   );
 }
-

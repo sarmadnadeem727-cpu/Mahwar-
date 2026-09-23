@@ -56,7 +56,7 @@ export default function FootballFieldChart({
       min: compsMinPx!,
       mid: compsAvgPx!,
       max: compsMaxPx!,
-      color: "bg-sky-500",
+      color: "bg-emerald-deep",
       tag: isAr ? "الأقران" : "PEER MULTIPLES",
       isLive: true,
     }] : []),

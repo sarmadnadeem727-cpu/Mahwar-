@@ -6,7 +6,6 @@ import { useTerminalStore } from "@/store/useTerminalStore";
 import { useCommandRunner } from "@/lib/useCommandRunner";
 import { suggest, COMMANDS } from "@/lib/commands";
 import { APP, TOOLS } from "@/lib/registry";
-import { useUser } from "@/lib/auth/useUser";
 
 /**
  * ConsolePanel — `CLI`. A full-screen transcript of everything typed into the
@@ -18,7 +17,6 @@ export default function ConsolePanel() {
     useShallow((s) => ({ language: s.language, log: s.consoleLog, history: s.commandHistory, clearConsole: s.clearConsole }))
   );
   const run = useCommandRunner();
-  const { user } = useUser();
   const isAr = language === "ar";
   const [cmd, setCmd] = useState("");
   const [cursor, setCursor] = useState<number | null>(null);
@@ -53,7 +51,7 @@ export default function ConsolePanel() {
     } else if (e.key === "Escape") { setCmd(""); setCursor(null); }
   };
 
-  const prompt = `${(user?.email?.split("@")[0] ?? "guest").toLowerCase()}@mahwar`;
+  const prompt = "local@mahwar";
 
   return (
     <div className="flex flex-col h-[calc(100dvh-8.5rem)] md:h-[calc(100dvh-9.5rem)] panel-data overflow-hidden" dir="ltr">

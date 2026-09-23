@@ -10,17 +10,9 @@ import { useTerminalStore } from "@/store/useTerminalStore";
 import { panelReveal } from "@/lib/motion";
 
 import { TERMINAL_CHART_THEME as T } from "@/lib/chartTheme";
+import { runMonteCarlo, type MonteCarloStats } from "@/lib/finance/monteCarlo";
 
-interface DistributionStats {
-  histogramData: { rangeLabel: string; count: number; minVal: number; maxVal: number }[];
-  p10: number;
-  p50: number;
-  p90: number;
-  mean: number;
-  stdDev: number;
-  probUpside: number;
-  iterationsRun: number;
-}
+type DistributionStats = MonteCarloStats;
 
 export default function MonteCarloPanel() {
   const { language, updateSessionAnalysis } = useTerminalStore();
@@ -51,115 +43,16 @@ export default function MonteCarloPanel() {
   const [isRunning, setIsRunning] = useState<boolean>(false);
   const [stats, setStats] = useState<DistributionStats | null>(null);
 
-  // Helper box-muller transform for normal distribution
-  const randomNormal = (mean: number, stdDev: number): number => {
-    let u = 0, v = 0;
-    while (u === 0) u = Math.random();
-    while (v === 0) v = Math.random();
-    const num = Math.sqrt(-2.0 * Math.log(u)) * Math.cos(2.0 * Math.PI * v);
-    return mean + num * stdDev;
-  };
-
-  // Helper triangular distribution
-  const randomTriangular = (min: number, mode: number, max: number): number => {
-    const u = Math.random();
-    const fc = (mode - min) / (max - min);
-    if (u < fc) {
-      return min + Math.sqrt(u * (max - min) * (mode - min));
-    } else {
-      return max - Math.sqrt((1 - u) * (max - min) * (max - mode));
-    }
-  };
-
   const runSimulation = () => {
     setIsRunning(true);
 
     // Use async timeout to allow UI loading spinner render
     setTimeout(() => {
-      const prices: number[] = [];
-
-      for (let i = 0; i < iterations; i++) {
-        let revGrowth = 0;
-        let ebitdaMarg = 0;
-        let wacc = 0;
-        let termGrowth = 0;
-
-        if (distributionType === "normal") {
-          revGrowth = randomNormal(revenueGrowthMean, revenueGrowthStd) / 100;
-          ebitdaMarg = randomNormal(ebitdaMarginMean, ebitdaMarginStd) / 100;
-          wacc = Math.max(0.04, randomNormal(waccMean, waccStd) / 100);
-          termGrowth = Math.min(wacc - 0.005, randomNormal(terminalGrowthMean, terminalGrowthStd) / 100);
-        } else {
-          revGrowth = randomTriangular(revenueGrowthMean - 2 * revenueGrowthStd, revenueGrowthMean, revenueGrowthMean + 2 * revenueGrowthStd) / 100;
-          ebitdaMarg = randomTriangular(ebitdaMarginMean - 2 * ebitdaMarginStd, ebitdaMarginMean, ebitdaMarginMean + 2 * ebitdaMarginStd) / 100;
-          wacc = Math.max(0.04, randomTriangular(waccMean - 2 * waccStd, waccMean, waccMean + 2 * waccStd) / 100);
-          termGrowth = Math.min(wacc - 0.005, randomTriangular(terminalGrowthMean - 2 * terminalGrowthStd, terminalGrowthMean, terminalGrowthMean + 2 * terminalGrowthStd) / 100);
-        }
-
-        // 5-Year Cash Flow Projection
-        let fcfSum = 0;
-        let currentRev = baseRev;
-        for (let yr = 1; yr <= 5; yr++) {
-          currentRev *= (1 + revGrowth);
-          const fcf = currentRev * ebitdaMarg * 0.65; // After capex/tax factor
-          const df = Math.pow(1 + wacc, yr);
-          fcfSum += fcf / df;
-        }
-
-        // Terminal Value
-        const lastRev = currentRev * (1 + termGrowth);
-        const lastFcf = lastRev * ebitdaMarg * 0.65;
-        const terminalValue = lastFcf / (wacc - termGrowth);
-        const pvTerminal = terminalValue / Math.pow(1 + wacc, 5);
-
-        const enterpriseValue = fcfSum + pvTerminal;
-        const equityValue = enterpriseValue - netDebt;
-        const perShare = Math.max(1.0, equityValue / (baseShares > 0 ? baseShares : 100));
-
-        prices.push(perShare);
-      }
-
-      prices.sort((a, b) => a - b);
-
-      const mean = prices.reduce((a, b) => a + b, 0) / prices.length;
-      const variance = prices.reduce((a, b) => a + Math.pow(b - mean, 2), 0) / prices.length;
-      const stdDev = Math.sqrt(variance);
-
-      const p10 = prices[Math.floor(prices.length * 0.10)];
-      const p50 = prices[Math.floor(prices.length * 0.50)];
-      const p90 = prices[Math.floor(prices.length * 0.90)];
-
-      const upsideCount = prices.filter(p => p > currentMarketPrice).length;
-      const probUpside = (upsideCount / prices.length) * 100;
-
-      // Construct 15-bin Histogram
-      const minPrice = prices[0];
-      const maxPrice = prices[prices.length - 1];
-      const binCount = 14;
-      const binWidth = (maxPrice - minPrice) / binCount;
-
-      const histogramData = Array.from({ length: binCount }).map((_, idx) => {
-        const minVal = minPrice + idx * binWidth;
-        const maxVal = minVal + binWidth;
-        const count = prices.filter(p => p >= minVal && (idx === binCount - 1 ? p <= maxVal : p < maxVal)).length;
-        return {
-          rangeLabel: `${minVal.toFixed(1)}-${maxVal.toFixed(1)}`,
-          count,
-          minVal,
-          maxVal
-        };
+      // The maths lives in lib/finance/monteCarlo.ts (shared with the landing preview).
+      const resultsData: DistributionStats = runMonteCarlo({
+        currentMarketPrice, revenueGrowthMean, revenueGrowthStd, ebitdaMarginMean, ebitdaMarginStd,
+        waccMean, waccStd, terminalGrowthMean, terminalGrowthStd, baseRev, baseShares, netDebt, iterations, distributionType,
       });
-
-      const resultsData: DistributionStats = {
-        histogramData,
-        p10: Number(p10.toFixed(2)),
-        p50: Number(p50.toFixed(2)),
-        p90: Number(p90.toFixed(2)),
-        mean: Number(mean.toFixed(2)),
-        stdDev: Number(stdDev.toFixed(2)),
-        probUpside: Number(probUpside.toFixed(1)),
-        iterationsRun: iterations
-      };
 
       setStats(resultsData);
       setIsRunning(false);

@@ -9,6 +9,7 @@ import autoTable from "jspdf-autotable";
 import { useTerminalStore } from "@/store/useTerminalStore";
 import { t } from "@/lib/i18n";
 import { panelReveal } from "@/lib/motion";
+import { ZAKAT_RATE } from "@/lib/constants";
 
 export default function ThreeStatementModel() {
   const { language, updateSessionAnalysis } = useTerminalStore();
@@ -41,7 +42,7 @@ export default function ThreeStatementModel() {
     
     // Zakat Treatment: 2.5% of Zakat Base (Equity + Debt - Net Fixed Assets) vs Corporate Tax 20% for IFRS
     const zakatBase = Math.max(0, runningCash + rev * 0.15 + ebit);
-    const zakatOrTax = gaapMode === "SAUDI_GAAP" ? zakatBase * 0.025 : Math.max(0, ebit * 0.20);
+    const zakatOrTax = gaapMode === "SAUDI_GAAP" ? zakatBase * ZAKAT_RATE : Math.max(0, ebit * 0.20);
     const netIncome = ebit - zakatOrTax;
 
     const capex = rev * (capexPct / 100);

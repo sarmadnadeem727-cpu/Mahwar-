@@ -6,25 +6,23 @@
  * top-bar GO line and the full-screen console panel, so behaviour is identical.
  */
 import { APP, TOOLS, resolveCommand, toolsBySuite, type ToolDef } from "@/lib/registry";
-import type { Currency, Language, PanelType } from "@/store/useTerminalStore";
+import { CURRENCIES, type Currency, type Language, type PanelType } from "@/store/useTerminalStore";
 
 export interface CommandContext {
   language: Language;
   currency: Currency;
   savedCount: number;
-  userName?: string | null;
   setPanel: (p: PanelType) => void;
   setLanguage: (l: Language) => void;
   setCurrency: (c: Currency) => void;
   clearSession: () => void;
   clearConsole: () => void;
   downloadSession: () => void;
-  signOut: () => void;
+  /** Leave the terminal (back to the landing page). There is no account to sign out of. */
+  leave: () => void;
   toast: (text: string, tone?: "ok" | "warn" | "err") => void;
 }
 export interface CommandResult { ok: boolean; out: string; tool?: ToolDef }
-
-const CURRENCIES: Currency[] = ["SAR", "AED", "KWD", "BHD", "OMR", "QAR", "USD"];
 
 export const COMMANDS: { verb: string; args?: string; en: string; ar: string }[] = [
   { verb: "<CODE>", args: "[GO]", en: "Open an engine — DCF, EOQ, CCC, SUK, MRP …", ar: "فتح محرك — DCF أو EOQ أو CCC…" },
@@ -39,9 +37,9 @@ export const COMMANDS: { verb: string; args?: string; en: string; ar: string }[]
   { verb: "RPT", en: "Build the consolidated report", ar: "إنشاء التقرير الموحد" },
   { verb: "RESET", args: "CONFIRM", en: "Clear every saved analysis", ar: "مسح كل التحليلات المحفوظة" },
   { verb: "CLEAR", en: "Clear the console transcript", ar: "مسح سجل وحدة التحكم" },
-  { verb: "WHOAMI", en: "Show the signed-in account", ar: "عرض الحساب الحالي" },
+  { verb: "WHOAMI", en: "Where this session lives", ar: "أين تُحفظ هذه الجلسة" },
   { verb: "VER", en: "Build and engine count", ar: "الإصدار وعدد المحركات" },
-  { verb: "EXIT", en: "Sign out", ar: "تسجيل الخروج" },
+  { verb: "EXIT", en: "Leave the terminal", ar: "مغادرة المحطة" },
 ];
 
 export function runCommand(raw: string, ctx: CommandContext): CommandResult {
@@ -68,7 +66,7 @@ export function runCommand(raw: string, ctx: CommandContext): CommandResult {
     case "EN": ctx.setLanguage("en"); return { ok: true, out: "english" };
     case "CUR": case "CCY": {
       const c = arg as Currency;
-      if (CURRENCIES.includes(c)) { ctx.setCurrency(c); return { ok: true, out: `${isAr ? "العملة" : "currency"} → ${c}` }; }
+      if ((CURRENCIES as readonly string[]).includes(c)) { ctx.setCurrency(c); return { ok: true, out: `${isAr ? "العملة" : "currency"} → ${c}` }; }
       return { ok: false, out: `${isAr ? "عملة غير معروفة" : "unknown currency"}. ${CURRENCIES.join(" ")}` };
     }
     case "SAVE": case "EXPORT": ctx.downloadSession(); return { ok: true, out: isAr ? `تم تنزيل ${ctx.savedCount} تحليلاً` : `downloaded ${ctx.savedCount} saved analyses` };
@@ -77,13 +75,13 @@ export function runCommand(raw: string, ctx: CommandContext): CommandResult {
       if (arg === "CONFIRM") { ctx.clearSession(); return { ok: true, out: isAr ? "تم مسح الجلسة" : "session cleared" }; }
       return { ok: false, out: isAr ? "اكتب RESET CONFIRM لمسح كل التحليلات" : `type RESET CONFIRM to clear ${ctx.savedCount} analyses` };
     case "CLEAR": case "CLS": ctx.clearConsole(); return { ok: true, out: "" };
-    case "WHOAMI": return { ok: true, out: ctx.userName ? ctx.userName : (isAr ? "ضيف — لم يتم تسجيل الدخول" : "guest — not signed in") };
+    case "WHOAMI": return { ok: true, out: isAr ? `جلسة محلية بلا حساب — ${ctx.savedCount} تحليلاً محفوظاً في هذا المتصفح فقط` : `local session, no account — ${ctx.savedCount} analyses saved in this browser only` };
     case "VER": case "VERSION": return { ok: true, out: `mahwar v${APP.version} · ${TOOLS.length} engines (${toolsBySuite("finance").length} finance / ${toolsBySuite("operations").length} operations)` };
-    case "EXIT": case "LOGOUT": case "QUIT": ctx.signOut(); return { ok: true, out: isAr ? "تسجيل الخروج…" : "signing out…" };
+    case "EXIT": case "QUIT": ctx.leave(); return { ok: true, out: isAr ? "مغادرة المحطة…" : "leaving the terminal…" };
     case "GO": return { ok: false, out: isAr ? "اكتب كوداً قبل GO" : "type a code before GO" };
   }
 
-  if (CURRENCIES.includes(verb as Currency) && parts.length === 1) { ctx.setCurrency(verb as Currency); return { ok: true, out: `${isAr ? "العملة" : "currency"} → ${verb}` }; }
+  if ((CURRENCIES as readonly string[]).includes(verb) && parts.length === 1) { ctx.setCurrency(verb as Currency); return { ok: true, out: `${isAr ? "العملة" : "currency"} → ${verb}` }; }
 
   const hit = resolveCommand(withoutGo);
   if (hit) { ctx.setPanel(hit.id); return { ok: true, out: `${hit.code} · ${isAr ? hit.ar : hit.en}`, tool: hit }; }

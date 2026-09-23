@@ -1,11 +1,13 @@
 import type { Metadata, Viewport } from "next";
-import { Cormorant_Garamond, DM_Sans, IBM_Plex_Mono, Cairo } from "next/font/google";
+import { Source_Serif_4, Inter, IBM_Plex_Mono, Cairo } from "next/font/google";
 import "./globals.css";
 import LoadingScreen from "@/components/ui/LoadingScreen";
 import CursorGlow from "@/components/ui/CursorGlow";
 import { APP } from "@/lib/registry";
 
-const cormorant = Cormorant_Garamond({
+// Typography: Source Serif 4 for headlines, Inter for body, IBM Plex Mono for
+// every number, Cairo for Arabic. No fifth typeface anywhere.
+const sourceSerif = Source_Serif_4({
   subsets: ["latin"],
   variable: "--font-serif",
   weight: ["400", "500", "600", "700"],
@@ -13,7 +15,7 @@ const cormorant = Cormorant_Garamond({
   display: "swap",
 });
 
-const dmSans = DM_Sans({
+const inter = Inter({
   subsets: ["latin"],
   variable: "--font-sans",
   weight: ["400", "500", "600", "700"],
@@ -60,7 +62,7 @@ export default function RootLayout({ children }: Readonly<{ children: React.Reac
   return (
     <html
       lang="en"
-      className={`${cormorant.variable} ${dmSans.variable} ${plexMono.variable} ${cairo.variable}`}
+      className={`${sourceSerif.variable} ${inter.variable} ${plexMono.variable} ${cairo.variable}`}
       suppressHydrationWarning
     >
       <body className="bg-ink-1 text-fg min-h-screen antialiased">

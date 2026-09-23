@@ -3,14 +3,12 @@
 import React, { useEffect, useMemo, useRef, useState } from "react";
 import { Globe, Menu, Command, CornerDownLeft } from "lucide-react";
 import { useShallow } from "zustand/react/shallow";
-import { useTerminalStore, type Currency } from "@/store/useTerminalStore";
+import { useTerminalStore, CURRENCIES, type Currency } from "@/store/useTerminalStore";
 import { getTool, TOOLS } from "@/lib/registry";
 import { suggest } from "@/lib/commands";
 import { useCommandRunner } from "@/lib/useCommandRunner";
 import CommandPalette from "@/components/ui/CommandPalette";
-import AccountMenu from "@/components/layout/AccountMenu";
-
-const CURRENCIES: Currency[] = ["SAR", "AED", "KWD", "BHD", "OMR", "QAR", "USD"];
+import SessionMenu from "@/components/layout/SessionMenu";
 
 /**
  * TopBar — the GO line. Same grammar as the console (`lib/commands.ts`):
@@ -142,7 +140,7 @@ export default function TopBar() {
             <Globe size={12} className="text-emerald-light" />
             <span>{isAr ? "EN" : "ع"}</span>
           </button>
-          <AccountMenu isAr={isAr} />
+          <SessionMenu isAr={isAr} />
         </div>
       </header>
 

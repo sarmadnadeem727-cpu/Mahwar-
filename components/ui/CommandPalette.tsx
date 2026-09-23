@@ -13,16 +13,21 @@ interface CommandPaletteProps {
 }
 
 export default function CommandPalette({ isOpen, onClose, tools = TOOLS }: CommandPaletteProps) {
-  const { setPanel, language, sessionAnalyses } = useTerminalStore();
+  const { setPanel, language, sessionAnalyses, recentPanels, activePanel } = useTerminalStore();
   const isAr = language === "ar";
   const [query, setQuery] = useState("");
   const [index, setIndex] = useState(0);
   const inputRef = useRef<HTMLInputElement>(null);
   const listRef = useRef<HTMLDivElement>(null);
 
+  // Empty query: the panels opened most recently come first, then everything else in registry order.
   const results = useMemo(() => {
     const q = query.trim().toLowerCase();
-    if (!q) return tools;
+    if (!q) {
+      const recent = recentPanels.filter((p) => p !== activePanel).map((id) => tools.find((t) => t.id === id)).filter((t): t is ToolDef => !!t).slice(0, 5);
+      const recentIds = new Set(recent.map((t) => t.id));
+      return [...recent, ...tools.filter((t) => !recentIds.has(t.id))];
+    }
     return tools
       .map((t) => {
         const hay = [t.code, t.id, t.en, t.ar, t.tag, ...t.keywords].join(" ").toLowerCase();
@@ -36,7 +41,9 @@ export default function CommandPalette({ isOpen, onClose, tools = TOOLS }: Comma
       .filter((r) => r.score > 0)
       .sort((a, b) => b.score - a.score)
       .map((r) => r.t);
-  }, [query, tools]);
+  }, [query, tools, recentPanels, activePanel]);
+
+  const recentCount = query.trim() ? 0 : Math.min(5, recentPanels.filter((p) => p !== activePanel && tools.some((t) => t.id === p)).length);
 
   useEffect(() => {
     if (isOpen) {
@@ -117,9 +124,15 @@ export default function CommandPalette({ isOpen, onClose, tools = TOOLS }: Comma
                 const Icon = tool.icon;
                 const active = i === index;
                 const saved = tool.sessionKey && sessionAnalyses[tool.sessionKey];
+                const heading = recentCount > 0 && (i === 0 || i === recentCount);
                 return (
+                  <React.Fragment key={tool.id}>
+                  {heading && (
+                    <div className="px-4 pt-2 pb-1 font-mono text-[10px] tracking-[0.18em] uppercase text-fg-4">
+                      {i === 0 ? (isAr ? "الأخيرة" : "Recent") : (isAr ? "كل المحركات" : "All engines")}
+                    </div>
+                  )}
                   <button
-                    key={tool.id}
                     data-idx={i}
                     onMouseEnter={() => setIndex(i)}
                     onClick={() => choose(tool)}
@@ -134,6 +147,7 @@ export default function CommandPalette({ isOpen, onClose, tools = TOOLS }: Comma
                     {saved && <span className="w-1.5 h-1.5 rounded-full bg-emerald-light shrink-0" />}
                     {active && <CornerDownLeft size={12} className="text-fg-3 shrink-0" />}
                   </button>
+                  </React.Fragment>
                 );
               })}
             </div>

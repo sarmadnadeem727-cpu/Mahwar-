@@ -39,10 +39,10 @@ export default function LboWaterfallChart({
   const totalUses = entryEv + transactionFees;
 
   const sources = [
-    { name: isAr ? "رأس مال المستثمر (Sponsor Equity)" : "Sponsor Equity", val: sponsorEquity, color: "bg-emerald", pct: ((sponsorEquity / totalUses) * 100).toFixed(1) },
-    { name: isAr ? "الدين الممتاز (Senior Debt)" : "Senior Bank Debt", val: seniorDebt, color: "bg-sky-500", pct: ((seniorDebt / totalUses) * 100).toFixed(1) },
-    { name: isAr ? "الدين الثانوي (Mezzanine Debt)" : "Mezzanine Debt", val: mezzDebt, color: "bg-indigo-500", pct: ((mezzDebt / totalUses) * 100).toFixed(1) },
-    ...(pikNotes > 0 ? [{ name: isAr ? "سندات عينية (PIK Notes)" : "PIK Notes", val: pikNotes, color: "bg-purple-500", pct: ((pikNotes / totalUses) * 100).toFixed(1) }] : []),
+    { name: isAr ? "رأس مال المستثمر (Sponsor Equity)" : "Sponsor Equity", val: sponsorEquity, color: T.colors.sponsor, pct: ((sponsorEquity / totalUses) * 100).toFixed(1) },
+    { name: isAr ? "الدين الممتاز (Senior Debt)" : "Senior Bank Debt", val: seniorDebt, color: T.series[1], pct: ((seniorDebt / totalUses) * 100).toFixed(1) },
+    { name: isAr ? "الدين الثانوي (Mezzanine Debt)" : "Mezzanine Debt", val: mezzDebt, color: T.colors.emeraldDeep, pct: ((mezzDebt / totalUses) * 100).toFixed(1) },
+    ...(pikNotes > 0 ? [{ name: isAr ? "سندات عينية (PIK Notes)" : "PIK Notes", val: pikNotes, color: T.colors.slateLight, pct: ((pikNotes / totalUses) * 100).toFixed(1) }] : []),
   ];
 
   const uses = [
@@ -81,7 +81,7 @@ export default function LboWaterfallChart({
                   <span className="text-emerald font-bold">SAR {s.val}M ({s.pct}%)</span>
                 </div>
                 <div className="h-3 bg-ink-4 rounded-full overflow-hidden border border-line">
-                  <div className={`h-full ${s.color}`} style={{ width: `${s.pct}%` }} />
+                  <div className="h-full" style={{ width: `${s.pct}%`, backgroundColor: s.color }} />
                 </div>
               </div>
             ))}

@@ -15,17 +15,19 @@ import {
   Network, Target, Timer, Warehouse, GitFork, Radar, Percent,
 } from "lucide-react";
 import type { PanelType, SessionAnalyses } from "@/store/useTerminalStore";
+import { APP_VERSION } from "@/lib/constants";
 
 export const APP = {
   name: "Mahwar",
   nameAr: "محور",
   tagline: "The axis where capital meets logistics",
   taglineAr: "المحور الذي يلتقي فيه رأس المال بسلاسل الإمداد",
-  version: "5.0",
+  /** Single source of truth: package.json → lib/constants.ts → here. Never type a version anywhere else. */
+  version: APP_VERSION,
   url: process.env.NEXT_PUBLIC_APP_URL || "https://mahwar.vercel.app",
+  repo: "https://github.com/sarmadnadeem727-cpu/Mahwar-",
   author: "Muhammad Sarmad Nadeem",
   authorAr: "محمد سرمد نديم",
-  heroVideo: process.env.NEXT_PUBLIC_HERO_VIDEO || "/bg-video.mp4",
   /** Where privacy requests go. Set NEXT_PUBLIC_PRIVACY_CONTACT before going live. */
   contact: process.env.NEXT_PUBLIC_PRIVACY_CONTACT || "",
 } as const;
@@ -63,7 +65,13 @@ export const CLUSTERS: Record<string, Cluster> = {
   cost: { id: "cost", en: "Cost & sourcing", ar: "التكلفة والتوريد" },
   network: { id: "network", en: "Network logistics", ar: "شبكة اللوجستيات" },
   debt: { id: "debt", en: "Debt & fixed income", ar: "الدين والدخل الثابت" },
+  research: { id: "research", en: "Research & reporting", ar: "الأبحاث والتقارير" },
 };
+
+/** Display order for the categorised engine lists (landing ENGINES chapter, sidebar sub-groups). */
+export const CLUSTER_ORDER: (keyof typeof CLUSTERS)[] = [
+  "valuation", "deals", "statements", "debt", "working_capital", "inventory", "planning", "cost", "network", "research",
+];
 
 export interface ToolDef {
   id: PanelType;
@@ -419,14 +427,14 @@ export const TOOLS: ToolDef[] = [
 
   // ---------------- Research ----------------
   {
-    id: "shariah", code: "AAOIFI", suite: "research", icon: ShieldCheck, tag: "COMPLIANCE", sessionKey: "shariah",
+    id: "shariah", code: "AAOIFI", suite: "research", cluster: "research", icon: ShieldCheck, tag: "COMPLIANCE", sessionKey: "shariah",
     en: "Shariah screening", ar: "الفحص الشرعي",
     descEn: "AAOIFI Standard 21 ratio tests with purification amounts.",
     descAr: "اختبارات نسب معيار أيوفي 21 مع مبالغ التطهير.",
     keywords: ["shariah", "aaoifi", "halal", "purification", "compliance", "شرعي"],
   },
   {
-    id: "bi_report", code: "RPT", suite: "research", icon: FileText, tag: "SYNTHESIS",
+    id: "bi_report", code: "RPT", suite: "research", cluster: "research", icon: FileText, tag: "SYNTHESIS",
     en: "BI report engine", ar: "محرك تقارير الأعمال",
     descEn: "Consolidates every saved analysis into a PDF or Excel briefing.",
     descAr: "يجمّع كل التحليلات المحفوظة في تقرير PDF أو Excel.",
@@ -443,6 +451,24 @@ export function getTool(id: PanelType | string | null | undefined): ToolDef | un
 export function toolsBySuite(suite: SuiteId): ToolDef[] {
   return TOOLS.filter((tool) => tool.suite === suite);
 }
+
+/**
+ * The analytical engines — everything except the platform shell (hub, wire,
+ * launcher, console). `ENGINES.length` is the number the landing page quotes;
+ * it is derived, never typed.
+ */
+export const ENGINES: ToolDef[] = TOOLS.filter((tool) => tool.suite !== "platform");
+
+/** Engines grouped by cluster in CLUSTER_ORDER — the one canonical categorised list. */
+export function enginesByCluster(): { cluster: Cluster; tools: ToolDef[] }[] {
+  return CLUSTER_ORDER
+    .map((id) => ({ cluster: CLUSTERS[id], tools: ENGINES.filter((t) => t.cluster === id) }))
+    .filter((g) => g.tools.length > 0);
+}
+
+/** Flagship engines — each gets a full chapter with a live computed demo on the landing page. */
+export const FLAGSHIP_IDS: PanelType[] = ["DCF", "LBO", "monte_carlo", "eoq", "ccc", "zscore"];
+export const FLAGSHIPS: ToolDef[] = FLAGSHIP_IDS.map((id) => TOOL_MAP[id]).filter(Boolean);
 
 /** Resolve a GO-line entry like `dcf`, `EOQ` or a fuzzy name to a tool. */
 export function resolveCommand(input: string): ToolDef | undefined {
