@@ -28,6 +28,7 @@ export const APP = {
   repo: "https://github.com/sarmadnadeem727-cpu/Mahwar-",
   author: "Muhammad Sarmad Nadeem",
   authorAr: "محمد سرمد نديم",
+  heroVideo: process.env.NEXT_PUBLIC_HERO_VIDEO || "/bg-video.mp4",
   /** Where privacy requests go. Set NEXT_PUBLIC_PRIVACY_CONTACT before going live. */
   contact: process.env.NEXT_PUBLIC_PRIVACY_CONTACT || "",
 } as const;

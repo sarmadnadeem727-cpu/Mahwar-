@@ -7,10 +7,13 @@ import { Globe, Menu, X, ArrowRight } from "lucide-react";
 import { useTerminalStore } from "@/store/useTerminalStore";
 import MahwarLogo from "@/components/ui/MahwarLogo";
 import { APP } from "@/lib/registry";
-import { CHAPTERS, chapterHref } from "@/components/sections/chapters";
 
-/** Top-level anchors — a subset of the chapters, the ones a first-time visitor would jump to. */
-const NAV_CHAPTERS = ["engines", "flagship", "network", "wire"];
+const LINKS = [
+  { href: "#thesis", en: "Why both", ar: "لماذا الاثنان" },
+  { href: "#modules", en: "Modules", ar: "الوحدات" },
+  { href: "#network", en: "GCC network", ar: "شبكة الخليج" },
+  { href: "#wire", en: "Wire", ar: "الأخبار" },
+];
 
 export default function Navbar() {
   const [scrolled, setScrolled] = useState(false);
@@ -20,7 +23,6 @@ export default function Navbar() {
   const isAr = language === "ar";
   const { scrollYProgress } = useScroll();
   const progress = useSpring(scrollYProgress, { stiffness: 140, damping: 30, mass: 0.4 });
-  const links = CHAPTERS.filter((c) => NAV_CHAPTERS.includes(c.id));
 
   useEffect(() => {
     const onScroll = () => setScrolled(window.scrollY > 24);
@@ -49,9 +51,9 @@ export default function Navbar() {
         </Link>
 
         <div className="hidden md:flex items-center gap-7 text-[13px] text-fg-2">
-          {links.map((c) => (
-            <a key={c.id} href={chapterHref(c.id)} className="hover:text-fg transition-colors">
-              {isAr ? c.ar : c.en}
+          {LINKS.map((l) => (
+            <a key={l.href} href={l.href} className="hover:text-fg transition-colors">
+              {isAr ? l.ar : l.en}
             </a>
           ))}
         </div>
@@ -86,9 +88,9 @@ export default function Navbar() {
             transition={{ duration: 0.2 }}
             className="md:hidden bg-ink-2 border-y border-line px-6 py-5 space-y-1 text-sm"
           >
-            {links.map((c) => (
-              <a key={c.id} href={chapterHref(c.id)} onClick={() => setOpen(false)} className="block py-2.5 text-fg-2">
-                {isAr ? c.ar : c.en}
+            {LINKS.map((l) => (
+              <a key={l.href} href={l.href} onClick={() => setOpen(false)} className="block py-2.5 text-fg-2">
+                {isAr ? l.ar : l.en}
               </a>
             ))}
             <div className="pt-3 flex flex-col gap-2">
