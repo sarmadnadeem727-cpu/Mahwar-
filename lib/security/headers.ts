@@ -3,7 +3,8 @@
  *
  * Content-Security-Policy is deliberately strict: scripts and styles only from
  * self (plus the inline styles Next/Framer need), images from self, connections
- * to self + the news providers, frames from nowhere. There is no auth, so no
+ * to self + the news providers, frames from nowhere. Market-data providers are
+ * called server-side (/api/quotes) so they never appear in connect-src. There is no auth, so no
  * third-party identity origin is allowed anywhere.
  *
  * PRIVATE_HEADERS go on the terminal itself: a visitor's working screen must

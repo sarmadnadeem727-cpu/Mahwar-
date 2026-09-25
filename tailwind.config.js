@@ -1,6 +1,7 @@
 /** @type {import('tailwindcss').Config} */
 /**
- * Mahwar design tokens — "Obsidian & Emerald" terminal theme.
+ * Mahwar design tokens — the logo theme: mint blueprint paper, navy ink, teal ring, gold nodes.
+ * Light is the default; `.dark` on <html> (next-themes) swaps every token live.
  * Every colour below maps to a CSS variable declared in app/globals.css so the
  * whole platform can be re-skinned from one place (no hex values in components).
  */
@@ -44,6 +45,10 @@ module.exports = {
           DEFAULT: "var(--gold)",
           dim: "var(--gold-dim)",
         },
+        navy: {
+          DEFAULT: "var(--navy)",
+          deep: "var(--navy-deep)",
+        },
         pos: "var(--pos)",
         neg: "var(--neg)",
         warn: "var(--warn)",
@@ -83,14 +88,15 @@ module.exports = {
       },
       fontFamily: {
         sans: ["var(--font-sans)", "system-ui", "sans-serif"],
-        serif: ["var(--font-serif)", "Georgia", "serif"],
-        display: ["var(--font-serif)", "Georgia", "serif"],
-        arabic: ["var(--font-cairo)", "sans-serif"],
+        // `serif` is kept as an alias so existing headline markup picks up the display face.
+        serif: ["var(--font-display)", "var(--font-sans)", "system-ui", "sans-serif"],
+        display: ["var(--font-display)", "var(--font-sans)", "system-ui", "sans-serif"],
+        arabic: ["var(--font-sans)", "system-ui", "sans-serif"],
         mono: ["var(--font-mono)", "ui-monospace", "monospace"],
       },
       fontSize: {
-        "display-xl": ["clamp(2.75rem, 6vw, 5.5rem)", { lineHeight: "0.98", fontWeight: "500", letterSpacing: "-0.02em" }],
-        "display-lg": ["clamp(2rem, 4vw, 3.5rem)", { lineHeight: "1.05", fontWeight: "500", letterSpacing: "-0.015em" }],
+        "display-xl": ["clamp(2.6rem, 5.6vw, 5rem)", { lineHeight: "1.04", fontWeight: "500", letterSpacing: "-0.02em" }],
+        "display-lg": ["clamp(1.9rem, 3.8vw, 3.25rem)", { lineHeight: "1.1", fontWeight: "500", letterSpacing: "-0.015em" }],
         "heading-md": ["1.5rem", { lineHeight: "1.25", fontWeight: "600" }],
         "heading-sm": ["1.125rem", { lineHeight: "1.3", fontWeight: "600" }],
         "body-md": ["1rem", { lineHeight: "1.6" }],

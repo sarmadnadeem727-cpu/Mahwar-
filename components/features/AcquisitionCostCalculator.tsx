@@ -11,7 +11,7 @@ import html2canvas from "html2canvas";
 import { useTerminalStore } from "@/store/useTerminalStore";
 import { panelReveal } from "@/lib/motion";
 
-import { TERMINAL_CHART_THEME as T } from "@/lib/chartTheme";
+import { TERMINAL_CHART_THEME as T, cssToken } from "@/lib/chartTheme";
 
 export default function AcquisitionCostCalculator() {
   const { language, updateSessionAnalysis } = useTerminalStore();
@@ -58,7 +58,7 @@ export default function AcquisitionCostCalculator() {
     if (!el) return;
     setExporting(true);
     try {
-      const canvas = await html2canvas(el, { scale: 1.8, backgroundColor: T.colors.surface });
+      const canvas = await html2canvas(el, { scale: 1.8, backgroundColor: cssToken(T.colors.surface) });
       const imgData = canvas.toDataURL("image/png");
       const pdf = new jsPDF("p", "mm", "a4");
       pdf.addImage(imgData, "PNG", 0, 0, 210, (canvas.height * 210) / canvas.width);
@@ -228,11 +228,11 @@ export default function AcquisitionCostCalculator() {
             <div className="h-64 w-full">
               <ResponsiveContainer width="100%" height="100%">
                 <BarChart data={waterfallData} margin={{ top: 10, right: 10, left: -10, bottom: 0 }}>
-                  <CartesianGrid strokeDasharray="3 3" stroke="rgba(158,190,180,0.14)" vertical={false} />
+                  <CartesianGrid strokeDasharray="3 3" stroke="var(--line)" vertical={false} />
                   <XAxis dataKey="name" stroke={T.colors.slate} fontSize={10} fontFamily="monospace" />
                   <YAxis stroke={T.colors.slate} fontSize={10} fontFamily="monospace" />
                   <Tooltip
-                    contentStyle={{ backgroundColor: T.colors.surface, borderColor: "rgba(158,190,180,0.14)", borderRadius: "8px", fontSize: "11px" }}
+                    contentStyle={{ backgroundColor: T.colors.surface, borderColor: "var(--line)", borderRadius: "8px", fontSize: "11px" }}
                     formatter={(val: any) => [`SAR ${val}M`, "Amount"]}
                   />
                   <Bar dataKey="amount" radius={[4, 4, 0, 0]}>

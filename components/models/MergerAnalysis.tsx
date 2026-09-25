@@ -156,7 +156,7 @@ export default function MergerAnalysis() {
               </span>
             </div>
             
-            <div className="panel-result text-white p-6 flex flex-col justify-center space-y-3">
+            <div className="panel-result text-fg p-6 flex flex-col justify-center space-y-3">
               <div className="flex justify-between border-b border-line pb-2">
                 <span className="text-xs font-mono opacity-70">{isAr ? "سعر العرض للمستهدف" : "Target Offer Price"}</span>
                 <span className="font-mono font-bold">{currency} {results.offerPrice.toFixed(2)}</span>
@@ -180,7 +180,7 @@ export default function MergerAnalysis() {
           <ChartWrapper title={isAr ? "تحليل أثر مكونات الاندماج على الربحية" : "EPS Impact Bridge"} isAr={isAr}>
             <ResponsiveContainer width="100%" height={300}>
               <BarChart data={results.bridgeData} margin={{ top: 20, right: 30, left: 20, bottom: 5 }}>
-                <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="rgba(158,190,180,0.14)" />
+                <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="var(--line)" />
                 <XAxis dataKey="name" axisLine={false} tickLine={false} tick={{ fontSize: 10, fill: T.colors.slate, fontFamily: 'monospace' }} />
                 <YAxis axisLine={false} tickLine={false} tick={{ fontSize: 10, fill: T.colors.slate, fontFamily: 'monospace' }} tickFormatter={(val) => `${currency} ${val.toFixed(2)}`} domain={['auto', 'auto']} />
                 <ReTooltip

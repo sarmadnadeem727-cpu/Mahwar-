@@ -358,11 +358,11 @@ export default function MonteCarloPanel() {
               {stats ? (
                 <ResponsiveContainer width="100%" height="100%">
                   <BarChart data={stats.histogramData} margin={{ top: 10, right: 10, left: -20, bottom: 0 }}>
-                    <CartesianGrid strokeDasharray="3 3" stroke="rgba(158,190,180,0.14)" vertical={false} />
+                    <CartesianGrid strokeDasharray="3 3" stroke="var(--line)" vertical={false} />
                     <XAxis dataKey="rangeLabel" stroke={T.colors.slate} fontSize={10} fontFamily="monospace" />
                     <YAxis stroke={T.colors.slate} fontSize={10} fontFamily="monospace" />
                     <Tooltip
-                      contentStyle={{ backgroundColor: T.colors.surface, borderColor: "rgba(158,190,180,0.14)", borderRadius: "8px", fontSize: "11px" }}
+                      contentStyle={{ backgroundColor: T.colors.surface, borderColor: "var(--line)", borderRadius: "8px", fontSize: "11px" }}
                       formatter={(val: any) => [`${val} Runs`, "Frequency"]}
                     />
                     <ReferenceLine x={`SAR ${stats.p50}`} stroke={T.colors.emerald} strokeWidth={2} label={{ value: "P50 Median", fill: T.colors.emerald, fontSize: 10 }} />

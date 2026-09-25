@@ -321,12 +321,12 @@ export default function AbcXyzClassification() {
             <div className="h-64 w-full">
               <ResponsiveContainer width="100%" height="100%">
                 <ComposedChart data={paretoData} margin={{ top: 10, right: 10, left: -20, bottom: 25 }}>
-                  <CartesianGrid strokeDasharray="3 3" stroke="rgba(158,190,180,0.14)" vertical={false} />
+                  <CartesianGrid strokeDasharray="3 3" stroke="var(--line)" vertical={false} />
                   <XAxis dataKey="name" stroke={T.colors.slate} fontSize={8} fontFamily="monospace" angle={-45} textAnchor="end" />
                   <YAxis yAxisId="left" stroke={T.colors.slate} fontSize={9} fontFamily="monospace" />
                   <YAxis yAxisId="right" orientation="right" stroke={T.colors.emerald} domain={[0, 100]} fontSize={9} fontFamily="monospace" unit="%" />
                   <Tooltip
-                    contentStyle={{ backgroundColor: T.colors.surface, borderColor: "rgba(158,190,180,0.14)", borderRadius: "8px", fontSize: "11px" }}
+                    contentStyle={{ backgroundColor: T.colors.surface, borderColor: "var(--line)", borderRadius: "8px", fontSize: "11px" }}
                   />
                   <Bar yAxisId="left" dataKey="value" name="Value (SAR)" fill={T.colors.neutral} radius={[3, 3, 0, 0]} />
                   <Line yAxisId="right" type="monotone" dataKey="cumulativePct" name="Cumulative %" stroke={T.colors.emerald} strokeWidth={2.5} dot={{ r: 2 }} />

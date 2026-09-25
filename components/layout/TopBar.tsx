@@ -9,6 +9,7 @@ import { suggest } from "@/lib/commands";
 import { useCommandRunner } from "@/lib/useCommandRunner";
 import CommandPalette from "@/components/ui/CommandPalette";
 import SessionMenu from "@/components/layout/SessionMenu";
+import ThemeToggle from "@/components/ui/ThemeToggle";
 
 /**
  * TopBar — the GO line. Same grammar as the console (`lib/commands.ts`):
@@ -119,7 +120,7 @@ export default function TopBar() {
               <Command size={10} />K
             </button>
             {focused && hints.length > 1 && cmd.trim() && (
-              <div className="absolute top-10 left-0 right-0 rounded-md border border-line bg-ink-2/95 backdrop-blur-xl shadow-[0_14px_40px_rgba(0,0,0,0.5)] p-1 z-40">
+              <div className="absolute top-10 left-0 right-0 rounded-md border border-line bg-ink-2/95 backdrop-blur-xl shadow-terminal-hover p-1 z-40">
                 {hints.map((h) => (
                   <button key={h.kind + h.code} type="button" onMouseDown={(e) => { e.preventDefault(); go(h.code); }} className="w-full flex items-center gap-2 px-2 py-1.5 rounded text-left hover:bg-ink-4">
                     <span className={`w-14 text-[11px] ${h.kind === "verb" ? "text-gold" : "text-emerald-light"}`}>{h.code}</span>
@@ -136,6 +137,7 @@ export default function TopBar() {
           <select value={currency} onChange={(e) => setCurrency(e.target.value as Currency)} className="h-8 bg-ink-1 border border-line-strong text-[11px] font-mono text-fg px-1.5 md:px-2 rounded focus:outline-none focus:border-emerald cursor-pointer" aria-label="Reporting currency">
             {CURRENCIES.map((c) => <option key={c} value={c}>{c}</option>)}
           </select>
+          <ThemeToggle isAr={isAr} />
           <button onClick={() => setLanguage(isAr ? "en" : "ar")} className="h-8 flex items-center gap-1.5 px-2 md:px-2.5 bg-ink-1 border border-line-strong hover:border-emerald/40 text-[11px] font-mono text-fg-2 hover:text-fg rounded transition-colors" aria-label="Switch language">
             <Globe size={12} className="text-emerald-light" />
             <span>{isAr ? "EN" : "ع"}</span>

@@ -38,9 +38,12 @@ export default function CTASection() {
             ? "افتح أي محرك، أدخل أرقامك، صدّر التقرير. كل شيء يعمل في متصفحك."
             : "Open any engine, enter your numbers, export the report. Everything runs in your browser."}
         </p>
-        <div className="mt-10">
+        <div className="mt-10 flex flex-wrap justify-center gap-3">
           <Link href="/dashboard" className="btn-primary px-8 py-4 text-[12px]">
             {isAr ? "ادخل إلى المحطة" : "Enter the terminal"}
+          </Link>
+          <Link href="/dashboard?panel=screener" className="btn-secondary px-6 py-4 text-[12px]">
+            {isAr ? "افتح فاحص الأسهم" : "Open the stock screener"}
           </Link>
         </div>
       </motion.div>

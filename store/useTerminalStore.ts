@@ -62,7 +62,9 @@ export type PanelType =
   | "warehouse"
   | "make_buy"
   | "supplier_risk"
-  | "quantity_discount";
+  | "quantity_discount"
+  // v7 market data
+  | "screener";
 
 export interface CustomModelRow {
   id: string;
@@ -124,6 +126,8 @@ export interface SessionAnalyses {
   makeBuy?: SavedAnalysis;
   supplierRisk?: SavedAnalysis;
   quantityDiscount?: SavedAnalysis;
+  // v7
+  screener?: SavedAnalysis;
 }
 
 export interface Toast { id: number; text: string; tone?: "ok" | "warn" | "err" }

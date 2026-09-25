@@ -20,7 +20,7 @@ export default function LegalShell({ title, titleAr, updated, children }: { titl
           <ArrowLeft size={13} className={isAr ? "rotate-180" : ""} />
           <span>{isAr ? "العودة للرئيسية" : "Back to home"}</span>
         </Link>
-        <h1 className={`font-serif text-display-lg text-fg ${isAr ? "font-cairo font-bold" : ""}`}>{isAr ? titleAr : title}</h1>
+        <h1 className={`font-display text-display-lg text-fg ${isAr ? "font-semibold" : ""}`}>{isAr ? titleAr : title}</h1>
         <p className="mt-3 font-mono text-[11px] text-fg-3 tracking-wider">
           {APP.name} v{APP.version} · {isAr ? "آخر تحديث" : "last updated"} {updated}
         </p>

@@ -340,7 +340,7 @@ export default function FacilityLocation() {
             <div className="h-80 w-full">
               <ResponsiveContainer width="100%" height="100%">
                 <ScatterChart margin={{ top: 20, right: 20, bottom: 20, left: 0 }}>
-                  <CartesianGrid strokeDasharray="3 3" stroke="rgba(158,190,180,0.14)" />
+                  <CartesianGrid strokeDasharray="3 3" stroke="var(--line)" />
                   <XAxis
                     type="number"
                     dataKey="x"
@@ -362,7 +362,7 @@ export default function FacilityLocation() {
                   <ZAxis type="number" dataKey="volume" range={[60, 450]} />
                   <Tooltip
                     cursor={{ strokeDasharray: '3 3' }}
-                    contentStyle={{ backgroundColor: T.colors.surface, borderColor: "rgba(158,190,180,0.14)", borderRadius: "8px", fontSize: "11px" }}
+                    contentStyle={{ backgroundColor: T.colors.surface, borderColor: "var(--line)", borderRadius: "8px", fontSize: "11px" }}
                     formatter={(val: any, name: any) => [val, name]}
                   />
                   <Scatter name="Demand Nodes" data={demandPoints} fill={T.series[2]} opacity={0.7} />

@@ -225,11 +225,11 @@ export default function MonteCarloSimulation({
         {simResults ? (
           <ResponsiveContainer width="100%" height="100%">
             <BarChart data={simResults.histogramData} margin={{ top: 10, right: 10, left: -20, bottom: 0 }}>
-              <CartesianGrid strokeDasharray="3 3" stroke="rgba(158,190,180,0.14)" vertical={false} />
+              <CartesianGrid strokeDasharray="3 3" stroke="var(--line)" vertical={false} />
               <XAxis dataKey="rangeLabel" stroke={T.colors.slate} tickLine={false} fontSize={10} />
               <YAxis stroke={T.colors.slate} tickLine={false} fontSize={10} />
               <Tooltip
-                contentStyle={{ backgroundColor: T.colors.surface, borderColor: "rgba(158,190,180,0.14)", borderRadius: "8px", color: T.colors.fg, fontSize: "11px", boxShadow: "0 4px 12px rgba(158,190,180,0.1)" }}
+                contentStyle={{ backgroundColor: T.colors.surface, borderColor: "var(--line)", borderRadius: "8px", color: T.colors.fg, fontSize: "11px", boxShadow: "0 4px 12px rgba(158,190,180,0.1)" }}
                 formatter={(val: any) => [`${val} runs`, "Frequency"]}
               />
               <Bar dataKey="count" fill={T.colors.emerald} radius={[3, 3, 0, 0]} />

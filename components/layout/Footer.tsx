@@ -15,6 +15,8 @@ export default function Footer() {
   const isAr = language === "ar";
 
   const company = [
+    { en: "Finance features", ar: "الميزات المالية", href: "/features/finance" },
+    { en: "Supply chain features", ar: "ميزات سلاسل الإمداد", href: "/features/supply-chain" },
     { en: "Privacy", ar: "الخصوصية", href: "/privacy" },
     { en: "Terms", ar: "الشروط", href: "/terms" },
     { en: "Source on GitHub", ar: "الشيفرة على GitHub", href: APP.repo, external: true },
@@ -28,7 +30,7 @@ export default function Footer() {
             <div className="flex items-center gap-3">
               <MahwarLogo size={34} animate={false} />
               <div>
-                <div className="font-serif text-xl text-fg">{APP.name} <span className="text-fg-3">{APP.nameAr}</span></div>
+                <div className="font-display text-xl text-fg">{APP.name} <span className="text-fg-3">{APP.nameAr}</span></div>
                 <div className="font-mono text-[10px] text-fg-3 tracking-wider">v{APP.version}</div>
               </div>
             </div>

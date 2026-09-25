@@ -17,8 +17,8 @@ import { timeline, addDraw, stagger, prefersReducedMotion, onceInView, DURATION 
 
 const Tower = ({ x, w, h, cap = false }: { x: number; w: number; h: number; cap?: boolean }) => (
   <g data-tower style={{ transformOrigin: `${x + w / 2}px 420px` }}>
-    <rect x={x} y={420 - h} width={w} height={h} fill="url(#towerGrad)" stroke="rgba(158,190,180,0.25)" strokeWidth="0.6" />
-    {cap && <path d={`M${x},${420 - h} L${x + w / 2},${420 - h - w * 0.9} L${x + w},${420 - h} Z`} fill="var(--ink-4)" stroke="rgba(158,190,180,0.25)" strokeWidth="0.6" />}
+    <rect x={x} y={420 - h} width={w} height={h} fill="url(#towerGrad)" stroke="var(--line-strong)" strokeWidth="0.6" />
+    {cap && <path d={`M${x},${420 - h} L${x + w / 2},${420 - h - w * 0.9} L${x + w},${420 - h} Z`} fill="var(--ink-4)" stroke="var(--line-strong)" strokeWidth="0.6" />}
     {Array.from({ length: Math.floor(h / 18) }).map((_, r) =>
       Array.from({ length: Math.max(1, Math.floor(w / 9)) }).map((__, c) => (
         <rect key={`${r}-${c}`} data-window={((r * 7 + c * 13 + x) % 5 === 0) ? "lit" : "dark"} x={x + 3 + c * 9} y={420 - h + 6 + r * 18} width={3} height={6} fill="var(--gold)" opacity={((r * 7 + c * 13 + x) % 5 === 0) ? 0.55 : 0.08} />
@@ -77,10 +77,10 @@ export default function GulfSceneSection() {
   ];
 
   return (
-    <section ref={ref} className="relative overflow-hidden bg-ink-0 border-y border-line" dir={isAr ? "rtl" : "ltr"}>
+    <section ref={ref} className="section-dark relative overflow-hidden bg-ink-0 border-y border-line" dir={isAr ? "rtl" : "ltr"}>
       <div className="relative h-[520px] md:h-[600px]" dir="ltr">
         {/* Sky */}
-        <motion.div style={{ y: sky }} className="absolute inset-0 bg-[radial-gradient(ellipse_80%_60%_at_50%_100%,rgba(217,179,110,0.14),transparent_60%),linear-gradient(180deg,#05090b_0%,#0a1216_60%,#0e161a_100%)]" />
+        <motion.div style={{ y: sky }} className="absolute inset-0 bg-[radial-gradient(ellipse_80%_60%_at_50%_100%,rgba(217,179,110,0.14),transparent_60%),linear-gradient(180deg,var(--ink-0)_0%,var(--ink-1)_60%,var(--ink-2)_100%)]" />
         <motion.div style={{ y: sun }} className="absolute left-[62%] top-[26%] w-28 h-28 rounded-full bg-gold/25 blur-2xl" />
         <motion.div style={{ y: sun }} className="absolute left-[64%] top-[30%] w-16 h-16 rounded-full border border-gold/50" />
 
@@ -119,10 +119,10 @@ export default function GulfSceneSection() {
           </motion.svg>
           {/* Tanker, other way */}
           <motion.svg animate={{ x: ["120%", "-40%"], y: [0, 2, 0] }} transition={{ x: { duration: 80, repeat: Infinity, ease: "linear" }, y: { duration: 5, repeat: Infinity, ease: "easeInOut" } }} viewBox="0 0 220 50" className="absolute top-[48%] w-[180px] h-[42px] opacity-80">
-            <path d="M8,32 L212,32 L196,46 L26,46 Z" fill="var(--ink-4)" stroke="rgba(158,190,180,0.45)" strokeWidth="1" />
+            <path d="M8,32 L212,32 L196,46 L26,46 Z" fill="var(--ink-4)" stroke="var(--line-strong)" strokeWidth="1" />
             <rect x="30" y="24" width="140" height="8" rx="3" fill="var(--ink-5)" />
             <rect x="30" y="18" width="150" height="6" rx="3" fill="var(--ink-3)" />
-            <rect x="18" y="12" width="18" height="20" fill="var(--ink-5)" stroke="rgba(158,190,180,0.45)" strokeWidth="0.8" />
+            <rect x="18" y="12" width="18" height="20" fill="var(--ink-5)" stroke="var(--line-strong)" strokeWidth="0.8" />
             <rect x="24" y="6" width="3" height="6" fill="var(--emerald-light)" />
           </motion.svg>
         </motion.div>

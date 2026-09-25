@@ -66,12 +66,13 @@ export const CLUSTERS: Record<string, Cluster> = {
   cost: { id: "cost", en: "Cost & sourcing", ar: "التكلفة والتوريد" },
   network: { id: "network", en: "Network logistics", ar: "شبكة اللوجستيات" },
   debt: { id: "debt", en: "Debt & fixed income", ar: "الدين والدخل الثابت" },
+  markets: { id: "markets", en: "Markets & screening", ar: "الأسواق والفرز" },
   research: { id: "research", en: "Research & reporting", ar: "الأبحاث والتقارير" },
 };
 
 /** Display order for the categorised engine lists (landing ENGINES chapter, sidebar sub-groups). */
 export const CLUSTER_ORDER: (keyof typeof CLUSTERS)[] = [
-  "valuation", "deals", "statements", "debt", "working_capital", "inventory", "planning", "cost", "network", "research",
+  "markets", "valuation", "deals", "statements", "debt", "working_capital", "inventory", "planning", "cost", "network", "research",
 ];
 
 export interface ToolDef {
@@ -265,6 +266,15 @@ export const TOOLS: ToolDef[] = [
     descEn: "Rank projects by NPV, IRR and profitability index and pick the best portfolio under a hard capital limit.",
     descAr: "ترتيب المشاريع بصافي القيمة الحالية ومعدل العائد ومؤشر الربحية واختيار أفضل محفظة ضمن سقف رأس المال.",
     keywords: ["capital budgeting", "rationing", "profitability index", "portfolio", "projects", "capex", "موازنة", "مشاريع"],
+  },
+
+  // ---------------- v7 market data ----------------
+  {
+    id: "screener", code: "SCR", suite: "finance", cluster: "markets", icon: Radar, tag: "LIVE", sessionKey: "screener",
+    en: "GCC stock screener", ar: "فاحص الأسهم الخليجية",
+    descEn: "Screen Tadawul, DFM, ADX, QSE, Kuwait, Bahrain and Muscat names by cap, P/E, P/B, yield, ROE, growth, leverage and Shariah activity — with live prices when a provider key is set.",
+    descAr: "فرز أسهم تداول ودبي وأبوظبي وقطر والكويت والبحرين ومسقط حسب القيمة والمكرر والعائد والنمو والرفع والتوافق الشرعي — مع أسعار مباشرة عند ضبط مفتاح المزود.",
+    keywords: ["screener", "screen", "stocks", "equities", "tadawul", "dfm", "adx", "live", "quotes", "watchlist", "أسهم", "فاحص", "فرز"],
   },
 
   // ---------------- Operations ----------------

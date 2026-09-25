@@ -115,7 +115,7 @@ export default function QuickNPV() {
             />
           </div>
 
-          <div className="panel-result text-white p-5 space-y-4">
+          <div className="panel-result text-fg p-5 space-y-4">
             <h3 className="font-bold font-mono text-xs uppercase text-fg-3">
               {isAr ? "النتائج المباشرة" : "Live Results"}
             </h3>

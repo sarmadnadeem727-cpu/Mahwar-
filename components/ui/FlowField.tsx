@@ -18,8 +18,31 @@ type Hub = { x: number; y: number; r: number };
 type Corridor = { a: number; b: number; cx: number; cy: number; length: number };
 type Particle = { c: number; t: number; speed: number; kind: 0 | 1; size: number; dir: 1 | -1 };
 
-const EMERALD = [23, 168, 138] as const;
-const GOLD = [217, 179, 110] as const;
+type RGB = readonly [number, number, number];
+
+/** Parse `#rrggbb` / `#rgb` / `rgb(a)(…)` into a triple; canvas gradients need numbers, not var(). */
+function parseColor(input: string, fallback: RGB): RGB {
+  const s = input.trim();
+  const hex = s.match(/^#([0-9a-f]{3}|[0-9a-f]{6})$/i);
+  if (hex) {
+    const h = hex[1].length === 3 ? hex[1].split("").map((c) => c + c).join("") : hex[1];
+    return [parseInt(h.slice(0, 2), 16), parseInt(h.slice(2, 4), 16), parseInt(h.slice(4, 6), 16)];
+  }
+  const rgb = s.match(/rgba?\(\s*([\d.]+)[,\s]+([\d.]+)[,\s]+([\d.]+)/i);
+  if (rgb) return [Number(rgb[1]), Number(rgb[2]), Number(rgb[3])];
+  return fallback;
+}
+
+/** The palette is read from the live theme tokens so the field follows light / dark. */
+function readPalette() {
+  const cs = getComputedStyle(document.documentElement);
+  const get = (name: string, fb: RGB) => parseColor(cs.getPropertyValue(name), fb);
+  return {
+    emerald: get("--emerald", [28, 139, 108]),
+    gold: get("--gold", [176, 138, 46]),
+    ink: get("--ink-1", [241, 248, 244]),
+  };
+}
 
 function rgba(rgb: readonly number[], a: number) {
   return `rgba(${rgb[0]},${rgb[1]},${rgb[2]},${a})`;
@@ -59,6 +82,9 @@ export default function FlowField({ className = "", density = 1, fadeSide = "non
     let corridors: Corridor[] = [];
     let particles: Particle[] = [];
     let mouse = { x: -9999, y: -9999 };
+    let palette = readPalette();
+    let EMERALD: RGB = palette.emerald;
+    let GOLD: RGB = palette.gold;
 
     const build = () => {
       const rect = canvas.getBoundingClientRect();
@@ -213,7 +239,7 @@ export default function FlowField({ className = "", density = 1, fadeSide = "non
       // Optional side fade so headline copy stays legible.
       if (fadeSide !== "none") {
         const g = ctx.createLinearGradient(0, 0, width, 0);
-        const ink = "rgba(9,15,18,";
+        const ink = `rgba(${palette.ink[0]},${palette.ink[1]},${palette.ink[2]},`;
         if (fadeSide === "left") {
           g.addColorStop(0, ink + "0.92)");
           g.addColorStop(0.45, ink + "0.35)");
@@ -259,6 +285,15 @@ export default function FlowField({ className = "", density = 1, fadeSide = "non
       visible = entry.isIntersecting && document.visibilityState === "visible";
     });
 
+    // Follow the live theme: next-themes flips the class on <html>.
+    const themeObserver = new MutationObserver(() => {
+      palette = readPalette();
+      EMERALD = palette.emerald;
+      GOLD = palette.gold;
+      if (reduced) draw(0);
+    });
+    themeObserver.observe(document.documentElement, { attributes: true, attributeFilter: ["class"] });
+
     io.observe(canvas);
     window.addEventListener("resize", onResize);
     document.addEventListener("visibilitychange", onVisibility);
@@ -269,6 +304,7 @@ export default function FlowField({ className = "", density = 1, fadeSide = "non
       running = false;
       cancelAnimationFrame(raf);
       io.disconnect();
+      themeObserver.disconnect();
       window.removeEventListener("resize", onResize);
       document.removeEventListener("visibilitychange", onVisibility);
       canvas.parentElement?.removeEventListener("pointermove", onMove);

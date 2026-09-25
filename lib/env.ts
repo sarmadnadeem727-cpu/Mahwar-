@@ -6,6 +6,9 @@
 export interface ServerEnv {
   MARKETAUX_API_KEY?: string;
   FINLIGHT_API_KEY?: string;
+  TWELVEDATA_API_KEY?: string;
+  EODHD_API_KEY?: string;
+  MARKET_DATA_PROVIDER?: string;
   NEXT_PUBLIC_APP_URL?: string;
 }
 
@@ -20,6 +23,9 @@ export function getServerEnv(): ServerEnv {
   return {
     MARKETAUX_API_KEY: process.env.MARKETAUX_API_KEY || "",
     FINLIGHT_API_KEY: process.env.FINLIGHT_API_KEY || "",
+    TWELVEDATA_API_KEY: process.env.TWELVEDATA_API_KEY || "",
+    EODHD_API_KEY: process.env.EODHD_API_KEY || "",
+    MARKET_DATA_PROVIDER: process.env.MARKET_DATA_PROVIDER || "",
     NEXT_PUBLIC_APP_URL: process.env.NEXT_PUBLIC_APP_URL || "https://mahwar.vercel.app",
   };
 }

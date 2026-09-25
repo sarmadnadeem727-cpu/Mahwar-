@@ -320,11 +320,11 @@ export default function SupplierScorecard() {
             <div className="h-72 w-full">
               <ResponsiveContainer width="100%" height="100%">
                 <RadarChart data={radarData} outerRadius="75%">
-                  <PolarGrid stroke="rgba(158,190,180,0.14)" />
+                  <PolarGrid stroke="var(--line)" />
                   <PolarAngleAxis dataKey="criterion" stroke={T.colors.slate} fontSize={9} fontFamily="sans-serif" />
                   <PolarRadiusAxis domain={[0, scaleMax]} stroke={T.colors.neutral} fontSize={8} />
                   <Tooltip
-                    contentStyle={{ backgroundColor: T.colors.surface, borderColor: "rgba(158,190,180,0.14)", borderRadius: "8px", fontSize: "11px" }}
+                    contentStyle={{ backgroundColor: T.colors.surface, borderColor: "var(--line)", borderRadius: "8px", fontSize: "11px" }}
                   />
                   <Legend wrapperStyle={{ fontSize: "10px", fontFamily: "monospace" }} />
                   {suppliers.map((sup, idx) => (

@@ -96,7 +96,7 @@ export default function HeroSection() {
 
   return (
     <section
-      className="relative min-h-[100svh] flex flex-col justify-end overflow-hidden bg-ink-1 grain"
+      className="relative min-h-[100svh] flex flex-col justify-end overflow-hidden bg-ink-1 blueprint grain"
       dir={isAr ? "rtl" : "ltr"}
       onPointerMove={onPointer}
     >
@@ -109,7 +109,7 @@ export default function HeroSection() {
             muted
             playsInline
             preload="metadata"
-            className="absolute inset-0 w-full h-full object-cover opacity-[0.14] mix-blend-screen"
+            className="absolute inset-0 w-full h-full object-cover opacity-[0.1] mix-blend-multiply dark:opacity-[0.14] dark:mix-blend-screen"
             src={APP.heroVideo}
           />
         )}
@@ -141,12 +141,12 @@ export default function HeroSection() {
               </span>
             </div>
 
-            <h1 className={`font-serif font-medium text-fg text-display-xl ${isAr ? "font-cairo font-bold leading-[1.15]" : ""}`}>
+            <h1 className={`font-display font-medium text-fg text-display-xl ${isAr ? "font-semibold leading-[1.25]" : ""}`}>
               {headline.map((line, i) => (
                 <span
                   key={line}
                   data-hero-line
-                  className={`block opacity-0 ${i === 2 ? "text-emerald-light italic" : ""} ${isAr && i === 2 ? "not-italic" : ""}`}
+                  className={`block opacity-0 ${i === 2 ? "text-emerald-light" : ""}`}
                 >
                   {line}
                 </span>

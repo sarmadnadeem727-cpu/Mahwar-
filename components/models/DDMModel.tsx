@@ -111,7 +111,7 @@ export default function DDMModel() {
             <InputGroup label={isAr ? "النمو النهائي (Terminal)" : "Terminal Growth Rate"} value={terminalGrowthRate} onChange={setTerminalGrowthRate} suffix="%" step={0.1} />
           </div>
           
-          <div className="panel-result text-white p-6 flex flex-col items-center justify-center text-center">
+          <div className="panel-result text-fg p-6 flex flex-col items-center justify-center text-center">
             <span className="block text-xs text-fg-3 font-mono uppercase mb-2">
               {isAr ? "القيمة الضمنية للسهم" : "Implied Share Price"}
             </span>
@@ -126,7 +126,7 @@ export default function DDMModel() {
           <ChartWrapper title={isAr ? "جسر القيمة الحالية" : "Value Contribution Bridge"} isAr={isAr}>
             <ResponsiveContainer width="100%" height={250}>
               <BarChart data={results.bridgeData} margin={{ top: 20, right: 30, left: 20, bottom: 5 }}>
-                <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="rgba(158,190,180,0.14)" />
+                <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="var(--line)" />
                 <XAxis dataKey="name" axisLine={false} tickLine={false} tick={{ fontSize: 10, fill: T.colors.slate, fontFamily: 'monospace' }} />
                 <YAxis axisLine={false} tickLine={false} tick={{ fontSize: 10, fill: T.colors.slate, fontFamily: 'monospace' }} tickFormatter={(val) => `${currency} ${val}`} />
                 <ReTooltip

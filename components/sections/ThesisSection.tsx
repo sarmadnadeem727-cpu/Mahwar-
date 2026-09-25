@@ -129,7 +129,11 @@ export default function ThesisSection() {
           </motion.div>
         </div>
 
-        <div className="mt-10 flex justify-center">
+        <div className="mt-10 flex flex-wrap justify-center gap-x-8 gap-y-3">
+          <Link href="/features" className="btn-ghost text-[12px]">
+            {isAr ? "استعرض النصفين: المالية وسلاسل الإمداد" : "See both halves: finance and supply chain"}
+            <ArrowRight size={13} className={isAr ? "rotate-180" : ""} />
+          </Link>
           <Link href="/dashboard?panel=ccc" className="btn-ghost text-[12px]">
             {isAr ? "ابدأ من دورة التحويل النقدي" : "Start from the cash conversion cycle"}
             <ArrowRight size={13} className={isAr ? "rotate-180" : ""} />

@@ -358,7 +358,7 @@ export default function CustomModelBuilder() {
 
             <button
               type="submit"
-              className="w-full py-2.5 rounded-lg bg-ink-0 hover:bg-ink-4 text-white font-mono font-bold uppercase tracking-wider transition-all cursor-pointer text-xs flex items-center justify-center gap-2"
+              className="w-full py-2.5 rounded-lg bg-navy hover:bg-navy-deep text-white font-mono font-bold uppercase tracking-wider transition-all cursor-pointer text-xs flex items-center justify-center gap-2"
             >
               <Plus size={14} />
               <span>{isAr ? "إدراج البند" : "Insert Line Item"}</span>
@@ -475,11 +475,11 @@ export default function CustomModelBuilder() {
           <div className="h-[220px] w-full pt-2">
             <ResponsiveContainer width="100%" height="100%">
               <ReLineChart data={chartData}>
-                <CartesianGrid strokeDasharray="3 3" stroke="rgba(158,190,180,0.14)" />
+                <CartesianGrid strokeDasharray="3 3" stroke="var(--line)" />
                 <XAxis dataKey="year" stroke={T.colors.slate} fontSize={10} tickLine={false} />
                 <YAxis stroke={T.colors.slate} fontSize={10} tickLine={false} />
                 <Tooltip
-                  contentStyle={{ backgroundColor: T.colors.surface, borderColor: "rgba(158,190,180,0.14)", borderRadius: "8px", fontSize: "12px", fontFamily: "var(--font-mono)" }}
+                  contentStyle={{ backgroundColor: T.colors.surface, borderColor: "var(--line)", borderRadius: "8px", fontSize: "12px", fontFamily: "var(--font-mono)" }}
                 />
                 <Line type="monotone" dataKey="value" stroke={T.colors.emerald} strokeWidth={3} dot={{ fill: T.colors.emerald, r: 4 }} />
               </ReLineChart>

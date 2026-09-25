@@ -3,7 +3,7 @@ import * as XLSX from "xlsx";
 import jsPDF from "jspdf";
 import autoTable from "jspdf-autotable";
 
-import { TERMINAL_CHART_THEME as T } from "@/lib/chartTheme";
+import { TERMINAL_CHART_THEME as T, cssToken } from "@/lib/chartTheme";
 
 /**
  * Legacy screenshot export (html2canvas). Kept for the older panels; the engine
@@ -14,7 +14,7 @@ export async function exportToPdf(elementId: string, filename: string): Promise<
   if (!el) return false;
   try {
     const { default: html2canvas } = await import("html2canvas");
-    const canvas = await html2canvas(el, { scale: 1.6, backgroundColor: T.colors.canvas, logging: false, useCORS: true });
+    const canvas = await html2canvas(el, { scale: 1.6, backgroundColor: cssToken(T.colors.canvas), logging: false, useCORS: true });
     const img = canvas.toDataURL("image/jpeg", 0.9);
     const pdf = new jsPDF("p", "mm", "a4");
     const w = 210;

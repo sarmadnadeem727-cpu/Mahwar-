@@ -167,7 +167,7 @@ export default function GulfMap({ isAr, hover = null, onHover, onSelect, highlig
           <feDropShadow dx="0" dy="2" stdDeviation="3" floodColor="var(--ink-0)" floodOpacity="0.6" />
         </filter>
         <pattern id={`hatch-${uid}`} width="6" height="6" patternUnits="userSpaceOnUse" patternTransform="rotate(45)">
-          <line x1="0" y1="0" x2="0" y2="6" stroke="rgba(158,190,180,0.06)" strokeWidth="1" />
+          <line x1="0" y1="0" x2="0" y2="6" stroke="var(--line)" strokeWidth="1" />
         </pattern>
         <style>{`
           @keyframes dash-${uid} { to { stroke-dashoffset: -240; } }
@@ -179,11 +179,11 @@ export default function GulfMap({ isAr, hover = null, onHover, onSelect, highlig
       {/* Sea */}
       <rect width={W} height={H} fill={`url(#sea-${uid})`} />
       <rect width={W} height={H} fill={`url(#hatch-${uid})`} />
-      <path d={gratD} fill="none" stroke="rgba(158,190,180,0.07)" strokeWidth="0.6" />
+      <path d={gratD} fill="none" stroke="var(--line)" strokeWidth="0.6" />
 
       {/* Neighbouring land */}
       {land.filter((l) => !l.gcc).map((l) => (
-        <path key={l.name} data-land d={l.d} fill="var(--ink-3)" stroke="rgba(158,190,180,0.14)" strokeWidth="0.6" style={{ opacity: drawn ? 1 : 0 }} />
+        <path key={l.name} data-land d={l.d} fill="var(--ink-3)" stroke="var(--line)" strokeWidth="0.6" style={{ opacity: drawn ? 1 : 0 }} />
       ))}
 
       {/* GCC states — lit */}
@@ -205,7 +205,7 @@ export default function GulfMap({ isAr, hover = null, onHover, onSelect, highlig
         if (!lab[0]) return null;
         const dy = l.name === "Saudi Arabia" ? 30 : l.name === "Oman" ? 10 : 0;
         return (
-          <text key={l.name} data-country-label x={cx} y={cy + dy} textAnchor="middle" fontSize={l.name === "Saudi Arabia" ? 22 : 11} fontFamily="var(--font-mono)" letterSpacing="0.2em" fill="rgba(158,190,180,0.28)" style={{ opacity: drawn ? 1 : 0 }}>
+          <text key={l.name} data-country-label x={cx} y={cy + dy} textAnchor="middle" fontSize={l.name === "Saudi Arabia" ? 22 : 11} fontFamily="var(--font-mono)" letterSpacing="0.2em" fill="var(--line-strong)" style={{ opacity: drawn ? 1 : 0 }}>
             {isAr ? lab[1] : lab[0]}
           </text>
         );
@@ -262,9 +262,9 @@ export default function GulfMap({ isAr, hover = null, onHover, onSelect, highlig
           <g key={h.id} onMouseEnter={() => onHover?.(h.id)} onMouseLeave={() => onHover?.(null)} onClick={() => onSelect?.(h.id)} className={onSelect ? "cursor-pointer" : ""}>
             <circle data-hub-halo cx={x} cy={y} r={drawn ? (active ? 22 : 12) : 0} fill={port ? "var(--gold)" : "var(--emerald-light)"} style={{ opacity: drawn ? (active ? 0.22 : 0.1) : 0, transition: drawn ? "r 0.3s, opacity 0.3s" : undefined }} />
             <circle data-hub-dot={port ? "port" : "city"} cx={x} cy={y} r={drawn ? r : 0} fill={port ? "var(--gold)" : "var(--emerald-light)"} />
-            <circle data-hub-ring cx={x} cy={y} r={drawn ? 8 : 0} fill="none" stroke={port ? "rgba(217,179,110,0.5)" : "var(--emerald-border)"} strokeWidth="1" style={{ opacity: drawn ? 1 : 0 }} />
+            <circle data-hub-ring cx={x} cy={y} r={drawn ? 8 : 0} fill="none" stroke={port ? "var(--gold)" : "var(--emerald)"} strokeOpacity={port ? 0.55 : 0.45} strokeWidth="1" style={{ opacity: drawn ? 1 : 0 }} />
             {showLabels && (
-              <text data-hub-label x={x + lp.dx} y={y + lp.dy} textAnchor={lp.anchor} fontSize="11.5" fontFamily="var(--font-mono)" fill={active ? "var(--fg-1)" : "var(--fg-2)"} style={{ paintOrder: "stroke", stroke: "rgba(6,13,17,0.85)", strokeWidth: 3, opacity: drawn ? 1 : 0 }}>
+              <text data-hub-label x={x + lp.dx} y={y + lp.dy} textAnchor={lp.anchor} fontSize="11.5" fontFamily="var(--font-mono)" fill={active ? "var(--fg-1)" : "var(--fg-2)"} style={{ paintOrder: "stroke", stroke: "var(--ink-1)", strokeWidth: 3, opacity: drawn ? 1 : 0 }}>
                 {isAr ? h.ar : h.en}
               </text>
             )}

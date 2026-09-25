@@ -108,7 +108,7 @@ export default function WACCBuilder() {
 
         {/* OUTPUTS & CHART - 4 COLS */}
         <div className="md:col-span-4 space-y-6">
-          <div className="panel-result text-white p-6 flex flex-col items-center justify-center min-h-[160px] text-center">
+          <div className="panel-result text-fg p-6 flex flex-col items-center justify-center min-h-[160px] text-center">
             <span className="block text-xs text-fg-3 font-mono uppercase mb-2">
               {isAr ? "المتوسط المرجح لتكلفة رأس المال" : "Weighted Average Cost of Capital"}
             </span>

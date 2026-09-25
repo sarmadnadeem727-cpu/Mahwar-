@@ -6,13 +6,15 @@ import { AnimatePresence, motion, useScroll, useSpring } from "framer-motion";
 import { Globe, Menu, X, ArrowRight } from "lucide-react";
 import { useTerminalStore } from "@/store/useTerminalStore";
 import MahwarLogo from "@/components/ui/MahwarLogo";
+import ThemeToggle from "@/components/ui/ThemeToggle";
 import { APP } from "@/lib/registry";
 
 const LINKS = [
-  { href: "#thesis", en: "Why both", ar: "لماذا الاثنان" },
-  { href: "#modules", en: "Modules", ar: "الوحدات" },
-  { href: "#network", en: "GCC network", ar: "شبكة الخليج" },
-  { href: "#wire", en: "Wire", ar: "الأخبار" },
+  { href: "/features/finance", en: "Finance", ar: "المالية" },
+  { href: "/features/supply-chain", en: "Supply chain", ar: "سلاسل الإمداد" },
+  { href: "/dashboard?panel=screener", en: "Screener", ar: "فاحص الأسهم" },
+  { href: "/#network", en: "GCC network", ar: "شبكة الخليج" },
+  { href: "/#wire", en: "Wire", ar: "الأخبار" },
 ];
 
 export default function Navbar() {
@@ -43,7 +45,7 @@ export default function Navbar() {
         <Link href="/" className="flex items-center gap-3 group">
           <MahwarLogo size={34} animate={false} />
           <div className="leading-none">
-            <div className="font-serif text-xl font-semibold tracking-wide text-fg group-hover:text-emerald-light transition-colors">
+            <div className="font-display text-xl font-semibold tracking-wide text-fg group-hover:text-emerald-light transition-colors">
               {APP.name}
             </div>
             <div className="font-mono text-[9.5px] tracking-[0.25em] text-fg-3 mt-1">{APP.nameAr} · v{APP.version}</div>
@@ -52,13 +54,14 @@ export default function Navbar() {
 
         <div className="hidden md:flex items-center gap-7 text-[13px] text-fg-2">
           {LINKS.map((l) => (
-            <a key={l.href} href={l.href} className="hover:text-fg transition-colors">
+            <Link key={l.href} href={l.href} className="hover:text-fg transition-colors">
               {isAr ? l.ar : l.en}
-            </a>
+            </Link>
           ))}
         </div>
 
         <div className="hidden md:flex items-center gap-3">
+          <ThemeToggle isAr={isAr} />
           <button onClick={() => setLanguage(isAr ? "en" : "ar")} className="btn-secondary py-2">
             <Globe size={12} />
             <span>{isAr ? "English" : "العربية"}</span>
@@ -89,11 +92,12 @@ export default function Navbar() {
             className="md:hidden bg-ink-2 border-y border-line px-6 py-5 space-y-1 text-sm"
           >
             {LINKS.map((l) => (
-              <a key={l.href} href={l.href} onClick={() => setOpen(false)} className="block py-2.5 text-fg-2">
+              <Link key={l.href} href={l.href} onClick={() => setOpen(false)} className="block py-2.5 text-fg-2">
                 {isAr ? l.ar : l.en}
-              </a>
+              </Link>
             ))}
             <div className="pt-3 flex flex-col gap-2">
+              <ThemeToggle isAr={isAr} variant="menu" className="w-full [&>button]:flex-1 [&>button]:justify-center" />
               <button
                 onClick={() => {
                   setLanguage(isAr ? "en" : "ar");

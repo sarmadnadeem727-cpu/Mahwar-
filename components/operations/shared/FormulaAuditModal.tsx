@@ -130,7 +130,7 @@ export default function FormulaAuditModal({
             </span>
             <button
               onClick={onClose}
-              className="px-4 py-2 bg-ink-0 hover:bg-ink-4 text-white font-mono font-bold text-xs rounded transition-colors cursor-pointer"
+              className="px-4 py-2 bg-navy hover:bg-navy-deep text-white font-mono font-bold text-xs rounded transition-colors cursor-pointer"
             >
               {isAr ? "إغلاق السجل" : "Close Audit Trace"}
             </button>

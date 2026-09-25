@@ -81,6 +81,8 @@ const PANELS: Record<PanelType, React.ComponentType> = {
   make_buy: lazy(() => import("@/components/engines/MakeVsBuy")),
   supplier_risk: lazy(() => import("@/components/engines/SupplierRisk")),
   quantity_discount: lazy(() => import("@/components/engines/QuantityDiscount")),
+  // v7
+  screener: lazy(() => import("@/components/features/StockScreener")),
 };
 
 function PanelContent() {
