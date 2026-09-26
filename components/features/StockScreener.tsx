@@ -12,6 +12,7 @@ import { EMPTY_FILTERS, PRESETS, applyFilters, buildRows, sortRows, summarise, t
 import AppleSheet from "@/components/ui/AppleSheet";
 import AppleContextMenu from "@/components/ui/AppleContextMenu";
 import SFSymbol from "@/components/ui/SFSymbol";
+import TradingViewChart from "@/components/ui/TradingViewChart";
 
 const POLL_MS = 15_000;
 
@@ -433,6 +434,20 @@ export default function StockScreener() {
                   </button>
                 ))}
               </div>
+            </div>
+
+            {/* Live TradingView Interactive Candlestick Chart */}
+            <div className="lg:col-span-2 pt-3 border-t border-line/60">
+              <div className="flex items-center justify-between mb-2">
+                <span className="font-sans text-[12px] font-medium text-fg flex items-center gap-2">
+                  <span className="w-2 h-2 rounded-full bg-emerald-light animate-pulse" />
+                  {isAr ? "الرسم البياني المباشر (TradingView)" : "Live Interactive Candlestick Chart (TradingView)"}
+                </span>
+                <span className="font-mono text-[11px] text-emerald-light font-semibold">
+                  {sel.sec.symbols.tradingview}
+                </span>
+              </div>
+              <TradingViewChart symbol={sel.sec.symbols.tradingview} height={340} />
             </div>
           </div>
         </AppleSheet>
