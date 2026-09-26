@@ -9,6 +9,8 @@ import { useSessionSave } from "@/lib/useSessionSave";
 import { EXCHANGES, SECTORS, REFERENCE_AS_OF, type Exchange, type Sector } from "@/lib/market/universe";
 import type { QuotesResponse } from "@/lib/market/quotes";
 import { EMPTY_FILTERS, PRESETS, applyFilters, buildRows, sortRows, summarise, type Range, type ScreenFilters, type ScreenRow, type SortKey } from "@/lib/finance/screener";
+import AppleSheet from "@/components/ui/AppleSheet";
+import AppleContextMenu from "@/components/ui/AppleContextMenu";
 
 const POLL_MS = 15_000;
 
@@ -215,13 +217,59 @@ export default function StockScreener() {
             </tr>
           </thead>
           <tbody>
-            {rows.map((r) => (
-              <tr key={r.sec.id} onClick={() => setSelected(r.sec.id)} className={`cursor-pointer ${selected === r.sec.id ? "bg-emerald-dim" : ""}`}>
-                {cols.map((c) => (
-                  <td key={c.key} className={`${c.hideSm ? "hidden md:table-cell" : ""} ${c.align === "end" ? "text-end" : ""}`}>{c.render(r)}</td>
-                ))}
-              </tr>
-            ))}
+            {rows.map((r) => {
+              const contextItems = [
+                {
+                  id: "dcf",
+                  label: isAr ? "تشغيل تقييم DCF" : "Run DCF Valuation",
+                  shortcut: "DCF",
+                  onClick: () => { setPanel("DCF"); toast(isAr ? `فُتح تقييم DCF لـ ${r.sec.code}` : `Opened DCF for ${r.sec.code}`); },
+                },
+                {
+                  id: "shariah",
+                  label: isAr ? "الفحص الشرعي AAOIFI" : "AAOIFI Shariah Audit",
+                  shortcut: "AAOIFI",
+                  onClick: () => { setPanel("shariah"); toast(isAr ? `فُتح الفحص الشرعي لـ ${r.sec.code}` : `Opened Shariah screen for ${r.sec.code}`); },
+                },
+                {
+                  id: "comps",
+                  label: isAr ? "الشركات المماثلة" : "Trading Comps",
+                  shortcut: "COMPS",
+                  onClick: () => { setPanel("comps"); toast(isAr ? `فُتحت المقارنات لـ ${r.sec.code}` : `Opened comps for ${r.sec.code}`); },
+                },
+                {
+                  id: "ddm",
+                  label: isAr ? "نموذج خصم التوزيعات" : "Dividend Discount Model",
+                  shortcut: "DDM",
+                  onClick: () => { setPanel("ddm"); toast(isAr ? `فُتح DDM لـ ${r.sec.code}` : `Opened DDM for ${r.sec.code}`); },
+                  divider: true,
+                },
+                {
+                  id: "copy",
+                  label: isAr ? "نسخ رمز السهم" : "Copy Ticker Code",
+                  onClick: () => {
+                    navigator.clipboard?.writeText(r.sec.code);
+                    toast(isAr ? `تم نسخ الرمز ${r.sec.code}` : `Copied ${r.sec.code}`);
+                  },
+                },
+              ];
+
+              return (
+                <tr key={r.sec.id} onClick={() => setSelected(r.sec.id)} className={`cursor-pointer ${selected === r.sec.id ? "bg-emerald-dim" : ""}`}>
+                  {cols.map((c, colIdx) => (
+                    <td key={c.key} className={`${c.hideSm ? "hidden md:table-cell" : ""} ${c.align === "end" ? "text-end" : ""}`}>
+                      {colIdx === 0 ? (
+                        <AppleContextMenu items={contextItems}>
+                          {c.render(r)}
+                        </AppleContextMenu>
+                      ) : (
+                        c.render(r)
+                      )}
+                    </td>
+                  ))}
+                </tr>
+              );
+            })}
             {rows.length === 0 && (
               <tr><td colSpan={cols.length} className="text-center py-10 text-fg-3 font-sans">
                 {isAr ? "لا توجد نتائج تطابق هذه الشاشة. وسّع نطاقاً أو أزل قطاعاً." : "Nothing matches this screen. Widen a range or drop a sector."}
@@ -232,76 +280,81 @@ export default function StockScreener() {
         </table>
       </div>
 
-      {/* Detail drawer */}
-      <AnimatePresence>
-        {sel && (
-          <motion.div key={sel.sec.id} initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: 8 }} transition={{ duration: 0.2 }}>
-            <Card
-              title={`${sel.sec.code} · ${sel.sec.exchange}`}
-              right={<button type="button" onClick={() => setSelected(null)} className="p-1 text-fg-3 hover:text-fg" aria-label="Close"><X size={14} /></button>}
-            >
-              <div className="grid grid-cols-1 lg:grid-cols-[1.2fr_1fr] gap-5">
-                <div>
-                  <div className="font-display text-xl text-fg">{isAr ? sel.sec.nameAr : sel.sec.name}</div>
-                  <div className="text-[12px] text-fg-3 mt-0.5 font-sans">{isAr ? SECTORS.find((s) => s.id === sel.sec.sector)?.ar : sel.sec.sector} · {isAr ? EXCHANGES.find((e) => e.id === sel.sec.exchange)?.ar : EXCHANGES.find((e) => e.id === sel.sec.exchange)?.en}</div>
-                  <div className="mt-4 flex items-baseline gap-3">
-                    <span className="font-mono text-3xl text-fg num">{money(sel.price, sel.price < 2 ? 3 : 2)}</span>
-                    <span className="font-mono text-[12px] text-fg-3">{sel.currency}</span>
-                    {keyed && <span className={`font-mono text-[13px] ${sel.changePct > 0 ? "text-pos" : sel.changePct < 0 ? "text-neg" : "text-fg-3"}`}>{sel.changePct > 0 ? "+" : ""}{sel.change.toFixed(2)} ({sel.changePct.toFixed(2)}%)</span>}
-                  </div>
-                  {/* 52-week position */}
-                  <div className="mt-4">
-                    <div className="flex justify-between font-mono text-[10px] text-fg-3"><span>{money(sel.low52, sel.low52 < 2 ? 3 : 2)}</span><span>{isAr ? "نطاق 52 أسبوعاً" : "52-week range"}</span><span>{money(sel.high52, sel.high52 < 2 ? 3 : 2)}</span></div>
-                    <div className="relative h-1.5 mt-1 rounded-full bg-ink-4">
-                      <div className="absolute inset-y-0 start-0 rounded-full bg-emerald" style={{ width: `${sel.rangePos}%` }} />
-                      <div className="absolute top-1/2 -translate-y-1/2 w-3 h-3 rounded-full bg-gold border-2 border-ink-2" style={{ insetInlineStart: `calc(${sel.rangePos}% - 6px)` }} />
-                    </div>
-                  </div>
-                  <dl className="mt-5 grid grid-cols-3 gap-x-4 gap-y-3 font-mono text-[12px]">
-                    {[
-                      [isAr ? "القيمة السوقية" : "Market cap", `${fmt(sel.marketCapB, 1)}bn ${sel.currency}`],
-                      [isAr ? "بالدولار" : "In USD", capUsd(sel.marketCapUsdB)],
-                      [isAr ? "مكرر الربحية" : "P/E", sel.pe > 0 ? sel.pe.toFixed(1) : "n/m"],
-                      [isAr ? "سعر/دفتري" : "P/B", sel.pb.toFixed(2)],
-                      [isAr ? "عائد التوزيعات" : "Dividend yield", pct(sel.divYield)],
-                      ["ROE", pct(sel.roe)],
-                      [isAr ? "نمو الإيرادات" : "Revenue growth", pct(sel.revenueGrowth)],
-                      [isAr ? "الدين / الأصول" : "Debt / assets", pct(sel.debtToAssets, 0)],
-                      [isAr ? "الحجم" : "Volume", sel.volume ? fmt(sel.volume) : "—"],
-                    ].map(([k, v]) => (
-                      <div key={k as string}><dt className="text-[10px] text-fg-3 uppercase tracking-wider">{k}</dt><dd className="text-fg num">{v}</dd></div>
-                    ))}
-                  </dl>
-                </div>
-
-                <div className="space-y-3">
-                  <div className="panel-result p-4">
-                    <div className="flex items-center justify-between">
-                      <span className="font-mono text-[10px] text-fg-3 uppercase tracking-wider">{isAr ? "الدرجة المركبة" : "Composite score"}</span>
-                      <span className="font-mono text-2xl text-emerald-light num">{sel.score}<span className="text-[12px] text-fg-3">/100</span></span>
-                    </div>
-                    <ScoreBar v={sel.score} tall />
-                  </div>
-                  <div className={`flex items-center gap-2 rounded border px-3 py-2 text-[12px] font-sans ${sel.sec.shariahIndicative ? "border-emerald-border text-emerald-light" : "border-line-strong text-fg-3"}`}>
-                    <ShieldCheck size={14} />
-                    {sel.sec.shariahIndicative
-                      ? (isAr ? "متوافقة مبدئياً حسب النشاط — شغّل فحص أيوفي لاختبارات النسب" : "Indicatively compliant by activity — run the AAOIFI screen for the ratio tests")
-                      : (isAr ? "نشاط غير متوافق مبدئياً (تمويل تقليدي)" : "Indicatively non-compliant activity (conventional finance)")}
-                  </div>
-                  <div className="text-[11px] text-fg-3 font-sans">{isAr ? "افتح هذا السهم في:" : "Open this name in:"}</div>
-                  <div className="grid grid-cols-2 gap-2">
-                    {([["DCF", "DCF", isAr ? "تقييم DCF" : "DCF valuation"], ["comps", "COMPS", isAr ? "الشركات المماثلة" : "Trading comps"], ["ddm", "DDM", isAr ? "خصم التوزيعات" : "Dividend model"], ["shariah", "AAOIFI", isAr ? "الفحص الشرعي" : "Shariah screen"]] as const).map(([id, code, label]) => (
-                      <button key={id} type="button" onClick={() => { setPanel(id); toast(isAr ? `فُتح ${code}` : `Opened ${code}`); }} className="btn-secondary justify-between normal-case tracking-normal font-sans text-[12px]">
-                        <span>{label}</span><ExternalLink size={12} />
-                      </button>
-                    ))}
-                  </div>
+      {/* Apple Sheet Detail Modal */}
+      {sel && (
+        <AppleSheet
+          isOpen={!!sel}
+          onClose={() => setSelected(null)}
+          title={`${sel.sec.code} · ${sel.sec.exchange}`}
+          subtitle={isAr ? sel.sec.nameAr : sel.sec.name}
+        >
+          <div className="grid grid-cols-1 lg:grid-cols-[1.2fr_1fr] gap-6">
+            <div>
+              <div className="font-display text-2xl text-fg font-semibold">{isAr ? sel.sec.nameAr : sel.sec.name}</div>
+              <div className="text-[12.5px] text-fg-3 mt-1 font-sans">
+                {isAr ? SECTORS.find((s) => s.id === sel.sec.sector)?.ar : sel.sec.sector} · {isAr ? EXCHANGES.find((e) => e.id === sel.sec.exchange)?.ar : EXCHANGES.find((e) => e.id === sel.sec.exchange)?.en}
+              </div>
+              <div className="mt-4 flex items-baseline gap-3">
+                <span className="font-mono text-3xl text-fg font-bold num">{money(sel.price, sel.price < 2 ? 3 : 2)}</span>
+                <span className="font-mono text-[12px] text-fg-3">{sel.currency}</span>
+                {keyed && <span className={`font-mono text-[13px] font-semibold ${sel.changePct > 0 ? "text-pos" : sel.changePct < 0 ? "text-neg" : "text-fg-3"}`}>{sel.changePct > 0 ? "+" : ""}{sel.change.toFixed(2)} ({sel.changePct.toFixed(2)}%)</span>}
+              </div>
+              {/* 52-week position */}
+              <div className="mt-4 p-3 rounded-xl bg-ink-2/60 border border-line">
+                <div className="flex justify-between font-mono text-[10px] text-fg-3"><span>{money(sel.low52, sel.low52 < 2 ? 3 : 2)}</span><span>{isAr ? "نطاق 52 أسبوعاً" : "52-week range"}</span><span>{money(sel.high52, sel.high52 < 2 ? 3 : 2)}</span></div>
+                <div className="relative h-2 mt-1.5 rounded-full bg-ink-4">
+                  <div className="absolute inset-y-0 start-0 rounded-full bg-emerald" style={{ width: `${sel.rangePos}%` }} />
+                  <div className="absolute top-1/2 -translate-y-1/2 w-3.5 h-3.5 rounded-full bg-gold border-2 border-ink-2 shadow-sm" style={{ insetInlineStart: `calc(${sel.rangePos}% - 7px)` }} />
                 </div>
               </div>
-            </Card>
-          </motion.div>
-        )}
-      </AnimatePresence>
+              <dl className="mt-5 grid grid-cols-3 gap-x-4 gap-y-3 font-mono text-[12px]">
+                {[
+                  [isAr ? "القيمة السوقية" : "Market cap", `${fmt(sel.marketCapB, 1)}bn ${sel.currency}`],
+                  [isAr ? "بالدولار" : "In USD", capUsd(sel.marketCapUsdB)],
+                  [isAr ? "مكرر الربحية" : "P/E", sel.pe > 0 ? sel.pe.toFixed(1) : "n/m"],
+                  [isAr ? "سعر/دفتري" : "P/B", sel.pb.toFixed(2)],
+                  [isAr ? "عائد التوزيعات" : "Dividend yield", pct(sel.divYield)],
+                  ["ROE", pct(sel.roe)],
+                  [isAr ? "نمو الإيرادات" : "Revenue growth", pct(sel.revenueGrowth)],
+                  [isAr ? "الدين / الأصول" : "Debt / assets", pct(sel.debtToAssets, 0)],
+                  [isAr ? "الحجم" : "Volume", sel.volume ? fmt(sel.volume) : "—"],
+                ].map(([k, v]) => (
+                  <div key={k as string} className="p-2 rounded-lg bg-ink-3/40 border border-line/40">
+                    <dt className="text-[10px] text-fg-3 uppercase tracking-wider">{k}</dt>
+                    <dd className="text-fg num font-semibold mt-0.5">{v}</dd>
+                  </div>
+                ))}
+              </dl>
+            </div>
+
+            <div className="space-y-4">
+              <div className="p-4 rounded-2xl liquid-glass-subtle border border-line">
+                <div className="flex items-center justify-between">
+                  <span className="font-mono text-[10.5px] text-fg-3 uppercase tracking-wider font-medium">{isAr ? "الدرجة المركبة" : "Composite Score"}</span>
+                  <span className="font-mono text-2xl text-emerald-light font-bold num">{sel.score}<span className="text-[12px] text-fg-3 font-normal">/100</span></span>
+                </div>
+                <ScoreBar v={sel.score} tall />
+              </div>
+              <div className={`flex items-center gap-2.5 rounded-xl border p-3 text-[12.5px] font-sans ${sel.sec.shariahIndicative ? "border-emerald/40 bg-emerald/10 text-emerald-light" : "border-line-strong bg-ink-3/30 text-fg-3"}`}>
+                <ShieldCheck size={16} className="shrink-0" />
+                <span>
+                  {sel.sec.shariahIndicative
+                    ? (isAr ? "متوافقة مبدئياً حسب النشاط — شغّل فحص أيوفي لاختبارات النسب" : "Indicatively compliant by activity — run the AAOIFI screen for the ratio tests")
+                    : (isAr ? "نشاط غير متوافق مبدئياً (تمويل تقليدي)" : "Indicatively non-compliant activity (conventional finance)")}
+                </span>
+              </div>
+              <div className="text-[11.5px] text-fg-3 font-sans font-medium">{isAr ? "افتح هذا السهم في محركات التحليل:" : "Open this name in analytics engines:"}</div>
+              <div className="grid grid-cols-2 gap-2">
+                {([["DCF", "DCF", isAr ? "تقييم DCF" : "DCF valuation"], ["comps", "COMPS", isAr ? "الشركات المماثلة" : "Trading comps"], ["ddm", "DDM", isAr ? "خصم التوزيعات" : "Dividend model"], ["shariah", "AAOIFI", isAr ? "الفحص الشرعي" : "Shariah screen"]] as const).map(([id, code, label]) => (
+                  <button key={id} type="button" onClick={() => { setPanel(id); setSelected(null); toast(isAr ? `فُتح ${code}` : `Opened ${code}`); }} className="btn-secondary justify-between normal-case tracking-normal font-sans text-[12px] py-2 px-3 rounded-xl apple-touch-target">
+                    <span>{label}</span><ExternalLink size={12} />
+                  </button>
+                ))}
+              </div>
+            </div>
+          </div>
+        </AppleSheet>
+      )}
 
       <p className="text-[11px] text-fg-4 font-sans leading-relaxed">
         {keyed

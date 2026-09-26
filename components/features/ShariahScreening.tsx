@@ -6,6 +6,8 @@ import { ShieldCheck, HelpCircle } from "lucide-react";
 import { useTerminalStore } from "@/store/useTerminalStore";
 import { panelReveal } from "@/lib/motion";
 import NumberCounter from "@/components/ui/NumberCounter";
+import AppleGauge from "@/components/ui/AppleGauge";
+import AppleSegmentedControl from "@/components/ui/AppleSegmentedControl";
 
 export default function ShariahScreening() {
   const { language, updateSessionAnalysis } = useTerminalStore();
@@ -19,6 +21,13 @@ export default function ShariahScreening() {
   const [receivables, setReceivables] = useState<number>(9500);
   const [sharesOutstanding, setSharesOutstanding] = useState<number>(500);
 
+  // Standard selector state
+  const [standard, setStandard] = useState<"aaoifi" | "sama" | "conservative">("aaoifi");
+
+  const debtLimit = standard === "conservative" ? 25 : 33;
+  const interestLimit = standard === "conservative" ? 3 : 5;
+  const receivablesLimit = standard === "sama" ? 33 : standard === "conservative" ? 33 : 49;
+
   // Client-side calculations
   const debtRatio = totalAssets > 0 ? (totalDebt / totalAssets) * 100 : 0;
   const interestRatio = totalRevenue > 0 ? (interestIncome / totalRevenue) * 100 : 0;
@@ -26,9 +35,9 @@ export default function ShariahScreening() {
   const purificationPerShare = sharesOutstanding > 0 ? (interestIncome / sharesOutstanding) : 0;
 
   // Threshold compliance checks
-  const isDebtCompliant = debtRatio <= 33;
-  const isInterestCompliant = interestRatio <= 5;
-  const isReceivablesCompliant = receivablesRatio <= 49;
+  const isDebtCompliant = debtRatio <= debtLimit;
+  const isInterestCompliant = interestRatio <= interestLimit;
+  const isReceivablesCompliant = receivablesRatio <= receivablesLimit;
 
   const isCompliant = isDebtCompliant && isInterestCompliant && isReceivablesCompliant;
 
@@ -150,8 +159,59 @@ export default function ShariahScreening() {
 
       {/* RIGHT COLUMN: SCREENING REPORT (8 COLS) */}
       <div className="col-span-12 lg:col-span-8 space-y-6">
+        {/* Apple Standard Selector */}
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 p-3.5 rounded-2xl liquid-glass-subtle">
+          <span className="text-xs font-mono text-fg-3 uppercase tracking-wider font-medium">
+            {isAr ? "معيار الفحص الشرعي" : "Screening Standard"}
+          </span>
+          <AppleSegmentedControl
+            options={[
+              { value: "aaoifi", label: "AAOIFI 21" },
+              { value: "sama", label: "SAMA" },
+              { value: "conservative", label: isAr ? "متحفظ" : "Conservative" },
+            ]}
+            value={standard}
+            onChange={(v) => setStandard(v as "aaoifi" | "sama" | "conservative")}
+            size="sm"
+          />
+        </div>
+
+        {/* Apple Radial Gauges */}
+        <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+          <AppleGauge
+            value={debtRatio}
+            max={60}
+            thresholds={{ safe: debtLimit, warn: debtLimit }}
+            title={isAr ? "نسبة الديون" : "Debt / Assets"}
+            subtitle={`${debtLimit}% max`}
+            unit="%"
+            statusLabel={isDebtCompliant ? "PASS" : "FAIL"}
+            className="w-full"
+          />
+          <AppleGauge
+            value={interestRatio}
+            max={15}
+            thresholds={{ safe: interestLimit, warn: interestLimit }}
+            title={isAr ? "الإيرادات المحرمة" : "Interest Income"}
+            subtitle={`${interestLimit}% max`}
+            unit="%"
+            statusLabel={isInterestCompliant ? "PASS" : "FAIL"}
+            className="w-full"
+          />
+          <AppleGauge
+            value={receivablesRatio}
+            max={80}
+            thresholds={{ safe: receivablesLimit, warn: receivablesLimit }}
+            title={isAr ? "الذمم المدينة" : "Receivables Ratio"}
+            subtitle={`${receivablesLimit}% max`}
+            unit="%"
+            statusLabel={isReceivablesCompliant ? "PASS" : "FAIL"}
+            className="w-full"
+          />
+        </div>
+
         {/* COMPLIANCE VERDICT BANNER */}
-        <div className={`p-6 rounded-lg border flex flex-col sm:flex-row items-center justify-between gap-4 shadow-xs ${
+        <div className={`p-6 rounded-2xl border flex flex-col sm:flex-row items-center justify-between gap-4 shadow-xs ${
           isCompliant 
             ? "bg-emerald/10 border-emerald/30 text-emerald" 
             : "bg-neg/10 border-neg/30 text-neg"

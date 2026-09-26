@@ -3,6 +3,7 @@ import React, { useMemo, useState } from "react";
 import { HeartPulse } from "lucide-react";
 import { ResponsiveContainer, BarChart, Bar, XAxis, YAxis, Tooltip, CartesianGrid, Cell } from "recharts";
 import EngineShell, { Field, Select, Kpis, Card, fmt, pct } from "./EngineShell";
+import AppleGauge from "@/components/ui/AppleGauge";
 import { computeZ, type ZInputs } from "@/lib/finance/zscore";
 import { TERMINAL_CHART_THEME as T } from "@/lib/chartTheme";
 import { useTerminalStore } from "@/store/useTerminalStore";
@@ -46,15 +47,32 @@ export default function AltmanZScore() {
         { label: isAr ? "حد الخطر" : "Distress cutoff", value: o.thresholds.distress.toFixed(2) },
         { label: isAr ? "حد الأمان" : "Safe cutoff", value: o.thresholds.safe.toFixed(2), accent: "gold" },
       ]} />
-      <Card title={isAr ? "الموضع على المقياس" : "Position on the scale"}>
-        <div className="relative h-3 rounded-full overflow-hidden bg-ink-4">
-          <div className="absolute inset-y-0 left-0 bg-neg/70" style={{ width: `${(o.thresholds.distress / (o.thresholds.safe * 1.6)) * 100}%` }} />
-          <div className="absolute inset-y-0 bg-warn/60" style={{ left: `${(o.thresholds.distress / (o.thresholds.safe * 1.6)) * 100}%`, width: `${((o.thresholds.safe - o.thresholds.distress) / (o.thresholds.safe * 1.6)) * 100}%` }} />
-          <div className="absolute inset-y-0 right-0 bg-emerald/70" style={{ left: `${(o.thresholds.safe / (o.thresholds.safe * 1.6)) * 100}%` }} />
-          <div className="absolute top-1/2 -translate-y-1/2 -translate-x-1/2 w-4 h-4 rounded-full bg-fg border-2 border-ink-0 shadow-[0_0_14px_var(--emerald-light)] transition-all duration-500" style={{ left: `${gauge * 100}%` }} />
+      <div className="grid grid-cols-1 md:grid-cols-12 gap-5 items-stretch">
+        <div className="md:col-span-4 flex">
+          <AppleGauge
+            value={o.z}
+            min={0}
+            max={+(o.thresholds.safe * 1.6).toFixed(1)}
+            thresholds={{ safe: o.thresholds.safe, warn: o.thresholds.distress }}
+            title="Altman Z-Score"
+            subtitle={zoneLabel}
+            statusLabel={o.zone.toUpperCase()}
+            size={120}
+            className="w-full h-full justify-between"
+          />
         </div>
-        <div className="mt-2 flex justify-between font-mono text-[10px] text-fg-4"><span>0</span><span>{o.thresholds.distress}</span><span>{o.thresholds.safe}</span><span>{(o.thresholds.safe * 1.6).toFixed(1)}+</span></div>
-      </Card>
+        <div className="md:col-span-8 flex flex-col justify-center">
+          <Card title={isAr ? "الموضع على المقياس" : "Position on the scale"}>
+            <div className="relative h-3 rounded-full overflow-hidden bg-ink-4">
+              <div className="absolute inset-y-0 left-0 bg-neg/70" style={{ width: `${(o.thresholds.distress / (o.thresholds.safe * 1.6)) * 100}%` }} />
+              <div className="absolute inset-y-0 bg-warn/60" style={{ left: `${(o.thresholds.distress / (o.thresholds.safe * 1.6)) * 100}%`, width: `${((o.thresholds.safe - o.thresholds.distress) / (o.thresholds.safe * 1.6)) * 100}%` }} />
+              <div className="absolute inset-y-0 right-0 bg-emerald/70" style={{ left: `${(o.thresholds.safe / (o.thresholds.safe * 1.6)) * 100}%` }} />
+              <div className="absolute top-1/2 -translate-y-1/2 -translate-x-1/2 w-4 h-4 rounded-full bg-fg border-2 border-ink-0 shadow-[0_0_14px_var(--emerald-light)] transition-all duration-500" style={{ left: `${gauge * 100}%` }} />
+            </div>
+            <div className="mt-2 flex justify-between font-mono text-[10px] text-fg-4"><span>0</span><span>{o.thresholds.distress}</span><span>{o.thresholds.safe}</span><span>{(o.thresholds.safe * 1.6).toFixed(1)}+</span></div>
+          </Card>
+        </div>
+      </div>
       <Card title={isAr ? "مساهمة كل نسبة" : "Contribution by ratio"}>
         <div className="h-56">
           <ResponsiveContainer>

@@ -8,7 +8,6 @@ import Sidebar from "@/components/layout/Sidebar";
 import TopBar from "@/components/layout/TopBar";
 import StatusBar from "@/components/layout/StatusBar";
 import MobileNav from "@/components/layout/MobileNav";
-import Toasts from "@/components/ui/Toasts";
 import { useTerminalStore, type PanelType, selectLanguage, selectActivePanel, selectSetPanel } from "@/store/useTerminalStore";
 import { isPanelType } from "@/lib/registry";
 
@@ -152,7 +151,6 @@ export default function DashboardPage() {
         <StatusBar />
         <MobileNav />
       </div>
-      <Toasts />
     </div>
   );
 }

@@ -4,6 +4,8 @@ import "./globals.css";
 import LoadingScreen from "@/components/ui/LoadingScreen";
 import CursorGlow from "@/components/ui/CursorGlow";
 import ThemeProvider from "@/components/ui/ThemeProvider";
+import AppleShortcutsHUD from "@/components/ui/AppleShortcutsHUD";
+import Toasts from "@/components/ui/Toasts";
 import { APP } from "@/lib/registry";
 
 /**
@@ -73,6 +75,8 @@ export default function RootLayout({ children }: Readonly<{ children: React.Reac
         <ThemeProvider>
           <LoadingScreen />
           <CursorGlow />
+          <Toasts />
+          <AppleShortcutsHUD />
           {children}
         </ThemeProvider>
       </body>
