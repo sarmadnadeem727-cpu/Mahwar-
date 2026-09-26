@@ -22,7 +22,7 @@
  * Both adapters normalise into `Quote`. Nothing from the visitor is forwarded:
  * the server is the only client the provider ever sees.
  */
-import { UNIVERSE, type Security } from "./universe";
+import { UNIVERSE, EXCHANGE_MAP, TV_EXCHANGE_TO_MAHWAR, mapTVSector, type Security, type Sector } from "./universe";
 
 export type Provider = "tradingview" | "twelvedata" | "eodhd" | "none";
 
@@ -61,6 +61,8 @@ export interface QuotesResponse {
   live: boolean;
   asOf: string;
   quotes: Record<string, Quote>;
+  /** Dynamic securities universe when all GCC stocks are fetched. */
+  securities?: Security[];
   /** Human-readable reason when `provider === "none"` or the call failed. */
   note?: string;
 }
@@ -92,6 +94,176 @@ const TV_COLUMNS = [
   "market_cap_basic", "price_earnings_ttm", "price_book_ratio", "dividends_yield_current",
   "return_on_equity", "total_revenue_yoy_growth_ttm", "price_52_week_low", "price_52_week_high",
 ] as const;
+
+const TV_ALL_GCC_COLUMNS = [
+  "name", "description", "close", "change", "change_abs", "open", "high", "low", "volume",
+  "market_cap_basic", "price_earnings_ttm", "price_book_ratio",
+  "dividends_yield_current", "return_on_equity", "total_revenue_yoy_growth_ttm",
+  "total_debt", "total_assets", "sector", "industry", "exchange",
+  "price_52_week_low", "price_52_week_high", "update_mode",
+] as const;
+
+const ISLAMIC_BANK_TERMS = [
+  "islamic", "إسلامي", "rajhi", "الراجحي", "alinma", "الإنماء",
+  "bilad", "البلاد", "boubyan", "بوبيان", "warba", "وربة",
+  "dib", "sib", "baraka", "qib", "مصرف قطر الإسلامي", "بيت التمويل"
+];
+
+function isShariahIndicative(sec: Sector, name: string, desc: string, debt?: number, assets?: number): boolean {
+  const text = (name + " " + desc).toLowerCase();
+  if (sec === "Banks") {
+    return ISLAMIC_BANK_TERMS.some((t) => text.includes(t));
+  }
+  if (assets && assets > 0 && debt !== undefined) {
+    return debt / assets <= 0.33;
+  }
+  return true;
+}
+
+/**
+ * Query TradingView's global scanner for the entire universe of publicly traded
+ * GCC equities (~750 stocks across Tadawul, ADX, DFM, QSE, Boursa Kuwait, Bahrain).
+ */
+async function fetchTradingViewAllGCC(): Promise<{ quotes: Record<string, Quote>; securities: Security[] }> {
+  const quotes: Record<string, Quote> = {};
+  const securities: Security[] = [];
+  const body = {
+    filter: [
+      { left: "exchange", operation: "in_range", right: ["TADAWUL", "DFM", "ADX", "QSE", "KSE", "BAHRAIN"] },
+      { left: "type", operation: "equal", right: "stock" },
+    ],
+    columns: [...TV_ALL_GCC_COLUMNS],
+    sort: { sortBy: "market_cap_basic", sortOrder: "desc" },
+    range: [0, 1000],
+  };
+
+  const res = await fetch("https://scanner.tradingview.com/global/scan", {
+    ...UPSTREAM,
+    method: "POST",
+    headers: {
+      ...(UPSTREAM.headers as Record<string, string>),
+      "Content-Type": "application/json",
+      Origin: "https://www.tradingview.com",
+    },
+    body: JSON.stringify(body),
+  });
+
+  if (!res.ok) throw new Error(`TradingView GCC scan ${res.status}`);
+  const json = (await res.json()) as { data?: { s: string; d: unknown[] }[] };
+  const idx = (name: (typeof TV_ALL_GCC_COLUMNS)[number]) => TV_ALL_GCC_COLUMNS.indexOf(name);
+  const now = new Date().toISOString();
+
+  for (const row of json.data ?? []) {
+    const s = row.s;
+    const tvEx = String(row.d[idx("exchange")] ?? "");
+    const exchange = TV_EXCHANGE_TO_MAHWAR[tvEx];
+    if (!exchange) continue;
+
+    const code = String(row.d[idx("name")] || s.split(":")[1] || "");
+    const id = `${exchange}:${code}`;
+    const price = num(row.d[idx("close")]) ?? 0;
+    if (price <= 0) continue;
+
+    const existing = UNIVERSE.find(
+      (u) => u.symbols.tradingview === s || u.id === id || (u.code === code && u.exchange === exchange)
+    );
+
+    const desc = String(row.d[idx("description")] || "");
+    const name = existing?.name ?? desc ?? code;
+    const nameAr = existing?.nameAr ?? name;
+    const tvSec = String(row.d[idx("sector")] ?? "");
+    const tvInd = String(row.d[idx("industry")] ?? "");
+    const sector = existing?.sector ?? mapTVSector(tvSec, tvInd);
+
+    const cap = num(row.d[idx("market_cap_basic")]);
+    const marketCapB = cap !== undefined ? cap / 1e9 : (existing?.ref.marketCapB ?? 0);
+    const pe = num(row.d[idx("price_earnings_ttm")]) ?? 0;
+    const pb = num(row.d[idx("price_book_ratio")]) ?? 0;
+    const divYield = num(row.d[idx("dividends_yield_current")]) ?? 0;
+    const roe = num(row.d[idx("return_on_equity")]) ?? 0;
+    const revenueGrowth = num(row.d[idx("total_revenue_yoy_growth_ttm")]) ?? 0;
+    const totalDebt = num(row.d[idx("total_debt")]);
+    const totalAssets = num(row.d[idx("total_assets")]);
+    const debtToAssets = totalAssets && totalAssets > 0 && totalDebt !== undefined
+      ? (totalDebt / totalAssets) * 100
+      : (existing?.ref.debtToAssets ?? 0);
+    const low52 = num(row.d[idx("price_52_week_low")]) ?? price;
+    const high52 = num(row.d[idx("price_52_week_high")]) ?? price;
+
+    const shariah = existing?.shariahIndicative ?? isShariahIndicative(sector, name, desc, totalDebt, totalAssets);
+    const mode = String(row.d[idx("update_mode")] ?? "");
+    const isLive = mode.includes("streaming");
+
+    const sec: Security = {
+      id,
+      code,
+      name,
+      nameAr,
+      exchange,
+      sector,
+      symbols: {
+        tradingview: s,
+        twelvedata: `${code}:${EXCHANGE_MAP[exchange].mic}`,
+        eodhd: EXCHANGE_MAP[exchange].eodhd ? `${code}.${EXCHANGE_MAP[exchange].eodhd}` : undefined,
+      },
+      ref: {
+        price,
+        marketCapB,
+        pe,
+        pb,
+        divYield,
+        roe,
+        revenueGrowth,
+        debtToAssets,
+        low52,
+        high52,
+      },
+      shariahIndicative: shariah,
+    };
+
+    securities.push(sec);
+    quotes[id] = {
+      id,
+      price,
+      change: num(row.d[idx("change_abs")]) ?? 0,
+      changePct: num(row.d[idx("change")]) ?? 0,
+      open: num(row.d[idx("open")]),
+      high: num(row.d[idx("high")]),
+      low: num(row.d[idx("low")]),
+      volume: num(row.d[idx("volume")]),
+      asOf: now,
+      live: isLive,
+      fundamentals: {
+        marketCapB,
+        pe,
+        pb,
+        divYield,
+        roe,
+        revenueGrowth,
+        low52,
+        high52,
+      },
+    };
+  }
+
+  // Preserve any curated UNIVERSE securities not in TradingView scanner (e.g. MSX Muscat)
+  for (const u of UNIVERSE) {
+    if (!securities.some((s) => s.id === u.id)) {
+      securities.push(u);
+      quotes[u.id] = {
+        id: u.id,
+        price: u.ref.price,
+        change: 0,
+        changePct: 0,
+        asOf: now,
+        live: false,
+        fundamentals: { ...u.ref },
+      };
+    }
+  }
+
+  return { quotes, securities };
+}
 
 /**
  * TradingView scanner — free, keyless. POST the exact tickers we want and read
@@ -207,19 +379,30 @@ async function fetchEodhd(securities: Security[], key: string): Promise<Record<s
 /** Fetch quotes for a set of universe ids (or all) from whichever provider is keyed. */
 export async function fetchQuotes(ids?: string[]): Promise<QuotesResponse> {
   const provider = activeProvider();
-  const securities = ids && ids.length ? UNIVERSE.filter((s) => ids.includes(s.id)) : UNIVERSE;
   const asOf = new Date().toISOString();
   if (provider === "none") {
     return { provider, live: false, asOf, quotes: {}, note: "Market data disabled (MARKET_DATA_PROVIDER=none). Remove it, or set TWELVEDATA_API_KEY / EODHD_API_KEY." };
   }
   try {
-    const quotes = provider === "tradingview"
-      ? await fetchTradingView(securities)
-      : provider === "twelvedata"
-        ? await fetchTwelveData(securities, process.env.TWELVEDATA_API_KEY!)
-        : await fetchEodhd(securities, process.env.EODHD_API_KEY!);
+    if (provider === "tradingview") {
+      // If no specific IDs are requested, pull the entire ~750 GCC stock universe!
+      if (!ids || ids.length === 0) {
+        const { quotes, securities } = await fetchTradingViewAllGCC();
+        const live = Object.values(quotes).some((q) => q.live);
+        return { provider, live, asOf, quotes, securities };
+      }
+      const securities = UNIVERSE.filter((s) => ids.includes(s.id));
+      const quotes = await fetchTradingView(securities);
+      const live = Object.values(quotes).some((q) => q.live);
+      return { provider, live, asOf, quotes, securities, note: Object.keys(quotes).length ? undefined : "Provider returned no quotes for these symbols." };
+    }
+
+    const securities = ids && ids.length ? UNIVERSE.filter((s) => ids.includes(s.id)) : UNIVERSE;
+    const quotes = provider === "twelvedata"
+      ? await fetchTwelveData(securities, process.env.TWELVEDATA_API_KEY!)
+      : await fetchEodhd(securities, process.env.EODHD_API_KEY!);
     const live = Object.values(quotes).some((q) => q.live);
-    return { provider, live, asOf, quotes, note: Object.keys(quotes).length ? undefined : "Provider returned no quotes for these symbols." };
+    return { provider, live, asOf, quotes, securities, note: Object.keys(quotes).length ? undefined : "Provider returned no quotes for these symbols." };
   } catch (err) {
     return { provider, live: false, asOf, quotes: {}, note: err instanceof Error ? err.message : "Provider request failed." };
   }

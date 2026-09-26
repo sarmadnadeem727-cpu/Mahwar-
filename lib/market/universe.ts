@@ -70,6 +70,32 @@ export const SECTORS: { id: Sector; ar: string }[] = [
   { id: "Industrials", ar: "الصناعة" },
 ];
 
+export const TV_EXCHANGE_TO_MAHWAR: Record<string, Exchange> = {
+  TADAWUL: "TADAWUL",
+  DFM: "DFM",
+  ADX: "ADX",
+  QSE: "QSE",
+  KSE: "BK",
+  BAHRAIN: "BHB",
+};
+
+export function mapTVSector(tvSector?: string, tvIndustry?: string): Sector {
+  if (tvIndustry?.includes("Real Estate") || tvSector === "Real Estate") return "Real Estate";
+  if (tvSector === "Energy Minerals" || tvSector === "Energy") return "Energy";
+  if (tvSector === "Non-Energy Minerals" || tvSector === "Process Industries" || tvSector === "Materials") return "Materials";
+  if (tvSector === "Communications" || tvIndustry?.includes("Telecommunications")) return "Telecom";
+  if (tvSector === "Utilities") return "Utilities";
+  if (tvSector === "Transportation") return "Transport & Logistics";
+  if (tvSector?.includes("Health")) return "Healthcare";
+  if (tvSector === "Finance") return "Banks";
+  if (
+    tvSector?.includes("Consumer") ||
+    tvSector === "Retail Trade" ||
+    tvSector === "Distribution Services"
+  ) return "Consumer";
+  return "Industrials";
+}
+
 export interface ReferenceFundamentals {
   /** Last price, local currency. */
   price: number;

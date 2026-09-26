@@ -33,6 +33,7 @@ export default function StockScreener() {
   const [bookmarked, setBookmarked] = useState(false);
   const [inspectorOpen, setInspectorOpen] = useState(false);
   const [filtersSheetOpen, setFiltersSheetOpen] = useState(false);
+  const [limit, setLimit] = useState<number>(100);
   const timer = useRef<number | null>(null);
 
   // ---- live feed ----------------------------------------------------------
@@ -55,8 +56,9 @@ export default function StockScreener() {
   }, [live, feed?.provider, pull]);
 
   // ---- rows -----------------------------------------------------------------
-  const allRows = useMemo(() => buildRows(feed?.quotes ?? {}), [feed]);
+  const allRows = useMemo(() => buildRows(feed?.quotes ?? {}, feed?.securities), [feed]);
   const rows = useMemo(() => sortRows(applyFilters(allRows, filters), sort.key, sort.dir), [allRows, filters, sort]);
+  const visibleRows = useMemo(() => rows.slice(0, limit), [rows, limit]);
   const stats = useMemo(() => summarise(rows), [rows]);
   const sel = useMemo(() => rows.find((r) => r.sec.id === selected) ?? allRows.find((r) => r.sec.id === selected) ?? null, [rows, allRows, selected]);
   const keyed = !!feed && feed.provider !== "none";
@@ -182,7 +184,13 @@ export default function StockScreener() {
               : feed?.live ? (isAr ? "السوق مفتوح · أسعار مباشرة" : "Market open · live prices") : (isAr ? "آخر إغلاق" : "Last close")}
           </span>
         </span>
-        {keyed && <span className="text-fg-3">{feed?.provider === "tradingview" ? (isAr ? "TradingView (مجاني)" : "TradingView (free)") : feed?.provider}</span>}
+        {keyed && (
+          <span className="text-fg-3">
+            {feed?.provider === "tradingview"
+              ? (isAr ? `TradingView · تغطية شاملة (${allRows.length} سهم خليجي)` : `TradingView · Full Universe (${allRows.length} GCC Stocks)`)
+              : feed?.provider}
+          </span>
+        )}
         {feed?.asOf && keyed && <span className="text-fg-3">{new Date(feed.asOf).toLocaleTimeString(isAr ? "ar-SA" : "en-GB")}</span>}
         {!keyed && <span className="text-fg-3 hidden md:inline">{feed?.note ?? (isAr ? "لا يوجد مزود بيانات" : "No market-data provider")}</span>}
         <span className="ms-auto flex items-center gap-2">
@@ -300,7 +308,7 @@ export default function StockScreener() {
             </tr>
           </thead>
           <tbody>
-            {rows.map((r) => {
+            {visibleRows.map((r) => {
               const contextItems = [
                 {
                   id: "dcf",
@@ -361,6 +369,42 @@ export default function StockScreener() {
             )}
           </tbody>
         </table>
+        {rows.length > limit && (
+          <div className="flex flex-wrap items-center justify-between gap-3 p-3.5 border-t border-line/60 bg-ink-2/70 text-[12px] text-fg-3">
+            <span>
+              {isAr
+                ? `عرض ${visibleRows.length} من أصل ${rows.length} سهم`
+                : `Showing ${visibleRows.length} of ${rows.length} stocks`}
+            </span>
+            <div className="flex items-center gap-2">
+              <button
+                type="button"
+                onClick={() => setLimit((l) => l + 100)}
+                className="px-3.5 py-1.5 rounded-lg border border-line-strong hover:border-emerald-border bg-ink-1 hover:text-fg text-fg-2 transition-colors apple-touch-target font-sans"
+              >
+                {isAr ? "تحميل 100 سهم إضافي" : "Load 100 More"}
+              </button>
+              <button
+                type="button"
+                onClick={() => setLimit(rows.length)}
+                className="px-3.5 py-1.5 rounded-lg border border-emerald/40 bg-emerald/10 text-emerald-light hover:bg-emerald/20 transition-colors apple-touch-target font-medium font-sans"
+              >
+                {isAr ? `عرض كل الأسهم (${rows.length})` : `Show All Stocks (${rows.length})`}
+              </button>
+            </div>
+          </div>
+        )}
+        {limit > 100 && rows.length > 100 && (
+          <div className="flex justify-end p-2 border-t border-line/30 bg-ink-2/30">
+            <button
+              type="button"
+              onClick={() => setLimit(100)}
+              className="text-[11px] text-fg-4 hover:text-fg-3 underline font-sans"
+            >
+              {isAr ? "طي العرض إلى أول 100 سهم" : "Collapse to top 100"}
+            </button>
+          </div>
+        )}
       </div>
 
       {/* Apple Sheet Detail Modal */}

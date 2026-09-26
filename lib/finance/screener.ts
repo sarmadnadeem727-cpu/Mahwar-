@@ -106,8 +106,9 @@ export function buildRow(sec: Security, quote?: Quote): ScreenRow {
   };
 }
 
-export function buildRows(quotes: Record<string, Quote> = {}): ScreenRow[] {
-  return UNIVERSE.map((s) => buildRow(s, quotes[s.id]));
+export function buildRows(quotes: Record<string, Quote> = {}, securities?: Security[]): ScreenRow[] {
+  const list = securities && securities.length > 0 ? securities : UNIVERSE;
+  return list.map((s) => buildRow(s, quotes[s.id]));
 }
 
 export function applyFilters(rows: ScreenRow[], f: ScreenFilters): ScreenRow[] {

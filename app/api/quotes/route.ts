@@ -11,7 +11,6 @@ import { fetchQuotes, type QuotesResponse } from "@/lib/market/quotes";
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
 
-const TTL_MS = 15_000;
 const cache = new Map<string, { at: number; data: QuotesResponse }>();
 
 export async function GET(req: NextRequest) {
@@ -21,13 +20,14 @@ export async function GET(req: NextRequest) {
   const idsParam = req.nextUrl.searchParams.get("ids") ?? "";
   const ids = idsParam.split(",").map((s) => s.trim()).filter(Boolean).slice(0, 80);
   const key = ids.length ? [...ids].sort().join(",") : "*";
+  const ttl = key === "*" ? 60_000 : 15_000;
 
   const hit = cache.get(key);
-  if (hit && Date.now() - hit.at < TTL_MS) {
-    return NextResponse.json(hit.data, { headers: { "Cache-Control": "private, max-age=15", "X-Cache": "HIT" } });
+  if (hit && Date.now() - hit.at < ttl) {
+    return NextResponse.json(hit.data, { headers: { "Cache-Control": `private, max-age=${key === "*" ? 60 : 15}`, "X-Cache": "HIT" } });
   }
   const data = await fetchQuotes(ids);
   cache.set(key, { at: Date.now(), data });
   if (cache.size > 200) cache.delete(cache.keys().next().value as string);
-  return NextResponse.json(data, { headers: { "Cache-Control": "private, max-age=15", "X-Cache": "MISS" } });
+  return NextResponse.json(data, { headers: { "Cache-Control": `private, max-age=${key === "*" ? 60 : 15}`, "X-Cache": "MISS" } });
 }
