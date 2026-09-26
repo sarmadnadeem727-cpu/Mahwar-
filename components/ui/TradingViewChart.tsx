@@ -26,10 +26,30 @@ export default function TradingViewChart({
   const { theme } = useTheme();
   const isDark = theme !== "light";
 
-  // Build official TradingView widget URL
-  const formattedSymbol = encodeURIComponent(symbol);
+  // Build official TradingView widget URL using tradingview-widget.com
   const tvTheme = isDark ? "dark" : "light";
-  const iframeSrc = `https://s.tradingview.com/widgetembed/?frameElementId=tradingview_widget&symbol=${formattedSymbol}&interval=${interval}&hidesidetoolbar=1&symboledit=1&saveimage=0&toolbarbg=f1f3f6&studies=%5B%5D&theme=${tvTheme}&style=1&timezone=Asia%2FRiyadh&studies_overrides=%7B%7D&overrides=%7B%7D&enabled_features=%5B%5D&disabled_features=%5B%5D&locale=en&utm_source=localhost&utm_medium=widget&utm_campaign=chart&utm_term=${formattedSymbol}`;
+  const widgetConfig = {
+    autosize: true,
+    symbol: symbol,
+    interval: interval,
+    timezone: "Asia/Riyadh",
+    theme: tvTheme,
+    style: "1",
+    locale: "en",
+    backgroundColor: isDark ? "#0c1f30" : "#ffffff",
+    gridColor: isDark ? "rgba(255, 255, 255, 0.06)" : "rgba(0, 0, 0, 0.06)",
+    enable_publishing: false,
+    hide_top_toolbar: false,
+    hide_legend: false,
+    save_image: false,
+    calendar: false,
+    hide_volume: false,
+    support_host: "https://www.tradingview.com",
+    hide_side_toolbar: true,
+    allow_symbol_change: true,
+  };
+
+  const iframeSrc = `https://www.tradingview-widget.com/embed-widget/advanced-chart/?locale=en#${encodeURIComponent(JSON.stringify(widgetConfig))}`;
 
   return (
     <div
