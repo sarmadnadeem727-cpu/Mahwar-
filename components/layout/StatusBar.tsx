@@ -30,7 +30,7 @@ export default function StatusBar() {
 
   return (
     <footer
-      className="hidden lg:flex h-7 min-h-7 border-t border-line bg-ink-2 items-center justify-between px-3 md:px-5 font-mono text-[10px] text-fg-3 no-print overflow-hidden"
+      className="hidden lg:flex h-7 min-h-7 border-t border-line liquid-glass-subtle items-center justify-between px-3 md:px-5 font-mono text-[10px] text-fg-3 no-print overflow-hidden"
       dir={isAr ? "rtl" : "ltr"}
     >
       <div className="flex items-center gap-4 min-w-0">

@@ -72,30 +72,38 @@ export default function TopBar() {
   return (
     <>
       <header
-        className="h-14 min-h-14 border-b border-line bg-ink-2/85 backdrop-blur-xl flex items-center gap-2 md:gap-3 px-2.5 md:px-5 sticky top-0 z-20 no-print"
+        className="h-14 min-h-14 border-b border-line liquid-glass-subtle flex items-center gap-2 md:gap-3 px-2.5 md:px-5 sticky top-0 z-20 no-print"
         dir={isAr ? "rtl" : "ltr"}
       >
-        <button className="lg:hidden p-2 text-fg-3 hover:text-fg rounded hover:bg-ink-4" onClick={() => setMobileMenuOpen(!isMobileMenuOpen)} aria-label="Toggle navigation">
+        <button
+          className="lg:hidden apple-touch-target text-fg-3 hover:text-fg rounded-lg hover:bg-ink-4/60 transition-colors"
+          onClick={() => setMobileMenuOpen(!isMobileMenuOpen)}
+          aria-label="Toggle navigation"
+        >
           <Menu size={18} />
         </button>
 
         {/* Active module */}
         <div className="hidden sm:flex items-center gap-2.5 min-w-0 shrink-0">
           <span className="font-mono text-[10px] tracking-[0.2em] text-fg-4">{suite}</span>
-          <span className="font-mono text-[11px] tracking-wider text-emerald-light">{tool?.code ?? "HOME"}</span>
-          <span className="text-[13px] text-fg truncate max-w-[220px] hidden md:inline">{tool ? (isAr ? tool.ar : tool.en) : ""}</span>
+          <span className="font-mono text-[11px] tracking-wider text-emerald-light font-medium">{tool?.code ?? "HOME"}</span>
+          <span className="text-[13px] text-fg truncate max-w-[220px] hidden md:inline font-medium">{tool ? (isAr ? tool.ar : tool.en) : ""}</span>
         </div>
 
-        {/* GO line */}
+        {/* GO line — Apple Spotlight style */}
         <div className="flex-1 flex justify-center min-w-0">
           <form
             onSubmit={(e) => { e.preventDefault(); go(); }}
-            className={`relative flex items-center gap-2 w-full max-w-xl h-9 px-3 rounded border bg-ink-1 font-mono text-[12px] transition-colors ${
-              flash?.tone === "err" ? "border-neg/60" : flash?.tone === "ok" ? "border-emerald shadow-[0_0_0_3px_var(--emerald-dim)]" : "border-line-strong focus-within:border-emerald"
+            className={`relative flex items-center gap-2 w-full max-w-xl h-9 px-3.5 rounded-full border bg-ink-1/90 backdrop-blur-md font-mono text-[12px] transition-all ${
+              flash?.tone === "err"
+                ? "border-neg/60 shadow-[0_0_0_3px_rgba(209,67,67,0.15)]"
+                : flash?.tone === "ok"
+                ? "border-emerald shadow-[0_0_0_3px_var(--emerald-dim)]"
+                : "border-line-strong focus-within:border-emerald/60 focus-within:shadow-[0_0_0_3px_var(--emerald-dim)]"
             }`}
             dir="ltr"
           >
-            <span className="text-emerald-light select-none">{">"}</span>
+            <span className="text-emerald-light select-none font-bold">{">"}</span>
             <input
               ref={inputRef}
               value={cmd}
@@ -113,17 +121,31 @@ export default function TopBar() {
             {!flash && first && cmd.trim() && first.code.toLowerCase() !== cmd.trim().toLowerCase() && (
               <span className="hidden md:inline text-[10px] text-fg-3 whitespace-nowrap">tab → <span className="text-fg-2">{first.code}</span></span>
             )}
-            <button type="submit" className="flex items-center gap-1 px-2 py-0.5 rounded bg-emerald/15 text-emerald-light text-[10px] font-bold tracking-wider hover:bg-emerald/25" aria-label="Go">
+            <button
+              type="submit"
+              className="flex items-center gap-1 px-2.5 py-1 rounded-full bg-emerald/15 text-emerald-light text-[10px] font-bold tracking-wider hover:bg-emerald/25 transition-colors"
+              aria-label="Go"
+            >
               GO <CornerDownLeft size={10} />
             </button>
-            <button type="button" onClick={() => setPaletteOpen(true)} className="hidden md:flex items-center gap-0.5 px-1.5 py-0.5 rounded border border-line text-[10px] text-fg-3 hover:text-fg" title="Command palette">
+            <button
+              type="button"
+              onClick={() => setPaletteOpen(true)}
+              className="hidden md:flex items-center gap-0.5 px-2 py-0.5 rounded-full border border-line text-[10px] text-fg-3 hover:text-fg transition-colors"
+              title="Command palette"
+            >
               <Command size={10} />K
             </button>
             {focused && hints.length > 1 && cmd.trim() && (
-              <div className="absolute top-10 left-0 right-0 rounded-md border border-line bg-ink-2/95 backdrop-blur-xl shadow-terminal-hover p-1 z-40">
+              <div className="absolute top-11 left-0 right-0 rounded-2xl border border-line liquid-glass shadow-[var(--shadow-modal)] p-1.5 z-40">
                 {hints.map((h) => (
-                  <button key={h.kind + h.code} type="button" onMouseDown={(e) => { e.preventDefault(); go(h.code); }} className="w-full flex items-center gap-2 px-2 py-1.5 rounded text-left hover:bg-ink-4">
-                    <span className={`w-14 text-[11px] ${h.kind === "verb" ? "text-gold" : "text-emerald-light"}`}>{h.code}</span>
+                  <button
+                    key={h.kind + h.code}
+                    type="button"
+                    onMouseDown={(e) => { e.preventDefault(); go(h.code); }}
+                    className="w-full flex items-center gap-2 px-3 py-1.5 rounded-xl text-left hover:bg-ink-4/60 transition-colors"
+                  >
+                    <span className={`w-14 text-[11px] font-mono ${h.kind === "verb" ? "text-gold" : "text-emerald-light"}`}>{h.code}</span>
                     <span className="text-[11px] text-fg-2 truncate">{h.label}</span>
                   </button>
                 ))}
@@ -134,11 +156,20 @@ export default function TopBar() {
 
         {/* Controls */}
         <div className="flex items-center gap-1.5 md:gap-2 shrink-0">
-          <select value={currency} onChange={(e) => setCurrency(e.target.value as Currency)} className="h-8 bg-ink-1 border border-line-strong text-[11px] font-mono text-fg px-1.5 md:px-2 rounded focus:outline-none focus:border-emerald cursor-pointer" aria-label="Reporting currency">
+          <select
+            value={currency}
+            onChange={(e) => setCurrency(e.target.value as Currency)}
+            className="h-8 bg-ink-1/90 border border-line-strong text-[11px] font-mono text-fg px-2 rounded-lg focus:outline-none focus:border-emerald cursor-pointer transition-colors"
+            aria-label="Reporting currency"
+          >
             {CURRENCIES.map((c) => <option key={c} value={c}>{c}</option>)}
           </select>
           <ThemeToggle isAr={isAr} />
-          <button onClick={() => setLanguage(isAr ? "en" : "ar")} className="h-8 flex items-center gap-1.5 px-2 md:px-2.5 bg-ink-1 border border-line-strong hover:border-emerald/40 text-[11px] font-mono text-fg-2 hover:text-fg rounded transition-colors" aria-label="Switch language">
+          <button
+            onClick={() => setLanguage(isAr ? "en" : "ar")}
+            className="h-8 flex items-center gap-1.5 px-2.5 bg-ink-1/90 border border-line-strong hover:border-emerald/40 text-[11px] font-mono text-fg-2 hover:text-fg rounded-lg transition-colors apple-touch-target"
+            aria-label="Switch language"
+          >
             <Globe size={12} className="text-emerald-light" />
             <span>{isAr ? "EN" : "ع"}</span>
           </button>

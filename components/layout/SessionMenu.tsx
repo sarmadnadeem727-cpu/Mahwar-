@@ -45,7 +45,7 @@ export default function SessionMenu({ isAr }: { isAr: boolean }) {
     <div className="relative" ref={ref}>
       <button
         onClick={() => setOpen((v) => !v)}
-        className="h-8 flex items-center gap-1.5 px-2.5 rounded bg-ink-1 border border-line-strong hover:border-emerald/40 text-[11px] font-mono text-fg-2 hover:text-fg transition-colors"
+        className="h-8 flex items-center gap-1.5 px-2.5 rounded-lg bg-ink-1/90 border border-line-strong hover:border-emerald/40 text-[11px] font-mono text-fg-2 hover:text-fg transition-colors"
         aria-label={isAr ? "الجلسة" : "Session"} aria-expanded={open}
       >
         <HardDrive size={12} className="text-emerald-light" />
@@ -57,7 +57,7 @@ export default function SessionMenu({ isAr }: { isAr: boolean }) {
           <motion.div
             initial={{ opacity: 0, y: -6, scale: 0.98 }} animate={{ opacity: 1, y: 0, scale: 1 }} exit={{ opacity: 0, y: -4, scale: 0.98 }}
             transition={{ duration: 0.16 }}
-            className="absolute top-10 end-0 w-72 rounded-lg border border-line bg-ink-2/95 backdrop-blur-xl shadow-[0_18px_50px_rgba(0,0,0,0.5)] p-1.5 z-50"
+            className="absolute top-10 end-0 w-72 rounded-2xl border border-line liquid-glass shadow-[var(--shadow-modal)] p-2 z-50"
             dir={isAr ? "rtl" : "ltr"}
           >
             <div className="px-2.5 py-2 border-b border-line mb-1">

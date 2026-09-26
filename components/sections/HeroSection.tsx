@@ -131,12 +131,12 @@ export default function HeroSection() {
       <div ref={rootRef} className="relative z-10 w-full max-w-7xl mx-auto px-6 pt-36 pb-16 lg:pb-24">
         <motion.div style={{ opacity: copyOpacity }} className="grid grid-cols-1 lg:grid-cols-12 gap-10 lg:gap-8 items-end">
           <div className="lg:col-span-7">
-            <div data-hero-rest className="opacity-0 flex items-center gap-3 font-mono text-[11px] tracking-[0.2em] text-emerald-light mb-8">
+            <div data-hero-rest className="opacity-0 inline-flex items-center gap-3 px-3.5 py-1.5 rounded-full border border-line liquid-glass mb-8 shadow-[var(--glass-shadow)] font-mono text-[11px] tracking-[0.2em] text-emerald-light">
               <span className="relative flex h-2 w-2">
                 <span className="absolute inline-flex h-full w-full rounded-full bg-emerald animate-pulse-ring" />
                 <span className="relative inline-flex rounded-full h-2 w-2 bg-emerald-light" />
               </span>
-              <span>
+              <span className="font-medium">
                 {APP.name.toUpperCase()} · {APP.nameAr} · v{APP.version}
               </span>
             </div>
@@ -160,11 +160,17 @@ export default function HeroSection() {
             </p>
 
             <div data-hero-rest className="opacity-0 mt-10 flex flex-col sm:flex-row items-start sm:items-center gap-3">
-              <Link href="/dashboard" className="btn-primary px-7 py-3.5 text-[12px]">
+              <Link
+                href="/dashboard"
+                className="btn-primary px-8 py-3.5 text-[13px] rounded-full apple-touch-target shadow-[0_4px_16px_rgba(28,139,108,0.3)] hover:scale-[1.02] transition-transform"
+              >
                 <span>{isAr ? "ادخل إلى المحطة" : "Enter the terminal"}</span>
                 <ArrowRight size={15} className={isAr ? "rotate-180" : ""} />
               </Link>
-              <a href="#modules" className="btn-secondary px-6 py-3.5 text-[12px]">
+              <a
+                href="#modules"
+                className="btn-secondary px-7 py-3.5 text-[13px] rounded-full apple-touch-target liquid-glass-subtle hover:scale-[1.02] transition-transform"
+              >
                 {isAr ? "استعرض الوحدات" : "Browse the modules"}
               </a>
             </div>

@@ -74,7 +74,7 @@ export default function CapabilitiesBento() {
           initial="hidden"
           whileInView="show"
           viewport={viewportOnce}
-          className="mt-12 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4"
+          className="mt-12 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-5"
         >
           {cells.map((c) => {
             const Icon = c.icon;
@@ -82,10 +82,14 @@ export default function CapabilitiesBento() {
               <motion.div
                 key={c.en}
                 variants={staggerItem}
-                className={`panel-data p-6 flex flex-col gap-4 ${c.wide ? "lg:col-span-2" : ""}`}
+                className={`p-7 sm:p-8 rounded-3xl bg-ink-2/80 border border-line/70 shadow-[inset_0_1px_0_0_rgba(255,255,255,0.08)] flex flex-col gap-4 relative overflow-hidden transition-all duration-300 hover:border-emerald-border hover:shadow-[0_12px_32px_-12px_rgba(28,139,108,0.2)] group ${
+                  c.wide ? "lg:col-span-2" : ""
+                }`}
               >
-                <Icon size={18} className="text-emerald-light" />
-                <h3 className="font-serif text-2xl text-fg leading-tight">{isAr ? c.ar : c.en}</h3>
+                <div className="w-10 h-10 rounded-xl bg-emerald/10 border border-emerald/20 flex items-center justify-center text-emerald-light group-hover:scale-105 transition-transform duration-200">
+                  <Icon size={19} />
+                </div>
+                <h3 className="font-serif text-2xl text-fg leading-tight font-medium">{isAr ? c.ar : c.en}</h3>
                 <p className="text-[13.5px] text-fg-2 leading-relaxed">{isAr ? c.descAr : c.descEn}</p>
               </motion.div>
             );

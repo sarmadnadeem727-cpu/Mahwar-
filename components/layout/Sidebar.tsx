@@ -67,25 +67,24 @@ export default function Sidebar() {
         onClick={() => pick(tool.id)}
         title={!expanded ? (isAr ? tool.ar : tool.en) : undefined}
         aria-current={active ? "page" : undefined}
-        className={`relative w-full flex items-center gap-3 py-[7px] text-start transition-colors group ${
-          expanded ? (indent ? "ps-7 pe-3" : "px-3") : "justify-center px-3"
-        } ${active ? "text-fg" : "text-fg-2 hover:text-fg hover:bg-ink-3/70"}`}
+        className={`relative flex items-center gap-3 py-[7px] text-start transition-all duration-150 group rounded-lg ${
+          expanded ? (indent ? "mx-2 ps-6 pe-2.5 w-[calc(100%-16px)]" : "mx-2 px-2.5 w-[calc(100%-16px)]") : "justify-center mx-1.5 px-2 w-[calc(100%-12px)]"
+        } ${active ? "text-fg bg-emerald/15 font-medium shadow-[inset_0_1px_0_rgba(255,255,255,0.08)]" : "text-fg-2 hover:text-fg hover:bg-ink-3/60"}`}
       >
         {active && (
           <motion.span
             layoutId="sidebar-active"
-            className="absolute inset-y-1 start-0 w-[3px] rounded-full bg-emerald-light shadow-[0_0_12px_var(--emerald-light)]"
+            className="absolute inset-y-1.5 start-0 w-[3px] rounded-full bg-emerald-light shadow-[0_0_10px_var(--emerald-light)]"
             transition={{ type: "spring", stiffness: 380, damping: 32 }}
           />
         )}
-        {active && <span className="absolute inset-0 bg-emerald/10" />}
-        <Icon size={16} className={`relative shrink-0 ${active ? "text-emerald-light" : "text-fg-3 group-hover:text-fg-2"}`} />
+        <Icon size={16} className={`relative shrink-0 transition-colors ${active ? "text-emerald-light" : "text-fg-3 group-hover:text-fg-2"}`} />
         {expanded && (
           <span className="relative flex-1 flex items-center justify-between min-w-0 gap-2">
             <span className="text-[13px] truncate">{isAr ? tool.ar : tool.en}</span>
             <span className="flex items-center gap-1.5 shrink-0">
-              {hasData(tool) && <span className="w-1.5 h-1.5 rounded-full bg-emerald-light" title={isAr ? "محفوظ في الجلسة" : "Saved in session"} />}
-              <span className={`font-mono text-[9.5px] tracking-wider ${active ? "text-emerald-light" : "text-fg-4"}`}>{tool.code}</span>
+              {hasData(tool) && <span className="w-1.5 h-1.5 rounded-full bg-emerald-light shadow-[0_0_6px_var(--emerald-light)]" title={isAr ? "محفوظ في الجلسة" : "Saved in session"} />}
+              <span className={`font-mono text-[9.5px] tracking-wider ${active ? "text-emerald-light font-semibold" : "text-fg-4"}`}>{tool.code}</span>
             </span>
           </span>
         )}
@@ -208,7 +207,7 @@ export default function Sidebar() {
         initial={false}
         animate={{ width: expanded ? EXPANDED : COLLAPSED }}
         transition={{ type: "spring", stiffness: 320, damping: 34 }}
-        className="hidden lg:flex flex-col h-full bg-ink-2 border-e border-line shrink-0 no-print"
+        className="hidden lg:flex flex-col h-full liquid-glass-subtle border-e border-line shrink-0 no-print"
         dir={isAr ? "rtl" : "ltr"}
       >
         {nav}
@@ -230,7 +229,7 @@ export default function Sidebar() {
               animate={{ x: 0 }}
               exit={{ x: isAr ? "100%" : "-100%" }}
               transition={{ type: "spring", stiffness: 320, damping: 34 }}
-              className={`fixed top-0 bottom-0 ${isAr ? "right-0" : "left-0"} w-[280px] flex flex-col bg-ink-2 border-e border-line z-50 lg:hidden`}
+              className={`fixed top-0 bottom-0 ${isAr ? "right-0" : "left-0"} w-[280px] flex flex-col liquid-glass border-e border-line z-50 lg:hidden shadow-[var(--shadow-modal)]`}
               dir={isAr ? "rtl" : "ltr"}
             >
               {nav}
