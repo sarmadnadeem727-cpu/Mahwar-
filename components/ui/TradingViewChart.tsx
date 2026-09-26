@@ -21,69 +21,29 @@ export default function TradingViewChart({
   symbol = "TADAWUL:2222",
   interval = "D",
   height = 420,
-  autosize = true,
   className = "",
-  hideSideToolbar = true,
-  allowSymbolChange = true,
 }: TradingViewChartProps) {
-  const containerRef = useRef<HTMLDivElement>(null);
   const { theme } = useTheme();
   const isDark = theme !== "light";
 
-  useEffect(() => {
-    const container = containerRef.current;
-    if (!container) return;
-
-    // Clean previous widget
-    container.innerHTML = "";
-
-    const widgetContainer = document.createElement("div");
-    widgetContainer.className = "tradingview-widget-container__widget";
-    widgetContainer.style.height = "100%";
-    widgetContainer.style.width = "100%";
-    container.appendChild(widgetContainer);
-
-    const script = document.createElement("script");
-    script.src = "https://s3.tradingview.com/external-embedding/embed-widget-advanced-chart.js";
-    script.type = "text/javascript";
-    script.async = true;
-    script.innerHTML = JSON.stringify({
-      autosize: autosize,
-      symbol: symbol,
-      interval: interval,
-      timezone: "Asia/Riyadh",
-      theme: isDark ? "dark" : "light",
-      style: "1",
-      locale: "en",
-      backgroundColor: isDark ? "rgba(10, 22, 34, 0.75)" : "rgba(241, 248, 244, 0.75)",
-      gridColor: isDark ? "rgba(255, 255, 255, 0.06)" : "rgba(0, 0, 0, 0.06)",
-      enable_publishing: false,
-      hide_top_toolbar: false,
-      hide_legend: false,
-      save_image: false,
-      calendar: false,
-      hide_volume: false,
-      support_host: "https://www.tradingview.com",
-      hide_side_toolbar: hideSideToolbar,
-      allow_symbol_change: allowSymbolChange,
-    });
-
-    container.appendChild(script);
-
-    return () => {
-      if (container) container.innerHTML = "";
-    };
-  }, [symbol, interval, isDark, autosize, hideSideToolbar, allowSymbolChange]);
+  // Build official TradingView widget URL
+  const formattedSymbol = encodeURIComponent(symbol);
+  const tvTheme = isDark ? "dark" : "light";
+  const iframeSrc = `https://s.tradingview.com/widgetembed/?frameElementId=tradingview_widget&symbol=${formattedSymbol}&interval=${interval}&hidesidetoolbar=1&symboledit=1&saveimage=0&toolbarbg=f1f3f6&studies=%5B%5D&theme=${tvTheme}&style=1&timezone=Asia%2FRiyadh&studies_overrides=%7B%7D&overrides=%7B%7D&enabled_features=%5B%5D&disabled_features=%5B%5D&locale=en&utm_source=localhost&utm_medium=widget&utm_campaign=chart&utm_term=${formattedSymbol}`;
 
   return (
     <div
-      className={`rounded-2xl overflow-hidden border border-white/15 bg-ink-2/80 backdrop-blur-xl shadow-[0_12px_36px_rgba(0,0,0,0.35),inset_0_1px_0_rgba(255,255,255,0.1)] ${className}`}
-      style={{ height }}
+      className={`relative w-full rounded-2xl overflow-hidden border border-white/15 bg-ink-2 shadow-[0_12px_36px_rgba(0,0,0,0.35)] ${className}`}
+      style={{ height, minHeight: height }}
     >
-      <div
-        ref={containerRef}
-        className="tradingview-widget-container h-full w-full"
-        style={{ minHeight: "100%" }}
+      <iframe
+        title={`TradingView Chart ${symbol}`}
+        src={iframeSrc}
+        className="w-full h-full border-0 block"
+        style={{ width: "100%", height: "100%", minHeight: height }}
+        allowTransparency={true}
+        scrolling="no"
+        allowFullScreen={true}
       />
     </div>
   );

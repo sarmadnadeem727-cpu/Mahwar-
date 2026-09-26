@@ -70,7 +70,7 @@ export default function AppleSheet({
             onDragEnd={handleDragEnd}
             role="dialog"
             aria-modal="true"
-            className={`relative z-10 w-full max-w-2xl rounded-t-[28px] md:rounded-[24px] liquid-glass shadow-[var(--shadow-modal)] border border-line flex flex-col overflow-hidden ${maxHeight} ${className}`}
+            className={`relative z-10 w-full max-w-4xl rounded-t-[28px] md:rounded-[24px] liquid-glass shadow-[var(--shadow-modal)] border border-line flex flex-col overflow-hidden ${maxHeight} ${className}`}
           >
             {/* iOS Grabber (visible on mobile) */}
             <div className="md:hidden pt-3 pb-1 flex justify-center cursor-grab active:cursor-grabbing">
