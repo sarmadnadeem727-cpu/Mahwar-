@@ -8,6 +8,7 @@ import FormulaAuditModal from "@/components/operations/shared/FormulaAuditModal"
 import { exportToExcel, exportRowsToPdf } from "@/components/operations/shared/exportOperations";
 import { panelReveal } from "@/lib/motion";
 import { useTerminalStore } from "@/store/useTerminalStore";
+import { haptics } from "@/lib/audio/haptics";
 import type { AuditData } from "@/lib/operations/types";
 import { APP, getTool } from "@/lib/registry";
 import type { PanelType } from "@/store/useTerminalStore";
@@ -130,8 +131,12 @@ export function Select<T extends string>({ label, value, onChange, options }: { 
 }
 
 export function Toggle({ label, value, onChange }: { label: string; value: boolean; onChange: (v: boolean) => void }) {
+  const handleClick = () => {
+    haptics.playSwitch(!value);
+    onChange(!value);
+  };
   return (
-    <button type="button" onClick={() => onChange(!value)} className="w-full flex items-center justify-between py-1.5 text-[12.5px] text-fg-2 hover:text-fg transition-colors select-none" aria-pressed={value}>
+    <button type="button" onClick={handleClick} className="w-full flex items-center justify-between py-1.5 text-[12.5px] text-fg-2 hover:text-fg transition-colors select-none apple-touch-target" aria-pressed={value}>
       <span className="font-medium">{label}</span>
       <span className={`relative w-11 h-6 rounded-full transition-colors duration-200 ${value ? "bg-emerald shadow-[0_0_10px_var(--emerald-border)]" : "bg-ink-4 border border-line"}`}>
         <span className={`absolute top-0.5 w-5 h-5 rounded-full bg-white shadow-md transition-all duration-200 ${value ? "left-[22px]" : "left-0.5"}`} />

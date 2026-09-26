@@ -7,6 +7,7 @@ import { useTerminalStore, type PanelType } from "@/store/useTerminalStore";
 import SFSymbol, { type SFSymbolName } from "@/components/ui/SFSymbol";
 import { Sparkles, TerminalSquare, Compass, Sun, Moon, HelpCircle } from "lucide-react";
 import { useTheme } from "next-themes";
+import { haptics } from "@/lib/audio/haptics";
 
 interface DockItemDef {
   id: PanelType | "cmd" | "theme" | "hud";
@@ -148,6 +149,7 @@ export default function AppleDock() {
   const mouseX = useMotionValue(Infinity);
 
   const handleClick = (item: DockItemDef) => {
+    haptics.playTap();
     if (item.id === "cmd") {
       window.dispatchEvent(new KeyboardEvent("keydown", { key: "k", metaKey: true, bubbles: true }));
     } else if (item.id === "hud") {

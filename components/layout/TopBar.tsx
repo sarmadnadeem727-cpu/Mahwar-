@@ -11,6 +11,8 @@ import { useCommandRunner } from "@/lib/useCommandRunner";
 import CommandPalette from "@/components/ui/CommandPalette";
 import SessionMenu from "@/components/layout/SessionMenu";
 import ThemeToggle from "@/components/ui/ThemeToggle";
+import AppleControlCenter from "@/components/ui/AppleControlCenter";
+import { Sliders } from "lucide-react";
 
 /**
  * TopBar — the GO line. Same grammar as the console (`lib/commands.ts`):
@@ -27,6 +29,7 @@ export default function TopBar() {
   const run = useCommandRunner();
   const isAr = language === "ar";
   const [paletteOpen, setPaletteOpen] = useState(false);
+  const [controlCenterOpen, setControlCenterOpen] = useState(false);
   const [cmd, setCmd] = useState("");
   const [focused, setFocused] = useState(false);
   const [cursor, setCursor] = useState<number | null>(null);
@@ -175,7 +178,26 @@ export default function TopBar() {
             <span>{isAr ? "EN" : "ع"}</span>
           </button>
           <SessionMenu isAr={isAr} />
+          {/* macOS Control Center Toggle */}
+          <button
+            onClick={() => setControlCenterOpen(!controlCenterOpen)}
+            className={`h-8 w-8 flex items-center justify-center rounded-lg border transition-all apple-touch-target ${
+              controlCenterOpen
+                ? "border-emerald/40 bg-emerald/15 text-emerald-light shadow-[0_0_12px_rgba(28,139,108,0.25)]"
+                : "border-line-strong bg-ink-1/90 text-fg-3 hover:text-fg hover:border-line"
+            }`}
+            aria-label="Control Center"
+            title={isAr ? "مركز التحكم" : "Control Center"}
+          >
+            <Sliders size={13} />
+          </button>
         </div>
+
+        {/* Control Center Popover */}
+        <AppleControlCenter
+          isOpen={controlCenterOpen}
+          onClose={() => setControlCenterOpen(false)}
+        />
       </header>
 
       <CommandPalette isOpen={paletteOpen} onClose={() => setPaletteOpen(false)} tools={TOOLS} />

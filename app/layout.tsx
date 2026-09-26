@@ -5,6 +5,7 @@ import LoadingScreen from "@/components/ui/LoadingScreen";
 import CursorGlow from "@/components/ui/CursorGlow";
 import ThemeProvider from "@/components/ui/ThemeProvider";
 import AppleShortcutsHUD from "@/components/ui/AppleShortcutsHUD";
+import AppleQuickLook from "@/components/ui/AppleQuickLook";
 import Toasts from "@/components/ui/Toasts";
 import { APP } from "@/lib/registry";
 
@@ -77,6 +78,7 @@ export default function RootLayout({ children }: Readonly<{ children: React.Reac
           <CursorGlow />
           <Toasts />
           <AppleShortcutsHUD />
+          <AppleQuickLook />
           {children}
         </ThemeProvider>
       </body>
