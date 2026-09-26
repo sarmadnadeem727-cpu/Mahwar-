@@ -14,13 +14,13 @@ const isProd = process.env.NODE_ENV === "production";
 
 const csp = [
   "default-src 'self'",
-  `script-src 'self' 'unsafe-inline'${isProd ? "" : " 'unsafe-eval'"}`,
+  `script-src 'self' 'unsafe-inline' https://s3.tradingview.com https://*.tradingview.com https://*.tradingview-widget.com${isProd ? "" : " 'unsafe-eval'"}`,
   "style-src 'self' 'unsafe-inline' https://fonts.googleapis.com",
   "font-src 'self' https://fonts.gstatic.com data:",
-  "img-src 'self' data: blob:",
+  "img-src 'self' data: blob: https://*.tradingview.com",
   "media-src 'self' blob:",
-  "connect-src 'self' https://news.google.com https://api.marketaux.com",
-  "frame-src 'none'",
+  "connect-src 'self' https://news.google.com https://api.marketaux.com https://*.tradingview.com https://*.tradingview-widget.com wss://*.tradingview.com",
+  "frame-src 'self' https://s.tradingview.com https://*.tradingview.com https://*.tradingview-widget.com",
   "worker-src 'self' blob:",
   "object-src 'none'",
   "base-uri 'self'",
