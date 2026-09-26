@@ -1,7 +1,8 @@
 "use client";
 
 import React, { useState } from "react";
-import { FileSpreadsheet, FileText, Calculator, BookmarkCheck, RotateCcw } from "lucide-react";
+import SFSymbol from "@/components/ui/SFSymbol";
+import { FileSpreadsheet, FileText } from "lucide-react";
 import type { SuiteId } from "@/lib/registry";
 
 interface OperationsHeaderProps {
@@ -36,10 +37,21 @@ export default function OperationsHeader({
   const accentText = accent === "emerald" ? "text-emerald-light" : "text-gold";
   const accentBox = accent === "emerald" ? "border-emerald/40 bg-emerald/10 text-emerald-light" : "border-gold/40 bg-gold/10 text-gold";
 
+  const handleShare = () => {
+    if (navigator.share) {
+      navigator.share({
+        title: `${title} — Mahwar Terminal`,
+        url: window.location.href,
+      }).catch(() => {});
+    } else {
+      navigator.clipboard?.writeText(window.location.href);
+    }
+  };
+
   return (
     <div className="flex flex-col lg:flex-row lg:items-end justify-between gap-4 pb-4 md:pb-5 border-b border-line" dir={isAr ? "rtl" : "ltr"}>
       <div className="flex items-start gap-3 md:gap-4 min-w-0">
-        <div className={`mt-1 p-2 md:p-2.5 rounded border shrink-0 ${accentBox}`}>{icon}</div>
+        <div className={`mt-1 p-2 md:p-2.5 rounded-2xl border shrink-0 ${accentBox}`}>{icon}</div>
         <div className="min-w-0">
           <p className={`font-mono text-[10.5px] tracking-[0.18em] ${accentText}`}>
             {SUITE_PREFIX[suite]} · {(isAr && categoryTagAr ? categoryTagAr : categoryTag).toUpperCase()}
@@ -52,21 +64,40 @@ export default function OperationsHeader({
       </div>
 
       <div className="flex flex-wrap items-center gap-2 no-print">
-        <button onClick={onOpenAudit} className="btn-secondary" title={isAr ? "عرض خطوات الحساب" : "Show the formula trace"}>
-          <Calculator size={13} className="text-emerald-light" /> <span>{isAr ? "سجل الحساب" : "Audit trail"}</span>
+        {/* Apple Share Symbol */}
+        <button onClick={handleShare} className="btn-secondary apple-touch-target" title={isAr ? "مشاركة التحليل" : "Share analysis"}>
+          <SFSymbol name="share" size={13} className="text-fg-3" />
+          <span className="hidden sm:inline">{isAr ? "مشاركة" : "Share"}</span>
         </button>
-        <button onClick={onExportExcel} className="btn-secondary" title="Export to Excel"><FileSpreadsheet size={13} className="text-emerald-light" /> <span className="hidden sm:inline">Excel</span></button>
-        <button onClick={onExportPdf} disabled={isExportingPdf} className="btn-secondary" title="Export to PDF">
-          <FileText size={13} className="text-emerald-light" /> <span className="hidden sm:inline">{isExportingPdf ? (isAr ? "جارٍ التصدير…" : "Exporting…") : "PDF"}</span>
+
+        {/* Formula Inspector Symbol */}
+        <button onClick={onOpenAudit} className="btn-secondary apple-touch-target" title={isAr ? "سجل الحساب والصيغة" : "Show formula inspector"}>
+          <SFSymbol name="inspector" size={13} className="text-emerald-light" />
+          <span>{isAr ? "سجل الحساب" : "Inspector"}</span>
         </button>
+
+        <button onClick={onExportExcel} className="btn-secondary apple-touch-target" title="Export to Excel">
+          <FileSpreadsheet size={13} className="text-emerald-light" />
+          <span className="hidden sm:inline">Excel</span>
+        </button>
+
+        <button onClick={onExportPdf} disabled={isExportingPdf} className="btn-secondary apple-touch-target" title="Export to PDF">
+          <FileText size={13} className="text-emerald-light" />
+          <span className="hidden sm:inline">{isExportingPdf ? (isAr ? "جارٍ التصدير…" : "Exporting…") : "PDF"}</span>
+        </button>
+
+        {/* Bookmark Symbol */}
         {onSaveSession && (
-          <button onClick={save} className={`btn-secondary ${saved ? "border-emerald text-emerald-light" : ""}`}>
-            <BookmarkCheck size={13} /> {saved ? (isAr ? "تم الحفظ" : "Saved") : (isAr ? "حفظ" : "Save")}
+          <button onClick={save} className={`btn-secondary apple-touch-target ${saved ? "border-gold/50 bg-gold/10 text-gold" : ""}`}>
+            <SFSymbol name="bookmark" fill={saved} size={13} className={saved ? "text-gold" : "text-fg-3"} />
+            <span>{saved ? (isAr ? "تم الحفظ" : "Saved") : (isAr ? "حفظ" : "Save")}</span>
           </button>
         )}
+
+        {/* Reset Symbol */}
         {onResetDefaults && (
-          <button onClick={onResetDefaults} className="p-2 rounded text-fg-3 hover:text-fg hover:bg-ink-4 transition-colors" title={isAr ? "استعادة القيم الافتراضية" : "Reset to sample inputs"} aria-label="Reset">
-            <RotateCcw size={14} />
+          <button onClick={onResetDefaults} className="p-2 rounded-xl text-fg-3 hover:text-fg hover:bg-ink-4 transition-colors apple-touch-target" title={isAr ? "استعادة القيم الافتراضية" : "Reset inputs"} aria-label="Reset">
+            <SFSymbol name="arrow.clockwise" size={13} />
           </button>
         )}
       </div>

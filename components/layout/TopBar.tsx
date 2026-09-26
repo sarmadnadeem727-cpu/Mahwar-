@@ -1,7 +1,8 @@
 "use client";
 
 import React, { useEffect, useMemo, useRef, useState } from "react";
-import { Globe, Menu, Command, CornerDownLeft } from "lucide-react";
+import { Globe, Menu, CornerDownLeft } from "lucide-react";
+import SFSymbol from "@/components/ui/SFSymbol";
 import { useShallow } from "zustand/react/shallow";
 import { useTerminalStore, CURRENCIES, type Currency } from "@/store/useTerminalStore";
 import { getTool, TOOLS } from "@/lib/registry";
@@ -131,10 +132,10 @@ export default function TopBar() {
             <button
               type="button"
               onClick={() => setPaletteOpen(true)}
-              className="hidden md:flex items-center gap-0.5 px-2 py-0.5 rounded-full border border-line text-[10px] text-fg-3 hover:text-fg transition-colors"
-              title="Command palette"
+              className="hidden md:flex items-center gap-1 px-2.5 py-0.5 rounded-full border border-line text-[10.5px] font-mono text-fg-3 hover:text-fg hover:border-line-strong transition-colors"
+              title="Command palette (⌘K)"
             >
-              <Command size={10} />K
+              <SFSymbol name="command" size={11} className="text-fg-3" />K
             </button>
             {focused && hints.length > 1 && cmd.trim() && (
               <div className="absolute top-11 left-0 right-0 rounded-2xl border border-line liquid-glass shadow-[var(--shadow-modal)] p-1.5 z-40">

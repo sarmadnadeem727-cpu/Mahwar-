@@ -11,6 +11,7 @@ import type { QuotesResponse } from "@/lib/market/quotes";
 import { EMPTY_FILTERS, PRESETS, applyFilters, buildRows, sortRows, summarise, type Range, type ScreenFilters, type ScreenRow, type SortKey } from "@/lib/finance/screener";
 import AppleSheet from "@/components/ui/AppleSheet";
 import AppleContextMenu from "@/components/ui/AppleContextMenu";
+import SFSymbol from "@/components/ui/SFSymbol";
 
 const POLL_MS = 15_000;
 
@@ -28,6 +29,9 @@ export default function StockScreener() {
   const [live, setLive] = useState(true);
   const [feed, setFeed] = useState<QuotesResponse | null>(null);
   const [fetching, setFetching] = useState(false);
+  const [bookmarked, setBookmarked] = useState(false);
+  const [inspectorOpen, setInspectorOpen] = useState(false);
+  const [filtersSheetOpen, setFiltersSheetOpen] = useState(false);
   const timer = useRef<number | null>(null);
 
   // ---- live feed ----------------------------------------------------------
@@ -125,7 +129,7 @@ export default function StockScreener() {
         <>
           {/* Search */}
           <label className="relative block">
-            <Search size={13} className="absolute top-1/2 -translate-y-1/2 start-3 text-fg-3" />
+            <SFSymbol name="search" size={14} className="absolute top-1/2 -translate-y-1/2 start-3 text-fg-3" />
             <input
               value={filters.query}
               onChange={(e) => setF("query", e.target.value)}
@@ -200,6 +204,84 @@ export default function StockScreener() {
           { label: isAr ? "وسيط العائد" : "Median yield", value: Number.isFinite(stats.medianYield) ? pct(stats.medianYield) : "—", accent: "gold", sub: keyed ? (isAr ? `↑${stats.advancers} ↓${stats.decliners}` : `↑${stats.advancers} ↓${stats.decliners}`) : undefined },
         ]}
       />
+
+      {/* Apple Actions Toolbar (Share, Bookmark, Filter, Inspector) */}
+      <div className="flex flex-wrap items-center justify-between gap-2.5 px-1 py-1">
+        <div className="flex items-center gap-2">
+          {/* Share */}
+          <button
+            type="button"
+            onClick={() => {
+              if (navigator.share) {
+                navigator.share({
+                  title: `${stats.n} GCC Stocks Screen`,
+                  url: window.location.href,
+                }).catch(() => {});
+              } else {
+                navigator.clipboard?.writeText(window.location.href);
+                toast(isAr ? "تم نسخ رابط الشاشة إلى الحافظة" : "Screen link copied to clipboard", "ok");
+              }
+            }}
+            className="btn-secondary text-[12px] px-3.5 py-1.5 apple-touch-target"
+            title={isAr ? "مشاركة الشاشة" : "Share screener"}
+          >
+            <SFSymbol name="share" size={14} className="text-fg-3" />
+            <span>{isAr ? "مشاركة" : "Share"}</span>
+          </button>
+
+          {/* Bookmark */}
+          <button
+            type="button"
+            onClick={() => {
+              setBookmarked((b) => !b);
+              toast(
+                !bookmarked
+                  ? isAr
+                    ? "تم حفظ الشاشة في الإشارات المرجعية"
+                    : "Screen saved to bookmarks"
+                  : isAr
+                  ? "أزيلت الإشارة المرجعية"
+                  : "Removed bookmark",
+                "ok"
+              );
+            }}
+            className={`btn-secondary text-[12px] px-3.5 py-1.5 apple-touch-target ${
+              bookmarked ? "border-gold/50 bg-gold/10 text-gold" : ""
+            }`}
+            title={isAr ? "إشارة مرجعية" : "Bookmark screen"}
+          >
+            <SFSymbol
+              name="bookmark"
+              fill={bookmarked}
+              size={14}
+              className={bookmarked ? "text-gold" : "text-fg-3"}
+            />
+            <span>{isAr ? "إشارة مرجعية" : "Bookmark"}</span>
+          </button>
+
+          {/* Filter count badge */}
+          <div className="hidden sm:inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-[11px] font-sans border border-line bg-ink-2/60 text-fg-3">
+            <SFSymbol name="filter" size={12} className="text-emerald-light" />
+            <span>
+              {stats.n} {isAr ? "نتيجة نشطة" : "active filters"}
+            </span>
+          </div>
+        </div>
+
+        {/* Inspector Button */}
+        <button
+          type="button"
+          onClick={() => {
+            if (!selected && rows[0]) setSelected(rows[0].sec.id);
+            else if (selected) setSelected(selected);
+          }}
+          className="btn-secondary text-[12px] px-3.5 py-1.5 apple-touch-target"
+          title={isAr ? "فتح المفتش المالي" : "Open Financial Inspector"}
+        >
+          <SFSymbol name="sidebar.right" size={14} className="text-emerald-light" />
+          <span>{isAr ? "المفتش المالي" : "Inspector"}</span>
+        </button>
+      </div>
 
       {/* Grid */}
       <div className="panel-data overflow-auto max-h-[62vh]">
