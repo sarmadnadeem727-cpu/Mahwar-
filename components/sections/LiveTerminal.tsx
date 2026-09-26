@@ -176,44 +176,58 @@ export default function LiveTerminal({ className = "" }: { className?: string })
 
   return (
     <div
-      className={`panel-input overflow-hidden font-mono text-[12px] leading-relaxed shadow-terminal-card ${className}`}
+      className={`rounded-2xl border border-white/15 bg-ink-2/95 backdrop-blur-2xl overflow-hidden font-mono text-[12px] leading-relaxed shadow-[0_24px_50px_-12px_rgba(0,0,0,0.6),inset_0_1px_0_rgba(255,255,255,0.18)] ${className}`}
       dir="ltr"
       aria-label="Live engine demonstration"
     >
-      <div className="h-9 px-4 flex items-center justify-between border-b border-line bg-ink-3/80">
-        <div className="flex items-center gap-2 text-[10px] text-fg-3">
-          <span className="w-2 h-2 rounded-full bg-emerald" />
-          <span className="w-2 h-2 rounded-full bg-gold/70" />
-          <span className="w-2 h-2 rounded-full bg-ink-5" />
-          <span className="ml-2 tracking-wider">mahwar://engine</span>
+      <div className="h-10 px-4 flex items-center justify-between border-b border-white/10 bg-white/[0.03]">
+        <div className="flex items-center gap-2">
+          {/* macOS Authentic Traffic Lights */}
+          <div className="flex items-center gap-1.5 group">
+            <span className="w-3 h-3 rounded-full bg-[#FF5F56] border border-[#E0443E] shadow-sm inline-block" />
+            <span className="w-3 h-3 rounded-full bg-[#FFBD2E] border border-[#DEA123] shadow-sm inline-block" />
+            <span className="w-3 h-3 rounded-full bg-[#27C93F] border border-[#1AAB29] shadow-sm inline-block" />
+          </div>
+          <span className="ml-3 font-sans text-[11px] font-medium text-fg-3 tracking-normal">mahwar.terminal — zsh</span>
         </div>
-        <span className="text-[10px] text-emerald-light tracking-wider">{isAr ? "حي" : "live"}</span>
+        <span className="inline-flex items-center gap-1.5 px-2 py-0.5 rounded-full text-[10px] font-mono bg-emerald/10 text-emerald-light border border-emerald/25">
+          <span className="w-1.5 h-1.5 rounded-full bg-emerald-light animate-pulse" />
+          {isAr ? "حي" : "live"}
+        </span>
       </div>
 
-      <div className="p-5 min-h-[196px] bg-ink-1/60">
+      <div className="p-5 min-h-[200px] bg-ink-1/80">
         <div className="flex gap-2 text-fg">
-          <span className="text-emerald-light select-none">{">"}</span>
-          <span className="text-gold">{typed}</span>
+          <span className="text-emerald-light select-none font-bold">~</span>
+          <span className="text-fg-4 select-none">%</span>
+          <span className="text-gold font-medium">{typed}</span>
           <span className="w-[7px] h-[14px] bg-emerald-light animate-blink inline-block translate-y-[3px]" />
         </div>
-        <div className="mt-3 space-y-1 text-fg-2">
+        <div className="mt-3 space-y-1.5 text-fg-2 font-mono text-[11.5px]">
           {printed.map((line, i) => (
-            <div key={`${step}-${i}`} className={i === printed.length - 1 ? "text-fg" : ""}>
+            <div key={`${step}-${i}`} className={i === printed.length - 1 ? "text-fg font-medium" : ""}>
               {line}
             </div>
           ))}
         </div>
       </div>
 
-      <div className="px-4 py-2 border-t border-line flex items-center justify-between text-[10px] text-fg-3">
-        <span>
+      <div className="px-4 py-2.5 border-t border-white/10 bg-white/[0.02] flex items-center justify-between text-[10.5px] text-fg-3">
+        <div className="flex items-center gap-1.5 overflow-x-auto">
           {scripts.map((s, i) => (
-            <span key={s.cmd} className={`mr-3 ${i === step % scripts.length ? "text-emerald-light" : ""}`}>
+            <span
+              key={s.cmd}
+              className={`px-2 py-0.5 rounded-md transition-all ${
+                i === step % scripts.length
+                  ? "bg-emerald/15 text-emerald-light font-semibold border border-emerald/30 shadow-sm"
+                  : "text-fg-4 hover:text-fg-3"
+              }`}
+            >
               {s.cmd.replace(" GO", "")}
             </span>
           ))}
-        </span>
-        <span>{isAr ? "نتائج محسوبة فعلياً" : "computed, not mocked"}</span>
+        </div>
+        <span className="font-sans text-[10.5px] text-fg-4 hidden sm:inline">{isAr ? "نتائج محسوبة فعلياً" : "computed live"}</span>
       </div>
 
       <span className="sr-only">{script.lines.join(". ")}</span>

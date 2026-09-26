@@ -131,10 +131,10 @@ export function Select<T extends string>({ label, value, onChange, options }: { 
 
 export function Toggle({ label, value, onChange }: { label: string; value: boolean; onChange: (v: boolean) => void }) {
   return (
-    <button type="button" onClick={() => onChange(!value)} className="w-full flex items-center justify-between py-1.5 text-[12px] text-fg-2" aria-pressed={value}>
-      <span>{label}</span>
-      <span className={`relative w-9 h-5 rounded-full transition-colors ${value ? "bg-emerald" : "bg-ink-5"}`}>
-        <span className={`absolute top-0.5 w-4 h-4 rounded-full bg-ink-0 transition-all ${value ? "left-[18px]" : "left-0.5"}`} />
+    <button type="button" onClick={() => onChange(!value)} className="w-full flex items-center justify-between py-1.5 text-[12.5px] text-fg-2 hover:text-fg transition-colors select-none" aria-pressed={value}>
+      <span className="font-medium">{label}</span>
+      <span className={`relative w-11 h-6 rounded-full transition-colors duration-200 ${value ? "bg-emerald shadow-[0_0_10px_var(--emerald-border)]" : "bg-ink-4 border border-line"}`}>
+        <span className={`absolute top-0.5 w-5 h-5 rounded-full bg-white shadow-md transition-all duration-200 ${value ? "left-[22px]" : "left-0.5"}`} />
       </span>
     </button>
   );
@@ -144,12 +144,12 @@ export function Toggle({ label, value, onChange }: { label: string; value: boole
 export function Kpis({ items, cols = 4 }: { items: { label: string; value: string; accent?: "emerald" | "gold" | "neg" | "warn"; sub?: string }[]; cols?: 3 | 4 }) {
   const color = { emerald: "text-emerald-light", gold: "text-gold", neg: "text-neg", warn: "text-warn" };
   return (
-    <div className={`grid grid-cols-2 ${cols === 3 ? "md:grid-cols-3" : "md:grid-cols-4"} gap-3`}>
+    <div className={`grid grid-cols-2 ${cols === 3 ? "md:grid-cols-3" : "md:grid-cols-4"} gap-3.5`}>
       {items.map((k) => (
-        <div key={k.label} className="panel-result p-3.5 md:p-4 min-w-0">
-          <div className="font-mono text-[10px] text-fg-3 uppercase tracking-wider truncate">{k.label}</div>
-          <div className={`mt-1 font-mono text-xl md:text-2xl num truncate ${k.accent ? color[k.accent] : "text-fg"}`}>{k.value}</div>
-          {k.sub && <div className="mt-0.5 text-[11px] text-fg-3 truncate">{k.sub}</div>}
+        <div key={k.label} className="panel-result p-4 md:p-5 rounded-2xl min-w-0 shadow-sm border border-line/60">
+          <div className="font-mono text-[10.5px] text-fg-3 uppercase tracking-wider truncate font-medium">{k.label}</div>
+          <div className={`mt-1.5 font-mono text-xl md:text-2xl font-bold num truncate ${k.accent ? color[k.accent] : "text-fg"}`}>{k.value}</div>
+          {k.sub && <div className="mt-1 text-[11.5px] text-fg-3 truncate">{k.sub}</div>}
         </div>
       ))}
     </div>
@@ -159,10 +159,10 @@ export function Kpis({ items, cols = 4 }: { items: { label: string; value: strin
 /** Titled card. */
 export function Card({ title, children, className = "", right }: { title?: string; children: React.ReactNode; className?: string; right?: React.ReactNode }) {
   return (
-    <div className={`panel-data p-4 md:p-5 ${className}`}>
+    <div className={`panel-data p-5 md:p-6 rounded-2xl ${className}`}>
       {(title || right) && (
-        <div className="flex items-center justify-between mb-3 gap-3">
-          {title && <div className="font-mono text-[10.5px] text-fg-3 uppercase tracking-wider">{title}</div>}
+        <div className="flex items-center justify-between mb-3.5 gap-3">
+          {title && <div className="font-mono text-[11px] text-fg-3 uppercase tracking-wider font-medium">{title}</div>}
           {right}
         </div>
       )}

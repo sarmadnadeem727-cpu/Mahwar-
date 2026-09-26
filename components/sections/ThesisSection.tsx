@@ -100,12 +100,14 @@ export default function ThesisSection() {
               {bridge.map((b, i) => (
                 <li
                   key={b.code}
-                  className={`relative flex items-center gap-3 rounded-md border px-3 py-2 bg-ink-2 ${
-                    b.side === "both" ? "border-emerald/40 shadow-glow" : "border-line"
+                  className={`relative flex items-center gap-3 rounded-xl border px-4 py-2.5 bg-ink-2/90 backdrop-blur-md transition-transform hover:scale-[1.02] ${
+                    b.side === "both"
+                      ? "border-emerald/50 bg-emerald/10 shadow-[inset_0_1px_0_0_rgba(255,255,255,0.15),0_4px_16px_rgba(28,139,108,0.25)]"
+                      : "border-line shadow-[inset_0_1px_0_0_rgba(255,255,255,0.05)]"
                   }`}
                 >
-                  <span className={`font-mono text-[11px] ${b.side === "both" ? "text-emerald-light" : "text-gold"}`}>{b.code}</span>
-                  <span className="text-[12px] text-fg-2">{isAr ? b.ar : b.en}</span>
+                  <span className={`font-mono text-[11px] font-semibold ${b.side === "both" ? "text-emerald-light" : "text-gold"}`}>{b.code}</span>
+                  <span className="text-[12.5px] font-medium text-fg-2">{isAr ? b.ar : b.en}</span>
                   {i < bridge.length - 1 && <span className="hidden lg:block absolute left-1/2 -bottom-3 w-px h-3 bg-emerald/40" />}
                 </li>
               ))}

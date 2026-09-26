@@ -39,10 +39,10 @@ export default function CTASection() {
             : "Open any engine, enter your numbers, export the report. Everything runs in your browser."}
         </p>
         <div className="mt-10 flex flex-wrap justify-center gap-3">
-          <Link href="/dashboard" className="btn-primary px-8 py-4 text-[12px]">
+          <Link href="/dashboard" className="btn-primary px-8 py-3.5 text-[14px] apple-touch-target shadow-[0_4px_20px_rgba(28,139,108,0.4)]">
             {isAr ? "ادخل إلى المحطة" : "Enter the terminal"}
           </Link>
-          <Link href="/dashboard?panel=screener" className="btn-secondary px-6 py-4 text-[12px]">
+          <Link href="/dashboard?panel=screener" className="btn-secondary px-7 py-3.5 text-[14px] apple-touch-target">
             {isAr ? "افتح فاحص الأسهم" : "Open the stock screener"}
           </Link>
         </div>

@@ -81,9 +81,9 @@
     --glass-shadow: 0 12px 36px -10px rgba(15, 58, 91, 0.12), 0 2px 6px 0 rgba(15, 58, 91, 0.04);
     --glass-dock-shadow: 0 16px 40px -12px rgba(15, 58, 91, 0.2), 0 2px 8px -2px rgba(15, 58, 91, 0.08);
 
-    --radius-panel: 4px;
-    --radius-element: 8px;
-    --radius-modal: 12px;
+    --radius-panel: 18px;
+    --radius-element: 12px;
+    --radius-modal: 24px;
 
     --ease-out: cubic-bezier(0.16, 1, 0.3, 1);
     color-scheme: light;
@@ -143,6 +143,9 @@
     --glass-specular: inset 0 1px 0 0 rgba(255, 255, 255, 0.15), inset 0 -1px 0 0 rgba(0, 0, 0, 0.55);
     --glass-shadow: 0 20px 50px -12px rgba(0, 0, 0, 0.65), 0 2px 8px 0 rgba(0, 0, 0, 0.35);
     --glass-dock-shadow: 0 24px 54px -12px rgba(0, 0, 0, 0.85), 0 4px 12px -2px rgba(0, 0, 0, 0.5);
+    --radius-panel: 18px;
+    --radius-element: 12px;
+    --radius-modal: 24px;
     color-scheme: dark;
   }
 
@@ -153,7 +156,7 @@
   body {
     background-color: var(--ink-1);
     color: var(--fg-1);
-    font-family: var(--font-sans), system-ui, sans-serif;
+    font-family: -apple-system, BlinkMacSystemFont, "SF Pro Text", "SF Pro Display", var(--font-sans), system-ui, sans-serif;
     -webkit-font-smoothing: antialiased;
     text-rendering: optimizeLegibility;
     overflow-x: hidden;
@@ -223,63 +226,70 @@
     background: var(--ink-2);
     border: 1px solid var(--line);
     border-radius: var(--radius-panel);
-    box-shadow: var(--shadow-panel);
+    box-shadow: inset 0 1px 0 0 rgba(255, 255, 255, 0.05), var(--shadow-panel);
   }
   .panel-input {
     background: var(--ink-2);
     border: 1px solid var(--line-strong);
     border-radius: var(--radius-panel);
-    box-shadow: var(--shadow-panel);
+    box-shadow: inset 0 1px 0 0 rgba(255, 255, 255, 0.05), var(--shadow-panel);
   }
   .card-nav {
-    background: linear-gradient(180deg, var(--ink-3) 0%, var(--ink-2) 100%);
+    background: linear-gradient(180deg, color-mix(in srgb, var(--ink-3) 85%, transparent) 0%, var(--ink-2) 100%);
     border: 1px solid var(--line);
-    border-radius: var(--radius-element);
-    box-shadow: var(--shadow-card);
-    transition: border-color 0.2s var(--ease-out), box-shadow 0.2s var(--ease-out), transform 0.2s var(--ease-out);
+    border-radius: var(--radius-panel);
+    box-shadow: inset 0 1px 0 0 rgba(255, 255, 255, 0.06), var(--shadow-card);
+    transition: border-color 0.24s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.24s cubic-bezier(0.16, 1, 0.3, 1), transform 0.24s cubic-bezier(0.16, 1, 0.3, 1);
   }
   .card-nav:hover {
     border-color: var(--emerald-border);
-    box-shadow: var(--shadow-elevated);
+    box-shadow: inset 0 1px 0 0 rgba(255, 255, 255, 0.12), 0 12px 32px -8px rgba(0, 0, 0, 0.35);
     transform: translateY(-2px);
   }
   .panel-result {
     background: radial-gradient(120% 140% at 0% 0%, var(--emerald-dim) 0%, var(--ink-2) 55%);
     border: 1px solid var(--emerald-border);
-    border-radius: var(--radius-element);
-    box-shadow: var(--shadow-card);
+    border-radius: var(--radius-panel);
+    box-shadow: inset 0 1px 0 0 rgba(255, 255, 255, 0.08), var(--shadow-card);
   }
   .glass-panel {
     background: color-mix(in srgb, var(--ink-2) 78%, transparent);
     border: 1px solid var(--line);
-    backdrop-filter: blur(14px);
+    border-radius: var(--radius-panel);
+    backdrop-filter: blur(16px);
+    -webkit-backdrop-filter: blur(16px);
+    box-shadow: inset 0 1px 0 0 rgba(255, 255, 255, 0.08), var(--shadow-panel);
   }
   .glass-card {
     background: color-mix(in srgb, var(--ink-3) 72%, transparent);
     border: 1px solid var(--line);
-    backdrop-filter: blur(12px);
-    transition: border-color 0.2s var(--ease-out), box-shadow 0.2s var(--ease-out);
+    border-radius: var(--radius-panel);
+    backdrop-filter: blur(14px);
+    -webkit-backdrop-filter: blur(14px);
+    box-shadow: inset 0 1px 0 0 rgba(255, 255, 255, 0.06), var(--shadow-card);
+    transition: border-color 0.24s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.24s cubic-bezier(0.16, 1, 0.3, 1), transform 0.24s cubic-bezier(0.16, 1, 0.3, 1);
   }
   .glass-card:hover {
     border-color: var(--emerald-border);
-    box-shadow: var(--shadow-elevated);
+    box-shadow: inset 0 1px 0 0 rgba(255, 255, 255, 0.12), var(--shadow-elevated);
+    transform: translateY(-1.5px);
   }
 
-  /* ---------- Labels ---------- */
+  /* ---------- Labels (Apple HIG Capsule Badge) ---------- */
   .label-pill {
     display: inline-flex;
     align-items: center;
     gap: 6px;
-    padding: 3px 9px;
-    border-radius: 3px;
+    padding: 3.5px 10px;
+    border-radius: 9999px;
     border: 1px solid var(--line-strong);
     background: var(--ink-3);
-    font-family: var(--font-mono), monospace;
-    font-size: 10px;
-    font-weight: 600;
-    letter-spacing: 0.08em;
-    text-transform: uppercase;
+    font-family: -apple-system, BlinkMacSystemFont, "SF Pro Text", var(--font-sans), sans-serif;
+    font-size: 11px;
+    font-weight: 500;
+    letter-spacing: -0.01em;
     color: var(--fg-2);
+    box-shadow: inset 0 1px 0 0 rgba(255, 255, 255, 0.08);
   }
   .label-pill-emerald {
     border-color: var(--emerald-border);
@@ -292,33 +302,33 @@
     color: var(--gold);
   }
 
-  /* ---------- Buttons ---------- */
+  /* ---------- Buttons (Apple HIG Push Button System) ---------- */
   .btn-primary {
     display: inline-flex;
     align-items: center;
     justify-content: center;
     gap: 8px;
-    padding: 10px 20px;
-    border-radius: var(--radius-panel);
+    padding: 9px 22px;
+    border-radius: 9999px;
     background: var(--emerald);
     color: #ffffff;
-    font-family: var(--font-mono), monospace;
-    font-size: 11px;
-    font-weight: 700;
-    letter-spacing: 0.08em;
-    text-transform: uppercase;
+    font-family: -apple-system, BlinkMacSystemFont, "SF Pro Text", var(--font-sans), sans-serif;
+    font-size: 13px;
+    font-weight: 600;
+    letter-spacing: -0.01em;
     border: 1px solid transparent;
     cursor: pointer;
-    box-shadow: 0 0 0 0 transparent;
-    transition: background 0.2s var(--ease-out), box-shadow 0.25s var(--ease-out), transform 0.1s ease;
+    box-shadow: inset 0 1px 0 0 rgba(255, 255, 255, 0.28), 0 2px 8px -1px rgba(28, 139, 108, 0.35);
+    transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
   }
   .btn-primary:hover {
     background: var(--emerald-deep);
-    box-shadow: 0 0 32px -6px var(--emerald-border);
+    box-shadow: inset 0 1px 0 0 rgba(255, 255, 255, 0.35), 0 4px 16px -2px rgba(28, 139, 108, 0.45);
+    transform: translateY(-0.5px);
   }
-  .dark .btn-primary { color: var(--ink-0); }
-  .dark .btn-primary:hover { background: var(--emerald-light); }
-  .btn-primary:active { transform: scale(0.985); }
+  .dark .btn-primary { color: #ffffff; }
+  .dark .btn-primary:hover { background: var(--emerald-light); color: var(--ink-0); }
+  .btn-primary:active { transform: scale(0.975); }
   .btn-primary:disabled { opacity: 0.5; cursor: not-allowed; }
 
   .btn-secondary {
@@ -326,60 +336,72 @@
     align-items: center;
     justify-content: center;
     gap: 6px;
-    padding: 9px 16px;
-    border-radius: var(--radius-panel);
-    background: transparent;
-    color: var(--fg-2);
-    font-family: var(--font-mono), monospace;
-    font-size: 11px;
-    font-weight: 600;
-    letter-spacing: 0.06em;
-    text-transform: uppercase;
+    padding: 8.5px 18px;
+    border-radius: 9999px;
+    background: color-mix(in srgb, var(--ink-3) 75%, transparent);
+    color: var(--fg-1);
+    font-family: -apple-system, BlinkMacSystemFont, "SF Pro Text", var(--font-sans), sans-serif;
+    font-size: 13px;
+    font-weight: 500;
+    letter-spacing: -0.01em;
     border: 1px solid var(--line-strong);
+    backdrop-filter: blur(16px);
+    -webkit-backdrop-filter: blur(16px);
     cursor: pointer;
-    transition: border-color 0.2s var(--ease-out), color 0.2s var(--ease-out), background 0.2s var(--ease-out);
+    box-shadow: inset 0 1px 0 0 rgba(255, 255, 255, 0.15), 0 1px 3px 0 rgba(0, 0, 0, 0.05);
+    transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
   }
   .btn-secondary:hover {
     border-color: var(--emerald-border);
     color: var(--fg-1);
-    background: var(--ink-3);
+    background: var(--ink-4);
+    transform: translateY(-0.5px);
   }
+  .btn-secondary:active { transform: scale(0.975); }
   .btn-secondary:disabled { opacity: 0.5; cursor: not-allowed; }
 
   .btn-ghost {
     display: inline-flex;
     align-items: center;
-    gap: 5px;
-    padding: 2px 0;
+    gap: 6px;
+    padding: 6px 12px;
     background: transparent;
-    border: none;
+    border-radius: 9999px;
+    border: 1px solid transparent;
     color: var(--emerald-light);
-    font-family: var(--font-mono), monospace;
-    font-size: 11px;
-    font-weight: 600;
-    letter-spacing: 0.06em;
-    text-transform: uppercase;
+    font-family: -apple-system, BlinkMacSystemFont, "SF Pro Text", var(--font-sans), sans-serif;
+    font-size: 12px;
+    font-weight: 500;
+    letter-spacing: -0.01em;
     cursor: pointer;
-    text-underline-offset: 4px;
-    transition: opacity 0.15s ease;
+    transition: all 0.18s cubic-bezier(0.16, 1, 0.3, 1);
   }
-  .btn-ghost:hover { opacity: 0.75; text-decoration: underline; }
+  .btn-ghost:hover {
+    background: color-mix(in srgb, var(--emerald) 12%, transparent);
+    border-color: color-mix(in srgb, var(--emerald) 24%, transparent);
+    color: var(--emerald-light);
+    transform: translateY(-0.5px);
+  }
+  .btn-ghost:active {
+    transform: scale(0.97);
+  }
 
-  /* ---------- Tables ---------- */
+  /* ---------- Tables (macOS / iPadOS System Table Style) ---------- */
   .terminal-table {
     width: 100%;
     border-collapse: separate;
     border-spacing: 0;
   }
   .terminal-table thead th {
-    background: var(--ink-3);
+    background: color-mix(in srgb, var(--ink-3) 88%, transparent);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
     color: var(--fg-3);
-    font-family: var(--font-mono), monospace;
-    font-size: 10px;
+    font-family: -apple-system, BlinkMacSystemFont, "SF Pro Text", var(--font-sans), sans-serif;
+    font-size: 11px;
     font-weight: 600;
-    text-transform: uppercase;
-    letter-spacing: 0.1em;
-    padding: 10px 14px;
+    letter-spacing: 0.02em;
+    padding: 10px 16px;
     text-align: left;
     border-bottom: 1px solid var(--line-strong);
     position: sticky;
@@ -388,32 +410,41 @@
   }
   [dir="rtl"] .terminal-table thead th { text-align: right; }
   .terminal-table tbody td {
-    padding: 9px 14px;
+    padding: 10px 16px;
     border-bottom: 1px solid var(--line);
     color: var(--fg-1);
-    font-family: var(--font-mono), monospace;
-    font-variant-numeric: tabular-nums;
-    font-size: 12px;
+    font-family: -apple-system, BlinkMacSystemFont, "SF Pro Text", var(--font-sans), sans-serif;
+    font-size: 12.5px;
   }
-  .terminal-table tbody tr { transition: background 0.12s ease; }
-  .terminal-table tbody tr:hover { background: var(--emerald-dim); }
+  .terminal-table tbody td.num,
+  .terminal-table tbody td:has(span.num) {
+    font-family: var(--font-mono), ui-monospace, monospace;
+    font-variant-numeric: tabular-nums;
+  }
+  .terminal-table tbody tr {
+    transition: background 0.15s cubic-bezier(0.16, 1, 0.3, 1);
+  }
+  .terminal-table tbody tr:hover {
+    background: color-mix(in srgb, var(--emerald) 8%, var(--ink-2));
+  }
 
-  /* ---------- Inputs ---------- */
+  /* ---------- Inputs (Apple HIG Input Fields) ---------- */
   .terminal-input {
-    background: var(--ink-1);
+    background: color-mix(in srgb, var(--ink-1) 85%, transparent);
     border: 1px solid var(--line-strong);
     color: var(--fg-1);
-    padding: 8px 12px;
-    border-radius: var(--radius-panel);
-    font-family: var(--font-mono), monospace;
-    font-size: 12px;
+    padding: 8.5px 14px;
+    border-radius: 12px;
+    font-family: -apple-system, BlinkMacSystemFont, var(--font-sans), monospace;
+    font-size: 12.5px;
+    box-shadow: inset 0 1px 2px rgba(0, 0, 0, 0.04);
     transition: border-color 0.18s var(--ease-out), box-shadow 0.18s var(--ease-out);
   }
   .terminal-input::placeholder { color: var(--fg-4); }
   .terminal-input:focus {
     outline: none;
     border-color: var(--emerald);
-    box-shadow: 0 0 0 3px var(--emerald-dim);
+    box-shadow: 0 0 0 3px var(--emerald-dim), inset 0 1px 2px rgba(0, 0, 0, 0.04);
   }
 
   /* ---------- Cinematic textures ---------- */

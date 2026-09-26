@@ -141,13 +141,15 @@ export default function ToolShowcase() {
                   <button
                     key={s.id}
                     onClick={() => setSuite(s.id)}
-                    className={`text-start rounded-md border px-4 py-3 transition-all ${
-                      active ? "border-emerald/40 bg-emerald/10 text-fg" : "border-line text-fg-2 hover:border-line-strong hover:text-fg"
+                    className={`text-start rounded-2xl border px-5 py-3.5 transition-all duration-200 apple-touch-target ${
+                      active
+                        ? "border-emerald/40 bg-emerald/15 text-fg shadow-[inset_0_1px_0_0_rgba(255,255,255,0.15),0_6px_20px_rgba(28,139,108,0.22)]"
+                        : "border-line bg-ink-2/60 text-fg-2 hover:border-line-strong hover:bg-ink-3/80 hover:text-fg"
                     }`}
                     aria-pressed={active}
                   >
-                    <div className="text-sm font-medium">{isAr ? s.ar : s.en}</div>
-                    <div className="font-mono text-[10px] text-fg-3 mt-0.5">
+                    <div className="text-sm font-semibold tracking-tight">{isAr ? s.ar : s.en}</div>
+                    <div className="font-mono text-[10.5px] text-fg-3 mt-1">
                       {toolsBySuite(s.id).length} {isAr ? "محرك" : "engines"}
                     </div>
                   </button>
