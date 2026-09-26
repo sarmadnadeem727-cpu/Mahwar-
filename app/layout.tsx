@@ -44,6 +44,11 @@ export const metadata: Metadata = {
   description:
     "The axis where capital meets logistics. Institutional DCF, LBO and 3-statement modelling, AAOIFI screening, a live GCC stock screener and a full supply-chain analytics suite.",
   icons: { icon: "/logo.jpg", apple: "/logo.jpg" },
+  appleWebApp: {
+    capable: true,
+    statusBarStyle: "black-translucent",
+    title: "Mahwar Terminal",
+  },
   openGraph: {
     title: `${APP.name} (${APP.nameAr}) — Finance & Supply Chain Terminal`,
     description: "Bloomberg-grade modelling for GCC capital markets and operations, in one terminal.",

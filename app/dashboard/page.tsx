@@ -9,6 +9,7 @@ import TopBar from "@/components/layout/TopBar";
 import StatusBar from "@/components/layout/StatusBar";
 import MobileNav from "@/components/layout/MobileNav";
 import AppleDock from "@/components/layout/AppleDock";
+import AppleWindowTabs from "@/components/layout/AppleWindowTabs";
 import { useTerminalStore, type PanelType, selectLanguage, selectActivePanel, selectSetPanel } from "@/store/useTerminalStore";
 import { isPanelType } from "@/lib/registry";
 
@@ -142,6 +143,7 @@ export default function DashboardPage() {
       <div className="flex-1 flex flex-col min-w-0 overflow-hidden relative">
         <div className="aurora aurora--dashboard" aria-hidden="true" />
         <TopBar />
+        <AppleWindowTabs />
         <main className="flex-1 overflow-y-auto p-3 sm:p-4 md:p-6 lg:p-8 pb-[calc(4.5rem+env(safe-area-inset-bottom))] lg:pb-8 bg-ink-1/80 grain relative">
           <div className="relative max-w-[1600px] mx-auto">
             <Suspense fallback={<PanelSkeleton />}>
