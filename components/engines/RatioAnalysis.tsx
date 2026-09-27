@@ -7,6 +7,10 @@ import { useTerminalStore } from "@/store/useTerminalStore";
 import { useSessionSave } from "@/lib/useSessionSave";
 import { mapToRatioInputs, type LinkedSecurity } from "@/lib/market/engineBridge";
 
+import { Upload, CheckCircle2 } from "lucide-react";
+import DocumentIngestionModal from "@/components/shared/DocumentIngestionModal";
+import ProvenanceBadge from "@/components/shared/ProvenanceBadge";
+
 const DEFAULTS: RatioInputs = {
   revenue: 4_200, cogs: 2_730, opex: 690, depreciation: 210, interestExpense: 95, taxExpense: 62, netIncome: 390,
   cash: 380, receivables: 610, inventory: 520, currentAssets: 1_640, totalAssets: 6_100,
@@ -20,7 +24,7 @@ const GROUPS: { id: Ratio["group"]; en: string; ar: string }[] = [
 const STATUS = { good: "bg-pos", watch: "bg-warn", weak: "bg-neg" };
 
 export default function RatioAnalysis() {
-  const { language, currency, activeSecurity } = useTerminalStore();
+  const { language, currency, activeSecurity, sessionValues } = useTerminalStore();
   const isAr = language === "ar";
   const [i, setI] = useState<RatioInputs>(() => {
     if (activeSecurity) {
@@ -28,6 +32,9 @@ export default function RatioAnalysis() {
     }
     return DEFAULTS;
   });
+  const [uploadedFile, setUploadedFile] = useState<string | null>(null);
+  const [isUploadOpen, setIsUploadOpen] = useState(false);
+
   const set = <K extends keyof RatioInputs>(k: K, v: RatioInputs[K]) => setI((p) => ({ ...p, [k]: v }));
   const o = useMemo(() => computeRatios(i), [i]);
   useSessionSave("ratios", i, { score: o.score, roe: o.dupont.roe * 100, netDebtEbitda: o.ratios.find((r) => r.key === "ndebitda")?.value, currentRatio: o.ratios.find((r) => r.key === "current")?.value });
@@ -36,33 +43,128 @@ export default function RatioAnalysis() {
     setI(mapToRatioInputs(sec));
   };
 
+  const handleApplyDocument = (data: Record<string, number>, fileName: string) => {
+    setUploadedFile(fileName);
+    setI((prev) => ({
+      ...prev,
+      revenue: data.revenue ?? prev.revenue,
+      cogs: data.cogs ?? prev.cogs,
+      opex: data.opex ?? prev.opex,
+      depreciation: data.depreciation ?? prev.depreciation,
+      interestExpense: data.interestExpense ?? prev.interestExpense,
+      netIncome: data.netIncome ?? prev.netIncome,
+      cash: data.cash ?? prev.cash,
+      receivables: data.receivables ?? prev.receivables,
+      inventory: data.inventory ?? prev.inventory,
+      currentAssets: data.currentAssets ?? prev.currentAssets,
+      totalAssets: data.totalAssets ?? prev.totalAssets,
+      payables: data.payables ?? prev.payables,
+      currentLiabilities: data.currentLiabilities ?? prev.currentLiabilities,
+      totalDebt: data.totalDebt ?? prev.totalDebt,
+      totalLiabilities: data.totalLiabilities ?? prev.totalLiabilities,
+      equity: data.equity ?? prev.equity,
+      capex: data.capex ?? prev.capex,
+      operatingCashFlow: data.operatingCashFlow ?? prev.operatingCashFlow,
+    }));
+  };
+
   const show = (r: Ratio) => (r.unit === "%" ? pct(r.value) : r.unit === "days" ? `${fmt(r.value, 0)} d` : `${fmt(r.value, 2)}x`);
   const f = (k: keyof RatioInputs, en: string, ar: string, suffix: string = currency) => <Field key={k} label={isAr ? ar : en} value={i[k]} onChange={(v) => set(k, v)} suffix={suffix} />;
 
-  return (
-    <EngineShell
-      id="ratios"
-      icon={<Gauge size={22} />}
-      onReset={() => setI(DEFAULTS)}
-      onSyncSecurity={handleSyncSecurity}
+  const auditSteps = [
+    ...(uploadedFile
+      ? [
+          {
+            title: isAr ? "مصدر القوائم" : "Statement Provenance",
+            formula: "populated from uploaded statement",
+            substitution: uploadedFile,
+            result: isAr ? "تمت المراجعة والاعتماد" : "User-reviewed",
+          },
+        ]
+      : []),
+    { title: "EBITDA", formula: "Revenue − COGS − Opex", substitution: `${i.revenue} − ${i.cogs} − ${i.opex}`, result: fmt(o.ebitda) },
+    { title: "Net margin", formula: "NI / Revenue", substitution: `${i.netIncome} / ${i.revenue}`, result: pct(o.dupont.netMargin * 100, 2) },
+    { title: "Asset turnover", formula: "Revenue / Total assets", substitution: `${i.revenue} / ${i.totalAssets}`, result: fmt(o.dupont.assetTurnover, 3) },
+    { title: "Equity multiplier", formula: "Total assets / Equity", substitution: `${i.totalAssets} / ${i.equity}`, result: fmt(o.dupont.leverage, 3) },
+    { title: "ROE (DuPont)", formula: "margin × turnover × multiplier", substitution: `${(o.dupont.netMargin * 100).toFixed(2)}% × ${o.dupont.assetTurnover.toFixed(3)} × ${o.dupont.leverage.toFixed(3)}`, result: pct(o.dupont.roe * 100, 2) },
+  ];
 
-      audit={{
-        toolName: "Ratio analysis", toolNameAr: "تحليل النسب المالية",
-        summary: "Twenty standard ratios from the income statement, balance sheet and cash flow; DuPont splits ROE into margin × turnover × leverage.", summaryAr: "عشرون نسبة قياسية من القوائم الثلاث؛ ديبونت يفكك العائد على حقوق الملكية.",
-        steps: [
-          { title: "EBITDA", formula: "Revenue − COGS − Opex", substitution: `${i.revenue} − ${i.cogs} − ${i.opex}`, result: fmt(o.ebitda) },
-          { title: "Net margin", formula: "NI / Revenue", substitution: `${i.netIncome} / ${i.revenue}`, result: pct(o.dupont.netMargin * 100, 2) },
-          { title: "Asset turnover", formula: "Revenue / Total assets", substitution: `${i.revenue} / ${i.totalAssets}`, result: fmt(o.dupont.assetTurnover, 3) },
-          { title: "Equity multiplier", formula: "Total assets / Equity", substitution: `${i.totalAssets} / ${i.equity}`, result: fmt(o.dupont.leverage, 3) },
-          { title: "ROE (DuPont)", formula: "margin × turnover × multiplier", substitution: `${(o.dupont.netMargin * 100).toFixed(2)}% × ${o.dupont.assetTurnover.toFixed(3)} × ${o.dupont.leverage.toFixed(3)}`, result: pct(o.dupont.roe * 100, 2) },
-        ],
-      }}
-      exportRows={[{ Metric: "Health score", Value: o.score }, ...o.ratios.map((r) => ({ Metric: r.label, Value: r.value, Unit: r.unit, Status: r.status }))]}
-      inputs={<>
-        <div className="font-mono text-[10px] text-fg-4 uppercase tracking-wider pt-1">{isAr ? "قائمة الدخل" : "Income statement"}</div>
-        {f("revenue", "Revenue", "الإيرادات")}{f("cogs", "COGS", "تكلفة المبيعات")}{f("opex", "Operating expenses", "المصاريف التشغيلية")}{f("depreciation", "D&A", "الإهلاك")}{f("interestExpense", "Interest expense", "مصروف الفائدة")}{f("netIncome", "Net income", "صافي الدخل")}
-        <div className="font-mono text-[10px] text-fg-4 uppercase tracking-wider pt-2 border-t border-line">{isAr ? "الميزانية" : "Balance sheet"}</div>
-        {f("cash", "Cash", "النقد")}{f("receivables", "Receivables", "الذمم المدينة")}{f("inventory", "Inventory", "المخزون")}{f("currentAssets", "Current assets", "الأصول المتداولة")}{f("totalAssets", "Total assets", "إجمالي الأصول")}{f("payables", "Payables", "الذمم الدائنة")}{f("currentLiabilities", "Current liabilities", "الالتزامات المتداولة")}{f("totalDebt", "Total debt", "إجمالي الدين")}{f("totalLiabilities", "Total liabilities", "إجمالي الالتزامات")}{f("equity", "Equity", "حقوق الملكية")}
+  return (
+    <>
+      <DocumentIngestionModal
+        isOpen={isUploadOpen}
+        onClose={() => setIsUploadOpen(false)}
+        targetEngine="ratios"
+        onApply={handleApplyDocument}
+      />
+      <EngineShell
+        id="ratios"
+        icon={<Gauge size={22} />}
+        onReset={() => {
+          setI(DEFAULTS);
+          setUploadedFile(null);
+        }}
+        onSyncSecurity={handleSyncSecurity}
+        audit={{
+          toolName: "Ratio analysis",
+          toolNameAr: "تحليل النسب المالية",
+          summary: uploadedFile
+            ? `populated from uploaded statement: ${uploadedFile} · DuPont & 20 ratios computed.`
+            : "Twenty standard ratios from the income statement, balance sheet and cash flow; DuPont splits ROE into margin × turnover × leverage.",
+          summaryAr: uploadedFile
+            ? `مستخرجة من القائمة المالية: ${uploadedFile} · تحليل ديبونت وعشرون نسبة مالية.`
+            : "عشرون نسبة قياسية من القوائم الثلاث؛ ديبونت يفكك العائد على حقوق الملكية.",
+          steps: auditSteps,
+        }}
+        exportRows={[{ Metric: "Health score", Value: o.score }, ...(uploadedFile ? [{ Metric: "Source Document", Value: uploadedFile }] : []), ...o.ratios.map((r) => ({ Metric: r.label, Value: r.value, Unit: r.unit, Status: r.status }))]}
+        inputs={<>
+          <div className="flex items-center justify-between pb-2 mb-2 border-b border-line">
+            <span className="font-mono text-[10px] text-fg-3 uppercase">
+              {isAr ? "الاستيراد الذكي" : "Smart Ingestion"}
+            </span>
+            <button
+              type="button"
+              onClick={() => setIsUploadOpen(true)}
+              className="flex items-center gap-1.5 px-2.5 py-1 rounded bg-emerald/10 border border-emerald/30 text-emerald-light hover:bg-emerald/20 transition-colors text-[11px] font-mono font-bold"
+            >
+              <Upload size={12} />
+              <span>{isAr ? "رفع القوائم (PDF/صورة)" : "Upload Statement (PDF/Image)"}</span>
+            </button>
+          </div>
+
+          {uploadedFile && (
+            <div className="p-2 mb-3 rounded border border-emerald/40 bg-emerald/10 text-emerald-light text-xs font-mono flex items-center justify-between">
+              <div className="flex items-center gap-1.5 truncate">
+                <CheckCircle2 size={13} className="shrink-0" />
+                <span className="truncate">
+                  {isAr ? `مستخرج من: ${uploadedFile}` : `Extracted: ${uploadedFile}`}
+                </span>
+              </div>
+              <button
+                type="button"
+                onClick={() => setUploadedFile(null)}
+                className="text-fg-4 hover:text-fg text-[10px] underline ms-2"
+              >
+                {isAr ? "مسح" : "Clear"}
+              </button>
+            </div>
+          )}
+
+          {!uploadedFile && sessionValues["inventory-days"] && (
+            <ProvenanceBadge
+              engineId="ccc"
+              metricLabelEn="Inventory Days (DIO)"
+              metricLabelAr="أيام المخزون"
+              originalValue={sessionValues["inventory-days"].value}
+              unit="days"
+              className="mb-2"
+            />
+          )}
+
+          <div className="font-mono text-[10px] text-fg-4 uppercase tracking-wider pt-1">{isAr ? "قائمة الدخل" : "Income statement"}</div>
+          {f("revenue", "Revenue", "الإيرادات")}{f("cogs", "COGS", "تكلفة المبيعات")}{f("opex", "Operating expenses", "المصاريف التشغيلية")}{f("depreciation", "D&A", "الإهلاك")}{f("interestExpense", "Interest expense", "مصروف الفائدة")}{f("netIncome", "Net income", "صافي الدخل")}
+          <div className="font-mono text-[10px] text-fg-4 uppercase tracking-wider pt-2 border-t border-line">{isAr ? "الميزانية" : "Balance sheet"}</div>
+          {f("cash", "Cash", "النقد")}{f("receivables", "Receivables", "الذمم المدينة")}{f("inventory", "Inventory", "المخزون")}{f("currentAssets", "Current assets", "الأصول المتداولة")}{f("totalAssets", "Total assets", "إجمالي الأصول")}{f("payables", "Payables", "الذمم الدائنة")}{f("currentLiabilities", "Current liabilities", "الالتزامات المتداولة")}{f("totalDebt", "Total debt", "إجمالي الدين")}{f("totalLiabilities", "Total liabilities", "إجمالي الالتزامات")}{f("equity", "Equity", "حقوق الملكية")}
         <div className="font-mono text-[10px] text-fg-4 uppercase tracking-wider pt-2 border-t border-line">{isAr ? "التدفق والسوق" : "Cash flow & market"}</div>
         {f("operatingCashFlow", "Operating cash flow", "التدفق التشغيلي")}{f("capex", "Capex", "الإنفاق الرأسمالي")}{f("sharesOutstanding", "Shares (m)", "الأسهم (م)", "")}{f("price", "Share price", "سعر السهم")}
       </>}>
@@ -96,5 +198,6 @@ export default function RatioAnalysis() {
         ))}
       </div>
     </EngineShell>
+    </>
   );
 }

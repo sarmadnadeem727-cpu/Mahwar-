@@ -2,7 +2,7 @@
 
 import React, { useState, useEffect } from "react";
 import { motion } from "framer-motion";
-import { FileSpreadsheet, Download, FileText, ToggleLeft, ToggleRight } from "lucide-react";
+import { FileSpreadsheet, Download, FileText, ToggleLeft, ToggleRight, Upload, CheckCircle2 } from "lucide-react";
 import * as XLSX from "xlsx";
 import jsPDF from "jspdf";
 import autoTable from "jspdf-autotable";
@@ -10,13 +10,17 @@ import { useTerminalStore } from "@/store/useTerminalStore";
 import { t } from "@/lib/i18n";
 import { panelReveal } from "@/lib/motion";
 import { ZAKAT_RATE } from "@/lib/constants";
+import DocumentIngestionModal from "@/components/shared/DocumentIngestionModal";
+import ProvenanceBadge from "@/components/shared/ProvenanceBadge";
 
 export default function ThreeStatementModel() {
-  const { language, updateSessionAnalysis } = useTerminalStore();
+  const { language, updateSessionAnalysis, sessionValues } = useTerminalStore();
   const isAr = language === 'ar';
 
   const [activeTab, setActiveTab] = useState<"income" | "balance" | "cashflow">("income");
   const [gaapMode, setGaapMode] = useState<"SAUDI_GAAP" | "IFRS">("SAUDI_GAAP");
+  const [isUploadOpen, setIsUploadOpen] = useState(false);
+  const [uploadedFile, setUploadedFile] = useState<string | null>(null);
 
   // Editable Drivers
   const [baseRev, setBaseRev] = useState<number>(1500);
@@ -27,7 +31,32 @@ export default function ThreeStatementModel() {
   const [startingCash, setStartingCash] = useState<number>(400);
   const [initialDebt, setInitialDebt] = useState<number>(500);
 
-  // Projections 5Y - Purely derived dynamically from inputs
+  // Operational Working Capital Drivers (Carried over from CCC)
+  const sessionDio = sessionValues["inventory-days"]?.value ?? 45;
+  const sessionDso = sessionValues["receivable-days"]?.value ?? 55;
+  const sessionDpo = sessionValues["payable-days"]?.value ?? 36;
+
+  const [dio, setDio] = useState<number>(sessionDio);
+  const [dso, setDso] = useState<number>(sessionDso);
+  const [dpo, setDpo] = useState<number>(sessionDpo);
+
+  const handleApplyDocument = (data: Record<string, number>, fileName: string) => {
+    setUploadedFile(fileName);
+    if (data.revenue) setBaseRev(Math.round(data.revenue));
+    if (data.revenue && data.cogs) {
+      setCogsPct(Number(((data.cogs / data.revenue) * 100).toFixed(1)));
+    }
+    if (data.revenue && data.opex) {
+      setOpexPct(Number(((data.opex / data.revenue) * 100).toFixed(1)));
+    }
+    if (data.revenue && data.capex) {
+      setCapexPct(Number(((data.capex / data.revenue) * 100).toFixed(1)));
+    }
+    if (data.cash) setStartingCash(Math.round(data.cash));
+    if (data.totalDebt) setInitialDebt(Math.round(data.totalDebt));
+  };
+
+  // Projections 5Y - Derived dynamically from inputs & operational cycle
   let runningCash = startingCash;
   let runningPpe = 800;
 
@@ -46,16 +75,18 @@ export default function ThreeStatementModel() {
     const netIncome = ebit - zakatOrTax;
 
     const capex = rev * (capexPct / 100);
-    const receivables = rev * 0.15;
-    const payables = cogs * 0.10;
-    const deltaNwc = (receivables - payables) * 0.1;
+    // Working capital line items linked to operational DIO, DSO, DPO
+    const inventory = Math.round((cogs * dio) / 365);
+    const receivables = Math.round((rev * dso) / 365);
+    const payables = Math.round((cogs * dpo) / 365);
+    const deltaNwc = (inventory + receivables - payables) * 0.1;
     const operatingCF = netIncome + da - deltaNwc;
     const fcf = operatingCF - capex;
 
     runningCash += fcf;
     runningPpe += (capex - da);
 
-    const totalAssets = runningCash + receivables + runningPpe;
+    const totalAssets = runningCash + inventory + receivables + runningPpe;
     const debt = initialDebt;
     const totalLiab = debt + payables;
     const equity = totalAssets - totalLiab;
@@ -72,6 +103,7 @@ export default function ThreeStatementModel() {
       zakatOrTax: Math.round(zakatOrTax),
       netIncome: Math.round(netIncome),
       cash: Math.round(runningCash),
+      inventory: Math.round(inventory),
       receivables: Math.round(receivables),
       netPpe: Math.round(runningPpe),
       totalAssets: Math.round(totalAssets),
@@ -96,14 +128,18 @@ export default function ThreeStatementModel() {
         capexPct,
         startingCash,
         initialDebt,
-        gaapMode
+        gaapMode,
+        dio,
+        dso,
+        dpo,
+        uploadedFile,
       },
       outputs: {
         projections
       },
       computedAt: new Date().toISOString()
     });
-  }, [baseRev, growthRate, cogsPct, opexPct, capexPct, startingCash, initialDebt, gaapMode]);
+  }, [baseRev, growthRate, cogsPct, opexPct, capexPct, startingCash, initialDebt, gaapMode, dio, dso, dpo, uploadedFile]);
 
   const exportExcel = () => {
     const ws = XLSX.utils.json_to_sheet(projections);
@@ -128,110 +164,201 @@ export default function ThreeStatementModel() {
   };
 
   return (
-    <motion.div
-      variants={panelReveal}
-      initial="initial"
-      animate="animate"
-      exit="exit"
-      className="grid grid-cols-1 lg:grid-cols-12 gap-8 text-fg font-mono"
-      dir={isAr ? "rtl" : "ltr"}
-    >
-      {/* LEFT COLUMN: DRIVERS (4 COLS) */}
-      <div className="col-span-12 lg:col-span-4 space-y-6">
-        <div className="panel-input p-6 space-y-4">
-          <div className="flex items-center justify-between pb-3 border-b border-line">
-            <div className="flex items-center gap-3">
-              <FileSpreadsheet className="text-emerald" size={22} />
-              <div>
-                <h2 className="font-mono text-lg font-extrabold text-fg uppercase">
-                  {isAr ? "افتراضات القوائم الثلاث" : "3-Statement Drivers"}
-                </h2>
-                <span className="text-[10px] font-mono text-fg-3 uppercase">
-                  {isAr ? "مدخلات التنبؤات والنموذج" : "Forecast Drivers"}
-                </span>
+    <>
+      <DocumentIngestionModal
+        isOpen={isUploadOpen}
+        onClose={() => setIsUploadOpen(false)}
+        targetEngine="FS"
+        onApply={handleApplyDocument}
+      />
+      <motion.div
+        variants={panelReveal}
+        initial="initial"
+        animate="animate"
+        exit="exit"
+        className="grid grid-cols-1 lg:grid-cols-12 gap-8 text-fg font-mono"
+        dir={isAr ? "rtl" : "ltr"}
+      >
+        {/* LEFT COLUMN: DRIVERS (4 COLS) */}
+        <div className="col-span-12 lg:col-span-4 space-y-6">
+          <div className="panel-input p-6 space-y-4">
+            <div className="flex items-center justify-between pb-3 border-b border-line">
+              <div className="flex items-center gap-3">
+                <FileSpreadsheet className="text-emerald" size={22} />
+                <div>
+                  <h2 className="font-mono text-lg font-extrabold text-fg uppercase">
+                    {isAr ? "افتراضات القوائم الثلاث" : "3-Statement Drivers"}
+                  </h2>
+                  <span className="text-[10px] font-mono text-fg-3 uppercase">
+                    {isAr ? "مدخلات التنبؤات والنموذج" : "Forecast Drivers"}
+                  </span>
+                </div>
               </div>
             </div>
-          </div>
 
-          <div className="space-y-4 font-mono text-xs">
-            {/* Base Revenue */}
-            <div className="flex justify-between items-center">
-              <label className="text-fg-2">{isAr ? "الإيرادات الأساسية" : "Base Revenue (M)"}</label>
-              <input
-                type="number"
-                value={baseRev}
-                onChange={(e) => setBaseRev(Number(e.target.value))}
-                className="w-24 px-2 py-1 bg-ink-3 border border-line focus:border-emerald rounded-md text-right text-fg font-mono text-xs focus:outline-none"
-              />
+            <div className="flex items-center justify-between pb-2 border-b border-line">
+              <span className="font-mono text-[10px] text-fg-3 uppercase">
+                {isAr ? "الاستيراد الذكي" : "Smart Ingestion"}
+              </span>
+              <button
+                type="button"
+                onClick={() => setIsUploadOpen(true)}
+                className="flex items-center gap-1.5 px-2.5 py-1 rounded bg-emerald/10 border border-emerald/30 text-emerald-light hover:bg-emerald/20 transition-colors text-[11px] font-mono font-bold"
+              >
+                <Upload size={12} />
+                <span>{isAr ? "رفع القوائم (PDF/صورة)" : "Upload Statement (PDF/Image)"}</span>
+              </button>
             </div>
 
-            {/* Growth Rate */}
-            <div className="flex justify-between items-center">
-              <label className="text-fg-2">{isAr ? "معدل النمو (%)" : "Growth Rate (%)"}</label>
-              <input
-                type="number"
-                value={growthRate}
-                onChange={(e) => setGrowthRate(Number(e.target.value))}
-                className="w-24 px-2 py-1 bg-ink-3 border border-line focus:border-emerald rounded-md text-right text-fg font-mono text-xs focus:outline-none"
-              />
-            </div>
+            {uploadedFile && (
+              <div className="p-2 rounded border border-emerald/40 bg-emerald/10 text-emerald-light text-xs font-mono flex items-center justify-between">
+                <div className="flex items-center gap-1.5 truncate">
+                  <CheckCircle2 size={13} className="shrink-0" />
+                  <span className="truncate">
+                    {isAr ? `مستخرج من: ${uploadedFile}` : `Extracted: ${uploadedFile}`}
+                  </span>
+                </div>
+                <button
+                  type="button"
+                  onClick={() => setUploadedFile(null)}
+                  className="text-fg-4 hover:text-fg text-[10px] underline ms-2"
+                >
+                  {isAr ? "مسح" : "Clear"}
+                </button>
+              </div>
+            )}
 
-            {/* COGS % */}
-            <div className="flex justify-between items-center">
-              <label className="text-fg-2">{isAr ? "تكلفة المبيعات (%)" : "COGS (%)"}</label>
-              <input
-                type="number"
-                value={cogsPct}
-                onChange={(e) => setCogsPct(Number(e.target.value))}
-                className="w-24 px-2 py-1 bg-ink-3 border border-line focus:border-emerald rounded-md text-right text-fg font-mono text-xs focus:outline-none"
+            {sessionValues["inventory-days"] && (
+              <ProvenanceBadge
+                engineId="ccc"
+                metricLabelEn="Working Capital Cycle"
+                metricLabelAr="دورة رأس المال العامل"
+                originalValue={`DIO: ${sessionDio}d, DSO: ${sessionDso}d, DPO: ${sessionDpo}d`}
+                isModified={dio !== sessionDio || dso !== sessionDso || dpo !== sessionDpo}
+                onReset={() => {
+                  setDio(sessionDio);
+                  setDso(sessionDso);
+                  setDpo(sessionDpo);
+                }}
+                className="mb-1"
               />
-            </div>
+            )}
 
-            {/* OpEx % */}
-            <div className="flex justify-between items-center">
-              <label className="text-fg-2">{isAr ? "المصاريف التشغيلية (%)" : "OpEx (%)"}</label>
-              <input
-                type="number"
-                value={opexPct}
-                onChange={(e) => setOpexPct(Number(e.target.value))}
-                className="w-24 px-2 py-1 bg-ink-3 border border-line focus:border-emerald rounded-md text-right text-fg font-mono text-xs focus:outline-none"
-              />
-            </div>
+            <div className="space-y-4 font-mono text-xs">
+              {/* Base Revenue */}
+              <div className="flex justify-between items-center">
+                <label className="text-fg-2">{isAr ? "الإيرادات الأساسية" : "Base Revenue (M)"}</label>
+                <input
+                  type="number"
+                  value={baseRev}
+                  onChange={(e) => setBaseRev(Number(e.target.value))}
+                  className="w-24 px-2 py-1 bg-ink-3 border border-line focus:border-emerald rounded-md text-right text-fg font-mono text-xs focus:outline-none"
+                />
+              </div>
 
-            {/* CapEx % */}
-            <div className="flex justify-between items-center">
-              <label className="text-fg-2">{isAr ? "الإنفاق الرأسمالي (% من الإيرادات)" : "CapEx (% of Rev)"}</label>
-              <input
-                type="number"
-                value={capexPct}
-                onChange={(e) => setCapexPct(Number(e.target.value))}
-                className="w-24 px-2 py-1 bg-ink-3 border border-line focus:border-emerald rounded-md text-right text-fg font-mono text-xs focus:outline-none"
-              />
-            </div>
+              {/* Growth Rate */}
+              <div className="flex justify-between items-center">
+                <label className="text-fg-2">{isAr ? "معدل النمو (%)" : "Growth Rate (%)"}</label>
+                <input
+                  type="number"
+                  value={growthRate}
+                  onChange={(e) => setGrowthRate(Number(e.target.value))}
+                  className="w-24 px-2 py-1 bg-ink-3 border border-line focus:border-emerald rounded-md text-right text-fg font-mono text-xs focus:outline-none"
+                />
+              </div>
 
-            {/* Starting Cash */}
-            <div className="flex justify-between items-center">
-              <label className="text-fg-2">{isAr ? "النقد الابتدائي (مليون)" : "Starting Cash (M)"}</label>
-              <input
-                type="number"
-                value={startingCash}
-                onChange={(e) => setStartingCash(Number(e.target.value))}
-                className="w-24 px-2 py-1 bg-ink-3 border border-line focus:border-emerald rounded-md text-right text-fg font-mono text-xs focus:outline-none"
-              />
-            </div>
+              {/* COGS % */}
+              <div className="flex justify-between items-center">
+                <label className="text-fg-2">{isAr ? "تكلفة المبيعات (%)" : "COGS (%)"}</label>
+                <input
+                  type="number"
+                  value={cogsPct}
+                  onChange={(e) => setCogsPct(Number(e.target.value))}
+                  className="w-24 px-2 py-1 bg-ink-3 border border-line focus:border-emerald rounded-md text-right text-fg font-mono text-xs focus:outline-none"
+                />
+              </div>
 
-            {/* Initial Debt */}
-            <div className="flex justify-between items-center">
-              <label className="text-fg-2">{isAr ? "الدين القائم (مليون)" : "Existing Debt (M)"}</label>
-              <input
-                type="number"
-                value={initialDebt}
-                onChange={(e) => setInitialDebt(Number(e.target.value))}
-                className="w-24 px-2 py-1 bg-ink-3 border border-line focus:border-emerald rounded-md text-right text-fg font-mono text-xs focus:outline-none"
-              />
-            </div>
+              {/* OpEx % */}
+              <div className="flex justify-between items-center">
+                <label className="text-fg-2">{isAr ? "المصاريف التشغيلية (%)" : "OpEx (%)"}</label>
+                <input
+                  type="number"
+                  value={opexPct}
+                  onChange={(e) => setOpexPct(Number(e.target.value))}
+                  className="w-24 px-2 py-1 bg-ink-3 border border-line focus:border-emerald rounded-md text-right text-fg font-mono text-xs focus:outline-none"
+                />
+              </div>
 
-            <hr className="border-line" />
+              {/* CapEx % */}
+              <div className="flex justify-between items-center">
+                <label className="text-fg-2">{isAr ? "الإنفاق الرأسمالي (% من الإيرادات)" : "CapEx (% of Rev)"}</label>
+                <input
+                  type="number"
+                  value={capexPct}
+                  onChange={(e) => setCapexPct(Number(e.target.value))}
+                  className="w-24 px-2 py-1 bg-ink-3 border border-line focus:border-emerald rounded-md text-right text-fg font-mono text-xs focus:outline-none"
+                />
+              </div>
+
+              {/* Starting Cash */}
+              <div className="flex justify-between items-center">
+                <label className="text-fg-2">{isAr ? "النقد الابتدائي (مليون)" : "Starting Cash (M)"}</label>
+                <input
+                  type="number"
+                  value={startingCash}
+                  onChange={(e) => setStartingCash(Number(e.target.value))}
+                  className="w-24 px-2 py-1 bg-ink-3 border border-line focus:border-emerald rounded-md text-right text-fg font-mono text-xs focus:outline-none"
+                />
+              </div>
+
+              {/* Initial Debt */}
+              <div className="flex justify-between items-center">
+                <label className="text-fg-2">{isAr ? "الدين القائم (مليون)" : "Existing Debt (M)"}</label>
+                <input
+                  type="number"
+                  value={initialDebt}
+                  onChange={(e) => setInitialDebt(Number(e.target.value))}
+                  className="w-24 px-2 py-1 bg-ink-3 border border-line focus:border-emerald rounded-md text-right text-fg font-mono text-xs focus:outline-none"
+                />
+              </div>
+
+              <div className="border-t border-line pt-3 space-y-3">
+                <span className="text-[10px] text-fg-3 uppercase font-bold block">
+                  {isAr ? "سلسلة العمليات: دورة رأس المال العامل" : "Operational WC Cycle (Days)"}
+                </span>
+
+                <div className="flex justify-between items-center">
+                  <label className="text-fg-2">{isAr ? "أيام المخزون (DIO)" : "Inventory Days (DIO)"}</label>
+                  <input
+                    type="number"
+                    value={dio}
+                    onChange={(e) => setDio(Number(e.target.value))}
+                    className="w-20 px-2 py-1 bg-ink-3 border border-line focus:border-emerald rounded-md text-right text-fg font-mono text-xs focus:outline-none"
+                  />
+                </div>
+
+                <div className="flex justify-between items-center">
+                  <label className="text-fg-2">{isAr ? "أيام التحصيل (DSO)" : "Receivable Days (DSO)"}</label>
+                  <input
+                    type="number"
+                    value={dso}
+                    onChange={(e) => setDso(Number(e.target.value))}
+                    className="w-20 px-2 py-1 bg-ink-3 border border-line focus:border-emerald rounded-md text-right text-fg font-mono text-xs focus:outline-none"
+                  />
+                </div>
+
+                <div className="flex justify-between items-center">
+                  <label className="text-fg-2">{isAr ? "أيام السداد (DPO)" : "Payable Days (DPO)"}</label>
+                  <input
+                    type="number"
+                    value={dpo}
+                    onChange={(e) => setDpo(Number(e.target.value))}
+                    className="w-20 px-2 py-1 bg-ink-3 border border-line focus:border-emerald rounded-md text-right text-fg font-mono text-xs focus:outline-none"
+                  />
+                </div>
+              </div>
+
+              <hr className="border-line" />
 
             {/* GAAP Mode Toggle */}
             <div className="space-y-2">
@@ -453,6 +580,7 @@ export default function ThreeStatementModel() {
         </div>
       </div>
     </motion.div>
+    </>
   );
 }
 

@@ -19,7 +19,7 @@ import { exportToExcel, exportToPdf } from "./shared/exportOperations";
 import { TERMINAL_CHART_THEME as T } from "@/lib/chartTheme";
 
 export default function EconomicOrderQuantity() {
-  const { language, currency, updateSessionAnalysis } = useTerminalStore();
+  const { language, currency, updateSessionAnalysis, setSessionValues } = useTerminalStore();
   const isAr = language === "ar";
 
   const [annualDemand, setAnnualDemand] = useState<number>(10000);
@@ -43,13 +43,42 @@ export default function EconomicOrderQuantity() {
 
   const outputs: EOQOutputs = computeEOQ(inputs);
 
-  // Sync session state
+  // Sync session state & shared metrics chain
   useEffect(() => {
     updateSessionAnalysis("eoq", {
       inputs,
       outputs: { eoq: outputs.eoq, totalAnnualCost: outputs.totalAnnualCost },
       computedAt: new Date().toISOString(),
     });
+    setSessionValues([
+      {
+        key: "eoq-quantity",
+        value: outputs.eoq,
+        unit: "units",
+        sourceEngine: "eoq",
+        sourceLabelEn: "Economic Order Quantity (EOQ)",
+        sourceLabelAr: "حجم الطلب الاقتصادي الأمثل",
+        updatedAt: new Date().toISOString(),
+      },
+      {
+        key: "eoq-holding-cost",
+        value: outputs.annualHoldingCost,
+        unit: currency,
+        sourceEngine: "eoq",
+        sourceLabelEn: "Annual Holding Cost",
+        sourceLabelAr: "تكلفة الاحتفاظ السنوية بالمخزون",
+        updatedAt: new Date().toISOString(),
+      },
+      {
+        key: "eoq-unit-cost",
+        value: unitCost,
+        unit: currency,
+        sourceEngine: "eoq",
+        sourceLabelEn: "Unit Purchase Cost",
+        sourceLabelAr: "سعر شراء الوحدة",
+        updatedAt: new Date().toISOString(),
+      },
+    ]);
   }, [annualDemand, orderSetupCost, holdingCostMode, directHoldingCost, unitCost, holdingCostPct]);
 
   let validationError = "";

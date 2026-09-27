@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState, useMemo } from "react";
+import React, { useState, useMemo, useEffect } from "react";
 import { Activity } from "lucide-react";
 import { motion } from "framer-motion";
 import { useTerminalStore } from "@/store/useTerminalStore";
@@ -12,7 +12,7 @@ import { PieChart as RePieChart, Pie, Cell, ResponsiveContainer, Tooltip as ReTo
 import { TERMINAL_CHART_THEME as T } from "@/lib/chartTheme";
 
 export default function WACCBuilder() {
-  const { language } = useTerminalStore();
+  const { language, updateSessionAnalysis, setSessionValues } = useTerminalStore();
   const isAr = language === "ar";
 
   // CAPM Inputs
@@ -40,6 +40,43 @@ export default function WACCBuilder() {
     
     return { ke, kdAfterTax, wacc };
   }, [riskFreeRate, equityBeta, erp, costOfDebt, taxRate, equityWeight, debtWeight]);
+
+  useEffect(() => {
+    updateSessionAnalysis("wacc", {
+      inputs: { riskFreeRate, equityBeta, erp, costOfDebt, taxRate, debtWeight },
+      outputs: results,
+      computedAt: new Date().toISOString(),
+    });
+    setSessionValues([
+      {
+        key: "wacc",
+        value: Number(results.wacc.toFixed(2)),
+        unit: "%",
+        sourceEngine: "wacc",
+        sourceLabelEn: "WACC (Cost of Capital)",
+        sourceLabelAr: "متوسط تكلفة رأس المال المرجح (WACC)",
+        updatedAt: new Date().toISOString(),
+      },
+      {
+        key: "cost-of-equity",
+        value: Number(results.ke.toFixed(2)),
+        unit: "%",
+        sourceEngine: "wacc",
+        sourceLabelEn: "Cost of Equity (Ke)",
+        sourceLabelAr: "تكلفة حقوق الملكية (Ke)",
+        updatedAt: new Date().toISOString(),
+      },
+      {
+        key: "cost-of-debt",
+        value: Number(results.kdAfterTax.toFixed(2)),
+        unit: "%",
+        sourceEngine: "wacc",
+        sourceLabelEn: "Cost of Debt (Kd After-Tax)",
+        sourceLabelAr: "تكلفة الدين بعد الضريبة (Kd)",
+        updatedAt: new Date().toISOString(),
+      },
+    ]);
+  }, [results, riskFreeRate, equityBeta, erp, costOfDebt, taxRate, debtWeight]);
 
   const pieData = [
     { name: isAr ? "الملكية (الأسهم)" : "Equity", value: equityWeight, color: T.colors.emerald },

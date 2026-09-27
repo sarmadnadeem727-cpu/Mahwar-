@@ -3,14 +3,17 @@
 import React, { useMemo, useState } from "react";
 import Link from "next/link";
 import { motion, AnimatePresence } from "framer-motion";
-import { ArrowUpRight } from "lucide-react";
+import { ArrowUpRight, Sparkles, Activity, Layers } from "lucide-react";
 import { useTerminalStore } from "@/store/useTerminalStore";
 import { CLUSTERS, SUITES, TOOLS, toolsBySuite, type SuiteId, type ToolDef } from "@/lib/registry";
 import { computeEOQ } from "@/lib/operations/eoq";
 import { computeSafetyStock } from "@/lib/operations/safetyStock";
 import { reveal, viewportOnce } from "@/lib/motion";
 
-/** Tiny SVG line from a numeric series — used for the live preview cards. */
+/** Core engines that form the real operational-to-financial chain. */
+const CORE_CHAIN_IDS = new Set(["eoq", "ccc", "wc_financing", "wacc", "DCF", "FS", "zscore", "ratios"]);
+
+/** Tiny SVG line from a numeric series — used for live mini-preview cards. */
 function Spark({ values, accent = "emerald", marker }: { values: number[]; accent?: "emerald" | "gold"; marker?: number }) {
   const w = 240;
   const h = 64;
@@ -23,7 +26,7 @@ function Spark({ values, accent = "emerald", marker }: { values: number[]; accen
   const d = pts.map(([x, y], i) => `${i ? "L" : "M"}${x.toFixed(1)},${y.toFixed(1)}`).join(" ");
   const stroke = accent === "emerald" ? "var(--emerald-light)" : "var(--gold)";
   return (
-    <svg viewBox={`0 0 ${w} ${h}`} className="w-full h-16 overflow-visible" aria-hidden="true">
+    <svg viewBox={`0 0 ${w} ${h}`} className="w-full h-14 overflow-visible" aria-hidden="true">
       <defs>
         <linearGradient id={`fill-${accent}`} x1="0" y1="0" x2="0" y2="1">
           <stop offset="0%" stopColor={stroke} stopOpacity="0.35" />
@@ -39,7 +42,128 @@ function Spark({ values, accent = "emerald", marker }: { values: number[]; accen
   );
 }
 
-function LivePreviews({ isAr }: { isAr: boolean }) {
+/** Mini preview widget for core chain engines inside the grid. */
+function CoreEngineMiniPreview({ toolId, isAr }: { toolId: string; isAr: boolean }) {
+  if (toolId === "eoq") {
+    return (
+      <div className="mt-3 p-3 rounded-xl bg-ink-2/80 border border-line/60 font-mono text-[11px] space-y-1.5">
+        <div className="flex justify-between text-fg-3">
+          <span>Q* = 1,180 units</span>
+          <span className="text-emerald-light">Cost Minimized</span>
+        </div>
+        <Spark values={[12000, 8500, 6200, 5100, 4800, 5200, 6400, 8100]} marker={4} />
+      </div>
+    );
+  }
+
+  if (toolId === "ccc") {
+    return (
+      <div className="mt-3 p-3 rounded-xl bg-ink-2/80 border border-line/60 font-mono text-[11px] space-y-2">
+        <div className="flex justify-between items-center text-fg-3">
+          <span>DIO 45d + DSO 55d − DPO 36d</span>
+          <span className="text-emerald-light font-bold">CCC = 64d</span>
+        </div>
+        <div className="flex h-2 rounded-full overflow-hidden bg-ink-4">
+          <div className="bg-gold/80" style={{ width: "45%" }} title="DIO 45d" />
+          <div className="bg-emerald/70" style={{ width: "55%" }} title="DSO 55d" />
+          <div className="bg-neg/60" style={{ width: "36%" }} title="DPO 36d" />
+        </div>
+      </div>
+    );
+  }
+
+  if (toolId === "wc_financing") {
+    return (
+      <div className="mt-3 p-3 rounded-xl bg-ink-2/80 border border-line/60 font-mono text-[11px] space-y-1.5">
+        <div className="flex justify-between text-fg-3">
+          <span>NOWC: SAR 1.25M</span>
+          <span className="text-emerald-light font-bold">-10d = SAR 85k/yr</span>
+        </div>
+        <div className="flex items-center gap-1.5 text-[10px] text-fg-4">
+          <span className="w-2 h-2 rounded-full bg-emerald-light" />
+          <span>{isAr ? "وفورات تمويل نقدية مباشرة" : "Direct interest expense savings unlocked"}</span>
+        </div>
+      </div>
+    );
+  }
+
+  if (toolId === "wacc") {
+    return (
+      <div className="mt-3 p-3 rounded-xl bg-ink-2/80 border border-line/60 font-mono text-[11px] space-y-2">
+        <div className="flex justify-between text-fg-3">
+          <span>Equity 70% (10.5%) + Debt 30% (4.8%)</span>
+          <span className="text-emerald-light font-bold">WACC = 8.8%</span>
+        </div>
+        <div className="flex h-2 rounded-full overflow-hidden bg-ink-4">
+          <div className="bg-emerald-light" style={{ width: "70%" }} />
+          <div className="bg-fg-3" style={{ width: "30%" }} />
+        </div>
+      </div>
+    );
+  }
+
+  if (toolId === "DCF") {
+    return (
+      <div className="mt-3 p-3 rounded-xl bg-ink-2/80 border border-line/60 font-mono text-[11px] space-y-1.5">
+        <div className="flex justify-between text-fg-3">
+          <span>5Y FCF PV + Terminal Value</span>
+          <span className="text-emerald-light font-bold">+18.4% Upside</span>
+        </div>
+        <Spark values={[240, 275, 310, 355, 410]} accent="emerald" />
+      </div>
+    );
+  }
+
+  if (toolId === "FS") {
+    return (
+      <div className="mt-3 p-3 rounded-xl bg-ink-2/80 border border-line/60 font-mono text-[11px] space-y-2">
+        <div className="flex justify-between text-fg-3">
+          <span>{isAr ? "قوائم ثلاث مترابطة" : "Integrated 3-Statement Bridge"}</span>
+          <span className="text-emerald-light font-bold">Zakat 2.5%</span>
+        </div>
+        <div className="grid grid-cols-5 gap-1 h-6 items-end">
+          {[40, 55, 68, 82, 100].map((h, i) => (
+            <div key={i} className="bg-emerald/30 hover:bg-emerald/60 rounded-t transition-colors" style={{ height: `${h}%` }} />
+          ))}
+        </div>
+      </div>
+    );
+  }
+
+  if (toolId === "zscore") {
+    return (
+      <div className="mt-3 p-3 rounded-xl bg-ink-2/80 border border-line/60 font-mono text-[11px] space-y-2">
+        <div className="flex justify-between text-fg-3">
+          <span>Altman Z-Score = 2.49</span>
+          <span className="text-emerald-light font-bold">Safe Zone</span>
+        </div>
+        <div className="relative h-2 rounded-full overflow-hidden bg-ink-4">
+          <div className="absolute inset-y-0 left-0 bg-neg/70" style={{ width: "30%" }} />
+          <div className="absolute inset-y-0 bg-warn/60" style={{ left: "30%", width: "25%" }} />
+          <div className="absolute inset-y-0 right-0 bg-emerald/70" style={{ left: "55%" }} />
+        </div>
+      </div>
+    );
+  }
+
+  if (toolId === "ratios") {
+    return (
+      <div className="mt-3 p-3 rounded-xl bg-ink-2/80 border border-line/60 font-mono text-[11px] space-y-1.5">
+        <div className="flex justify-between text-fg-3">
+          <span>DuPont ROE = 14.8%</span>
+          <span className="text-emerald-light font-bold">Score 82/100</span>
+        </div>
+        <div className="text-[10px] text-fg-4 truncate">
+          Margin (9.3%) × Turnover (0.69) × Leverage (2.3)
+        </div>
+      </div>
+    );
+  }
+
+  return null;
+}
+
+function LiveRailPreviews({ isAr }: { isAr: boolean }) {
   const eoq = useMemo(
     () =>
       computeEOQ({
@@ -129,8 +253,8 @@ export default function ToolShowcase() {
               </h2>
               <p className="mt-5 text-fg-2 leading-relaxed">
                 {isAr
-                  ? "اكتب الكود في سطر الأوامر واضغط GO، كما في بلومبرغ. كل محرك يحفظ نتائجه في الجلسة ويظهر في تقرير واحد."
-                  : "Type the code on the command line and press GO, the Bloomberg way. Every engine saves into the session and lands in one report."}
+                  ? "اكتب الكود في سطر الأوامر واضغط GO، كما في بلومبرغ. المحركات المركزية (المميزة) تشكل السلسلة المترابطة من المخزون إلى التقييم، بينما تشكل بقية المحركات المكتبة المساندة الكاملة."
+                  : "Type the code on the command line and press GO, the Bloomberg way. The highlighted core engines form the connected operations-to-valuation chain; the rest provide the full supporting library."}
               </p>
             </motion.div>
 
@@ -158,7 +282,7 @@ export default function ToolShowcase() {
             </div>
 
             <div className="mt-8">
-              <LivePreviews isAr={isAr} />
+              <LiveRailPreviews isAr={isAr} />
               <p className="mt-3 font-mono text-[10px] text-fg-4">
                 {isAr ? "المعاينات محسوبة من نفس المكتبات المستخدمة في المحطة." : "Previews are computed from the same libraries the terminal uses."}
               </p>
@@ -184,24 +308,48 @@ export default function ToolShowcase() {
                     {cluster && (
                       <h3 className="font-serif text-xl text-fg-2 mb-4">{isAr ? cluster.ar : cluster.en}</h3>
                     )}
-                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-3.5">
                       {list.map((tool) => {
                         const Icon = tool.icon;
+                        const isCore = CORE_CHAIN_IDS.has(tool.id);
+
                         return (
                           <Link
                             key={tool.id}
                             href={`/dashboard?panel=${tool.id}`}
-                            className="card-nav group p-5 flex flex-col gap-3 min-h-[168px]"
+                            className={`group p-5 flex flex-col gap-3 rounded-2xl transition-all duration-200 ${
+                              isCore
+                                ? "sm:col-span-2 border border-emerald/40 bg-gradient-to-br from-ink-2 to-emerald/5 hover:border-emerald-light shadow-[inset_0_1px_0_0_rgba(255,255,255,0.12),0_8px_24px_rgba(28,139,108,0.12)] min-h-[190px]"
+                                : "card-nav min-h-[160px]"
+                            }`}
                           >
                             <div className="flex items-center justify-between">
-                              <span className="font-mono text-[11px] tracking-wider text-emerald-light">{tool.code}</span>
+                              <div className="flex items-center gap-2">
+                                <span className="font-mono text-[11px] font-bold tracking-wider text-emerald-light">
+                                  {tool.code}
+                                </span>
+                                {isCore && (
+                                  <span className="flex items-center gap-1 px-2 py-0.5 rounded-full bg-emerald/15 border border-emerald/30 text-emerald-light text-[10px] font-mono font-bold">
+                                    <Sparkles size={10} />
+                                    <span>{isAr ? "السلسلة المركزية" : "Core Chain"}</span>
+                                  </span>
+                                )}
+                              </div>
                               <Icon size={16} className="text-fg-3 group-hover:text-emerald-light transition-colors" />
                             </div>
+
                             <div className="text-[15px] font-medium text-fg leading-snug">{isAr ? tool.ar : tool.en}</div>
                             <p className="text-[12.5px] text-fg-3 leading-relaxed flex-1">{isAr ? tool.descAr : tool.descEn}</p>
-                            <div className="flex items-center justify-between font-mono text-[10px] text-fg-4">
+
+                            {/* Live mini preview for core chain engines */}
+                            {isCore && <CoreEngineMiniPreview toolId={tool.id} isAr={isAr} />}
+
+                            <div className="flex items-center justify-between font-mono text-[10px] text-fg-4 pt-1">
                               <span>{tool.tag}</span>
-                              <ArrowUpRight size={13} className="text-fg-4 group-hover:text-emerald-light transition-colors" />
+                              <div className="flex items-center gap-1 group-hover:text-emerald-light transition-colors">
+                                <span className="text-[10px]">{isAr ? "تشغيل" : "Launch"}</span>
+                                <ArrowUpRight size={13} className={isAr ? "rotate-180" : ""} />
+                              </div>
                             </div>
                           </Link>
                         );
@@ -217,4 +365,3 @@ export default function ToolShowcase() {
     </section>
   );
 }
-

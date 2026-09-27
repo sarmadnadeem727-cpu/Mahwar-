@@ -69,13 +69,6 @@ export default function GulfSceneSection() {
     return () => { stop(); tl?.cancel(); };
   }, []);
 
-  const facts = [
-    { v: "6", en: "member states, one common tariff", ar: "دول أعضاء وتعرفة موحدة" },
-    { v: "7", en: "exchanges the terminal speaks", ar: "أسواق تفهمها المحطة" },
-    { v: "2.5%", en: "Zakat base, no tax shield", ar: "زكاة دون درع ضريبي" },
-    { v: "Hormuz", en: "the chokepoint every landed-cost model respects", ar: "المضيق الذي يحترمه كل نموذج تكلفة واصلة" },
-  ];
-
   return (
     <section ref={ref} className="section-dark relative overflow-hidden bg-ink-0 border-y border-line" dir={isAr ? "rtl" : "ltr"}>
       <div className="relative h-[520px] md:h-[600px]" dir="ltr">
@@ -135,17 +128,6 @@ export default function GulfSceneSection() {
               {isAr ? "ميناء، رافعة، سفينة، صك. الأرقام خلف كل منها في محطة واحدة." : "A port, a crane, a ship, a sukuk. The numbers behind each of them, in one terminal."}
             </h2>
           </motion.div>
-        </div>
-      </div>
-
-      <div className="relative bg-ink-1 border-t border-line">
-        <div className="max-w-7xl mx-auto px-6 py-8 grid grid-cols-2 md:grid-cols-4 gap-6">
-          {facts.map((f) => (
-            <div key={f.en}>
-              <div className="font-serif text-3xl text-fg">{f.v}</div>
-              <div className="mt-1 text-[12px] text-fg-3 leading-snug">{isAr ? f.ar : f.en}</div>
-            </div>
-          ))}
         </div>
       </div>
     </section>

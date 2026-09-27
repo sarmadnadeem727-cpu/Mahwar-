@@ -55,7 +55,7 @@ const INITIAL_PERIODS: CCCPeriodInput[] = [
 ];
 
 export default function CashConversionCycle() {
-  const { language, currency, sessionAnalyses, updateSessionAnalysis } = useTerminalStore();
+  const { language, currency, sessionAnalyses, updateSessionAnalysis, setSessionValues } = useTerminalStore();
   const isAr = language === "ar";
 
   const [periods, setPeriods] = useState<CCCPeriodInput[]>(() => {
@@ -82,14 +82,81 @@ export default function CashConversionCycle() {
     yoyDeltaCCC = Number((currentOutput.ccc - prevCCC).toFixed(1));
   }
 
-  // Update session state
+  // Update session state & cross-engine chain
   useEffect(() => {
     updateSessionAnalysis("ccc", {
       inputs: { periods },
       outputs: { activeOutput: currentOutput, allOutputs: computedOutputs },
       computedAt: new Date().toISOString(),
     });
-  }, [periods, currentOutput?.ccc]);
+    if (currentOutput) {
+      setSessionValues([
+        {
+          key: "inventory-days",
+          value: Number(currentOutput.dio.toFixed(1)),
+          unit: "days",
+          sourceEngine: "ccc",
+          sourceLabelEn: "Days Inventory Outstanding (DIO)",
+          sourceLabelAr: "فترة بقاء المخزون (DIO)",
+          updatedAt: new Date().toISOString(),
+        },
+        {
+          key: "receivable-days",
+          value: Number(currentOutput.dso.toFixed(1)),
+          unit: "days",
+          sourceEngine: "ccc",
+          sourceLabelEn: "Days Sales Outstanding (DSO)",
+          sourceLabelAr: "فترة تحصيل الذمم (DSO)",
+          updatedAt: new Date().toISOString(),
+        },
+        {
+          key: "payable-days",
+          value: Number(currentOutput.dpo.toFixed(1)),
+          unit: "days",
+          sourceEngine: "ccc",
+          sourceLabelEn: "Days Payable Outstanding (DPO)",
+          sourceLabelAr: "فترة سداد الموردين (DPO)",
+          updatedAt: new Date().toISOString(),
+        },
+        {
+          key: "cash-conversion-cycle",
+          value: Number(currentOutput.ccc.toFixed(1)),
+          unit: "days",
+          sourceEngine: "ccc",
+          sourceLabelEn: "Cash Conversion Cycle (CCC)",
+          sourceLabelAr: "دورة التحويل النقدي (CCC)",
+          updatedAt: new Date().toISOString(),
+        },
+        {
+          key: "average-inventory",
+          value: currentPeriod.averageInventory,
+          unit: currency,
+          sourceEngine: "ccc",
+          sourceLabelEn: "Average Inventory",
+          sourceLabelAr: "متوسط المخزون",
+          updatedAt: new Date().toISOString(),
+        },
+        {
+          key: "average-receivables",
+          value: currentPeriod.averageAR,
+          unit: currency,
+          sourceEngine: "ccc",
+          sourceLabelEn: "Accounts Receivable",
+          sourceLabelAr: "الذمم المدينة",
+          updatedAt: new Date().toISOString(),
+        },
+        {
+          key: "average-payables",
+          value: currentPeriod.averageAP,
+          unit: currency,
+          sourceEngine: "ccc",
+          sourceLabelEn: "Accounts Payable",
+          sourceLabelAr: "الذمم الدائنة",
+          updatedAt: new Date().toISOString(),
+        },
+      ]);
+    }
+  }, [periods, currentOutput?.ccc, currentOutput?.dio, currentOutput?.dso, currentOutput?.dpo]);
 
   // Validation
   let validationError = "";

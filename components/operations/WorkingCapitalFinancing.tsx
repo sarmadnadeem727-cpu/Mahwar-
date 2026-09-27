@@ -18,21 +18,24 @@ import { exportToExcel, exportToPdf } from "./shared/exportOperations";
 
 import { TERMINAL_CHART_THEME as T } from "@/lib/chartTheme";
 
+import ProvenanceBadge from "@/components/shared/ProvenanceBadge";
+
 export default function WorkingCapitalFinancing() {
-  const { language, currency, sessionAnalyses, updateSessionAnalysis } = useTerminalStore();
+  const { language, currency, sessionAnalyses, sessionValues, updateSessionAnalysis, setSessionValues } = useTerminalStore();
   const isAr = language === "ar";
 
-  // Check if CCC is available in session
-  const sessionCCC = sessionAnalyses.ccc?.outputs?.activeOutput?.ccc ?? null;
-  const sessionCOGS = sessionAnalyses.ccc?.inputs?.periods?.[0]?.cogs ?? 3100000;
-  const sessionInv = sessionAnalyses.ccc?.inputs?.periods?.[0]?.averageInventory ?? 590000;
-  const sessionAR = sessionAnalyses.ccc?.inputs?.periods?.[0]?.averageAR ?? 780000;
-  const sessionAP = sessionAnalyses.ccc?.inputs?.periods?.[0]?.averageAP ?? 560000;
+  // Check if CCC or WACC is available in sessionValues or sessionAnalyses
+  const sessionCCC = sessionValues["cash-conversion-cycle"]?.value ?? sessionAnalyses.ccc?.outputs?.activeOutput?.ccc ?? null;
+  const sessionCOGS = sessionValues["cogs"]?.value ?? sessionAnalyses.ccc?.inputs?.periods?.[0]?.cogs ?? 3100000;
+  const sessionInv = sessionValues["average-inventory"]?.value ?? sessionAnalyses.ccc?.inputs?.periods?.[0]?.averageInventory ?? 590000;
+  const sessionAR = sessionValues["average-receivables"]?.value ?? sessionAnalyses.ccc?.inputs?.periods?.[0]?.averageAR ?? 780000;
+  const sessionAP = sessionValues["average-payables"]?.value ?? sessionAnalyses.ccc?.inputs?.periods?.[0]?.averageAP ?? 560000;
+  const sessionWacc = sessionValues["wacc"]?.value;
 
   const [inventory, setInventory] = useState<number>(sessionInv);
   const [accountsReceivable, setAccountsReceivable] = useState<number>(sessionAR);
   const [accountsPayable, setAccountsPayable] = useState<number>(sessionAP);
-  const [costOfCapitalRate, setCostOfCapitalRate] = useState<number>(8.5); // %
+  const [costOfCapitalRate, setCostOfCapitalRate] = useState<number>(sessionWacc ?? 8.5); // %
   const [cogs, setCogs] = useState<number>(sessionCOGS);
   const [revenue, setRevenue] = useState<number>(5200000);
   const [linkedCCC, setLinkedCCC] = useState<number | undefined>(sessionCCC || 45);
@@ -55,13 +58,42 @@ export default function WorkingCapitalFinancing() {
 
   const outputs: WCFinancingOutputs = computeWCFinancing(inputs);
 
-  // Sync to sessionAnalyses
+  // Sync to sessionAnalyses & shared metrics chain
   useEffect(() => {
     updateSessionAnalysis("wcFinancing", {
       inputs,
       outputs,
       computedAt: new Date().toISOString(),
     });
+    setSessionValues([
+      {
+        key: "working-capital",
+        value: outputs.netWorkingCapital,
+        unit: currency,
+        sourceEngine: "wc_financing",
+        sourceLabelEn: "Net Working Capital (NOWC)",
+        sourceLabelAr: "صافي رأس المال العامل التشغيلي",
+        updatedAt: new Date().toISOString(),
+      },
+      {
+        key: "working-capital-cost",
+        value: outputs.annualFinancingCostOperating,
+        unit: currency,
+        sourceEngine: "wc_financing",
+        sourceLabelEn: "Annual WC Financing Cost",
+        sourceLabelAr: "تكلفة تمويل رأس المال العامل السنوية",
+        updatedAt: new Date().toISOString(),
+      },
+      {
+        key: "cash-tied-up",
+        value: outputs.cashTiedUpCCC,
+        unit: currency,
+        sourceEngine: "wc_financing",
+        sourceLabelEn: "Cash Tied Up in Cycle",
+        sourceLabelAr: "السيولة المحتجزة في دورة التشغيل",
+        updatedAt: new Date().toISOString(),
+      },
+    ]);
   }, [inventory, accountsReceivable, accountsPayable, costOfCapitalRate, cogs, linkedCCC, sensitivityDays, useCccMode]);
 
   let validationError = "";
@@ -243,6 +275,18 @@ export default function WorkingCapitalFinancing() {
 
             <div className="space-y-3.5 text-xs">
               <div>
+                {sessionInv && (
+                  <ProvenanceBadge
+                    engineId="ccc"
+                    metricLabelEn="Inventory"
+                    metricLabelAr="المخزون"
+                    originalValue={sessionInv.toLocaleString()}
+                    unit={currency}
+                    isModified={inventory !== sessionInv}
+                    onReset={() => setInventory(sessionInv)}
+                    className="mb-1.5"
+                  />
+                )}
                 <label className="text-fg-2 font-medium block mb-1">
                   {isAr ? "المخزون السلعي الحالي" : "Current Inventory Balance"} ({currency})
                 </label>
@@ -290,6 +334,18 @@ export default function WorkingCapitalFinancing() {
               </div>
 
               <div>
+                {sessionWacc && (
+                  <ProvenanceBadge
+                    engineId="wacc"
+                    metricLabelEn="Cost of capital (WACC)"
+                    metricLabelAr="تكلفة رأس المال (WACC)"
+                    originalValue={sessionWacc}
+                    unit="%"
+                    isModified={costOfCapitalRate !== sessionWacc}
+                    onReset={() => setCostOfCapitalRate(sessionWacc)}
+                    className="mb-1.5"
+                  />
+                )}
                 <label className="text-fg-2 font-medium block mb-1">
                   {isAr ? "تكلفة رأس المال / فائدة الاقتراض (%)" : "Cost of Capital / Borrowing Rate (%)"}
                 </label>

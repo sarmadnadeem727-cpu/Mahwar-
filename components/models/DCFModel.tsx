@@ -133,9 +133,10 @@ export function computeDCFLocal(params: {
 
 import ActiveSecuritySyncBar from "@/components/shared/ActiveSecuritySyncBar";
 import { mapToDcfInputs, type LinkedSecurity } from "@/lib/market/engineBridge";
+import ProvenanceBadge from "@/components/shared/ProvenanceBadge";
 
 export default function DCFModel() {
-  const { language, updateSessionAnalysis, activeSecurity } = useTerminalStore();
+  const { language, updateSessionAnalysis, activeSecurity, sessionValues } = useTerminalStore();
   const isAr = language === 'ar';
 
   const initialDcf = useMemo(() => {
@@ -143,13 +144,18 @@ export default function DCFModel() {
     return null;
   }, [activeSecurity]);
 
+  const sessionWacc = sessionValues["wacc"]?.value;
+  const sessionCostEquity = sessionValues["cost-of-equity"]?.value;
+  const sessionCostDebt = sessionValues["cost-of-debt"]?.value;
+  const sessionWC = sessionValues["working-capital"]?.value;
+
   // Base assumptions
   const [baseRevGrowth, setBaseRevGrowth] = useState<number>(() => initialDcf?.revGrowth ?? 8);
   const [baseEbitdaMargin, setBaseEbitdaMargin] = useState<number>(() => initialDcf?.ebitdaMargin ?? 35);
   const [baseCapexRev, setBaseCapexRev] = useState<number>(10);
   const [taxZakat, setTaxZakat] = useState<number>(2.5);
-  const [costEquity, setCostEquity] = useState<number>(9.5);
-  const [costDebt, setCostDebt] = useState<number>(4.5);
+  const [costEquity, setCostEquity] = useState<number>(() => sessionCostEquity ?? 9.5);
+  const [costDebt, setCostDebt] = useState<number>(() => sessionCostDebt ?? 4.5);
   const [debtWeight, setDebtWeight] = useState<number>(20);
   const [baseTerminalGrowth, setBaseTerminalGrowth] = useState<number>(2.5);
 
@@ -329,6 +335,32 @@ export default function DCFModel() {
               </div>
             </div>
           </div>
+
+          {sessionWacc && (
+            <ProvenanceBadge
+              engineId="wacc"
+              metricLabelEn="WACC discount rate"
+              metricLabelAr="معدل خصم WACC"
+              originalValue={sessionWacc}
+              unit="%"
+              isModified={costEquity !== (sessionCostEquity ?? 9.5)}
+              onReset={() => {
+                if (sessionCostEquity) setCostEquity(sessionCostEquity);
+                if (sessionCostDebt) setCostDebt(sessionCostDebt);
+              }}
+              className="mb-2"
+            />
+          )}
+          {sessionWC && (
+            <ProvenanceBadge
+              engineId="wc_financing"
+              metricLabelEn="Working Capital (NOWC)"
+              metricLabelAr="رأس المال العامل التشغيلي"
+              originalValue={sessionWC.toLocaleString()}
+              unit="SAR"
+              className="mb-2"
+            />
+          )}
 
           {/* Base Financials Section */}
           <div className="space-y-3 font-mono text-xs border-b border-line pb-4">

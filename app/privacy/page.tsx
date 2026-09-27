@@ -29,6 +29,12 @@ export default function PrivacyPage() {
       bodyAr: "كل الحسابات المالية وحسابات سلاسل الإمداد تعمل في متصفحك. أرقامك لا تُرسل إلى خادم لحسابها أو تسجيلها أو تخزينها.",
     },
     {
+      en: "Document ingestion & OCR run 100% on your device",
+      ar: "استيراد القوائم وOCR يعمل محلياً بالكامل على جهازك",
+      bodyEn: "When you upload financial statements (PDFs or images) to the 3-statement, DuPont ratio, or Altman Z-score engines, all text extraction and optical character recognition (OCR) execute entirely inside your browser using WebAssembly. Your documents, statements, and financial numbers are never uploaded to any server or external cloud API.",
+      bodyAr: "عند رفع القوائم المالية (ملفات PDF أو صور) إلى نماذج القوائم الثلاث أو نسب ديبونت أو مؤشر ألتمان، تتم جميع عمليات استخراج النصوص والتعرف الضوئي على الحروف (OCR) داخل متصفحك محلياً بالكامل عبر تقنية WebAssembly. لا يتم رفع مستنداتك أو أرقامك المالية إلى أي خادم أو واجهة سحابية خارجية نهائياً.",
+    },
+    {
       en: "The only network request: the market wire",
       ar: "طلب الشبكة الوحيد: الأخبار",
       bodyEn: "The wire panel asks our own /api/news endpoint for public headlines. That endpoint fetches from a news provider without forwarding cookies, a referrer or anything that identifies you, and it is rate-limited per client. If no provider key is configured it falls back to a public RSS feed. Nothing about your session travels with that request.",

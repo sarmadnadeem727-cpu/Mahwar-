@@ -40,6 +40,29 @@ export default function GCCMapSection() {
         <motion.div variants={reveal} initial="hidden" whileInView="show" viewport={viewportOnce} className="mt-12 grid grid-cols-1 lg:grid-cols-[1fr_320px] gap-4">
           <div className="panel-data relative overflow-hidden">
             <GulfMap isAr={isAr} hover={hover} onHover={setHover} />
+            {/* Map Facts Ribbon */}
+            <div className="relative border-t border-line/60 bg-ink-2/80 px-5 py-2.5 flex flex-wrap items-center justify-between gap-3 font-mono text-[11px]">
+              <div className="flex flex-wrap items-center gap-x-4 gap-y-1 text-fg-3">
+                <span className="flex items-center gap-1.5 text-fg-2">
+                  <span className="font-bold text-emerald-light">6</span>
+                  <span>{isAr ? "دول أعضاء (تعرفة موحدة)" : "member states (common tariff)"}</span>
+                </span>
+                <span className="text-ink-5 hidden sm:inline">·</span>
+                <span className="flex items-center gap-1.5 text-fg-2">
+                  <span className="font-bold text-emerald-light">7</span>
+                  <span>{isAr ? "أسواق مالية تفهمها المحطة" : "exchanges tracked"}</span>
+                </span>
+                <span className="text-ink-5 hidden sm:inline">·</span>
+                <span className="flex items-center gap-1.5 text-gold">
+                  <span className="font-bold">{isAr ? "مضيق هرمز" : "Strait of Hormuz"}</span>
+                  <span className="text-fg-4">{isAr ? "(ممر الشحن الحرج)" : "(landed-cost choke)"}</span>
+                </span>
+              </div>
+              <span className="text-[10px] text-fg-4 hidden sm:inline">
+                {isAr ? "بيانات موانئ وممرات فعلية" : "Physical corridors & ports"}
+              </span>
+            </div>
+
             <div className="relative border-t border-line px-5 py-3 flex flex-wrap gap-x-6 gap-y-2 font-mono text-[10.5px] text-fg-3">
               {legend.map((l) => (
                 <span key={l.en} className="flex items-center gap-2">

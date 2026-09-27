@@ -10,10 +10,14 @@ import { useTerminalStore } from "@/store/useTerminalStore";
 import { useSessionSave } from "@/lib/useSessionSave";
 import { mapToAltmanZInputs, type LinkedSecurity } from "@/lib/market/engineBridge";
 
+import { Upload, FileText, CheckCircle2 } from "lucide-react";
+import DocumentIngestionModal from "@/components/shared/DocumentIngestionModal";
+import ProvenanceBadge from "@/components/shared/ProvenanceBadge";
+
 const DEFAULTS: ZInputs = { model: "public", workingCapital: 420, retainedEarnings: 1_180, ebit: 610, equityValue: 5_400, totalLiabilities: 2_900, sales: 4_200, totalAssets: 6_100 };
 
 export default function AltmanZScore() {
-  const { language, currency, activeSecurity } = useTerminalStore();
+  const { language, currency, activeSecurity, sessionValues } = useTerminalStore();
   const isAr = language === "ar";
   const [i, setI] = useState<ZInputs>(() => {
     if (activeSecurity) {
@@ -21,6 +25,9 @@ export default function AltmanZScore() {
     }
     return DEFAULTS;
   });
+  const [uploadedFile, setUploadedFile] = useState<string | null>(null);
+  const [isUploadOpen, setIsUploadOpen] = useState(false);
+
   const set = <K extends keyof ZInputs>(k: K, v: ZInputs[K]) => setI((p) => ({ ...p, [k]: v }));
   const o = useMemo(() => computeZ(i), [i]);
   useSessionSave("zscore", i, { z: o.z, zone: o.zone, impliedPd: o.impliedPd });
@@ -29,33 +36,132 @@ export default function AltmanZScore() {
     setI(mapToAltmanZInputs(sec));
   };
 
+  const handleApplyDocument = (data: Record<string, number>, fileName: string) => {
+    setUploadedFile(fileName);
+    setI((prev) => ({
+      ...prev,
+      workingCapital: data.workingCapital ?? prev.workingCapital,
+      retainedEarnings: data.retainedEarnings ?? prev.retainedEarnings,
+      ebit: data.ebit ?? prev.ebit,
+      equityValue: data.equityValue ?? data.equity ?? prev.equityValue,
+      totalLiabilities: data.totalLiabilities ?? prev.totalLiabilities,
+      sales: data.revenue ?? prev.sales,
+      totalAssets: data.totalAssets ?? prev.totalAssets,
+    }));
+  };
+
   const zoneLabel = { safe: isAr ? "منطقة آمنة" : "Safe zone", grey: isAr ? "منطقة رمادية" : "Grey zone", distress: isAr ? "منطقة خطر" : "Distress zone" }[o.zone];
   const accent = { safe: "emerald", grey: "warn", distress: "neg" }[o.zone] as "emerald" | "warn" | "neg";
   const gauge = Math.max(0, Math.min(1, o.z / (o.thresholds.safe * 1.6)));
 
-  return (
-    <EngineShell
-      id="zscore"
-      icon={<HeartPulse size={22} />}
-      onReset={() => setI(DEFAULTS)}
-      onSyncSecurity={handleSyncSecurity}
+  const auditSteps = [
+    ...(uploadedFile
+      ? [
+          {
+            title: isAr ? "مصدر البيانات" : "Data Provenance",
+            formula: "populated from uploaded statement",
+            substitution: uploadedFile,
+            result: isAr ? "تمت المراجعة والاعتماد" : "User-reviewed",
+          },
+        ]
+      : []),
+    ...o.components.map((c) => ({
+      title: c.name,
+      formula: `${c.weight} × ratio`,
+      substitution: `${c.weight} × ${c.ratio.toFixed(3)}`,
+      result: c.contribution.toFixed(3),
+    })),
+    {
+      title: "Z-score",
+      formula: "Σ contributions",
+      substitution: o.components.map((c) => c.contribution.toFixed(2)).join(" + "),
+      result: o.z.toFixed(2),
+    },
+  ];
 
-      audit={{
-        toolName: "Altman Z-score", toolNameAr: "مؤشر ألتمان Z",
-        summary: "Z = Σ wᵢ × ratioᵢ using the coefficient set for the chosen firm type.", summaryAr: "Z = مجموع الأوزان × النسب حسب نوع الشركة.",
-        steps: o.components.map((c) => ({ title: c.name, formula: `${c.weight} × ratio`, substitution: `${c.weight} × ${c.ratio.toFixed(3)}`, result: c.contribution.toFixed(3) })).concat([{ title: "Z-score", formula: "Σ contributions", substitution: o.components.map((c) => c.contribution.toFixed(2)).join(" + "), result: o.z.toFixed(2) }]),
-      }}
-      exportRows={[{ Metric: "Z-score", Value: o.z }, { Metric: "Zone", Value: o.zone }, { Metric: "Implied 1y PD %", Value: o.impliedPd * 100 }, ...o.components.map((c) => ({ Metric: c.name, Ratio: c.ratio, Weight: c.weight, Value: c.contribution }))]}
-      inputs={<>
-        <Select label={isAr ? "نوع الشركة" : "Firm type"} value={i.model} onChange={(v) => set("model", v)} options={[{ value: "public", label: isAr ? "مدرجة صناعية (Z)" : "Public manufacturer (Z)" }, { value: "private", label: isAr ? "خاصة صناعية (Z')" : "Private manufacturer (Z′)" }, { value: "nonmfg", label: isAr ? "غير صناعية / ناشئة (Z'')" : "Non-manufacturer / EM (Z″)" }]} />
-        <Field label={isAr ? "رأس المال العامل" : "Working capital"} value={i.workingCapital} onChange={(v) => set("workingCapital", v)} suffix={currency} />
-        <Field label={isAr ? "الأرباح المبقاة" : "Retained earnings"} value={i.retainedEarnings} onChange={(v) => set("retainedEarnings", v)} suffix={currency} />
-        <Field label="EBIT" value={i.ebit} onChange={(v) => set("ebit", v)} suffix={currency} />
-        <Field label={i.model === "public" ? (isAr ? "القيمة السوقية لحقوق الملكية" : "Market value of equity") : (isAr ? "القيمة الدفترية لحقوق الملكية" : "Book equity")} value={i.equityValue} onChange={(v) => set("equityValue", v)} suffix={currency} />
-        <Field label={isAr ? "إجمالي الالتزامات" : "Total liabilities"} value={i.totalLiabilities} onChange={(v) => set("totalLiabilities", v)} suffix={currency} />
-        {i.model !== "nonmfg" && <Field label={isAr ? "المبيعات" : "Sales"} value={i.sales} onChange={(v) => set("sales", v)} suffix={currency} />}
-        <Field label={isAr ? "إجمالي الأصول" : "Total assets"} value={i.totalAssets} onChange={(v) => set("totalAssets", v)} suffix={currency} />
-      </>}>
+  return (
+    <>
+      <DocumentIngestionModal
+        isOpen={isUploadOpen}
+        onClose={() => setIsUploadOpen(false)}
+        targetEngine="zscore"
+        onApply={handleApplyDocument}
+      />
+      <EngineShell
+        id="zscore"
+        icon={<HeartPulse size={22} />}
+        onReset={() => {
+          setI(DEFAULTS);
+          setUploadedFile(null);
+        }}
+        onSyncSecurity={handleSyncSecurity}
+        audit={{
+          toolName: "Altman Z-score",
+          toolNameAr: "مؤشر ألتمان Z",
+          summary: uploadedFile
+            ? `populated from uploaded statement: ${uploadedFile} · Z = Σ wᵢ × ratioᵢ`
+            : "Z = Σ wᵢ × ratioᵢ using the coefficient set for the chosen firm type.",
+          summaryAr: uploadedFile
+            ? `مستخرجة من القائمة المالية: ${uploadedFile} · Z = مجموع الأوزان × النسب`
+            : "Z = مجموع الأوزان × النسب حسب نوع الشركة.",
+          steps: auditSteps,
+        }}
+        exportRows={[{ Metric: "Z-score", Value: o.z }, { Metric: "Zone", Value: o.zone }, { Metric: "Implied 1y PD %", Value: o.impliedPd * 100 }, ...(uploadedFile ? [{ Metric: "Source Document", Value: uploadedFile }] : []), ...o.components.map((c) => ({ Metric: c.name, Ratio: c.ratio, Weight: c.weight, Value: c.contribution }))]}
+        inputs={<>
+          <div className="flex items-center justify-between pb-2 mb-2 border-b border-line">
+            <span className="font-mono text-[10px] text-fg-3 uppercase">
+              {isAr ? "الاستيراد الذكي" : "Smart Ingestion"}
+            </span>
+            <button
+              type="button"
+              onClick={() => setIsUploadOpen(true)}
+              className="flex items-center gap-1.5 px-2.5 py-1 rounded bg-emerald/10 border border-emerald/30 text-emerald-light hover:bg-emerald/20 transition-colors text-[11px] font-mono font-bold"
+            >
+              <Upload size={12} />
+              <span>{isAr ? "رفع القوائم (PDF/صورة)" : "Upload Statement (PDF/Image)"}</span>
+            </button>
+          </div>
+
+          {uploadedFile && (
+            <div className="p-2 mb-3 rounded border border-emerald/40 bg-emerald/10 text-emerald-light text-xs font-mono flex items-center justify-between">
+              <div className="flex items-center gap-1.5 truncate">
+                <CheckCircle2 size={13} className="shrink-0" />
+                <span className="truncate">
+                  {isAr ? `مستخرج من: ${uploadedFile}` : `Extracted: ${uploadedFile}`}
+                </span>
+              </div>
+              <button
+                type="button"
+                onClick={() => setUploadedFile(null)}
+                className="text-fg-4 hover:text-fg text-[10px] underline ms-2"
+              >
+                {isAr ? "مسح" : "Clear"}
+              </button>
+            </div>
+          )}
+
+          {!uploadedFile && sessionValues["working-capital"] && (
+            <ProvenanceBadge
+              engineId="wc_financing"
+              metricLabelEn="Working Capital"
+              metricLabelAr="رأس المال العامل"
+              originalValue={sessionValues["working-capital"].value.toLocaleString()}
+              unit={currency}
+              isModified={i.workingCapital !== sessionValues["working-capital"].value}
+              onReset={() => set("workingCapital", sessionValues["working-capital"]!.value)}
+              className="mb-2"
+            />
+          )}
+
+          <Select label={isAr ? "نوع الشركة" : "Firm type"} value={i.model} onChange={(v) => set("model", v)} options={[{ value: "public", label: isAr ? "مدرجة صناعية (Z)" : "Public manufacturer (Z)" }, { value: "private", label: isAr ? "خاصة صناعية (Z')" : "Private manufacturer (Z′)" }, { value: "nonmfg", label: isAr ? "غير صناعية / ناشئة (Z'')" : "Non-manufacturer / EM (Z″)" }]} />
+          <Field label={isAr ? "رأس المال العامل" : "Working capital"} value={i.workingCapital} onChange={(v) => set("workingCapital", v)} suffix={currency} />
+          <Field label={isAr ? "الأرباح المبقاة" : "Retained earnings"} value={i.retainedEarnings} onChange={(v) => set("retainedEarnings", v)} suffix={currency} />
+          <Field label="EBIT" value={i.ebit} onChange={(v) => set("ebit", v)} suffix={currency} />
+          <Field label={i.model === "public" ? (isAr ? "القيمة السوقية لحقوق الملكية" : "Market value of equity") : (isAr ? "القيمة الدفترية لحقوق الملكية" : "Book equity")} value={i.equityValue} onChange={(v) => set("equityValue", v)} suffix={currency} />
+          <Field label={isAr ? "إجمالي الالتزامات" : "Total liabilities"} value={i.totalLiabilities} onChange={(v) => set("totalLiabilities", v)} suffix={currency} />
+          {i.model !== "nonmfg" && <Field label={isAr ? "المبيعات" : "Sales"} value={i.sales} onChange={(v) => set("sales", v)} suffix={currency} />}
+          <Field label={isAr ? "إجمالي الأصول" : "Total assets"} value={i.totalAssets} onChange={(v) => set("totalAssets", v)} suffix={currency} />
+        </>}>
       <Kpis items={[
         { label: "Z-score", value: o.z.toFixed(2), accent, sub: zoneLabel },
         { label: isAr ? "احتمال التعثر (سنة)" : "Implied 1-yr default prob.", value: pct(o.impliedPd * 100), accent: o.impliedPd > 0.15 ? "neg" : o.impliedPd > 0.05 ? "warn" : "emerald" },
@@ -102,5 +208,6 @@ export default function AltmanZScore() {
         </div>
       </Card>
     </EngineShell>
+    </>
   );
 }

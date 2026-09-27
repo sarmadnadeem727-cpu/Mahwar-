@@ -128,9 +128,22 @@ export interface SessionAnalyses {
   quantityDiscount?: SavedAnalysis;
   // v7
   screener?: SavedAnalysis;
+  wacc?: SavedAnalysis;
 }
 
 export interface Toast { id: number; text: string; tone?: "ok" | "warn" | "err" }
+
+export interface SessionMetricValue {
+  key: string;
+  value: number;
+  unit?: string;
+  sourceEngine: PanelType;
+  sourceLabelEn: string;
+  sourceLabelAr: string;
+  updatedAt: string;
+  note?: string;
+  noteAr?: string;
+}
 
 export interface SessionFile {
   app: "mahwar";
@@ -139,6 +152,7 @@ export interface SessionFile {
   currency: Currency;
   language: Language;
   analyses: SessionAnalyses;
+  sessionValues?: Record<string, SessionMetricValue>;
 }
 
 import type { LinkedSecurity } from "@/lib/market/engineBridge";
@@ -175,6 +189,12 @@ interface TerminalState {
   clearSessionAnalyses: () => void;
   exportSession: () => SessionFile;
   importSession: (file: SessionFile, mode?: "merge" | "replace") => number;
+
+  /** Cross-engine shared metrics chain (EOQ -> CCC -> WCF -> WACC -> DCF -> 3-Statement). */
+  sessionValues: Record<string, SessionMetricValue>;
+  setSessionValue: (metric: SessionMetricValue) => void;
+  setSessionValues: (metrics: SessionMetricValue[]) => void;
+  removeSessionValue: (key: string) => void;
 
   setPanel: (panel: PanelType) => void;
   setLoading: (loading: boolean) => void;
@@ -236,20 +256,50 @@ export const useTerminalStore = create<TerminalState>()(
           delete next[key];
           return { sessionAnalyses: next };
         }),
-      clearSessionAnalyses: () => set({ sessionAnalyses: {}, sessionStartedAt: new Date().toISOString() }),
+      clearSessionAnalyses: () => set({ sessionAnalyses: {}, sessionValues: {}, sessionStartedAt: new Date().toISOString() }),
       exportSession: () => {
         const s = get();
-        return { app: "mahwar", version: 5, exportedAt: new Date().toISOString(), currency: s.currency, language: s.language, analyses: s.sessionAnalyses };
+        return {
+          app: "mahwar",
+          version: 5,
+          exportedAt: new Date().toISOString(),
+          currency: s.currency,
+          language: s.language,
+          analyses: s.sessionAnalyses,
+          sessionValues: s.sessionValues,
+        };
       },
       importSession: (file, mode = "merge") => {
         if (!file || file.app !== "mahwar" || typeof file.analyses !== "object") return 0;
         const incoming = file.analyses ?? {};
+        const incomingVals = file.sessionValues ?? {};
         set((state) => ({
           sessionAnalyses: mode === "replace" ? incoming : { ...state.sessionAnalyses, ...incoming },
+          sessionValues: mode === "replace" ? incomingVals : { ...state.sessionValues, ...incomingVals },
           currency: file.currency ?? state.currency,
         }));
         return Object.keys(incoming).length;
       },
+
+      sessionValues: {},
+      setSessionValue: (metric) =>
+        set((state) => ({
+          sessionValues: { ...state.sessionValues, [metric.key]: metric },
+        })),
+      setSessionValues: (metrics) =>
+        set((state) => {
+          const updated = { ...state.sessionValues };
+          for (const m of metrics) {
+            updated[m.key] = m;
+          }
+          return { sessionValues: updated };
+        }),
+      removeSessionValue: (key) =>
+        set((state) => {
+          const next = { ...state.sessionValues };
+          delete next[key];
+          return { sessionValues: next };
+        }),
 
       setPanel: (activePanel) =>
         set((state) => ({
@@ -283,6 +333,7 @@ export const useTerminalStore = create<TerminalState>()(
         language: state.language,
         currency: state.currency,
         sessionAnalyses: state.sessionAnalyses,
+        sessionValues: state.sessionValues,
         recentPanels: state.recentPanels,
         commandHistory: state.commandHistory,
         sessionStartedAt: state.sessionStartedAt,
