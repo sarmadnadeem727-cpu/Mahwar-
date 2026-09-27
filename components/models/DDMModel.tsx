@@ -11,16 +11,32 @@ import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip as ReTooltip, Respo
 
 import { TERMINAL_CHART_THEME as T } from "@/lib/chartTheme";
 
+import ActiveSecuritySyncBar from "@/components/shared/ActiveSecuritySyncBar";
+import { mapToDdmInputs, type LinkedSecurity } from "@/lib/market/engineBridge";
+
 export default function DDMModel() {
-  const { language, currency } = useTerminalStore();
+  const { language, currency, activeSecurity } = useTerminalStore();
   const isAr = language === "ar";
 
+  const initialDdm = useMemo(() => {
+    if (activeSecurity) return mapToDdmInputs(activeSecurity);
+    return null;
+  }, [activeSecurity]);
+
   // Inputs
-  const [currentDPS, setCurrentDPS] = useState(2.50);
-  const [costOfEquity, setCostOfEquity] = useState(9.5);
-  const [highGrowthRate, setHighGrowthRate] = useState(12.0);
+  const [currentDPS, setCurrentDPS] = useState(() => initialDdm?.currentDPS ?? 2.50);
+  const [costOfEquity, setCostOfEquity] = useState(() => initialDdm?.costOfEquity ?? 9.5);
+  const [highGrowthRate, setHighGrowthRate] = useState(() => initialDdm?.highGrowthRate ?? 12.0);
   const [highGrowthYears, setHighGrowthYears] = useState(5);
-  const [terminalGrowthRate, setTerminalGrowthRate] = useState(3.0);
+  const [terminalGrowthRate, setTerminalGrowthRate] = useState(() => initialDdm?.terminalGrowthRate ?? 3.0);
+
+  const handleSyncSecurity = (sec: LinkedSecurity) => {
+    const ddm = mapToDdmInputs(sec);
+    setCurrentDPS(ddm.currentDPS);
+    setCostOfEquity(ddm.costOfEquity);
+    setHighGrowthRate(ddm.highGrowthRate);
+    setTerminalGrowthRate(ddm.terminalGrowthRate);
+  };
 
   const results = useMemo(() => {
     let presentValueHighGrowth = 0;
@@ -90,6 +106,8 @@ export default function DDMModel() {
           </p>
         </div>
       </div>
+
+      <ActiveSecuritySyncBar onSync={handleSyncSecurity} engineName="DDM Model" />
 
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
         {/* INPUTS - 4 COLS */}

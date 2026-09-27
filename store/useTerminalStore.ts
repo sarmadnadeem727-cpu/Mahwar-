@@ -141,6 +141,8 @@ export interface SessionFile {
   analyses: SessionAnalyses;
 }
 
+import type { LinkedSecurity } from "@/lib/market/engineBridge";
+
 interface TerminalState {
   activePanel: PanelType;
   isLoading: boolean;
@@ -159,6 +161,13 @@ interface TerminalState {
   sessionStartedAt: string;
   hasHydrated: boolean;
   toasts: Toast[];
+
+  /** The currently active / linked market security across all engines & charts. */
+  activeSecurity: LinkedSecurity | null;
+  isLiveSyncEnabled: boolean;
+  setActiveSecurity: (sec: LinkedSecurity | null) => void;
+  setLiveSyncEnabled: (enabled: boolean) => void;
+  linkSecurityAndOpenPanel: (sec: LinkedSecurity, panel: PanelType) => void;
 
   sessionAnalyses: SessionAnalyses;
   updateSessionAnalysis: <K extends keyof SessionAnalyses>(key: K, data: SessionAnalyses[K]) => void;
@@ -203,6 +212,20 @@ export const useTerminalStore = create<TerminalState>()(
       sessionStartedAt: new Date().toISOString(),
       hasHydrated: false,
       toasts: [],
+
+      activeSecurity: null,
+      isLiveSyncEnabled: true,
+      setActiveSecurity: (activeSecurity) => set({ activeSecurity }),
+      setLiveSyncEnabled: (isLiveSyncEnabled) => set({ isLiveSyncEnabled }),
+      linkSecurityAndOpenPanel: (sec, panel) => {
+        set((state) => ({
+          activeSecurity: sec,
+          activePanel: panel,
+          currency: sec.currency ?? state.currency,
+          recentPanels: [panel, ...state.recentPanels.filter((p) => p !== panel)].slice(0, 8),
+        }));
+        get().toast(`Linked ${sec.name} (${sec.code}) → ${panel.toUpperCase()}`, "ok");
+      },
 
       sessionAnalyses: {},
       updateSessionAnalysis: (key, data) =>
@@ -263,6 +286,8 @@ export const useTerminalStore = create<TerminalState>()(
         recentPanels: state.recentPanels,
         commandHistory: state.commandHistory,
         sessionStartedAt: state.sessionStartedAt,
+        activeSecurity: state.activeSecurity,
+        isLiveSyncEnabled: state.isLiveSyncEnabled,
       }),
       // Pull a v3 session forward once, then forget it.
       migrate: (persisted) => persisted as TerminalState,
@@ -296,3 +321,5 @@ export const selectCurrency = (s: TerminalState) => s.currency;
 export const selectActivePanel = (s: TerminalState) => s.activePanel;
 export const selectSetPanel = (s: TerminalState) => s.setPanel;
 export const selectSavedCount = (s: TerminalState) => Object.keys(s.sessionAnalyses).length;
+export const selectActiveSecurity = (s: TerminalState) => s.activeSecurity;
+export const selectSetActiveSecurity = (s: TerminalState) => s.setActiveSecurity;

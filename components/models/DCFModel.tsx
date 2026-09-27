@@ -131,13 +131,21 @@ export function computeDCFLocal(params: {
   };
 }
 
+import ActiveSecuritySyncBar from "@/components/shared/ActiveSecuritySyncBar";
+import { mapToDcfInputs, type LinkedSecurity } from "@/lib/market/engineBridge";
+
 export default function DCFModel() {
-  const { language, updateSessionAnalysis } = useTerminalStore();
+  const { language, updateSessionAnalysis, activeSecurity } = useTerminalStore();
   const isAr = language === 'ar';
 
+  const initialDcf = useMemo(() => {
+    if (activeSecurity) return mapToDcfInputs(activeSecurity);
+    return null;
+  }, [activeSecurity]);
+
   // Base assumptions
-  const [baseRevGrowth, setBaseRevGrowth] = useState<number>(8);
-  const [baseEbitdaMargin, setBaseEbitdaMargin] = useState<number>(35);
+  const [baseRevGrowth, setBaseRevGrowth] = useState<number>(() => initialDcf?.revGrowth ?? 8);
+  const [baseEbitdaMargin, setBaseEbitdaMargin] = useState<number>(() => initialDcf?.ebitdaMargin ?? 35);
   const [baseCapexRev, setBaseCapexRev] = useState<number>(10);
   const [taxZakat, setTaxZakat] = useState<number>(2.5);
   const [costEquity, setCostEquity] = useState<number>(9.5);
@@ -198,10 +206,20 @@ export default function DCFModel() {
   const terminalGrowth = baseTerminalGrowth + scenarioDeltas.terminalGrowthDelta;
 
   // Editable Base Financial Metrics
-  const [baseRevenue, setBaseRevenue] = useState<number>(1200);
-  const [netDebt, setNetDebt] = useState<number>(250);
-  const [sharesOutstanding, setSharesOutstanding] = useState<number>(100);
-  const [currentPrice, setCurrentPrice] = useState<number>(32.50);
+  const [baseRevenue, setBaseRevenue] = useState<number>(() => initialDcf?.baseRevenue ?? 1200);
+  const [netDebt, setNetDebt] = useState<number>(() => initialDcf?.netDebt ?? 250);
+  const [sharesOutstanding, setSharesOutstanding] = useState<number>(() => initialDcf?.sharesOutstanding ?? 100);
+  const [currentPrice, setCurrentPrice] = useState<number>(() => initialDcf?.currentPrice ?? 32.50);
+
+  const handleSyncSecurity = (sec: LinkedSecurity) => {
+    const dcf = mapToDcfInputs(sec);
+    setCurrentPrice(dcf.currentPrice);
+    setSharesOutstanding(dcf.sharesOutstanding);
+    setBaseRevenue(dcf.baseRevenue);
+    setBaseRevGrowth(dcf.revGrowth);
+    setBaseEbitdaMargin(dcf.ebitdaMargin);
+    setNetDebt(dcf.netDebt);
+  };
 
   const [isCalculating, setIsCalculating] = useState<boolean>(false);
   const [activeTab, setActiveTab] = useState<"PROJECTIONS" | "FOOTBALL" | "TORNADO" | "MONTE_CARLO">("PROJECTIONS");
@@ -286,6 +304,8 @@ export default function DCFModel() {
       className="grid grid-cols-1 lg:grid-cols-12 gap-8 text-fg font-mono"
       dir={isAr ? "rtl" : "ltr"}
     >
+      <ActiveSecuritySyncBar onSync={handleSyncSecurity} engineName="DCF Valuation" className="col-span-12" />
+
       {/* LEFT COLUMN: ASSUMPTIONS & SCENARIOS (4 COLS) */}
       <div className="col-span-12 lg:col-span-4 space-y-6">
         {/* SCENARIO CASE TOGGLE */}

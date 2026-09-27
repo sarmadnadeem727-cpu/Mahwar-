@@ -13,6 +13,7 @@ import AppleSheet from "@/components/ui/AppleSheet";
 import AppleContextMenu from "@/components/ui/AppleContextMenu";
 import SFSymbol from "@/components/ui/SFSymbol";
 import TradingViewChart from "@/components/ui/TradingViewChart";
+import { buildLinkedSecurity } from "@/lib/market/engineBridge";
 
 const POLL_MS = 15_000;
 
@@ -20,7 +21,7 @@ const POLL_MS = 15_000;
 interface Col { key: SortKey; en: string; ar: string; render: (r: ScreenRow) => React.ReactNode; align?: "start" | "end"; hideSm?: boolean }
 
 export default function StockScreener() {
-  const { language, setPanel, toast } = useTerminalStore();
+  const { language, setPanel, linkSecurityAndOpenPanel, toast } = useTerminalStore();
   const isAr = language === "ar";
 
   const [filters, setFilters] = useState<ScreenFilters>(EMPTY_FILTERS);
@@ -470,11 +471,30 @@ export default function StockScreener() {
                     : (isAr ? "نشاط غير متوافق مبدئياً (تمويل تقليدي)" : "Indicatively non-compliant activity (conventional finance)")}
                 </span>
               </div>
-              <div className="text-[11.5px] text-fg-3 font-sans font-medium">{isAr ? "افتح هذا السهم في محركات التحليل:" : "Open this name in analytics engines:"}</div>
-              <div className="grid grid-cols-2 gap-2">
-                {([["DCF", "DCF", isAr ? "تقييم DCF" : "DCF valuation"], ["comps", "COMPS", isAr ? "الشركات المماثلة" : "Trading comps"], ["ddm", "DDM", isAr ? "خصم التوزيعات" : "Dividend model"], ["shariah", "AAOIFI", isAr ? "الفحص الشرعي" : "Shariah screen"]] as const).map(([id, code, label]) => (
-                  <button key={id} type="button" onClick={() => { setPanel(id); setSelected(null); toast(isAr ? `فُتح ${code}` : `Opened ${code}`); }} className="btn-secondary justify-between normal-case tracking-normal font-sans text-[12px] py-2 px-3 rounded-xl apple-touch-target">
-                    <span>{label}</span><ExternalLink size={12} />
+              <div className="text-[11.5px] text-fg-3 font-sans font-medium">{isAr ? "ربط هذا السهم ونقله إلى محركات التحليل:" : "Link & dispatch to analytics engines:"}</div>
+              <div className="grid grid-cols-2 sm:grid-cols-3 gap-2">
+                {([
+                  ["DCF", "DCF", isAr ? "تقييم DCF" : "DCF valuation"],
+                  ["comps", "COMPS", isAr ? "الشركات المماثلة" : "Trading comps"],
+                  ["zscore", "Z-SCORE", isAr ? "مؤشر ألتمان" : "Altman Z-Score"],
+                  ["ratios", "RATIOS", isAr ? "تحليل النسب" : "Financial Ratios"],
+                  ["ddm", "DDM", isAr ? "خصم التوزيعات" : "Dividend model"],
+                  ["shariah", "AAOIFI", isAr ? "الفحص الشرعي" : "Shariah screen"],
+                ] as const).map(([id, code, label]) => (
+                  <button
+                    key={id}
+                    type="button"
+                    onClick={() => {
+                      if (sel) {
+                        const linked = buildLinkedSecurity(sel.sec, feed?.quotes?.[sel.sec.id]);
+                        linkSecurityAndOpenPanel(linked, id as any);
+                        setSelected(null);
+                      }
+                    }}
+                    className="btn-secondary justify-between normal-case tracking-normal font-sans text-[11.5px] py-2 px-2.5 rounded-xl apple-touch-target hover:border-emerald-border hover:bg-emerald/10"
+                  >
+                    <span className="truncate">{label}</span>
+                    <ExternalLink size={11} className="shrink-0 text-emerald-light" />
                   </button>
                 ))}
               </div>

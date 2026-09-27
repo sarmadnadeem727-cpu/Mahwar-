@@ -20,10 +20,10 @@ import { Sliders } from "lucide-react";
  * ⌘K / Ctrl+K opens the palette, "/" focuses the line, ↑/↓ walks history.
  */
 export default function TopBar() {
-  const { activePanel, language, setLanguage, currency, setCurrency, isMobileMenuOpen, setMobileMenuOpen, history } = useTerminalStore(
+  const { activePanel, setPanel, language, setLanguage, currency, setCurrency, isMobileMenuOpen, setMobileMenuOpen, history, activeSecurity } = useTerminalStore(
     useShallow((s) => ({
-      activePanel: s.activePanel, language: s.language, setLanguage: s.setLanguage, currency: s.currency, setCurrency: s.setCurrency,
-      isMobileMenuOpen: s.isMobileMenuOpen, setMobileMenuOpen: s.setMobileMenuOpen, history: s.commandHistory,
+      activePanel: s.activePanel, setPanel: s.setPanel, language: s.language, setLanguage: s.setLanguage, currency: s.currency, setCurrency: s.setCurrency,
+      isMobileMenuOpen: s.isMobileMenuOpen, setMobileMenuOpen: s.setMobileMenuOpen, history: s.commandHistory, activeSecurity: s.activeSecurity,
     }))
   );
   const run = useCommandRunner();
@@ -157,6 +157,20 @@ export default function TopBar() {
             )}
           </form>
         </div>
+
+        {/* Active Linked Security Pill */}
+        {activeSecurity && (
+          <button
+            type="button"
+            onClick={() => setPanel("screener")}
+            className="hidden xl:flex items-center gap-1.5 h-8 px-2.5 rounded-lg border border-emerald/40 bg-emerald/10 text-emerald-light font-mono text-[11px] hover:bg-emerald/20 transition-all apple-touch-target shrink-0"
+            title={`Active Security: ${activeSecurity.name} (${activeSecurity.tradingViewSymbol}) — Click to view in Screener`}
+          >
+            <span className="w-1.5 h-1.5 rounded-full bg-emerald-light animate-pulse" />
+            <span className="font-semibold">{activeSecurity.code}</span>
+            <span className="text-fg-3">{activeSecurity.price} {activeSecurity.currency}</span>
+          </button>
+        )}
 
         {/* Controls */}
         <div className="flex items-center gap-1.5 md:gap-2 shrink-0">

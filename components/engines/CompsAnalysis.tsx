@@ -7,6 +7,7 @@ import { computeComps, type CompsInputs, type Peer } from "@/lib/finance/comps";
 import { TERMINAL_CHART_THEME as T } from "@/lib/chartTheme";
 import { useTerminalStore } from "@/store/useTerminalStore";
 import { useSessionSave } from "@/lib/useSessionSave";
+import { mapToCompsInputs, type LinkedSecurity } from "@/lib/market/engineBridge";
 
 const PEERS: Peer[] = [
   { id: "p1", name: "Almarai", evRevenue: 2.6, evEbitda: 11.8, pe: 22.5 },
@@ -18,13 +19,23 @@ const PEERS: Peer[] = [
 const DEFAULTS: CompsInputs = { revenue: 4_200, ebitda: 780, netIncome: 390, netDebt: 1_150, sharesOutstanding: 500, currentPrice: 16.4, peers: PEERS };
 
 export default function CompsAnalysis() {
-  const { language, currency } = useTerminalStore();
+  const { language, currency, activeSecurity } = useTerminalStore();
   const isAr = language === "ar";
-  const [i, setI] = useState<CompsInputs>(DEFAULTS);
+  const [i, setI] = useState<CompsInputs>(() => {
+    if (activeSecurity) {
+      return mapToCompsInputs(activeSecurity);
+    }
+    return DEFAULTS;
+  });
   const set = <K extends keyof CompsInputs>(k: K, v: CompsInputs[K]) => setI((p) => ({ ...p, [k]: v }));
   const setPeer = (id: string, k: keyof Peer, v: string | number) => set("peers", i.peers.map((p) => (p.id === id ? { ...p, [k]: v } : p)));
   const o = useMemo(() => computeComps(i), [i]);
   useSessionSave("comps", i, { blendedPerShare: o.blendedPerShare, upsidePct: o.upsidePct, medianEvEbitda: o.stats[1]?.median });
+
+  const handleSyncSecurity = (sec: LinkedSecurity) => {
+    const mapped = mapToCompsInputs(sec);
+    setI(mapped);
+  };
 
   const audit = {
     toolName: "Comparable companies", toolNameAr: "الشركات المماثلة",
@@ -36,7 +47,12 @@ export default function CompsAnalysis() {
   const chart = o.implied.map((r) => ({ name: r.label, low: r.lowPs, mid: r.midPs, high: r.highPs, range: r.highPs - r.lowPs }));
 
   return (
-    <EngineShell id="comps" icon={<Users size={22} />} audit={audit} onReset={() => setI(DEFAULTS)}
+    <EngineShell
+      id="comps"
+      icon={<Users size={22} />}
+      audit={audit}
+      onReset={() => setI(DEFAULTS)}
+      onSyncSecurity={handleSyncSecurity}
       exportRows={[
         { Metric: "Blended value / share", Value: o.blendedPerShare }, { Metric: "Upside %", Value: o.upsidePct },
         ...o.implied.flatMap((r) => [{ Metric: `${r.label} low / share`, Value: r.lowPs }, { Metric: `${r.label} median / share`, Value: r.midPs }, { Metric: `${r.label} high / share`, Value: r.highPs }]),

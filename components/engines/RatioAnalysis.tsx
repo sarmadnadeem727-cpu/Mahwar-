@@ -5,6 +5,7 @@ import EngineShell, { Field, Kpis, Card, fmt, pct } from "./EngineShell";
 import { computeRatios, type RatioInputs, type Ratio } from "@/lib/finance/ratios";
 import { useTerminalStore } from "@/store/useTerminalStore";
 import { useSessionSave } from "@/lib/useSessionSave";
+import { mapToRatioInputs, type LinkedSecurity } from "@/lib/market/engineBridge";
 
 const DEFAULTS: RatioInputs = {
   revenue: 4_200, cogs: 2_730, opex: 690, depreciation: 210, interestExpense: 95, taxExpense: 62, netIncome: 390,
@@ -19,17 +20,32 @@ const GROUPS: { id: Ratio["group"]; en: string; ar: string }[] = [
 const STATUS = { good: "bg-pos", watch: "bg-warn", weak: "bg-neg" };
 
 export default function RatioAnalysis() {
-  const { language, currency } = useTerminalStore();
+  const { language, currency, activeSecurity } = useTerminalStore();
   const isAr = language === "ar";
-  const [i, setI] = useState<RatioInputs>(DEFAULTS);
+  const [i, setI] = useState<RatioInputs>(() => {
+    if (activeSecurity) {
+      return mapToRatioInputs(activeSecurity);
+    }
+    return DEFAULTS;
+  });
   const set = <K extends keyof RatioInputs>(k: K, v: RatioInputs[K]) => setI((p) => ({ ...p, [k]: v }));
   const o = useMemo(() => computeRatios(i), [i]);
   useSessionSave("ratios", i, { score: o.score, roe: o.dupont.roe * 100, netDebtEbitda: o.ratios.find((r) => r.key === "ndebitda")?.value, currentRatio: o.ratios.find((r) => r.key === "current")?.value });
+
+  const handleSyncSecurity = (sec: LinkedSecurity) => {
+    setI(mapToRatioInputs(sec));
+  };
+
   const show = (r: Ratio) => (r.unit === "%" ? pct(r.value) : r.unit === "days" ? `${fmt(r.value, 0)} d` : `${fmt(r.value, 2)}x`);
   const f = (k: keyof RatioInputs, en: string, ar: string, suffix: string = currency) => <Field key={k} label={isAr ? ar : en} value={i[k]} onChange={(v) => set(k, v)} suffix={suffix} />;
 
   return (
-    <EngineShell id="ratios" icon={<Gauge size={22} />} onReset={() => setI(DEFAULTS)}
+    <EngineShell
+      id="ratios"
+      icon={<Gauge size={22} />}
+      onReset={() => setI(DEFAULTS)}
+      onSyncSecurity={handleSyncSecurity}
+
       audit={{
         toolName: "Ratio analysis", toolNameAr: "تحليل النسب المالية",
         summary: "Twenty standard ratios from the income statement, balance sheet and cash flow; DuPont splits ROE into margin × turnover × leverage.", summaryAr: "عشرون نسبة قياسية من القوائم الثلاث؛ ديبونت يفكك العائد على حقوق الملكية.",

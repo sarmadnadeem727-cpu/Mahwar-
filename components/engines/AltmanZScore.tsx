@@ -8,23 +8,38 @@ import { computeZ, type ZInputs } from "@/lib/finance/zscore";
 import { TERMINAL_CHART_THEME as T } from "@/lib/chartTheme";
 import { useTerminalStore } from "@/store/useTerminalStore";
 import { useSessionSave } from "@/lib/useSessionSave";
+import { mapToAltmanZInputs, type LinkedSecurity } from "@/lib/market/engineBridge";
 
 const DEFAULTS: ZInputs = { model: "public", workingCapital: 420, retainedEarnings: 1_180, ebit: 610, equityValue: 5_400, totalLiabilities: 2_900, sales: 4_200, totalAssets: 6_100 };
 
 export default function AltmanZScore() {
-  const { language, currency } = useTerminalStore();
+  const { language, currency, activeSecurity } = useTerminalStore();
   const isAr = language === "ar";
-  const [i, setI] = useState<ZInputs>(DEFAULTS);
+  const [i, setI] = useState<ZInputs>(() => {
+    if (activeSecurity) {
+      return mapToAltmanZInputs(activeSecurity);
+    }
+    return DEFAULTS;
+  });
   const set = <K extends keyof ZInputs>(k: K, v: ZInputs[K]) => setI((p) => ({ ...p, [k]: v }));
   const o = useMemo(() => computeZ(i), [i]);
   useSessionSave("zscore", i, { z: o.z, zone: o.zone, impliedPd: o.impliedPd });
+
+  const handleSyncSecurity = (sec: LinkedSecurity) => {
+    setI(mapToAltmanZInputs(sec));
+  };
 
   const zoneLabel = { safe: isAr ? "منطقة آمنة" : "Safe zone", grey: isAr ? "منطقة رمادية" : "Grey zone", distress: isAr ? "منطقة خطر" : "Distress zone" }[o.zone];
   const accent = { safe: "emerald", grey: "warn", distress: "neg" }[o.zone] as "emerald" | "warn" | "neg";
   const gauge = Math.max(0, Math.min(1, o.z / (o.thresholds.safe * 1.6)));
 
   return (
-    <EngineShell id="zscore" icon={<HeartPulse size={22} />} onReset={() => setI(DEFAULTS)}
+    <EngineShell
+      id="zscore"
+      icon={<HeartPulse size={22} />}
+      onReset={() => setI(DEFAULTS)}
+      onSyncSecurity={handleSyncSecurity}
+
       audit={{
         toolName: "Altman Z-score", toolNameAr: "مؤشر ألتمان Z",
         summary: "Z = Σ wᵢ × ratioᵢ using the coefficient set for the chosen firm type.", summaryAr: "Z = مجموع الأوزان × النسب حسب نوع الشركة.",

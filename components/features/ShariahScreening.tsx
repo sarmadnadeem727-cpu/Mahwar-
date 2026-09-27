@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useMemo } from "react";
 import { motion } from "framer-motion";
 import { ShieldCheck, HelpCircle } from "lucide-react";
 import { useTerminalStore } from "@/store/useTerminalStore";
@@ -9,17 +9,35 @@ import NumberCounter from "@/components/ui/NumberCounter";
 import AppleGauge from "@/components/ui/AppleGauge";
 import AppleSegmentedControl from "@/components/ui/AppleSegmentedControl";
 
+import ActiveSecuritySyncBar from "@/components/shared/ActiveSecuritySyncBar";
+import { mapToShariahInputs, type LinkedSecurity } from "@/lib/market/engineBridge";
+
 export default function ShariahScreening() {
-  const { language, updateSessionAnalysis } = useTerminalStore();
+  const { language, updateSessionAnalysis, activeSecurity } = useTerminalStore();
   const isAr = language === 'ar';
 
+  const initialShariah = useMemo(() => {
+    if (activeSecurity) return mapToShariahInputs(activeSecurity);
+    return null;
+  }, [activeSecurity]);
+
   // Manual inputs state
-  const [totalAssets, setTotalAssets] = useState<number>(45000);
-  const [totalDebt, setTotalDebt] = useState<number>(8500);
-  const [totalRevenue, setTotalRevenue] = useState<number>(12000);
-  const [interestIncome, setInterestIncome] = useState<number>(120);
-  const [receivables, setReceivables] = useState<number>(9500);
-  const [sharesOutstanding, setSharesOutstanding] = useState<number>(500);
+  const [totalAssets, setTotalAssets] = useState<number>(() => initialShariah?.totalAssets ?? 45000);
+  const [totalDebt, setTotalDebt] = useState<number>(() => initialShariah?.totalDebt ?? 8500);
+  const [totalRevenue, setTotalRevenue] = useState<number>(() => initialShariah?.totalRevenue ?? 12000);
+  const [interestIncome, setInterestIncome] = useState<number>(() => initialShariah?.interestIncome ?? 120);
+  const [receivables, setReceivables] = useState<number>(() => initialShariah?.receivables ?? 9500);
+  const [sharesOutstanding, setSharesOutstanding] = useState<number>(() => initialShariah?.sharesOutstanding ?? 500);
+
+  const handleSyncSecurity = (sec: LinkedSecurity) => {
+    const s = mapToShariahInputs(sec);
+    setTotalAssets(s.totalAssets);
+    setTotalDebt(s.totalDebt);
+    setTotalRevenue(s.totalRevenue);
+    setInterestIncome(s.interestIncome);
+    setReceivables(s.receivables);
+    setSharesOutstanding(s.sharesOutstanding);
+  };
 
   // Standard selector state
   const [standard, setStandard] = useState<"aaoifi" | "sama" | "conservative">("aaoifi");
@@ -74,6 +92,8 @@ export default function ShariahScreening() {
       className="grid grid-cols-12 gap-8 text-fg font-sans"
       dir={isAr ? "rtl" : "ltr"}
     >
+      <ActiveSecuritySyncBar onSync={handleSyncSecurity} engineName="AAOIFI Shariah Screening" className="col-span-12" />
+
       {/* LEFT COLUMN: MANUAL ENTRY FORM (4 COLS) */}
       <div className="col-span-12 lg:col-span-4 space-y-6">
         <div className="bg-ink-2 p-6 rounded-lg border border-line space-y-4 shadow-xs">

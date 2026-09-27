@@ -13,10 +13,13 @@ import type { AuditData } from "@/lib/operations/types";
 import { APP, getTool } from "@/lib/registry";
 import type { PanelType } from "@/store/useTerminalStore";
 
+import ActiveSecuritySyncBar from "@/components/shared/ActiveSecuritySyncBar";
+import type { LinkedSecurity } from "@/lib/market/engineBridge";
+
 /**
  * EngineShell — the frame every engine uses: registry-driven header, audit
- * trail, vector PDF / Excel export, and an inputs column that becomes a
- * collapsible drawer on phones so results stay above the fold.
+ * trail, vector PDF / Excel export, live market security interlink, and an inputs
+ * column that becomes a collapsible drawer on phones so results stay above the fold.
  */
 interface EngineShellProps {
   id: PanelType;
@@ -24,13 +27,26 @@ interface EngineShellProps {
   audit: AuditData;
   exportRows: Record<string, string | number>[];
   onReset?: () => void;
+  onSyncSecurity?: (sec: LinkedSecurity) => void;
+  showSecurityBridge?: boolean;
   inputs: React.ReactNode;
   children: React.ReactNode;
   /** Width of the inputs column on xl screens. */
   inputsWidth?: number;
 }
 
-export default function EngineShell({ id, icon, audit, exportRows, onReset, inputs, children, inputsWidth = 360 }: EngineShellProps) {
+export default function EngineShell({
+  id,
+  icon,
+  audit,
+  exportRows,
+  onReset,
+  onSyncSecurity,
+  showSecurityBridge = true,
+  inputs,
+  children,
+  inputsWidth = 360,
+}: EngineShellProps) {
   const language = useTerminalStore((s) => s.language);
   const currency = useTerminalStore((s) => s.currency);
   const toast = useTerminalStore((s) => s.toast);
@@ -40,6 +56,8 @@ export default function EngineShell({ id, icon, audit, exportRows, onReset, inpu
   const [exporting, setExporting] = useState(false);
   const [inputsOpen, setInputsOpen] = useState(true);
   const domId = `engine-${id}`;
+
+  const isFinancialEngine = tool?.suite === "finance" || ["DCF", "LBO", "FS", "ddm", "comps", "zscore", "ratios", "shariah", "wacc"].includes(id);
 
   const excel = () => {
     exportToExcel([{ name: tool?.code ?? "Engine", data: exportRows }], `MAHWAR_${tool?.code ?? id}`);
@@ -73,6 +91,10 @@ export default function EngineShell({ id, icon, audit, exportRows, onReset, inpu
         onResetDefaults={onReset}
         isExportingPdf={exporting}
       />
+      {showSecurityBridge && (isFinancialEngine || onSyncSecurity) && (
+        <ActiveSecuritySyncBar onSync={onSyncSecurity} engineName={tool?.en ?? id} />
+      )}
+
       <div className="xl:grid xl:gap-6 space-y-5 xl:space-y-0" style={{ gridTemplateColumns: `${inputsWidth}px minmax(0,1fr)` }}>
         <aside className="panel-input self-start xl:sticky xl:top-2">
           <button
