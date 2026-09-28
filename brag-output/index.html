@@ -1,0 +1,992 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Mahwar (محور) — GCC Terminal Launch Video</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600;700&family=IBM+Plex+Sans+Arabic:wght@400;600;700&family=Readex+Pro:wght@400;600;700&display=swap" rel="stylesheet">
+  <style>
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      user-select: none;
+    }
+    body {
+      background: #02070d;
+      color: #e7f1ec;
+      font-family: 'Readex Pro', -apple-system, sans-serif;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      min-height: 100vh;
+      overflow-x: hidden;
+      padding: 24px 0;
+    }
+
+    /* Header Bar */
+    .app-header {
+      width: 1280px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 16px;
+    }
+    .app-brand {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+    .brand-dot {
+      width: 12px;
+      height: 12px;
+      border-radius: 50%;
+      background: #22b08a;
+      box-shadow: 0 0 14px #22b08a;
+    }
+    .brand-title {
+      font-size: 20px;
+      font-weight: 700;
+      letter-spacing: -0.5px;
+      color: #ffffff;
+    }
+    .brand-badge {
+      font-family: 'IBM Plex Mono', monospace;
+      font-size: 12px;
+      background: rgba(34, 176, 138, 0.15);
+      border: 1px solid rgba(34, 176, 138, 0.35);
+      color: #48dcb2;
+      padding: 4px 10px;
+      border-radius: 6px;
+    }
+
+    /* 16:9 Viewport */
+    .viewport {
+      width: 1280px;
+      height: 720px;
+      position: relative;
+      background: #040d16;
+      border: 1px solid rgba(34, 176, 138, 0.45);
+      border-radius: 12px;
+      overflow: hidden;
+      box-shadow: 0 25px 80px rgba(0, 0, 0, 0.85), 0 0 60px rgba(34, 176, 138, 0.2);
+    }
+
+    #stageCanvas {
+      width: 1280px;
+      height: 720px;
+      display: block;
+      background: #040d16;
+    }
+
+    /* Recording Overlay Toast */
+    .rec-toast {
+      position: absolute;
+      top: 24px;
+      right: 24px;
+      background: rgba(209, 67, 67, 0.9);
+      border: 1px solid #ff6f6f;
+      color: #ffffff;
+      padding: 10px 18px;
+      border-radius: 8px;
+      font-family: 'IBM Plex Mono', monospace;
+      font-size: 14px;
+      font-weight: 600;
+      display: none;
+      align-items: center;
+      gap: 10px;
+      box-shadow: 0 0 25px rgba(255, 111, 111, 0.5);
+      z-index: 100;
+    }
+    .rec-toast.active {
+      display: flex;
+    }
+    .rec-dot {
+      width: 10px;
+      height: 10px;
+      border-radius: 50%;
+      background: #ffffff;
+      animation: blink 0.8s infinite;
+    }
+    @keyframes blink {
+      0%, 100% { opacity: 1; }
+      50% { opacity: 0.3; }
+    }
+
+    /* Controller Deck */
+    .controls-deck {
+      margin-top: 18px;
+      width: 1280px;
+      background: #071522;
+      border: 1px solid rgba(160, 196, 214, 0.18);
+      border-radius: 12px;
+      padding: 16px 24px;
+      display: flex;
+      align-items: center;
+      gap: 18px;
+    }
+    .ctrl-btn {
+      background: #0f3a5b;
+      color: #e7f1ec;
+      border: 1px solid rgba(34, 176, 138, 0.4);
+      padding: 11px 22px;
+      border-radius: 8px;
+      font-family: 'IBM Plex Mono', monospace;
+      font-size: 14px;
+      font-weight: 600;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      transition: all 0.2s ease;
+      white-space: nowrap;
+    }
+    .ctrl-btn:hover {
+      background: #1b4f77;
+      border-color: #48dcb2;
+    }
+    .ctrl-btn.primary {
+      background: #1c8b6c;
+      color: #ffffff;
+      border-color: #48dcb2;
+    }
+    .ctrl-btn.primary:hover {
+      background: #22b08a;
+    }
+    .ctrl-btn.record {
+      background: #8b1c1c;
+      color: #ffffff;
+      border-color: #ff6f6f;
+    }
+    .ctrl-btn.record:hover {
+      background: #b02222;
+    }
+    .time-display {
+      font-family: 'IBM Plex Mono', monospace;
+      font-size: 16px;
+      color: #48dcb2;
+      min-width: 160px;
+      text-align: center;
+    }
+    .progress-bar-container {
+      flex: 1;
+      height: 10px;
+      background: rgba(160, 196, 214, 0.15);
+      border-radius: 5px;
+      position: relative;
+      cursor: pointer;
+    }
+    .progress-fill {
+      position: absolute;
+      left: 0;
+      top: 0;
+      bottom: 0;
+      width: 0%;
+      background: linear-gradient(90deg, #1c8b6c, #48dcb2);
+      border-radius: 5px;
+    }
+    .tick {
+      position: absolute;
+      top: -4px;
+      bottom: -4px;
+      width: 2px;
+      background: rgba(220, 187, 108, 0.7);
+    }
+
+    /* Export Status Banner */
+    #statusBanner {
+      width: 1280px;
+      margin-top: 14px;
+      padding: 12px 20px;
+      border-radius: 8px;
+      background: rgba(7, 21, 34, 0.85);
+      border: 1px solid rgba(34, 176, 138, 0.3);
+      font-family: 'IBM Plex Mono', monospace;
+      font-size: 13px;
+      color: #a9bfc9;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Top Brand Banner -->
+  <div class="app-header">
+    <div class="app-brand">
+      <div class="brand-dot"></div>
+      <div class="brand-title">MAHWAR (محور) · Launch Video Renderer</div>
+      <div class="brand-badge">1080p 60FPS MP4 RECORDER</div>
+    </div>
+    <div style="font-family:'IBM Plex Mono',monospace; font-size:13px; color:#6f8a98;">
+      ALL 27 COUNTRIES · REAL NATURAL EARTH COASTLINES · 100% IN-BROWSER
+    </div>
+  </div>
+
+  <!-- 1920x1080 Master Stage Canvas -->
+  <div class="viewport">
+    <canvas id="stageCanvas" width="1920" height="1080"></canvas>
+    <div class="rec-toast" id="recToast">
+      <div class="rec-dot"></div>
+      <span id="recStatusText">RECORDING MP4: 00.0s / 20.0s</span>
+    </div>
+  </div>
+
+  <!-- Controller Deck -->
+  <div class="controls-deck">
+    <button class="ctrl-btn primary" id="playBtn">▶ PLAY / PAUSE</button>
+    <button class="ctrl-btn record" id="exportMp4Btn">🔴 EXPORT AS MP4</button>
+    <button class="ctrl-btn" id="posterBtn">📷 SNAPSHOT POSTER</button>
+    <div class="time-display" id="timeDisplay">00.00s / 20.00s</div>
+    <div class="progress-bar-container" id="progressBar">
+      <div class="progress-fill" id="progressFill"></div>
+      <div class="tick" style="left: 15%;"></div> <!-- 3.0s -->
+      <div class="tick" style="left: 40%;"></div> <!-- 8.0s -->
+      <div class="tick" style="left: 65%;"></div> <!-- 13.0s -->
+      <div class="tick" style="left: 85%;"></div> <!-- 17.0s -->
+    </div>
+  </div>
+
+  <div id="statusBanner">
+    <span>Ready to export. Click <strong>"EXPORT AS MP4"</strong> to record the complete 20-second 1080p video with audio directly to your device.</span>
+    <span id="mimeSupportTag" style="color:#48dcb2;"></span>
+  </div>
+
+  <audio id="audioTrack" src="assets/music/track.mp3" preload="auto"></audio>
+
+  <!-- Load Real Natural Earth GCC Map Data -->
+  <script src="assets/map-data.js"></script>
+
+  <script>
+    const DURATION = 20.0;
+    let currentTime = 0;
+    let isPlaying = false;
+    let isRecording = false;
+    let animFrame = null;
+    let lastTimestamp = null;
+    let mediaRecorder = null;
+    let recordedBlobs = [];
+
+    const canvas = document.getElementById('stageCanvas');
+    const ctx = canvas.getContext('2d');
+    const audioTrack = document.getElementById('audioTrack');
+    const playBtn = document.getElementById('playBtn');
+    const exportMp4Btn = document.getElementById('exportMp4Btn');
+    const posterBtn = document.getElementById('posterBtn');
+    const timeDisplay = document.getElementById('timeDisplay');
+    const progressBar = document.getElementById('progressBar');
+    const progressFill = document.getElementById('progressFill');
+    const recToast = document.getElementById('recToast');
+    const recStatusText = document.getElementById('recStatusText');
+    const mimeSupportTag = document.getElementById('mimeSupportTag');
+
+    // Detect browser MP4 support
+    let selectedMimeType = 'video/webm';
+    if (MediaRecorder.isTypeSupported('video/mp4; codecs="avc1.42E01E, mp4a.40.2"')) {
+      selectedMimeType = 'video/mp4; codecs="avc1.42E01E, mp4a.40.2"';
+    } else if (MediaRecorder.isTypeSupported('video/mp4')) {
+      selectedMimeType = 'video/mp4';
+    } else if (MediaRecorder.isTypeSupported('video/webm; codecs=vp9')) {
+      selectedMimeType = 'video/webm; codecs=vp9';
+    }
+    mimeSupportTag.textContent = "Format: " + (selectedMimeType.includes('mp4') ? "Direct MP4 (H.264)" : "WebM/MP4");
+
+    // Cache pre-compiled Path2D for 60fps rendering
+    const pathCache = { gcc: [], neighbours: [], routes: [] };
+    if (window.MAP_DATA) {
+      window.MAP_DATA.gcc.forEach(item => pathCache.gcc.push({ name: item.name, path: new Path2D(item.d) }));
+      window.MAP_DATA.neighbours.forEach(item => pathCache.neighbours.push({ name: item.name, path: new Path2D(item.d) }));
+      window.MAP_DATA.routes.forEach(item => pathCache.routes.push({ ...item, path: new Path2D(item.d) }));
+    }
+
+    // Helper: Rounded Rectangle
+    function roundRect(ctx, x, y, w, h, r) {
+      ctx.beginPath();
+      ctx.moveTo(x + r, y);
+      ctx.lineTo(x + w - r, y);
+      ctx.quadraticCurveTo(x + w, y, x + w, y + r);
+      ctx.lineTo(x + w, y + h - r);
+      ctx.quadraticCurveTo(x + w, y + h, x + w - r, y + h);
+      ctx.lineTo(x + r, y + h);
+      ctx.quadraticCurveTo(x, y + h, x, y + h - r);
+      ctx.lineTo(x, y + r);
+      ctx.quadraticCurveTo(x, y, x + r, y);
+      ctx.closePath();
+    }
+
+    // Master Render Function: Renders every pixel of 1920x1080 at time t
+    function renderMasterFrame(t) {
+      ctx.clearRect(0, 0, 1920, 1080);
+
+      // 1. Ocean Background
+      ctx.fillStyle = "#040d16";
+      ctx.fillRect(0, 0, 1920, 1080);
+
+      // Graticule grid lines
+      ctx.strokeStyle = "rgba(160, 196, 214, 0.05)";
+      ctx.lineWidth = 1;
+      for (let x = 100; x < 1920; x += 150) {
+        ctx.beginPath();
+        ctx.moveTo(x, 0);
+        ctx.lineTo(x, 1080);
+        ctx.stroke();
+      }
+      for (let y = 100; y < 1080; y += 150) {
+        ctx.beginPath();
+        ctx.moveTo(0, y);
+        ctx.lineTo(1920, y);
+        ctx.stroke();
+      }
+
+      // 2. All Neighbouring Countries (Iran, Iraq, Jordan, Yemen, Egypt, etc.)
+      const neighbourAlpha = Math.min(1, t * 1.5);
+      ctx.fillStyle = "rgba(9, 29, 44, " + (0.75 * neighbourAlpha) + ")";
+      ctx.strokeStyle = "rgba(160, 196, 214, " + (0.15 * neighbourAlpha) + ")";
+      ctx.lineWidth = 1;
+      pathCache.neighbours.forEach(item => {
+        ctx.fill(item.path);
+        ctx.stroke(item.path);
+      });
+
+      // 3. The 6 GCC States (Saudi Arabia, UAE, Qatar, Oman, Kuwait, Bahrain)
+      const gccProgress = Math.min(1, Math.max(0, (t - 0.2) * 1.8));
+      ctx.fillStyle = "rgba(18, 56, 50, " + (0.85 * gccProgress) + ")";
+      ctx.strokeStyle = "rgba(34, 176, 138, " + gccProgress + ")";
+      ctx.lineWidth = 2.2;
+      ctx.shadowColor = "#22b08a";
+      ctx.shadowBlur = 18 * gccProgress;
+      pathCache.gcc.forEach(item => {
+        ctx.fill(item.path);
+        ctx.stroke(item.path);
+      });
+      ctx.shadowBlur = 0;
+
+      // 4. Physical & Economic Corridors (Roads, Maritime Sea Lanes, Capital Arcs)
+      if (t >= 0.8) {
+        const corridorProgress = Math.min(1, (t - 0.8) * 1.5);
+        pathCache.routes.forEach(r => {
+          ctx.save();
+          if (r.kind === 'road') {
+            ctx.strokeStyle = "rgba(91, 115, 135, " + (0.7 * corridorProgress) + ")";
+            ctx.lineWidth = 2;
+            ctx.setLineDash([4, 6]);
+          } else if (r.kind === 'sea') {
+            ctx.strokeStyle = "rgba(220, 187, 108, " + (0.85 * corridorProgress) + ")";
+            ctx.lineWidth = 2.2;
+            ctx.setLineDash([8, 8]);
+            ctx.lineDashOffset = -t * 35;
+          } else if (r.kind === 'capital') {
+            ctx.strokeStyle = "rgba(72, 220, 178, " + (0.9 * corridorProgress) + ")";
+            ctx.lineWidth = 2.8;
+            ctx.setLineDash([4, 10]);
+            ctx.lineDashOffset = -t * 50;
+            ctx.shadowColor = "#22b08a";
+            ctx.shadowBlur = 10;
+          }
+          ctx.stroke(r.path);
+          ctx.restore();
+
+          // Flowing transit particles
+          const transitT = (t * 0.8 + (r.a.charCodeAt(0) % 5) * 0.2) % 1;
+          const pX = (1 - transitT) * (1 - transitT) * r.aPos.x + 2 * (1 - transitT) * transitT * r.cx + transitT * transitT * r.bPos.x;
+          const pY = (1 - transitT) * (1 - transitT) * r.aPos.y + 2 * (1 - transitT) * transitT * r.cy + transitT * transitT * r.bPos.y;
+
+          ctx.fillStyle = r.kind === 'sea' ? "#dcbb6c" : "#48dcb2";
+          ctx.beginPath();
+          ctx.arc(pX, pY, r.kind === 'capital' ? 4.5 : 3.5, 0, Math.PI * 2);
+          ctx.fill();
+        });
+      }
+
+      // 5. Hubs with pulse rings & labels
+      if (window.MAP_DATA && window.MAP_DATA.hubs) {
+        window.MAP_DATA.hubs.forEach((hub, idx) => {
+          const hubDelay = 0.4 + idx * 0.12;
+          if (t < hubDelay) return;
+
+          const pulse = ((t - hubDelay) * 3) % 2;
+          ctx.strokeStyle = "rgba(72, 220, 178, " + (1 - pulse / 2) + ")";
+          ctx.lineWidth = 1.6;
+          ctx.beginPath();
+          ctx.arc(hub.x, hub.y, 8 + pulse * 24, 0, Math.PI * 2);
+          ctx.stroke();
+
+          ctx.fillStyle = hub.kind === 'port' ? "#dcbb6c" : "#48dcb2";
+          ctx.beginPath();
+          ctx.arc(hub.x, hub.y, hub.kind === 'financial' ? 6.5 : 5, 0, Math.PI * 2);
+          ctx.fill();
+
+          ctx.font = "bold 15px 'IBM Plex Mono', monospace";
+          ctx.fillStyle = "#ffffff";
+          ctx.fillText(hub.en.toUpperCase(), hub.x + 12, hub.y + 5);
+
+          if (hub.exchange) {
+            ctx.font = "11px 'IBM Plex Mono', monospace";
+            ctx.fillStyle = "#dcbb6c";
+            ctx.fillText(hub.exchange, hub.x + 12, hub.y + 20);
+          }
+        });
+      }
+
+      // 6. Top Telemetry HUD Bar
+      ctx.fillStyle = "rgba(7, 21, 34, 0.85)";
+      ctx.fillRect(60, 36, 1800, 52);
+      ctx.strokeStyle = "rgba(160, 196, 214, 0.18)";
+      ctx.lineWidth = 1;
+      ctx.strokeRect(60, 36, 1800, 52);
+
+      ctx.font = "bold 16px 'IBM Plex Mono', monospace";
+      ctx.fillStyle = "#ffffff";
+      ctx.fillText("MAHWAR // TERMINAL v7.0", 85, 68);
+      ctx.fillStyle = "#22b08a";
+      ctx.fillText("● 43 ENGINES READY", 335, 68);
+
+      roundRect(ctx, 840, 46, 260, 32, 16);
+      ctx.fillStyle = "rgba(18, 56, 50, 0.8)";
+      ctx.fill();
+      ctx.strokeStyle = "rgba(34, 176, 138, 0.4)";
+      ctx.stroke();
+      ctx.fillStyle = "#48dcb2";
+      ctx.font = "14px 'IBM Plex Mono', monospace";
+      ctx.fillText("● GCC LIVE: 7 EXCHANGES", 860, 67);
+
+      ctx.fillStyle = "#6f8a98";
+      ctx.fillText("24.7136° N, 46.6753° E", 1520, 68);
+      ctx.fillStyle = "#dcbb6c";
+      ctx.fillText("0 MS SYNC", 1740, 68);
+
+      // ==========================================
+      // SCENE 1: 0.0s - 3.0s (Full Map Showcase)
+      // ==========================================
+      if (t < 3.0) {
+        // Hero Title Box
+        roundRect(ctx, 80, 800, 680, 180, 18);
+        ctx.fillStyle = "rgba(4, 13, 22, 0.88)";
+        ctx.fill();
+        ctx.strokeStyle = "rgba(34, 176, 138, 0.4)";
+        ctx.lineWidth = 1.5;
+        ctx.stroke();
+
+        ctx.font = "16px 'IBM Plex Mono', monospace";
+        ctx.fillStyle = "#48dcb2";
+        ctx.fillText("SOVEREIGN CAPITAL NETWORK · GCC INTELLIGENCE", 115, 845);
+
+        ctx.font = "bold 56px 'Readex Pro', sans-serif";
+        ctx.fillStyle = "#ffffff";
+        ctx.fillText("MAHWAR (محور)", 115, 915);
+
+        ctx.font = "20px 'Readex Pro', sans-serif";
+        ctx.fillStyle = "#a9bfc9";
+        ctx.fillText("The GCC Intelligence Terminal. Physical Corridors & 7 Exchanges.", 115, 955);
+
+        // Legend Card
+        roundRect(ctx, 1420, 110, 420, 160, 14);
+        ctx.fillStyle = "rgba(7, 21, 34, 0.9)";
+        ctx.fill();
+        ctx.strokeStyle = "rgba(160, 196, 214, 0.2)";
+        ctx.stroke();
+
+        ctx.font = "14px 'IBM Plex Mono', monospace";
+        ctx.fillStyle = "#e7f1ec";
+
+        ctx.strokeStyle = "#5b7387"; ctx.lineWidth = 3;
+        ctx.beginPath(); ctx.moveTo(1450, 150); ctx.lineTo(1480, 150); ctx.stroke();
+        ctx.fillText("Road & Rail Network", 1495, 155);
+
+        ctx.strokeStyle = "#dcbb6c"; ctx.lineWidth = 3;
+        ctx.beginPath(); ctx.moveTo(1450, 185); ctx.lineTo(1480, 185); ctx.stroke();
+        ctx.fillText("Maritime Sea Lanes (Hormuz/Red Sea)", 1495, 190);
+
+        ctx.strokeStyle = "#48dcb2"; ctx.lineWidth = 3;
+        ctx.beginPath(); ctx.moveTo(1450, 220); ctx.lineTo(1480, 220); ctx.stroke();
+        ctx.fillText("Sovereign Capital Flows", 1495, 225);
+      }
+
+      // ==========================================
+      // SCENE 2: 3.0s - 8.0s (Live GCC Stock Screener)
+      // ==========================================
+      else if (t >= 3.0 && t < 8.0) {
+        ctx.fillStyle = "rgba(4, 13, 22, 0.85)";
+        ctx.fillRect(0, 100, 1920, 980);
+
+        ctx.font = "16px 'IBM Plex Mono', monospace";
+        ctx.fillStyle = "#48dcb2";
+        ctx.fillText("REAL-TIME MARKET INTELLIGENCE", 80, 160);
+
+        ctx.font = "bold 44px 'Readex Pro', sans-serif";
+        ctx.fillStyle = "#ffffff";
+        ctx.fillText("38 GCC Blue-Chips · 7 Exchanges", 80, 215);
+
+        roundRect(ctx, 1460, 165, 380, 44, 8);
+        ctx.fillStyle = "rgba(34, 176, 138, 0.18)";
+        ctx.fill();
+        ctx.strokeStyle = "rgba(34, 176, 138, 0.45)";
+        ctx.stroke();
+        ctx.font = "16px 'IBM Plex Mono', monospace";
+        ctx.fillStyle = "#48dcb2";
+        ctx.fillText("NO DELAY · CLIENT-SIDE PARSER", 1490, 193);
+
+        const stocks = [
+          { sym: "2222:XSAU", ex: "TADAWUL", name: "Saudi Aramco", p: "31.40 SAR", c: "▲ +1.85%", pe: "15.4x", tag: "AAOIFI Compliant", sel: true },
+          { sym: "EMAAR:XDFM", ex: "DFM DUBAI", name: "Emaar Properties", p: "8.95 AED", c: "▲ +2.40%", pe: "7.2x", tag: "Rank 96/100", sel: false },
+          { sym: "FAB:XADS", ex: "ADX ABU DHABI", name: "First Abu Dhabi Bank", p: "14.20 AED", c: "▲ +0.90%", pe: "1.15x PB", tag: "Tier 1 OK", sel: false },
+          { sym: "QNBK:DSMD", ex: "QSE DOHA", name: "Qatar National Bank", p: "15.80 QAR", c: "▲ +1.12%", pe: "10.1x", tag: "Audited", sel: false }
+        ];
+
+        stocks.forEach((s, idx) => {
+          const cardX = 80 + idx * 455;
+          roundRect(ctx, cardX, 260, 420, 520, 16);
+          ctx.fillStyle = "rgba(7, 21, 34, 0.9)";
+          ctx.fill();
+          ctx.strokeStyle = s.sel ? "#22b08a" : "rgba(160, 196, 214, 0.2)";
+          ctx.lineWidth = s.sel ? 2 : 1;
+          ctx.stroke();
+
+          ctx.font = "bold 24px 'IBM Plex Mono', monospace";
+          ctx.fillStyle = "#ffffff";
+          ctx.fillText(s.sym, cardX + 28, 310);
+
+          ctx.font = "14px 'IBM Plex Mono', monospace";
+          ctx.fillStyle = "#dcbb6c";
+          ctx.fillText(s.ex, cardX + 260, 310);
+
+          ctx.font = "16px 'Readex Pro', sans-serif";
+          ctx.fillStyle = "#8c9eac";
+          ctx.fillText(s.name, cardX + 28, 345);
+
+          ctx.font = "bold 34px 'IBM Plex Mono', monospace";
+          ctx.fillStyle = "#ffffff";
+          ctx.fillText(s.p, cardX + 28, 420);
+
+          ctx.font = "bold 20px 'IBM Plex Mono', monospace";
+          ctx.fillStyle = "#33d494";
+          ctx.fillText(s.c, cardX + 28, 460);
+
+          ctx.strokeStyle = "rgba(160, 196, 214, 0.12)";
+          ctx.beginPath();
+          ctx.moveTo(cardX + 28, 490);
+          ctx.lineTo(cardX + 390, 490);
+          ctx.stroke();
+
+          ctx.font = "15px 'IBM Plex Mono', monospace";
+          ctx.fillStyle = "#6f8a98";
+          ctx.fillText("P/E MULTIPLE", cardX + 28, 540);
+          ctx.fillStyle = "#ffffff";
+          ctx.fillText(s.pe, cardX + 290, 540);
+
+          ctx.fillStyle = "#6f8a98";
+          ctx.fillText("STATUS", cardX + 28, 600);
+          ctx.fillStyle = "#dcbb6c";
+          ctx.fillText(s.tag, cardX + 210, 600);
+        });
+      }
+
+      // ==========================================
+      // SCENE 3: 8.0s - 13.0s (Institutional Valuation: Altman Z + DCF)
+      // ==========================================
+      else if (t >= 8.0 && t < 13.0) {
+        ctx.fillStyle = "rgba(4, 13, 22, 0.88)";
+        ctx.fillRect(0, 100, 1920, 980);
+
+        // Panel Left: Altman Z-Score
+        roundRect(ctx, 80, 160, 840, 780, 18);
+        ctx.fillStyle = "rgba(7, 21, 34, 0.9)";
+        ctx.fill();
+        ctx.strokeStyle = "rgba(160, 196, 214, 0.22)";
+        ctx.stroke();
+
+        ctx.font = "14px 'IBM Plex Mono', monospace";
+        ctx.fillStyle = "#dcbb6c";
+        ctx.fillText("DISTRESS & SOLVENCY ENGINE", 120, 210);
+
+        ctx.font = "bold 32px 'Readex Pro', sans-serif";
+        ctx.fillStyle = "#ffffff";
+        ctx.fillText("Altman Z-Score Solvency Barometer", 120, 260);
+
+        // Track
+        roundRect(ctx, 120, 360, 760, 28, 14);
+        const gradTrack = ctx.createLinearGradient(120, 0, 880, 0);
+        gradTrack.addColorStop(0, "#ff6f6f");
+        gradTrack.addColorStop(0.45, "#f2bd5e");
+        gradTrack.addColorStop(0.8, "#33d494");
+        ctx.fillStyle = gradTrack;
+        ctx.fill();
+
+        // Pin animation
+        const pinPos = 650 + Math.sin(t * 3) * 45;
+        ctx.fillStyle = "#ffffff";
+        roundRect(ctx, pinPos - 7, 345, 14, 58, 7);
+        ctx.shadowColor = "#ffffff";
+        ctx.shadowBlur = 15;
+        ctx.fill();
+        ctx.shadowBlur = 0;
+
+        ctx.font = "bold 64px 'IBM Plex Mono', monospace";
+        ctx.fillStyle = "#33d494";
+        ctx.fillText((3.15 + Math.sin(t * 3) * 0.3).toFixed(2), 120, 480);
+
+        ctx.font = "18px 'IBM Plex Mono', monospace";
+        ctx.fillStyle = "#48dcb2";
+        ctx.fillText("SAFE ZONE // IMMINENT DEFAULT RISK: MINIMAL", 120, 520);
+
+        ctx.font = "14px 'IBM Plex Mono', monospace";
+        ctx.fillStyle = "#6f8a98";
+        ctx.fillText("Z = 1.2(WC/TA) + 1.4(RE/TA) + 3.3(EBIT/TA) + 0.6(MVE/TL) + 0.99(S/TA)", 120, 640);
+
+        // Panel Right: DCF 10-Year Trajectory
+        roundRect(ctx, 960, 160, 880, 780, 18);
+        ctx.fillStyle = "rgba(7, 21, 34, 0.9)";
+        ctx.fill();
+        ctx.strokeStyle = "rgba(160, 196, 214, 0.22)";
+        ctx.stroke();
+
+        ctx.font = "14px 'IBM Plex Mono', monospace";
+        ctx.fillStyle = "#dcbb6c";
+        ctx.fillText("INSTITUTIONAL VALUATION", 1000, 210);
+
+        ctx.font = "bold 32px 'Readex Pro', sans-serif";
+        ctx.fillStyle = "#ffffff";
+        ctx.fillText("10-Year Discounted Cash Flow", 1000, 260);
+
+        // DCF Curve
+        const dcfProgress = Math.min(1, (t - 8.5) / 3.5);
+        ctx.strokeStyle = "#48dcb2";
+        ctx.lineWidth = 4;
+        ctx.beginPath();
+        ctx.moveTo(1020, 600);
+        const pts = [
+          {x: 1100, y: 560}, {x: 1180, y: 530}, {x: 1260, y: 490},
+          {x: 1350, y: 440}, {x: 1450, y: 390}, {x: 1560, y: 340},
+          {x: 1680, y: 300}, {x: 1780, y: 270}
+        ];
+        pts.forEach((p, idx) => {
+          if (idx / pts.length <= dcfProgress) ctx.lineTo(p.x, p.y);
+        });
+        ctx.stroke();
+
+        ctx.font = "16px 'IBM Plex Mono', monospace";
+        ctx.fillStyle = "#6f8a98";
+        ctx.fillText("INTRINSIC VALUE", 1020, 720);
+        ctx.font = "bold 32px 'IBM Plex Mono', monospace";
+        ctx.fillStyle = "#48dcb2";
+        ctx.fillText("38.60 SAR", 1020, 765);
+
+        ctx.font = "16px 'IBM Plex Mono', monospace";
+        ctx.fillStyle = "#6f8a98";
+        ctx.fillText("MARKET PRICE", 1320, 720);
+        ctx.font = "bold 32px 'IBM Plex Mono', monospace";
+        ctx.fillStyle = "#ffffff";
+        ctx.fillText("31.40 SAR", 1320, 765);
+
+        ctx.font = "16px 'IBM Plex Mono', monospace";
+        ctx.fillStyle = "#6f8a98";
+        ctx.fillText("UPSIDE DELTA", 1600, 720);
+        ctx.font = "bold 32px 'IBM Plex Mono', monospace";
+        ctx.fillStyle = "#33d494";
+        ctx.fillText("+22.9%", 1600, 765);
+      }
+
+      // ==========================================
+      // SCENE 4: 13.0s - 17.0s (Operations & Arabic RTL Switch)
+      // ==========================================
+      else if (t >= 13.0 && t < 17.0) {
+        ctx.fillStyle = "rgba(4, 13, 22, 0.85)";
+        ctx.fillRect(0, 100, 1920, 980);
+
+        ctx.font = "18px 'Readex Pro', sans-serif";
+        ctx.fillStyle = "#dcbb6c";
+        ctx.textAlign = "right";
+        ctx.fillText("محرك سلاسل الإمداد والعمليات", 1840, 160);
+
+        ctx.font = "bold 44px 'IBM Plex Sans Arabic', sans-serif";
+        ctx.fillStyle = "#ffffff";
+        ctx.fillText("ثنائية اللغة بالكامل · سلاسل الإمداد والمالية", 1840, 220);
+
+        roundRect(ctx, 80, 165, 340, 44, 8);
+        ctx.fillStyle = "rgba(220, 187, 108, 0.18)";
+        ctx.fill();
+        ctx.strokeStyle = "rgba(220, 187, 108, 0.45)";
+        ctx.stroke();
+        ctx.font = "16px 'IBM Plex Mono', monospace";
+        ctx.fillStyle = "#dcbb6c";
+        ctx.textAlign = "left";
+        ctx.fillText("FULL RTL SUPPORT · READEX PRO", 100, 193);
+
+        const ops = [
+          { h: "دورة التحويل النقدي (CCC)", v: "42.8 يوم", sub: "DIO (54d) + DSO (48d) - DPO (59.2d)" },
+          { h: "حجم الطلب الاقتصادي (EOQ)", v: "12,450 وحدة", sub: "تقليل تكلفة التخزين بنسبة 18.4%" },
+          { h: "ممر النقل التجاري الخليجي", v: "3 ممرات نشطة", sub: "الرياض ⇄ دبي ⇄ الدوحة (صفر احتكاك)" }
+        ];
+
+        ops.forEach((o, idx) => {
+          const cardX = 1840 - (idx + 1) * 560;
+          roundRect(ctx, cardX, 290, 520, 480, 16);
+          ctx.fillStyle = "rgba(7, 21, 34, 0.9)";
+          ctx.fill();
+          ctx.strokeStyle = "rgba(34, 176, 138, 0.35)";
+          ctx.stroke();
+
+          ctx.textAlign = "right";
+          ctx.font = "bold 26px 'IBM Plex Sans Arabic', sans-serif";
+          ctx.fillStyle = "#ffffff";
+          ctx.fillText(o.h, cardX + 480, 360);
+
+          ctx.font = "bold 52px 'IBM Plex Mono', monospace";
+          ctx.fillStyle = "#48dcb2";
+          ctx.fillText(o.v, cardX + 480, 460);
+
+          ctx.font = "18px 'IBM Plex Sans Arabic', sans-serif";
+          ctx.fillStyle = "#8c9eac";
+          ctx.fillText(o.sub, cardX + 480, 530);
+        });
+        ctx.textAlign = "left";
+      }
+
+      // ==========================================
+      // SCENE 5: 17.0s - 20.0s (Sovereign Brand Outro & Punchline)
+      // ==========================================
+      else if (t >= 17.0) {
+        ctx.fillStyle = "rgba(4, 13, 22, 0.92)";
+        ctx.fillRect(0, 0, 1920, 1080);
+
+        // Crest Box
+        roundRect(ctx, 890, 240, 140, 140, 36);
+        const gradCrest = ctx.createLinearGradient(890, 240, 1030, 380);
+        gradCrest.addColorStop(0, "#0c1f30");
+        gradCrest.addColorStop(1, "#071522");
+        ctx.fillStyle = gradCrest;
+        ctx.fill();
+        ctx.strokeStyle = "rgba(34, 176, 138, 0.6)";
+        ctx.lineWidth = 2;
+        ctx.stroke();
+
+        // Crest Ring
+        ctx.save();
+        ctx.translate(960, 310);
+        ctx.rotate(t * 1.5);
+        ctx.strokeStyle = "#48dcb2";
+        ctx.lineWidth = 4;
+        ctx.beginPath();
+        ctx.arc(0, 0, 45, 0, Math.PI * 1.5);
+        ctx.stroke();
+        ctx.strokeStyle = "#dcbb6c";
+        ctx.beginPath();
+        ctx.arc(0, 0, 45, Math.PI * 1.5, Math.PI * 2);
+        ctx.stroke();
+        ctx.restore();
+
+        // Central gold core
+        ctx.fillStyle = "#dcbb6c";
+        ctx.beginPath();
+        ctx.arc(960, 310, 11, 0, Math.PI * 2);
+        ctx.fill();
+
+        // Punchline Text
+        ctx.textAlign = "center";
+        ctx.font = "bold 64px 'Readex Pro', sans-serif";
+        ctx.fillStyle = "#ffffff";
+        ctx.fillText("43 Institutional Engines.", 960, 480);
+
+        ctx.fillStyle = "#48dcb2";
+        ctx.fillText("Zero Cloud Overhead.", 960, 560);
+
+        ctx.font = "28px 'Readex Pro', sans-serif";
+        ctx.fillStyle = "#a9bfc9";
+        ctx.fillText("محور · The GCC Intelligence Terminal v7.0", 960, 640);
+
+        roundRect(ctx, 640, 700, 640, 54, 27);
+        ctx.fillStyle = "rgba(7, 21, 34, 0.8)";
+        ctx.fill();
+        ctx.strokeStyle = "rgba(160, 196, 214, 0.25)";
+        ctx.stroke();
+
+        ctx.font = "18px 'IBM Plex Mono', monospace";
+        ctx.fillStyle = "#48dcb2";
+        ctx.fillText("100% IN-BROWSER EXECUTION · AUDITED FINANCIAL TRAIL", 960, 734);
+        ctx.textAlign = "left";
+      }
+    }
+
+    function updateTime(t) {
+      currentTime = Math.max(0, Math.min(DURATION, t));
+      timeDisplay.textContent = currentTime.toFixed(2) + "s / 20.00s";
+      progressFill.style.width = (currentTime / DURATION * 100) + "%";
+      renderMasterFrame(currentTime);
+    }
+
+    function loop(timestamp) {
+      if (!lastTimestamp) lastTimestamp = timestamp;
+      const delta = (timestamp - lastTimestamp) / 1000;
+      lastTimestamp = timestamp;
+
+      if (isPlaying || isRecording) {
+        currentTime += delta;
+        if (currentTime >= DURATION) {
+          currentTime = DURATION;
+          updateTime(currentTime);
+          if (isRecording) {
+            stopRecording();
+          } else {
+            pause();
+          }
+          return;
+        }
+        updateTime(currentTime);
+      }
+
+      if (isPlaying || isRecording) {
+        animFrame = requestAnimationFrame(loop);
+      }
+    }
+
+    function play() {
+      isPlaying = true;
+      lastTimestamp = performance.now();
+      playBtn.textContent = "❚❚ PAUSE";
+      try {
+        audioTrack.currentTime = currentTime;
+        audioTrack.play().catch(() => {});
+      } catch(e) {}
+      animFrame = requestAnimationFrame(loop);
+    }
+
+    function pause() {
+      isPlaying = false;
+      playBtn.textContent = "▶ PLAY";
+      try { audioTrack.pause(); } catch(e) {}
+      if (animFrame) cancelAnimationFrame(animFrame);
+    }
+
+    playBtn.addEventListener('click', () => {
+      if (isPlaying) pause();
+      else {
+        if (currentTime >= DURATION) currentTime = 0;
+        play();
+      }
+    });
+
+    progressBar.addEventListener('click', (e) => {
+      if (isRecording) return;
+      const rect = progressBar.getBoundingClientRect();
+      const clickRatio = (e.clientX - rect.left) / rect.width;
+      currentTime = clickRatio * DURATION;
+      updateTime(currentTime);
+      if (isPlaying) audioTrack.currentTime = currentTime;
+    });
+
+    // ==========================================
+    // EXPORT AS MP4 RECORDING LOGIC
+    // ==========================================
+    exportMp4Btn.addEventListener('click', () => {
+      if (isRecording) return;
+      startMp4Export();
+    });
+
+    function startMp4Export() {
+      isRecording = true;
+      pause();
+      currentTime = 0;
+      updateTime(0);
+      recordedBlobs = [];
+
+      recToast.classList.add('active');
+      recStatusText.textContent = "RECORDING MP4: 00.0s / 20.0s";
+      exportMp4Btn.textContent = "⏳ EXPORTING...";
+      exportMp4Btn.disabled = true;
+
+      // 1. Capture 60fps canvas stream
+      const canvasStream = canvas.captureStream(60);
+
+      // 2. Mix Audio Stream
+      let mixedStream = canvasStream;
+      try {
+        const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+        const source = audioCtx.createMediaElementSource(audioTrack);
+        const dest = audioCtx.createMediaStreamDestination();
+        source.connect(dest);
+        source.connect(audioCtx.destination);
+        dest.stream.getAudioTracks().forEach(track => canvasStream.addTrack(track));
+      } catch (e) {
+        console.warn("Audio capture through WebAudio:", e);
+      }
+
+      // 3. Setup MediaRecorder with direct MP4/H.264 high bitrate
+      try {
+        mediaRecorder = new MediaRecorder(mixedStream, {
+          mimeType: selectedMimeType,
+          videoBitsPerSecond: 8000000 // 8 Mbps high quality
+        });
+      } catch (err) {
+        console.warn("Fallback to default mimeType", err);
+        mediaRecorder = new MediaRecorder(mixedStream);
+      }
+
+      mediaRecorder.ondataavailable = (event) => {
+        if (event.data && event.data.size > 0) {
+          recordedBlobs.push(event.data);
+        }
+      };
+
+      mediaRecorder.onstop = () => {
+        const blob = new Blob(recordedBlobs, { type: selectedMimeType });
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.style.display = 'none';
+        a.href = url;
+        // Save file with proper .mp4 extension
+        a.download = 'mahwar-brag.mp4';
+        document.body.appendChild(a);
+        a.click();
+        setTimeout(() => {
+          document.body.removeChild(a);
+          window.URL.revokeObjectURL(url);
+        }, 100);
+
+        recToast.classList.remove('active');
+        exportMp4Btn.textContent = "✔ EXPORT COMPLETE!";
+        exportMp4Btn.disabled = false;
+        setTimeout(() => {
+          exportMp4Btn.textContent = "🔴 EXPORT AS MP4";
+        }, 4000);
+      };
+
+      mediaRecorder.start(100);
+
+      // Play audio and start loop
+      try {
+        audioTrack.currentTime = 0;
+        audioTrack.play().catch(() => {});
+      } catch(e) {}
+
+      lastTimestamp = performance.now();
+      animFrame = requestAnimationFrame(loop);
+    }
+
+    function stopRecording() {
+      isRecording = false;
+      try { audioTrack.pause(); } catch(e) {}
+      if (mediaRecorder && mediaRecorder.state !== 'inactive') {
+        mediaRecorder.stop();
+      }
+    }
+
+    // Poster snapshot functionality
+    posterBtn.addEventListener('click', () => {
+      currentTime = 17.5;
+      updateTime(17.5);
+      
+      const link = document.createElement('a');
+      link.download = 'brag.jpg';
+      link.href = canvas.toDataURL('image/jpeg', 0.95);
+      link.click();
+    });
+
+    // Initial render
+    updateTime(0);
+  </script>
+</body>
+</html>

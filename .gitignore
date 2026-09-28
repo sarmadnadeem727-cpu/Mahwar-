@@ -49,6 +49,8 @@ Mahwar-v7/
 free-screener-api-update/
 files/
 *.zip
+brag-output/**/*.mp4
+brag-output/*.mp4
 
 
 # API Keys and Secrets (General patterns)
